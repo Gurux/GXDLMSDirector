@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GXDLMSDirector/Development/Views/GXDLMSSpecialDaysTableView.cs $
 //
-// Version:         $Revision: 5795 $,
-//                  $Date: 2012-10-02 13:22:54 +0300 (ti, 02 loka 2012) $
+// Version:         $Revision: 6512 $,
+//                  $Date: 2013-08-08 20:25:09 +0300 (to, 08 elo 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -74,15 +74,15 @@ namespace GXDLMSDirector.Views
             if (attributeID == 2)
             {
                 GXDLMSSpecialDaysTable target = Target as GXDLMSSpecialDaysTable;
-                object[] items = (object[])target.Entries;
+                GXDLMSSpecialDay[] items = target.Entries;
                 CallingWindowLV.Items.Clear();
                 if (items != null)
                 {
-                    foreach (object[] it in items)
+                    foreach (GXDLMSSpecialDay it in items)
                     {                        
-                        ListViewItem li = CallingWindowLV.Items.Add(it[0].ToString());
-                        li.SubItems.Add(GXHelpers.ConvertDLMS2String(GXHelpers.ConvertFromDLMS(it[1], DataType.OctetString, DataType.Date, false)));
-                        li.SubItems.Add(it[2].ToString());
+                        ListViewItem li = CallingWindowLV.Items.Add(it.Index.ToString());
+                        li.SubItems.Add(it.Date.ToString());
+                        li.SubItems.Add(it.DayId.ToString());
                     }
                 }
             }

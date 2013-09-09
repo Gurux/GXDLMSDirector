@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GXDLMSDirector/Development/Views/GXValueField.cs $
 //
-// Version:         $Revision: 5816 $,
-//                  $Date: 2012-10-15 12:53:26 +0300 (ma, 15 loka 2012) $
+// Version:         $Revision: 6510 $,
+//                  $Date: 2013-08-08 16:24:58 +0300 (to, 08 elo 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -239,17 +239,17 @@ namespace GXDLMSDirector.Views
             }             
         }
 
-        delegate void UpdateValueItemsEventHandler(GXDLMSObject target, GXDLMSAttributeSettings att);
+        delegate void UpdateValueItemsEventHandler(GXDLMSObject target, int index);
 
-        public void UpdateValueItems(GXDLMSObject target, GXDLMSAttributeSettings att)
+        public void UpdateValueItems(GXDLMSObject target, int index)
         {
             if (InvokeRequired)
             {
-                this.BeginInvoke(new UpdateValueItemsEventHandler(UpdateValueItems), target, att);
+                this.BeginInvoke(new UpdateValueItemsEventHandler(UpdateValueItems), target, index);
             }
             else
             {
-                GXDLMSAttributeSettings tmp = GXDLMSClient.GetAttributeInfo(target, att.Index);
+                GXDLMSAttributeSettings tmp = GXDLMSClient.GetAttributeInfo(target, index);
                 if (tmp != null)
                 {
                     Items = tmp.Values;
@@ -270,7 +270,7 @@ namespace GXDLMSDirector.Views
                         comboBox1.Items.Add(it.UIValue);
                     }
                 }
-                ReadOnly = (target.GetAccess(att.Index) & Gurux.DLMS.AccessMode.Write) == 0;
+                ReadOnly = (target.GetAccess(index) & Gurux.DLMS.AccessMode.Write) == 0;
             }
         }
 

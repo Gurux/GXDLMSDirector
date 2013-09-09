@@ -113,6 +113,15 @@ namespace GXDLMS.Common
                 }                
                 return GXDLMSClient.ChangeType((byte[])data, DataType.Date);
             }
+            //Convert DLMS datetime to Windows Time.
+            else if (type == DataType.Time)
+            {
+                if (data is byte[])
+                {
+                    return GXDLMSClient.ChangeType((byte[])data, type);
+                }
+                return data;
+            }
             else if (data is byte[])
             {
                 if (type == DataType.String)

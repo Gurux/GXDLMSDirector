@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GXDLMSDirector/Development/Views/GXDLMSIECOpticalPortSetupView.cs $
 //
-// Version:         $Revision: 5795 $,
-//                  $Date: 2012-10-02 13:22:54 +0300 (ti, 02 loka 2012) $
+// Version:         $Revision: 6489 $,
+//                  $Date: 2013-06-27 15:56:54 +0300 (to, 27 kesä 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -290,9 +290,10 @@ namespace GXDLMSDirector.Views
             this.ResponseTimeTB.AttributeID = 5;
             this.ResponseTimeTB.Location = new System.Drawing.Point(102, 125);
             this.ResponseTimeTB.Name = "ResponseTimeTB";
+            this.ResponseTimeTB.ReadOnly = true;
             this.ResponseTimeTB.Size = new System.Drawing.Size(208, 20);
             this.ResponseTimeTB.TabIndex = 4;
-            this.ResponseTimeTB.Type = GXDLMSDirector.Views.GXValueFieldType.TextBox;
+            this.ResponseTimeTB.Type = GXDLMSDirector.Views.GXValueFieldType.CompoBox;
             // 
             // ResponseTimeLbl
             // 
@@ -310,9 +311,10 @@ namespace GXDLMSDirector.Views
             this.MaximumBaudrateTB.AttributeID = 4;
             this.MaximumBaudrateTB.Location = new System.Drawing.Point(102, 99);
             this.MaximumBaudrateTB.Name = "MaximumBaudrateTB";
+            this.MaximumBaudrateTB.ReadOnly = true;
             this.MaximumBaudrateTB.Size = new System.Drawing.Size(208, 20);
             this.MaximumBaudrateTB.TabIndex = 3;
-            this.MaximumBaudrateTB.Type = GXDLMSDirector.Views.GXValueFieldType.TextBox;
+            this.MaximumBaudrateTB.Type = GXDLMSDirector.Views.GXValueFieldType.CompoBox;
             // 
             // MaximumBaudrateLbl
             // 
@@ -330,9 +332,10 @@ namespace GXDLMSDirector.Views
             this.DefaultBaudrateTB.AttributeID = 3;
             this.DefaultBaudrateTB.Location = new System.Drawing.Point(102, 73);
             this.DefaultBaudrateTB.Name = "DefaultBaudrateTB";
+            this.DefaultBaudrateTB.ReadOnly = true;
             this.DefaultBaudrateTB.Size = new System.Drawing.Size(208, 20);
             this.DefaultBaudrateTB.TabIndex = 2;
-            this.DefaultBaudrateTB.Type = GXDLMSDirector.Views.GXValueFieldType.TextBox;
+            this.DefaultBaudrateTB.Type = GXDLMSDirector.Views.GXValueFieldType.CompoBox;
             // 
             // DefaultBaudrateLbl
             // 

@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GXDLMSDirector/Development/Views/GXDLMSProfileGenericView.cs $
 //
-// Version:         $Revision: 5901 $,
-//                  $Date: 2013-01-08 14:52:06 +0200 (ti, 08 tammi 2013) $
+// Version:         $Revision: 6528 $,
+//                  $Date: 2013-08-13 22:52:57 +0300 (ti, 13 elo 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -92,7 +92,7 @@ namespace GXDLMSDirector.Views
             m_MyPane.GraphPane.XAxis.ScaleFormatEvent += new ZedGraph.Axis.ScaleFormatHandler(XAxis_ScaleFormatEvent);
             this.ReadFromRB.CheckedChanged += new System.EventHandler(this.ReadFromRB_CheckedChanged);
             this.ReadLastRB.CheckedChanged += new System.EventHandler(this.ReadLastRB_CheckedChanged);
-            this.ReadEntryBtn.CheckedChanged += new System.EventHandler(this.ReadAllRB_CheckedChanged);
+            this.ReadEntryBtn.CheckedChanged += new System.EventHandler(this.ReadAllRB_CheckedChanged);            
         }
         
         #region IGXDLMSView Members
@@ -116,26 +116,37 @@ namespace GXDLMSDirector.Views
             m_MyPane.GraphPane.CurveList.Clear();
             IGXDLMSColumnObject obj;
             if (m_Target != null)
-            {
+            {                
                 m_MyPane.GraphPane.Title.Text = m_Target.Description;
+                DataTable table = ProfileGenericView.DataSource as DataTable;
                 ProfileGenericView.DataSource = null;
                 ProfileGenericView.Columns.Clear();
-                foreach (System.Data.DataColumn col in m_Target.Buffer.Columns)
+                DataTable dt = new DataTable();
+                int index = 0;
+                foreach (GXDLMSObject col in m_Target.CaptureObjects)
                 {
-                    int pos = ProfileGenericView.Columns.Add(col.ColumnName, col.Caption);
-                    ProfileGenericView.Columns[pos].DataPropertyName = col.ColumnName;
+                    DataColumn dc = dt.Columns.Add(index.ToString());
+                    dc.Caption = col.Description;
+                    int pos = ProfileGenericView.Columns.Add(index.ToString(), col.Description);
+                    ProfileGenericView.Columns[pos].DataPropertyName = index.ToString();
+                    ++index;
                 }
-                ProfileGenericView.DataSource = m_Target.Buffer;
-                if (m_Target.Buffer.Columns.Count != 0)
+                foreach(object[] it in m_Target.Buffer)
                 {
-                    //We can show only tables that are date based.
-                    if (m_Target.Buffer.Columns[0].DataType == typeof(DateTime))
+                    dt.LoadDataRow(it, true);                                    
+                }
+
+                ProfileGenericView.DataSource = dt;
+                if (m_Target.CaptureObjects.Count != 0)
+                {
+                    //We can show graph only tables that are date based.
+                    if (m_Target.CaptureObjects[0].GetUIDataType((m_Target.CaptureObjects[0] as IGXDLMSColumnObject).SelectedAttributeIndex) == DataType.DateTime)
                     {
-                        for (int col = 0; col < m_Target.Buffer.Columns.Count; ++col)
+                        for (int col = 0; col < m_Target.CaptureObjects.Count; ++col)
                         {
                             //Do not shown Status' or Events
                             obj = m_Target.CaptureObjects[col] as IGXDLMSColumnObject;
-                            int index = obj.SelectedAttributeIndex;
+                            index = obj.SelectedAttributeIndex;
                             if (index > 0 && ((index & 0x8) != 0 || (obj.SelectedAttributeIndex & 0x10) != 0))
                             {
                                 continue;
@@ -145,12 +156,12 @@ namespace GXDLMSDirector.Views
                             {
                                 ZedGraph.DataSourcePointList dspl = new ZedGraph.DataSourcePointList();
                                 dspl.DataSource = m_Target.Buffer;
-                                dspl.XDataMember = m_Target.Buffer.Columns[0].ColumnName;
-                                dspl.YDataMember = m_Target.Buffer.Columns[col].ColumnName;
-                                ZedGraph.LineItem myCurve = m_MyPane.GraphPane.AddCurve(m_Target.Buffer.Columns[col].Caption, dspl, item.Color);
+                                dspl.XDataMember = m_Target.CaptureObjects[0].Description;
+                                dspl.YDataMember = m_Target.CaptureObjects[col].Description;
+                                ZedGraph.LineItem myCurve = m_MyPane.GraphPane.AddCurve(m_Target.CaptureObjects[col].Description, dspl, item.Color);
                             }
                         }
-                        m_MyPane.GraphPane.XAxis.Title.Text = m_Target.Buffer.Columns[0].Caption;
+                        m_MyPane.GraphPane.XAxis.Title.Text = m_Target.CaptureObjects[0].LogicalName;
                         // Tell ZedGraph to refigure the axes since the data have changed                
                         m_MyPane.AxisChange();
                     }
@@ -240,7 +251,17 @@ namespace GXDLMSDirector.Views
         public void OnValueChanged(int attributeID, object value)
         {
             if (attributeID == 2)
-            {                                        
+            {     
+                DataTable dt = ProfileGenericView.DataSource as DataTable;
+                if (m_Target.Buffer.Count < dt.Rows.Count)
+                {
+                    dt.Rows.Clear();
+                }
+                for (int pos = dt.Rows.Count; pos < m_Target.Buffer.Count; ++pos)
+                {
+                    object[] row = m_Target.Buffer[pos];
+                    dt.LoadDataRow(row, true);
+                }        
                 ProfileGenericView.Refresh();
             }             
         }

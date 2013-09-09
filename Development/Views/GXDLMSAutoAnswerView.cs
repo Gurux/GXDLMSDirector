@@ -92,27 +92,21 @@ namespace GXDLMSDirector.Views
             }
             else if (attributeID == 6)
             {                
-                object[] data = (object[])target.NumberOfRings;
-                if (data != null)
+                if (target.NumberOfRingsInListeningWindow == 0)
                 {
-                    int tmp = Convert.ToInt16(data[0]);
-                    if (tmp == 0)
-                    {
-                        this.RingCountInWindowTB.Text = "No connect.";
-                    }
-                    else
-                    {
-                        this.RingCountInWindowTB.Text = Convert.ToString(tmp);
-                    }
-                    tmp = Convert.ToInt16(data[1]);
-                    if (tmp == 0)
-                    {
-                        this.RingCountOutOfWindowTB.Text = "No connect.";
-                    }
-                    else
-                    {
-                        this.RingCountOutOfWindowTB.Text = Convert.ToString(data[1]);
-                    }
+                    this.RingCountInWindowTB.Text = "No connect.";
+                }
+                else
+                {
+                    this.RingCountInWindowTB.Text = target.NumberOfRingsInListeningWindow.ToString();
+                }
+                if (target.NumberOfRingsOutListeningWindow == 0)
+                {
+                    this.RingCountOutOfWindowTB.Text = "No connect.";
+                }
+                else
+                {
+                    this.RingCountOutOfWindowTB.Text = target.NumberOfRingsOutListeningWindow.ToString();
                 }
             }
         }

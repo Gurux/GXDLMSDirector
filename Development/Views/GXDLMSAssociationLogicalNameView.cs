@@ -94,7 +94,7 @@ namespace GXDLMSDirector.Views
                             string str = null;
                             //Show attribute access.
                             int cnt = (it as IGXDLMSBase).GetAttributeCount();                            
-                            for(int pos = 0; pos != cnt; ++pos)
+                            for(int pos = 1; pos != cnt + 1; ++pos)
                             {
                                 if (str != null)
                                 {
@@ -107,7 +107,7 @@ namespace GXDLMSDirector.Views
                             //Show method access.
                             str = null;
                             cnt = (it as IGXDLMSBase).GetMethodCount();
-                            for (int pos = 0; pos != cnt; ++pos)
+                            for (int pos = 1; pos != cnt + 1; ++pos)
                             {
                                 if (str != null)
                                 {

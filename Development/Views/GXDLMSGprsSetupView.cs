@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GXDLMSDirector/Development/Views/GXDLMSGprsSetupView.cs $
 //
-// Version:         $Revision: 6029 $,
-//                  $Date: 2013-02-05 14:31:14 +0200 (ti, 05 helmi 2013) $
+// Version:         $Revision: 6510 $,
+//                  $Date: 2013-08-08 16:24:58 +0300 (to, 08 elo 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -95,23 +95,16 @@ namespace GXDLMSDirector.Views
             GXDLMSGprsSetup target = Target as GXDLMSGprsSetup;
             if (attributeID == 4)
             {
-                Array arr = (Array)target.QualityOfService;
-                if (arr != null)
-                {
-                    Array cQos = (Array)arr.GetValue(0);
-                    Array mQos = (Array)arr.GetValue(1);
-                    CPrecedenceTB.Text = cQos.GetValue(0).ToString();
-                    CDelayTB.Text = cQos.GetValue(1).ToString();
-                    CReliabilityTB.Text = cQos.GetValue(2).ToString();
-                    CPeakThroughputTB.Text = cQos.GetValue(3).ToString();
-                    CMeanThroughputTB.Text = cQos.GetValue(4).ToString();
-
-                    MPrecedenceTB.Text = mQos.GetValue(0).ToString();
-                    MDelayTB.Text = mQos.GetValue(1).ToString();
-                    MReliabilityTB.Text = mQos.GetValue(2).ToString();
-                    MPeakThroughputTB.Text = mQos.GetValue(3).ToString();
-                    MMeanThroughputTB.Text = mQos.GetValue(4).ToString();
-                }
+                CPrecedenceTB.Text = target.DefaultQualityOfService.Precedence.ToString();
+                CDelayTB.Text = target.DefaultQualityOfService.Delay.ToString();
+                CReliabilityTB.Text = target.DefaultQualityOfService.Reliability.ToString();
+                CPeakThroughputTB.Text = target.DefaultQualityOfService.PeakThroughput.ToString();
+                CMeanThroughputTB.Text = target.DefaultQualityOfService.MeanThroughput.ToString();
+                MPrecedenceTB.Text = target.RequestedQualityOfService.Precedence.ToString();
+                MDelayTB.Text = target.RequestedQualityOfService.Delay.ToString();
+                MReliabilityTB.Text = target.RequestedQualityOfService.Reliability.ToString();
+                MPeakThroughputTB.Text = target.RequestedQualityOfService.PeakThroughput.ToString();
+                MMeanThroughputTB.Text = target.RequestedQualityOfService.MeanThroughput.ToString();
             }
             else
             {

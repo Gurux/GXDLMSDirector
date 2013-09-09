@@ -408,9 +408,9 @@
       <Project>{6210C774-782D-4292-AF4C-5998AC70BAFD}</Project>
       <Name>Gurux.Terminal_2008</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\GXCom\Protocols\Gurux.DLMS\Development\Gurux.DLMS_2008.csproj">
+    <ProjectReference Include="..\..\GXCom\Protocols\Gurux.DLMS.Net\Development\Gurux.DLMS_2008.csproj">
       <Project>{EFD71BFF-AD54-45ED-B473-305813C2F83A}</Project>
-      <Name>Gurux.DLMSServer_2008</Name>
+      <Name>Gurux.DLMS_2008</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

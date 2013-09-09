@@ -355,7 +355,14 @@ namespace GXDLMSDirector
                 GXAuthentication authentication = (GXAuthentication)AuthenticationCB.SelectedItem;
                 Device.HDLCAddressing = ((GXServerAddress)ServerAddressTypeCB.SelectedItem).HDLCAddress;
                 Device.ClientID = Convert.ChangeType(ClientAddTB.Value, authentication.ClientID.GetType());
-                Device.PhysicalAddress = Convert.ChangeType(PhysicalServerAddressTB.Value, server.PhysicalAddress.GetType());
+                if (Device.HDLCAddressing == HDLCAddressType.SerialNumber)
+                {
+                    Device.PhysicalAddress = PhysicalServerAddressTB.Value;
+                }
+                else
+                {
+                    Device.PhysicalAddress = Convert.ChangeType(PhysicalServerAddressTB.Value, server.PhysicalAddress.GetType());
+                }
                 Device.LogicalAddress = Convert.ToInt32(LogicalServerAddressTB.Value);                              
                 Device.StartProtocol = (StartProtocolType) this.StartProtocolCB.SelectedItem;
             }

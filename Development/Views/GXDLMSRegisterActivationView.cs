@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GXDLMSDirector/Development/Views/GXDLMSRegisterActivationView.cs $
 //
-// Version:         $Revision: 5795 $,
-//                  $Date: 2012-10-02 13:22:54 +0300 (ti, 02 loka 2012) $
+// Version:         $Revision: 6506 $,
+//                  $Date: 2013-08-08 09:09:04 +0300 (to, 08 elo 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -74,7 +74,6 @@ namespace GXDLMSDirector.Views
 
         public void OnAccessRightsChange(int attributeID, AccessMode access)
         {
-            throw new NotImplementedException();
         }
 
         public System.Windows.Forms.ErrorProvider ErrorProvider

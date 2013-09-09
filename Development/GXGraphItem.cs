@@ -43,6 +43,13 @@ namespace GXDLMSDirector
             Enabled = true;
         }
 
+        public GXGraphItem(string ln, System.Drawing.Color color)
+        {
+            Enabled = true;
+            LogicalName = ln;
+            this.Color = color;
+        }
+
         [System.Xml.Serialization.XmlIgnore()]
         public System.Drawing.Color Color
         {

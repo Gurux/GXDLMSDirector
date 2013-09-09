@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GXDLMSDirector/Development/GXDLMSDevice.cs $
 //
-// Version:         $Revision: 5903 $,
-//                  $Date: 2013-01-08 15:00:16 +0200 (ti, 08 tammi 2013) $
+// Version:         $Revision: 6528 $,
+//                  $Date: 2013-08-13 22:52:57 +0300 (ti, 13 elo 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -442,9 +442,10 @@ namespace GXDLMSDirector
             PhysicalAddress = 1;
             Password = "";
             Authentication = Authentication.None;
-            m_Objects = new GXDLMSObjectCollection();
-            m_Objects.Parent = this;
+            m_Objects = new GXDLMSObjectCollection(this);
+            m_Objects.Tag = this;
             m_Communicator = new GXDLMSCommunicator(this, media);
+            m_Communicator.m_Cosem.Objects = m_Objects;
             m_Communicator.OnProgress += new ProgressEventHandler(this.NotifyProgress);
             this.KeepAlive = new System.Timers.Timer();
             this.KeepAlive.Interval = 40000;
@@ -580,56 +581,7 @@ namespace GXDLMSDirector
                 }
             }
             return obj;
-        }
-
-        DataColumn AddColumn(GXDLMSProfileGeneric item, GXDLMSObject row, DataType type, string text, int pos)
-        {
-            item.CaptureObjects.Add(row);
-            DataColumn col = new DataColumn("O" + pos.ToString());
-            col.Caption = text;
-            //If event type or status.
-            IGXDLMSColumnObject obj = item as IGXDLMSColumnObject;
-            IGXDLMSColumnObject obj2 = row as IGXDLMSColumnObject;
-            if (obj.SelectedAttributeIndex > 0 && ((obj.SelectedAttributeIndex & (0x8 | 0x10)) != 0x0))
-            {                                     
-                return col;
-            }
-            /* TODO: Is nesessry?
-             if (obj2.SelectedAttributeIndex > 8) 
-                {
-                    //Convert value to 32 bit. This is done because event type in register can be UInt8, but event value in column is UInt32.
-                    if (type == DataType.UInt8 || type == DataType.UInt16)
-                    {
-                        type = DataType.UInt32;
-                    }
-                    if (type == DataType.Int8 || type == DataType.Int16)
-                    {
-                        type = DataType.Int32;
-                    }
-                }       
-             * //Read col's data type if unknown.
-            if (type == DataType.None && item.ObjectType != ObjectType.ProfileGeneric)
-            {
-                GXDLMSObject tmp = this.FindObject(item.ObjectType, item.LogicalName);
-                if (tmp != null)
-                {
-                    DataType t = DataType.None;
-                    this.Comm.ReadValue(tmp.Name, item.ObjectType, obj.SelectedAttributeIndex, ref t);
-                    tmp.SetDataType(obj.SelectedAttributeIndex, t);
-                    type = t;                    
-                }
-            }
-             */
-            if (type != DataType.None)
-            {
-                Type tp = GXHelpers.FromDLMSDataType(type);
-                if (tp != null)
-                {
-                    col.DataType = tp;
-                }
-            }            
-            return col;
-        }
+        }       
 
         bool ShouldSkip(GXDLMSObject it, int index)
         {
@@ -650,10 +602,8 @@ namespace GXDLMSDirector
                 Comm.ParentForm.Invoke(new UpdateColumnsEventHandler(UpdateColumns), item, man);
                 return;
             }
-            item.Buffer.Columns.Clear();
-            item.Buffer.Rows.Clear();
+            item.Buffer.Clear();
             item.CaptureObjects.Clear();
-            int pos = 0;
             GXDLMSObjectCollection cols = null;
             List<DataColumn> columns = new List<DataColumn>();
             if (this.Extension != null)
@@ -664,152 +614,7 @@ namespace GXDLMSDirector
             {
                 cols = Comm.GetProfileGenericColumns(item.Name);                
             }
-            Comm.DeviceColumns[item] = cols;
-            foreach (GXDLMSObject it in cols)
-            {
-                IGXDLMSColumnObject obj = it as IGXDLMSColumnObject;
-                string text = it.Description;
-                DataType type = DataType.None;
-                if (it.ObjectType == ObjectType.ProfileGeneric)
-                {
-                    GXDLMSObjectCollection cols2 = null;
-                    if (!Comm.DeviceColumns.ContainsKey(it))
-                    {
-                        if (this.Extension != null)
-                        {
-                            cols2 = this.Extension.Refresh(it as GXDLMSProfileGeneric, this.Comm);
-                        }
-                        if (cols2 == null)
-                        {
-                            cols2 = Comm.GetProfileGenericColumns(it);
-                        }
-                        Comm.DeviceColumns[it] = cols2;
-                    }
-                    else
-                    {
-                        cols2 = Comm.DeviceColumns[it];
-                    }
-                    int index = 0;
-                    foreach (GXDLMSObject it2 in cols2)
-                    {                        
-                        if (obj.SelectedAttributeIndex == index)
-                        {
-                            IGXDLMSColumnObject obj2 = it2 as IGXDLMSColumnObject;
-                            if (obj2.SelectedAttributeIndex == 0)
-                            {
-                                Array arr = it2.GetValues();
-                                if (arr != null)
-                                {
-                                    //Skip Logical name.
-                                    for (int a = 1; a != arr.Length; ++a)
-                                    {
-                                        if (!ShouldSkip(it2, a + 1))
-                                        {
-                                            type = DataType.None;
-                                            GXDLMSObject obj3 = MakeColumn(man, it2, ref text, ref type, a + 1);
-                                            obj2 = obj3 as IGXDLMSColumnObject;
-                                            obj2.SourceLogicalName = it.LogicalName;
-                                            obj2.SourceObjectType = it.ObjectType;
-                                            columns.Add(AddColumn(item, obj3, type, text, pos++));
-                                            obj2.SelectedAttributeIndex = index;
-                                            obj2.SelectedDataIndex = a + 1;
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                type = DataType.None;
-                                GXDLMSObject obj3 = MakeColumn(man, it2, ref text, ref type, obj2.SelectedAttributeIndex);
-                                obj3.SelectedAttributeIndex = index;
-                                obj2 = obj3 as IGXDLMSColumnObject;
-                                obj2.SourceLogicalName = it.LogicalName;
-                                obj2.SourceObjectType = it.ObjectType;
-                                columns.Add(AddColumn(item, obj3, type, text, pos++));                                
-                            }
-                            break;
-                            
-                        }
-                        else
-                        {
-                            ++index;
-                        }
-                    }
-                }
-                else
-                {
-                    if (obj.SelectedAttributeIndex == 0)
-                    {
-                        Array arr = it.GetValues();
-                        if (arr != null)
-                        {
-                            for (int a = 1; a != arr.Length; ++a)
-                            {
-                                if (!ShouldSkip(it, a + 1))
-                                {
-                                    type = DataType.None;
-                                    GXDLMSObject obj3 = MakeColumn(man, it, ref text, ref type, a + 1);
-                                    obj = obj3 as IGXDLMSColumnObject;
-                                    obj.SourceLogicalName = it.LogicalName;
-                                    obj.SourceObjectType = it.ObjectType;
-                                    columns.Add(AddColumn(item, obj3, type, text, pos++));
-                                    obj.SelectedDataIndex = a + 1;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {                        
-                        columns.Add(AddColumn(item, MakeColumn(man, it, ref text, ref type, obj.SelectedAttributeIndex), type, text, pos++));
-                    }
-                }
-            }
-            item.Buffer.Columns.AddRange(columns.ToArray());
-        }
-
-        private GXDLMSObject MakeColumn(GXManufacturer man, GXDLMSObject it, ref string text, ref DataType type, int index)
-        {
-            GXObisCode code = man.ObisCodes.FindByLN(it.ObjectType, it.LogicalName, null);
-            GXDLMSObject obj = m_Objects.FindByLN(it.ObjectType, it.LogicalName);
-            if (obj != null)
-            {
-                obj = obj.Clone();
-                IGXDLMSColumnObject tmp = obj as IGXDLMSColumnObject;
-                IGXDLMSColumnObject tmp2 = it as IGXDLMSColumnObject;
-                tmp.SelectedAttributeIndex = tmp2.SelectedAttributeIndex;
-                tmp.SelectedDataIndex = tmp2.SelectedDataIndex;
-                type = obj.GetUIDataType(index);
-            }
-            else
-            {
-                obj = it;
-                if (code != null && type == DataType.None)
-                {
-                    IGXDLMSColumnObject tmp = it as IGXDLMSColumnObject;
-                    GXDLMSAttributeSettings att = code.Attributes.Find(tmp.SelectedAttributeIndex);
-                    if (att != null)
-                    {
-                        type = att.Type;
-                    }
-                }
-                else
-                {
-                    type = obj.GetUIDataType(index);
-                }
-            }            
-            if (code == null)
-            {
-                text = it.LogicalName + " " + it.Description;
-            }
-            else
-            {
-                text = it.LogicalName + " " + code.Description;                
-            }
-            if (string.IsNullOrEmpty(text))
-            {
-                text = it.LogicalName;
-            }
-            return obj;
+            item.CaptureObjects = cols;
         }
 
         /// <summary>
@@ -821,14 +626,8 @@ namespace GXDLMSDirector
             {
                 GXDLMSObjectCollection objs = Comm.GetObjects();
                 int pos = 0;
-                GXObisCode code;
                 foreach (GXDLMSObject it in objs)
-                {                    
-                    if ((code = this.ObisCodes.FindByLN(it.ObjectType, it.LogicalName, null)) == null)
-                    {
-                        code = new GXObisCode(it.LogicalName, it.ObjectType, "");                            
-                        this.ObisCodes.Add(code);
-                    }               
+                {
                     //Profile Generic objects are added later.
                     if (it.ObjectType == ObjectType.ProfileGeneric)
                     {
@@ -840,58 +639,94 @@ namespace GXDLMSDirector
                     }
                     ++pos;
                     NotifyProgress(this, "Creating object " + it.LogicalName, pos, objs.Count);
-                    //Read OBIS data type if it is unknown.
-                    if (it.GetDataType(2) == DataType.None && (it is GXDLMSData || it is GXDLMSRegister))
-                    {
-                        DataType t = DataType.None;
-                        try
-                        {
-                            this.Comm.ReadValue(it.ToString(), it.ObjectType, 2, ref t);
-                            it.SetDataType(2, t);
-                            GXDLMSAttributeSettings att = code.Attributes.Find(2);
-                            if (att == null)
-                            {
-                                att = new GXDLMSAttributeSettings(2);
-                                code.Attributes.Add(att);
-                            }
-                            att.Type = t; //TODO: tämä voidaan poistaa myohemmin...
-                            m_Objects.Add(it);
-                        }
-                        catch (GXDLMSException Ex)
-                        {
-                            //If HW error.
-                            if (Ex.ErrorCode == 1)
-                            {
-                                continue;
-                            }
-                            //If read is denied.
-                            else if (Ex.ErrorCode == 3)
-                            {
-                                it.SetAccess(2, AccessMode.NoAccess);
-                            }
-                            else
-                            {
-                                GXDLMS.Common.Error.ShowError(null, Ex);
-                            }
-                        }
-                        catch (Exception Ex)
-                        {
-                            GXDLMS.Common.Error.ShowError(null, Ex);
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        m_Objects.Add(it);
-                    }
+                    m_Objects.Add(it);                    
                 }
                 GXLogWriter.WriteLog("--- Created " + m_Objects.Count.ToString() + " objects. ---");
                 int objPos = 0;
+
+                //Read registers units and scalers.
+                int cnt = Objects.Count;
+                GXLogWriter.WriteLog("--- Reading scalers and units. ---");
+                for (pos = 0; pos != cnt; ++pos)
+                {
+                    GXDLMSObject it = Objects[pos];
+                    it.UpdateDefaultValueItems();
+                    this.OnProgress(this, "Reading scalers and units.", pos + 1, cnt);
+                    if (it is GXDLMSRegister)
+                    {
+                        object data = it.ShortName;
+                        if (it.ShortName == 0)
+                        {
+                            data = it.LogicalName;
+                        }
+                        //Read scaler first.
+                        DataType type = DataType.None;
+                        try
+                        {
+                            data = Comm.ReadValue(data, it.ObjectType, 3, ref type);
+                            object[] scalerUnit = (object[])GXHelpers.ConvertFromDLMS(data, DataType.None, DataType.None, false);
+                            ((GXDLMSRegister)it).Scaler = Math.Pow(10, Convert.ToInt32(scalerUnit.GetValue(0)));
+                            ((GXDLMSRegister)it).Unit = (Unit)Convert.ToInt32(scalerUnit.GetValue(1));
+                        }
+                        catch (Exception ex)
+                        {
+                            GXLogWriter.WriteLog(ex.Message);                            
+                        }
+                    }
+                    if (it is GXDLMSDemandRegister)
+                    {
+                        object name = it.ShortName;
+                        object data;
+                        if (it.ShortName == 0)
+                        {
+                            name = it.LogicalName;
+                        }
+                        //Read scaler first.
+                        DataType type = DataType.None;
+                        byte attributeOrder = 4;
+                        try
+                        {
+                            data = Comm.ReadValue(name, it.ObjectType, attributeOrder, ref type);
+                            Array scalerUnit = (Array)GXHelpers.ConvertFromDLMS(data, DataType.None, DataType.None, false);
+                            ((GXDLMSDemandRegister)it).Scaler = Math.Pow(10, Convert.ToInt32(scalerUnit.GetValue(0)));
+                            ((GXDLMSDemandRegister)it).Unit = (Unit)Convert.ToInt32(scalerUnit.GetValue(1));
+                            //Read Period
+                            data = Comm.ReadValue(name, it.ObjectType, 8, ref type);
+                            ((GXDLMSDemandRegister)it).Period = Convert.ToUInt64(data);
+                            //Read number of periods
+                            data = Comm.ReadValue(name, it.ObjectType, 9, ref type);
+                            ((GXDLMSDemandRegister)it).NumberOfPeriods = Convert.ToUInt32(data);
+                        }
+                        catch (Exception ex)
+                        {
+                            GXLogWriter.WriteLog(ex.Message);                            
+                        }
+                    }                  
+                }
+                GXLogWriter.WriteLog("--- Reading scalers and units end. ---");
+                /* TODO:
+                if (!m.UseLogicalNameReferencing)
+                {
+                    GXLogWriter.WriteLog("--- Reading Access rights. ---");
+                    try
+                    {
+                        foreach (GXDLMSAssociationShortName sn in dev.Objects.GetObjects(ObjectType.AssociationShortName))
+                        {
+                            dev.Comm.Read(sn, 3);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        GXLogWriter.WriteLog(ex.Message);
+                    }
+                    GXLogWriter.WriteLog("--- Reading Access rights end. ---");
+                }
+                 * */
+                this.OnProgress(this, "Reading scalers and units.", cnt, cnt);
                 foreach (Gurux.DLMS.Objects.GXDLMSProfileGeneric it in objs.GetObjects(ObjectType.ProfileGeneric))
                 {                    
                     ++pos;
                     NotifyProgress(this, "Creating object " + it.LogicalName, pos, objs.Count);
-                    it.Buffer.TableName = it.LogicalName + " " + it.Description;
                     //Read Profile Generic Columns.                
                     try
                     {

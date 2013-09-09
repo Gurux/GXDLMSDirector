@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 6349 $,
-//                  $Date: 2013-05-27 08:17:00 +0300 (ma, 27 touko 2013) $
+// Version:         $Revision: 6532 $,
+//                  $Date: 2013-08-15 13:13:33 +0300 (to, 15 elo 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -71,11 +71,6 @@ namespace GXDLMSDirector
         public Control ParentForm;
         public Gurux.Common.IGXMedia Media = null;
         internal Gurux.DLMS.GXDLMSClient m_Cosem;
-
-        [XmlIgnore()]
-        internal Dictionary<GXDLMSObject, GXDLMSObjectCollection> DeviceColumns = new Dictionary<GXDLMSObject, GXDLMSObjectCollection>();
-        [XmlIgnore()]
-        Dictionary<GXObisCode, object> Values = new Dictionary<GXObisCode, object>();
 
         public GXDLMSCommunicator(GXDLMSDevice parent, Gurux.Common.IGXMedia media)
         {
@@ -288,7 +283,14 @@ namespace GXDLMSDirector
                     if (!Media.Receive(p))
                     {
                         //Try to move away from mode E.
-                        this.ReadDLMSPacket(this.DisconnectRequest());
+                        try
+                        {
+
+                            this.ReadDLMSPacket(this.DisconnectRequest());
+                        }
+                        catch (Exception ex)
+                        { 
+                        }
                         data = (char)0x01 + "B0" + (char)0x03 + "\r\n";
                         Media.Send(data, null);
                         p.Count = 1;
@@ -382,13 +384,10 @@ namespace GXDLMSDirector
                 lock (Media.Synchronous)
                 {
                     Media.Send(arr, null);
-                    System.Threading.Thread.Sleep(200);
+                    System.Threading.Thread.Sleep(1000);
                     if (serial != null)
                     {
                         serial.DtrEnable = serial.RtsEnable = false;
-                        while (serial.BytesToWrite != 0)
-                        {
-                        }
                         serial.BaudRate = BaudRate;
                         serial.DtrEnable = serial.RtsEnable = true;
                     }
@@ -580,6 +579,7 @@ namespace GXDLMSDirector
             {
                 byte[] data, reply = null;
                 data = SNRMRequest();
+                System.Threading.Thread.Sleep(200);
                 if (data != null)
                 {
                     GXLogWriter.WriteLog("Send SNRM request.", data);
@@ -650,10 +650,10 @@ namespace GXDLMSDirector
 
         void OnProfileGenericDataReceived(object sender, byte[] data)
         {
-            Array value = (Array)m_Cosem.TryGetValue(data);
+            object value = m_Cosem.TryGetValue(data);            
             if (value != null)
             {
-                ShowRows(value);
+                (CurrentProfileGeneric as IGXDLMSBase).SetValue(2, value, false);                
                 if (OnAfterRead != null)
                 {
                     OnAfterRead(CurrentProfileGeneric, 2);
@@ -665,6 +665,7 @@ namespace GXDLMSDirector
         
         private void ShowRows(Array rows)
         {
+            /*
             if (ParentForm.InvokeRequired)
             {
                 ParentForm.BeginInvoke(new ShowRowsEventHandler(ShowRows), rows);
@@ -688,7 +689,7 @@ namespace GXDLMSDirector
                         {
                             int index = 0;
                             IGXDLMSColumnObject obj = CurrentProfileGeneric.CaptureObjects[pos] as IGXDLMSColumnObject;
-                            foreach (GXDLMSObject c in DeviceColumns[CurrentProfileGeneric])
+                            foreach (GXDLMSObject c in CurrentProfileGeneric.CaptureObjects)
                             {
                                 IGXDLMSColumnObject obj2 = c as IGXDLMSColumnObject;
                                 if (c.ObjectType == CurrentProfileGeneric.CaptureObjects[pos].ObjectType &&
@@ -753,7 +754,8 @@ namespace GXDLMSDirector
                     }
                     CurrentProfileGeneric.Buffer.Rows.InsertAt(dr, CurrentProfileGeneric.Buffer.Rows.Count);
                 }
-            }
+            } 
+             * */
         }
         
         /// <summary>
@@ -836,7 +838,7 @@ namespace GXDLMSDirector
             try
             {
                 NotifyProgress("Collecting objects", 0, 1);
-                allData = ReadDataBlock(m_Cosem.GetObjects(), "Collecting objects");
+                allData = ReadDataBlock(m_Cosem.GetObjectsRequest(), "Collecting objects");
             }
             catch (Exception Ex)
             {
@@ -860,57 +862,7 @@ namespace GXDLMSDirector
             }
         }
 
-        List<GXAttributeRead> GetOrderedAttributes(GXDLMSObject obj, int attribute)
-        {
-            PropertyInfo[] fields = obj.GetType().GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public).Where(x => Attribute.IsDefined(x, typeof(GXDLMSAttribute), false)).ToArray();            
-            SortedList<int, GXAttributeRead> items = new SortedList<int, GXAttributeRead>();
-            SortedList<int, GXAttributeRead> orderedItems = new SortedList<int, GXAttributeRead>();            
-            foreach (PropertyInfo it in fields)
-            {
-                if (it.CanWrite)
-                {
-                    GXDLMSAttribute att = Attribute.GetCustomAttribute(it, typeof(GXDLMSAttribute)) as GXDLMSAttribute;
-                    if (att != null && (obj.GetAccess(att.Index) & AccessMode.Read) != 0 &&
-                        (attribute == 0 || attribute == att.Index))
-                    {
-                        //If Order is not given arrange items by Index.
-                        if (att.Order == 0)
-                        {
-                            items.Add(att.Index, new GXAttributeRead(it, att));
-                        }
-                        else
-                        {
-                            orderedItems.Add(att.Order, new GXAttributeRead(it, att));
-                        }
-                    }
-                    //If only selected attribute is read.
-                    if (attribute != 0)
-                    {
-                        break;
-                    }
-                }
-            }
-            List<GXAttributeRead> tmp = new List<GXAttributeRead>(orderedItems.Values);
-            tmp.AddRange(items.Values);
-            return tmp;
-        }
-
         delegate void ClearProfileGenericDataEventHandler();
-
-
-        bool IsReadAlready(GXDLMSObject obj, int index)
-        {
-            object value = obj.GetValues()[index - 1];
-            if (value == null)
-            {
-                return false;
-            }
-            if (value is DateTime)
-            {
-                return (DateTime)value != DateTime.MinValue;
-            }
-            return obj.GetLastReadTime(index) != DateTime.MinValue;            
-        }
 
         /// <summary>
         /// Read object.
@@ -920,89 +872,55 @@ namespace GXDLMSDirector
         /// <param name="attribute"></param>
         public void Read(object sender, GXDLMSObject obj, int attribute)
         {
-            foreach (GXAttributeRead it in GetOrderedAttributes(obj, attribute))
+            foreach (int it in (obj as IGXDLMSBase).GetAttributeIndexToRead())
             {
-                PropertyInfo desc = it.Info;
-                GXDLMSAttribute att = it.Attribute;                              
-                if (obj is GXDLMSProfileGeneric)
-                {
-                    if (Parent.Extension != null)
-                    {
-                        GXDLMSObjectCollection items;
-                        if (!DeviceColumns.ContainsKey(obj))
-                        {                            
-                            items = Parent.Extension.Refresh(obj as GXDLMSProfileGeneric, this);
-                            if (items == null)
-                            {
-                                items = GetProfileGenericColumns(obj.Name);
-                            }                           
-                            DeviceColumns[obj as GXDLMSProfileGeneric] = items;
-                        }
-                        else
-                        {
-                            items = DeviceColumns[obj];
-                        }
-                        if (Parent.Extension.Read(sender, obj, items, it.Attribute.Index, this))
-                        {
-                            continue;
-                        }                        
-                    }
-                    if (att.Index == 2 || att.Index == 3)
-                    {
-                        CurrentProfileGeneric = obj as GXDLMSProfileGeneric;
-                        if (att.Index == 3)
-                        {
-                            if (!DeviceColumns.ContainsKey(obj))
-                            {
-                                DeviceColumns[obj] = GetProfileGenericColumns(obj.Name);
-                            }
-                            continue;
-                        }
-                        else if (att.Index == 2)
-                        {
-                            if (OnBeforeRead != null)
-                            {
-                                OnBeforeRead(obj, att.Index);
-                            }
-                            try
-                            {
-                                OnDataReceived += new GXDLMSCommunicator.DataReceivedEventHandler(this.OnProfileGenericDataReceived);
-                                if (CurrentProfileGeneric.AccessSelector != AccessRange.Entry)
-                                {
-                                    byte[] tmp = m_Cosem.ReadRowsByRange(CurrentProfileGeneric.Name, CurrentProfileGeneric.CaptureObjects[0].LogicalName, CurrentProfileGeneric.CaptureObjects[0].ObjectType, CurrentProfileGeneric.CaptureObjects[0].Version, Convert.ToDateTime(CurrentProfileGeneric.From), Convert.ToDateTime(CurrentProfileGeneric.To));
-                                    ReadDataBlock(tmp, "Reading profile generic data", 1);
-                                }
-                                else
-                                {
-                                    byte[] tmp = m_Cosem.ReadRowsByEntry(CurrentProfileGeneric.Name, Convert.ToInt32(CurrentProfileGeneric.From), Convert.ToInt32(CurrentProfileGeneric.To));
-                                    ReadDataBlock(tmp, "Reading profile generic data " + CurrentProfileGeneric.Name, 1);
-                                }
-                            }
-                            finally
-                            {
-                                OnDataReceived -= new GXDLMSCommunicator.DataReceivedEventHandler(OnProfileGenericDataReceived);
-                            }
-                        }
-                        continue;
-                    }                    
-                }
-                //Read static values only once.
-                if (!att.Static || !IsReadAlready(obj, att.Index))
+                if (obj is GXDLMSProfileGeneric && it == 2)
                 {
                     if (OnBeforeRead != null)
                     {
-                        OnBeforeRead(obj, att.Index);
+                        OnBeforeRead(obj, it);
                     }
-                    byte[] data = m_Cosem.Read(obj.ToString(), obj.ObjectType, att.Index)[0];
                     try
                     {
-                        data = ReadDataBlock(data, "Read object type " + obj.ObjectType + " index: " + att.Index);
+                        CurrentProfileGeneric = obj as GXDLMSProfileGeneric;
+                        OnDataReceived += new GXDLMSCommunicator.DataReceivedEventHandler(this.OnProfileGenericDataReceived);
+                        if (CurrentProfileGeneric.AccessSelector != AccessRange.Entry)
+                        {
+                            byte[] tmp = m_Cosem.ReadRowsByRange(CurrentProfileGeneric.Name, CurrentProfileGeneric.CaptureObjects[0].LogicalName, CurrentProfileGeneric.CaptureObjects[0].ObjectType, CurrentProfileGeneric.CaptureObjects[0].Version, Convert.ToDateTime(CurrentProfileGeneric.From), Convert.ToDateTime(CurrentProfileGeneric.To));
+                            ReadDataBlock(tmp, "Reading profile generic data", 1);
+                        }
+                        else
+                        {
+                            byte[] tmp = m_Cosem.ReadRowsByEntry(CurrentProfileGeneric.Name, Convert.ToInt32(CurrentProfileGeneric.From), Convert.ToInt32(CurrentProfileGeneric.To));
+                            ReadDataBlock(tmp, "Reading profile generic data " + CurrentProfileGeneric.Name, 1);
+                        }
+                    }
+                    finally
+                    {
+                        if (OnAfterRead != null)
+                        {
+                            OnAfterRead(obj, it);
+                        }
+                        OnDataReceived -= new GXDLMSCommunicator.DataReceivedEventHandler(OnProfileGenericDataReceived);
+                    }
+                    continue;
+                }
+                else               
+                {
+                    if (OnBeforeRead != null)
+                    {
+                        OnBeforeRead(obj, it);
+                    }
+                    byte[] data = m_Cosem.Read(obj.Name, obj.ObjectType, it)[0];
+                    try
+                    {
+                        data = ReadDataBlock(data, "Read object type " + obj.ObjectType + " index: " + it);
                     }
                     catch (GXDLMSException ex)
                     {
                         if (ex.ErrorCode == 3) //If read is denied.
                         {
-                            obj.SetAccess(att.Index, AccessMode.NoAccess);
+                            obj.SetAccess(it, AccessMode.NoAccess);
                             continue;
                         }
                         else
@@ -1012,91 +930,40 @@ namespace GXDLMSDirector
                     }
                     if (obj is IGXDLMSBase)
                     {
-                        (obj as IGXDLMSBase).SetValue(att.Index, m_Cosem.GetValue(data));
-                    }
-                    else
-                    {
-                        if (obj.GetDataType(att.Index) == DataType.None)
+                        object value = m_Cosem.GetValue(data);
+                        DataType type;
+                        if (value is byte[] && (type = obj.GetUIDataType(it)) != DataType.None)
                         {
-                            obj.SetDataType(att.Index, m_Cosem.GetDLMSDataType(data));
+                            value = GXDLMS.Common.GXHelpers.ConvertFromDLMS(value, obj.GetDataType(it), type, true);
                         }
-                        object tmp = m_Cosem.GetValue(data, obj.ObjectType, obj.LogicalName, att.Index);
-                        if (tmp != null)
-                        {
-                            if (tmp is byte[])
-                            {
-                                tmp = GXDLMS.Common.GXHelpers.ConvertFromDLMS(tmp, att.Type, att.UIType, true);
-                            }
-                            else if (!tmp.GetType().IsArray)
-                            {
-                                if (desc.PropertyType != typeof(object))
-                                {
-                                    if (desc.PropertyType.IsEnum)
-                                    {
-                                        tmp = Enum.ToObject(desc.PropertyType, Convert.ToInt32(tmp));
-                                    }
-                                    else
-                                    {
-                                        tmp = Convert.ChangeType(tmp, desc.PropertyType);
-                                    }
-                                }
-                            }
-                            else //If array.
-                            {
-                                if (tmp.GetType().GetElementType() != desc.PropertyType &&
-                                    desc.PropertyType != typeof(string))
-                                {
-                                    Type type = desc.PropertyType.GetElementType();
-                                    if (type != null && type != typeof(object))
-                                    {
-                                        Array newValue = (Array)tmp;
-                                        Array arr = Array.CreateInstance(type, newValue.Length);
-                                        tmp = arr;
-                                        for (int pos = 0; pos != newValue.Length; ++pos)
-                                        {
-                                            arr.SetValue(Convert.ChangeType(newValue.GetValue(pos), type), pos);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        if (tmp != null && desc.PropertyType != typeof(object) && desc.PropertyType != tmp.GetType())
-                        {
-                            tmp = Convert.ChangeType(tmp, desc.PropertyType);
-                        }
-                        desc.SetValue(obj, tmp, null);
+                        (obj as IGXDLMSBase).SetValue(it, value, false);
                     }
                     if (OnAfterRead != null)
                     {
-                        OnAfterRead(obj, att.Index);
+                        OnAfterRead(obj, it);
                     }
-                    obj.SetLastReadTime(att.Index, DateTime.Now);
+                    obj.SetLastReadTime(it, DateTime.Now);
                     //If only selected attribute is read.
                     if (attribute != 0)
                     {
                         break;
                     }
                 }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine(string.Format("Object {0} Attribute {1} is already read.", obj.LogicalName, att.Index));
-                }
             }
         }    
        
         public void Write(GXDLMSObject obj, object target, int index, List<object> UpdatedObjects)
         {
-            foreach (GXAttributeRead it in GetOrderedAttributes(obj, index))
+            for (int it = 1; it != (obj as IGXDLMSBase).GetAttributeCount() + 1; ++it)
             {
-                GXDLMSAttribute att = it.Attribute;
                 object value;
-                if (obj.GetDirty(att.Index, out value))
+                if (obj.GetDirty(it, out value))
                 {
                     //Read DLMS data type if not known.
-                    DataType type = obj.GetDataType(att.Index);
+                    DataType type = obj.GetDataType(it);
                     if (type == DataType.None)
                     {
-                        byte[] data = m_Cosem.Read(obj.ToString(), obj.ObjectType, att.Index)[0];
+                        byte[] data = m_Cosem.Read(obj.ToString(), obj.ObjectType, it)[0];
                         data = ReadDataBlock(data, "Write object type " + obj.ObjectType);
                         type = m_Cosem.GetDLMSDataType(data);
                         if (type == DataType.None)
@@ -1107,12 +974,12 @@ namespace GXDLMSDirector
                     }
                     try
                     {
-                        foreach (byte[] tmp in m_Cosem.Write(obj.ToString(), value, type, obj.ObjectType, att.Index))
+                        foreach (byte[] tmp in m_Cosem.Write(obj.ToString(), value, type, obj.ObjectType, it))
                         {
                             ReadDataBlock(tmp, "Write object");
                         }
-                        obj.ClearDirty(att.Index);
-                        obj.SetValue(att.Index, value);
+                        obj.ClearDirty(it);
+                        obj.SetValue(it, value);
                     }
                     catch (GXDLMSException ex)
                     {
@@ -1151,8 +1018,7 @@ namespace GXDLMSDirector
             {
                 return null;
             }
-            GXDLMSObjectCollection items = m_Cosem.ParseColumns(allData);
-            return items;
+            return m_Cosem.ParseColumns(allData);            
         }
 
         public void KeepAlive()

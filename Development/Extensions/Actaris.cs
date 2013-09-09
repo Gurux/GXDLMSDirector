@@ -93,6 +93,7 @@ namespace Extensions
                 MainForm.Invoke(new GXDLMSCommunicator.DataReceivedEventHandler(this.OnProfileGenericDataReceived), new object[] { sender, buff });
                 return;
             }
+            /*
             if (CurrentProfileGeneric != null)
             {               
                 GXDLMSCommunicator comm = sender as GXDLMSCommunicator;
@@ -133,9 +134,8 @@ namespace Extensions
                                 aIndex = target2.SelectedAttributeIndex;
                                 dIndex = target2.SelectedDataIndex;
                                 data = null;
-                                for (int a = index; a != comm.DeviceColumns[CurrentProfileGeneric].Count; ++a)
+                                foreach(GXDLMSObject c in CurrentProfileGeneric.CaptureObjects)
                                 {
-                                    GXDLMSObject c = comm.DeviceColumns[CurrentProfileGeneric][a];
                                     IGXDLMSColumnObject c2 = c as IGXDLMSColumnObject;
                                     if (c.ObjectType == oType && c.LogicalName == name)
                                     {
@@ -259,9 +259,11 @@ namespace Extensions
                             }
                         }                       
                     }
-                }
-            }
+                }            
+            }    
+              * * */  
         }
+
         /// <summary>
         /// Returns collection of manufacturer Obiscodes to implement custom read.
         /// </summary>

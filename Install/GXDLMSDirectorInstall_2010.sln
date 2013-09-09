@@ -14,7 +14,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gurux.Net_2010", "..\..\GXC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gurux.Serial_2010", "..\..\GXCom\GXMedias\Gurux.Serial\Development\Gurux.Serial_2010.csproj", "{D07A57D7-F2E7-4A0F-95D1-EF3B1FD688F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gurux.DLMS_2010", "..\..\GXCom\Protocols\Gurux.DLMS\Development\Gurux.DLMS_2010.csproj", "{EFD71BFF-AD54-45ED-B473-305813C2F83A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gurux.DLMS_2010", "..\..\GXCom\Protocols\Gurux.DLMS.Net\Development\Gurux.DLMS_2010.csproj", "{EFD71BFF-AD54-45ED-B473-305813C2F83A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GXDLMSDirector_2010", "..\Development\GXDLMSDirector_2010.csproj", "{0CA083FF-4071-4E07-AFFF-5B2E31A11D45}"
 EndProject

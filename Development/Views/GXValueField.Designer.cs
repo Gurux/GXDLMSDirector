@@ -4,7 +4,7 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GXDLMSDirector/Development/Views/GXValueField.Designer.cs $
+// Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/Views/GXValueField.Designer.cs $
 //
 // Version:         $Revision: 3170 $,
 //                  $Date: 2011-01-10 14:12:35 +0200 (ma, 10 tammi 2011) $

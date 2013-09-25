@@ -4,10 +4,10 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GXDLMSDirector/Development/DevicePropertiesForm.cs $
+// Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.cs $
 //
-// Version:         $Revision: 6251 $,
-//                  $Date: 2013-04-16 14:22:33 +0300 (ti, 16 huhti 2013) $
+// Version:         $Revision: 6556 $,
+//                  $Date: 2013-09-18 10:52:13 +0300 (ke, 18 syys 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd

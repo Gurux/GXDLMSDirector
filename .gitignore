@@ -130,11 +130,8 @@ publish/
 
 # NuGet Packages Directory
 ## TODO: If you have NuGet Package Restore enabled, uncomment the next line
-packages/
+#packages/
 .svn/
-Help/
-GXDLMSLog2Message/
-
 # Windows Azure Build Output
 csx
 *.build.csdef

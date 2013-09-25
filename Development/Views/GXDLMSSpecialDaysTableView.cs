@@ -4,7 +4,7 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GXDLMSDirector/Development/Views/GXDLMSSpecialDaysTableView.cs $
+// Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/Views/GXDLMSSpecialDaysTableView.cs $
 //
 // Version:         $Revision: 6512 $,
 //                  $Date: 2013-08-08 20:25:09 +0300 (to, 08 elo 2013) $

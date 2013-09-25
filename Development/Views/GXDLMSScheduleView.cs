@@ -4,7 +4,7 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GXDLMSDirector/Development/Views/GXDLMSScheduleView.cs $
+// Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/Views/GXDLMSScheduleView.cs $
 //
 // Version:         $Revision: 5795 $,
 //                  $Date: 2012-10-02 13:22:54 +0300 (ti, 02 loka 2012) $

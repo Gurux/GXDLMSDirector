@@ -4,7 +4,7 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GXDLMSDirector/Development/OBISCodeForm.Designer.cs $
+// Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/OBISCodeForm.Designer.cs $
 //
 // Version:         $Revision: 5059 $,
 //                  $Date: 2012-05-09 15:19:43 +0300 (ke, 09 touko 2012) $

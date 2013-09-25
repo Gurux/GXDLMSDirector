@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="pics">
+      <UniqueIdentifier>{9b3d83a7-8311-4100-abf4-8695291d802b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="pics\connectbutton.png">
+      <Filter>pics</Filter>
+    </None>
+    <None Include="pics\deletebutton.png">
+      <Filter>pics</Filter>
+    </None>
+    <None Include="pics\filemenu.png">
+      <Filter>pics</Filter>
+    </None>
+    <None Include="pics\helpmenu.png">
+      <Filter>pics</Filter>
+    </None>
+    <None Include="pics\newbutton.png">
+      <Filter>pics</Filter>
+    </None>
+    <None Include="pics\openbutton.png">
+      <Filter>pics</Filter>
+    </None>
+    <None Include="pics\propertiesbutton.png">
+      <Filter>pics</Filter>
+    </None>
+    <None Include="pics\propertybutton.png">
+      <Filter>pics</Filter>
+    </None>
+    <None Include="pics\readbutton.png">
+      <Filter>pics</Filter>
+    </None>
+    <None Include="pics\savebutton.png">
+      <Filter>pics</Filter>
+    </None>
+    <None Include="pics\serialsettings.png">
+      <Filter>pics</Filter>
+    </None>
+    <None Include="pics\tablebutton.bmp">
+      <Filter>pics</Filter>
+    </None>
+    <None Include="pics\tcpsettings.png">
+      <Filter>pics</Filter>
+    </None>
+    <None Include="pics\toolsmenu.png">
+      <Filter>pics</Filter>
+    </None>
+    <None Include="pics\viewmenu.png">
+      <Filter>pics</Filter>
+    </None>
+    <None Include="pics\writebutton.png">
+      <Filter>pics</Filter>
+    </None>
+    <None Include="Connections.html" />
+    <None Include="Introduction.html" />
+    <None Include="QuickStart.html" />
+    <None Include="Read.html" />
+    <None Include="Settings.html" />
+    <None Include="UI.html" />
+    <None Include="Views.html" />
+  </ItemGroup>
+</Project>

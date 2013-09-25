@@ -1,0 +1,125 @@
+<HTML dir="ltr" XMLNS:MSHelp="http://msdn.microsoft.com/mshelp" xmlns:o>
+	<HEAD>
+		<TITLE>Views</TITLE>
+		<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<META content="http://schemas.microsoft.com/intellisense/ie5" name="vs_targetSchema">
+		<xml></xml>
+		<LINK href="MSDN.css" type="text/css" rel="stylesheet">
+		<xml>
+			<MSHelp:TOCTitle Title='Views' />
+		</xml>
+	</HEAD>
+	<BODY class="dtBODY" id="bodyID">
+		<DIV id="nsbanner">
+			<DIV id="bannerrow1">
+				<TABLE class="bannerparthead" cellSpacing="0">
+					<TBODY>
+						<TR id="hdr">
+							<TD class="runninghead">
+								Gurux GXDirector</TD>
+							<TD class="product"></TD>
+						</TR>
+					</TBODY>
+				</TABLE>
+			</DIV>
+			<DIV id="TitleRow">
+				<H1 class="dtH1">Views</H1>
+			</DIV>
+		</DIV>
+		<DIV id="nstext">
+			<table class="intext" width="710">
+			<tr><td width="430">
+			<h2>GXDLMSDirector menubar</h2>
+<h2>File menu</h2>
+			
+			<p>In addition to normal file operations File menu includes 
+			<a href="06b_FindDevice.html">Find Device</a> command
+			(sub command for New) for searching physical devices in your network.</p>
+			<p>File menu also includes Open and Save commands for Value Lists. Read more 
+			about managing <a href="10_ValueLists.html">Value Lists</a>.</p>
+
+			<h2>View menu</h2>
+
+			<p>In View menu you can select items shown in Device Tree.</p>
+			<p>View as Hex command shows Property values as hexadecimal.</p>
+			<p>Find command searches items branching from the selected item in the Device Tree.</p>
+			<p>For more information, see Help on <a href="03_Views.html">Views</a>.</p>
+
+			<h2>Tools</h2>
+
+			<p>Tools menu has commands for <a href="07_ReadEditWrite.html">transactions</a>
+			 between the computer and physical device.</p>
+
+			<p>In addition Tools menu has Properties command for opening properties 
+			of the selected item for editing. When connected to a device, Device properties 
+			can be viewed but not edited.</p>
+
+			<p>Schedule Settings, see <a href="09_Schedule.html">Scheduled Tasks</a> help.</p>
+
+			<p>GXDirector Settings, see <a href="05_DirectorSettings.html">GXDirector Settings
+			</a> help.</p>
+
+			<p>Macro, see <a href="Macros.html">Macros</a> help.</p>
+
+			<p>With Language command you can switch languages instantly without restarting 
+			GXDirector.</p>
+
+			<h2>Help menu</h2>
+
+			<p>Library Versions command shows version numbers of GXDirector and libraries. 
+			Gurux technical support may ask you this information in case of troubleshooting. </p>
+			
+			<p><b>Tip:</b> Commonly used commands can also be accessed in the context 
+			menu (right-click) or with buttons on the toolbar.</p>h2>Icons in GXDirector</h2>
+
+			<ul>
+			<li><img src="pics/disconnected.jpg" alt=""> Disconnected</li>
+			<li><img src="pics/connected.jpg" alt=""> Connected to a physical device</li>
+			<li><img src="pics/monitoring.jpg" alt=""> Monitoring properties 
+			of a device</li>
+			<li><img src="pics/changed.jpg" alt=""> User has changed a property value</li>
+			<li><img src="pics/anerror.jpg" alt=""> An error has occurred</li>
+			<li><img src="pics/noerror.jpg" alt=""> No errors have occurred in the list</li>
+			<li><img src="pics/errorstate.jpg" alt=""> A device in the list is in error state</li>
+			</ul></td></tr></table>
+
+			<br>
+			<ol>
+			<li><a href="02_MenuBar.html"><b>Menu Bar</b></a></li>
+			<li> <b>Toolbar</b> - shortcut icons to common commands.</li>
+			<li><b>Device Tree</b> - items in hierarchical order. Use the right mouse 
+			button to open the context menu on an item.</li>
+			<li><b>Content view</b> on the right side of the GXDirector shows the user interface 
+			created with GXDevice Editor. If no UI has been created, various data is shown in the 
+			view, according to what is selected in the Device Tree.</li>
+			<li><b>Tab control</b> contains the Event Log and the 
+			<a href="09_Schedule.html">Scheduled Tasks</a>.</li></ol>
+
+
+		<br>
+		<h2>Content views of items selected in the Device Tree</h2>
+		<p>If no UI has been created and attached to the device or to any of its items, various data is shown in the 
+		content view, according to the item selected in the Device Tree.</p>
+		<p>Selecting a <b>device list</b> in the Device Tree shows a list of all devices in the content view. 
+		Listed are the name, group, type and status of the devices. Selecting a <b>device group</b> shows 
+		a similar list of devices in that particular group.</p>
+		<p>Selecting a <b>device</b> shows all categories and tables in the device as tabs. <i>Category tabs</i> 		show the property name, value, data type, unit, time of last transaction, read and write count and execution 			time. Read and Write Count columns show amount of transactions / errors. Execution Time column shows 			duration of last transaction / average duration in milliseconds. <i>Table tabs</i> show the table columns.</p>
+		<p>Selecting a <b>category</b> shows a list of its properties in the content view. 
+		Listed are property name, value, data type, unit, time of last transaction, read and write count and 
+		execution time. Read and Write Count columns show amount of transactions / errors. Execution Time 
+		column shows duration of last transaction / average duration in milliseconds.<br>
+		Property values can be read, edited and written by commands in  context menu (right-click). They can 
+		also be reset to default or last read value. Selecting a <b>table</b> in Device Tree shows the table 
+		columns in the content view.</p>
+		<p>Selecting a single <b>property</b> in the Device Tree shows general information of the property in text 		fields. Shown are Name, Type, Unit, Timestamp and Value of the selected property. If the AccessMode of 
+		the property is set to Write or ReadWrite in GXDevice Editor, the value of the property is editable and the 			field turns to white, when the device is connected. If the AccessMode of the property is set to NotAccessible 		or Read, the value cannot be edited and the field stays grayed.</p>
+
+
+			<p class="MsoNormal">
+				<hr>
+<div id="footer">
+<p><br><a href="http://www.gurux.fi" target="_blank">1998-2011&nbsp;&#169;&nbsp; Gurux&nbsp;Ltd.</a><br><br><br></p></div>
+</div>
+</body>
+</html>
+

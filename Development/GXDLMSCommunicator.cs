@@ -4,10 +4,10 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
+// Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 6532 $,
-//                  $Date: 2013-08-15 13:13:33 +0300 (to, 15 elo 2013) $
+// Version:         $Revision: 6556 $,
+//                  $Date: 2013-09-18 10:52:13 +0300 (ke, 18 syys 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd

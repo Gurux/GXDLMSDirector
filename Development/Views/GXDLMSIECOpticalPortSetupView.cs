@@ -4,7 +4,7 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GXDLMSDirector/Development/Views/GXDLMSIECOpticalPortSetupView.cs $
+// Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/Views/GXDLMSIECOpticalPortSetupView.cs $
 //
 // Version:         $Revision: 6489 $,
 //                  $Date: 2013-06-27 15:56:54 +0300 (to, 27 kesä 2013) $

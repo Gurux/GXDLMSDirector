@@ -1,0 +1,153 @@
+<HTML dir="ltr" XMLNS:MSHelp="http://msdn.microsoft.com/mshelp" xmlns:o>
+	<HEAD>
+		<TITLE>Getting started</TITLE>
+		<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<META content="http://schemas.microsoft.com/intellisense/ie5" name="vs_targetSchema">
+		<xml></xml>
+		<LINK href="MSDN.css" type="text/css" rel="stylesheet">
+		<xml>
+			<MSHelp:TOCTitle Title='Getting started' />
+		</xml>
+	</HEAD>
+	<BODY class="dtBODY" id="bodyID">
+		<DIV id="nsbanner">
+			<DIV id="bannerrow1">
+				<TABLE class="bannerparthead" cellSpacing="0">
+					<TBODY>
+						<TR id="hdr">
+							<TD class="runninghead">
+								Gurux GXDLMS/COSEMDirector</TD>
+							<TD class="product"></TD>
+						</TR>
+					</TBODY>
+				</TABLE>
+			</DIV>
+			<DIV id="TitleRow">
+				<H1 class="dtH1">Getting started</H1>
+			</DIV>
+		</DIV>
+				<DIV id="nstext">
+
+<p><b>Attention, Device Manufacturers</b><br>If your meter type is not yet in the list of <a href="Manufacturers.html">supported manufacturers</a>, kindly, send us the settings, and we'll 
+publish a manufacturer template for your device type, too. This way, you will get more visibility, and our users will get more easy-to-use options.<br><br>
+<b>To get your settings in the list</b><ol><li>Save your settings by creating a new manufacturer with your name and ID.</li><li>Restart GuruxDLMSDirector.</li><li>Go to directory <i>C:\ProgramData\Gurux\OBIS</i> or, in older systems, <i>C:\Program Files\Common Files\Gurux\OBIS</i>.</li><li>Copy <b>the .obx file</b> with your ID, and attach it to an E-mail message to us.</li></ol> 
+<br />&nbsp;<br /><hr><br />&nbsp;<br />
+When there are new manufacturer templates available, you get a notification on the UI of GXDLMSDirector.
+<img src="pics/newmanuavailable.png">
+<br />&nbsp;<br /><hr><br />&nbsp;<br />
+
+
+<h2>Getting started with GuruxDLMSDirector</h2>
+<p>To communicate with a physical DLMS device using GuruxDLMSDirector, the physical device needs to be represented by a Device in the application.</p>
+<p>A representative Device allows you to:
+	<ul>
+	<li>select device manufacturer</li>
+	<li>set the type and settings of the connection between the physical device and the application,</li>
+	<li>select the required registers of the physical device, if not using them all, and </li>
+	<li>read the values of selected registers from the physical device. </li>
+	</ul></p><br><br>
+
+<p><b>Note</b>: When starting GuruxDLMSDirector <i>for the first time after installing it</i>, you get a pop-up saying that Manufacturer Settings are not present. The pop-up also asks, whether you want to install them online from Gurux web. It is recommended to install the latest settings online. This is to avoid mistakes in configurating the manufacturer dependent settings.</p> 
+
+<h3>The following guides you through</h3>
+<ul>
+<li><a href="#prepare">preparing your system</a>,</li> 
+<li><a href="#itemsTOuse">determining items to use</a>, and </li>
+<li><a href="#communicate">communicating with your DLMS device</a>.</li>
+</ul>
+<br><br>
+<hr>
+
+<a name="prepare"><h2>Preparations of the system</h2></a>
+<p>You can create as many physical device representatives as you prefer, but even only one representative needs 
+a parenting collection to exist. You can also create as many collections as you want, to list your devices as you prefer.</p>
+
+<h3>  I) Create a collection of Devices</h3> 
+<ol type="1">
+	<li>To start a new collection of Devices, select <i>New</i> in the File menu.</li>
+	<li>To add a representatives for your physical device in the new collection, select <i>AddDevice</i> in the File menu.</li>
+	<li>In the opening <b>Device Properties dialog</b>:
+			<ul>
+			<li>Enter a unique <i>Name</i> for your device.</li>
+			<li>In the <i>Manufacturer</i> drop-down menu, select the manufacturer of your device.</li>
+			<li>In the <i>Media</i> drop-down menu, select the connection type to use.</li>
+			<li>In the <i>Authentication</i> drop-down menu, select the authentication (None, Low, High), and<br>
+			enter the <i>Password</i>, if needed.</li>
+			<li>Then enter / select the <a href="Connections.html">ID information of the device</a>, in the <i>Addressing box</i>, displaying  selections and fields according to the selected device manufacturer.</li>
+			<li>Next, set the <a href="Connections.html#mediaset">Media specific settings</a> in the <i>Settings box</i>, displaying  selections and fields according to the selected connection type.</li>
+			<li>Finally, click OK.</li></ol>
+<br>The representative of your physical DLMS device now appears in the Devices collection, on the left column of the user interface. <br><br>Add all the required representatives in the Devices collection the same way.
+
+<hr>
+
+<a name="itemsTOuse"><h2>Determine the registers to use</h2></a>
+<p>To determine the registers of the physical device, retrieve the register objects from the device. If there are registers that are 
+not needed, you can delete them. To retrieve the registers of a physical device, it needs to have a properly set Device representative, 
+as guided above.</p>
+
+<h3>II) Connect GXDLMS/COSEMDirector to your physical DLMS device</h3>
+	<ol type="1">
+		<li>In the collection of Devices, select the device to connect to.<br>
+		<b>Note: </b>To connect to all devices, select the collection (<i>Devices</i>).</li>
+		<li>In the Tools menu, select <i>Connect</i>.</li>
+	</ol>
+
+<h3>III) Retrieve the Device register objects of your device</h3>
+	<ol type="1">
+	<li>In the collection of Devices, select the device, whose register objects to retrieve.<br>
+	<b>Note: </b>To retrieve the register objects of all added devices, select the collection (<i>Devices</i>).</li>
+	<li>In the File menu, select <i>Refresh</i>.<br>This may take a while, depending on the amount of registers in the device and the 	selected connection type.</li>
+	<li>When the register objects are retrieved, save the Devices collection.<br>
+	This way you won't need to retrieve the register objects every time you start communicating with the device with GXDLMS/COSEMDirector.</</li>
+	</ol>
+	<p>To view the register objects of a device, click the plus sign next to the device name, in the Devices collection.</p>
+
+<h3> IV) Delete the registers that are not needed</h3>
+	<ol type="1">
+	<li>In the collection of Devices, select the device that holds the register to delete.</li>
+	<li>In the Tools menu, select  Disconnect, if not disconnected already.</li>
+	<li>Click the plus sign next to the device name to view the register objects of it.</li>
+	<li>Click on the register object, which you want to remove from the list.</li>
+	<li>In the Tools menu, select  Delete.</li>
+	</ol>
+<p><b>Note: </b>To return a deleted register back to the list, you need to <br>
+retrieve all register objects from the physical device again.</p>
+  	
+<h3> V) Delete the devices that are not needed</h3>
+	<ol type="1">
+	<li>Select the device to remove.</li>
+	<li>In the Tools menu, select  Disconnect, if not disconnected already.</li>
+	<li>In the Tools menu, select  Delete.</li>
+	</ol>	
+<p><b>Note: </b>To return a deleted device back into the collection, you need to <br>
+add a representative for it again, as guided above, starting from <br>
+"I) Create a collection of Devices", step 2. </p>
+<br><hr>
+
+<a name="communicate"><h2>Communicate with physical devices</h2></a>
+<p>Now that your system is all set, you can start communicating with your physical DLMS devices using GXDLMS/COSEMDirector.</p>
+
+<ol type="1">
+<li>On the left column list, select the item (Collection, Device, or Register) to read.</li>
+<li>In the Tools menu, select <i>Connect</i>, if not connected already.</li>
+<li>When connected, select <i>Read</i> to retrieve the device values.</li>
+</ol>
+</ol>	
+<p><b>Note: </b>Once you have selected a Register, you can change
+<ul>
+<li>the ValueType of the register object, by selecting the required type in the drop-down list</li>
+<li>the Description of the register object, by typing a new description in the text field</li>
+</ul>
+</p>
+<br>
+
+
+
+<p class="MsoNormal">
+				<hr>
+<div id="footer">
+<p><br><a href="http://www.gurux.fi" target="_blank">1998-2011&nbsp;&#169;&nbsp; Gurux&nbsp;Ltd.</a><br><br><br></p>
+</div>
+</div>
+</body>
+</html>

@@ -4,10 +4,10 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GXDLMSDirector/Development/MainForm.cs $
+// Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/MainForm.cs $
 //
-// Version:         $Revision: 6528 $,
-//                  $Date: 2013-08-13 22:52:57 +0300 (ti, 13 elo 2013) $
+// Version:         $Revision: 6556 $,
+//                  $Date: 2013-09-18 10:52:13 +0300 (ke, 18 syys 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd

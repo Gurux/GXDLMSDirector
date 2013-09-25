@@ -1,0 +1,92 @@
+<HTML dir="ltr" XMLNS:MSHelp="http://msdn.microsoft.com/mshelp" xmlns:o>
+	<HEAD>
+		<TITLE>OBIS codes</TITLE>
+		<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<META content="http://schemas.microsoft.com/intellisense/ie5" name="vs_targetSchema">
+		<xml></xml>
+		<LINK href="MSDN.css" type="text/css" rel="stylesheet">
+		<xml>
+			<MSHelp:TOCTitle Title='OBIS codes' />
+		</xml>
+	</HEAD>
+	<BODY class="dtBODY" id="bodyID">
+		<DIV id="nsbanner">
+			<DIV id="bannerrow1">
+				<TABLE class="bannerparthead" cellSpacing="0">
+					<TBODY>
+						<TR id="hdr">
+							<TD class="runninghead">
+								Gurux GXDLMS/COSEMDirector</TD>
+							<TD class="product"></TD>
+						</TR>
+					</TBODY>
+				</TABLE>
+			</DIV>
+			<DIV id="TitleRow">
+				<H1 class="dtH1">OBIS codes</H1>
+			</DIV>
+		</DIV>
+		<DIV id="nstext">
+
+The OBIS (Object Identification System) determines the identification of data objects in DLMS/COSEM communication. The OBIS codes are used as Logical names of data objects. The DLMS User Association defines and allocates OBIS codes, and maintains list of valid OBIS codes. All the device manufacturers, however, have not abided by the recommendations. This is why the OBIS codes are made editable, to some degree, in GXDLMS/COSEMDirector.<br><br>
+Though it is made possible, it is not recommended to add OBIS codes manually in the GXDLMS/COSEMDirector, but to <b>get them directly from the physical device</b> itself. This is done by adding a device in the Devices Collection</a>, and retrieving the register objects from the physical device, as guided in section <a href="QuickStart.html">Getting started</a>. Once you have retrieved the register objects from the device, you can view their OBIS codes.
+ <br><br>
+<table class="intext"><tr><td width="380" valign="top">
+The OBIS codes of devices of the supported device manufacturers are automatically available in the OBIS codes dialog. 
+
+<h2>To view the OBIS codes</h2>
+<ol>
+<li>In the Tools menu, select <i>OBIS codes...</i></li><br>
+In the opening OBIS codes dialog, on the left, you get a list of the supported device manufacturers.<br><br>
+<li>In the OBIS codes dialog, select the manufacturer, whose OBIS codes to view.</li><br>
+A list of OBIS codes of the selected manufacturer is displayed on the right.<br><br>
+<li>Double-click an OBIS code in the list, to open it in the OBIScode form:</li><br><br>
+</ol>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="pics/obiscodeForm.png">
+
+</td><td width="12">&nbsp;<td valign="top"><br><br><img src="pics/obiscodesDialog.png"><br><br>
+
+In the OBIS Code Form you can edit
+<ul>
+<li>The LogicalName</li>
+<li>Description of the OBIS code</li> 
+<li>ValueType, if available</li>
+<li>ValueUIType, if available, and</li>
+<li>the Interface, which the selected OBIS code belongs to.</li>
+<li>you can also add / edit / remove enumerated values in the Value Editor.</li></ul>
+</td></tr></table>
+<br>
+<h2>To edit the OBIS codes</h2>
+<ol>
+<li><b>To edit the LogicalName or Description</b>, just replace the text in the text field.</li>
+<li><b>To edit ValueType, or ValueUIType</b>
+	<ul>
+	<li>Click on the row to edit,</li>
+	<li>open the drop-down list of available options by clicking on the arrow down, in the end of the row, and</li>
+	<li>select the required option in the drop down list.</li></ul></li>
+<li>To change the Interface, select the correct one in the drop-down list (top left in OBIS Code Form).</li>
+<li>To add / edit / remove enumerated values, see section <i>Value Editor</i> below.</li>
+<li>When all required properties of the OBIS code are edited, <b>click OK to save the changes</b>.</li></ol><br><br><br>
+
+<table class="intext"><tr><td valign="top"><h2>Value Editor</h2>
+<p>In the Value Editor, the top most drop-down list shows the items available to edit. The enumerated device values, and the corresponding UI values, are shown in the list.</p>
+<p>In the example picture, on the right <i>Status of the Clock register</i> is selected.</p>
+<p>Below the list are buttons for creating a new, editing and removing a device value / UI value pair.</p>
+<p>This way you can easily remove the value pairs that your device does not support, from the list, or edit which UI Value is to represent which Device Value. You can also add new value pairs, if they are not all listed.</p>
+<p>The purpose of using device values and UI values as pairs, is to make interpretation of the read data easier for the user. With value pairs, the user gets information in human language, and does not have to know, or to remember, which device language value means which.</p>  
+<p><b>An example of using a value pair</b>:
+<br>Let us assume that value one means that the device is turned on. When the value, retrieved from the device, equals one, the application displays "<i>ON</i>", instead of "<i>1</i>".</p>   
+
+</td><td width="12">&nbsp;<td valign="top"><br><br><img src="pics/obiscodeForm.png"><br><br></td></tr></table>
+
+<p class="MsoNormal">
+				<hr>
+<div id="footer">
+<p><br><a href="http://www.gurux.fi" target="_blank">1998-2011&nbsp;&#169;&nbsp; Gurux&nbsp;Ltd.</a><br><br><br></p>
+</div>
+</div>
+</body>
+</html>
+
+
+

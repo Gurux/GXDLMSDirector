@@ -4,7 +4,7 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GXDLMSDirector/Development/ManufacturerForm.Designer.cs $
+// Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/ManufacturerForm.Designer.cs $
 //
 // Version:         $Revision: 4474 $,
 //                  $Date: 2011-11-29 15:19:33 +0200 (ti, 29 marras 2011) $

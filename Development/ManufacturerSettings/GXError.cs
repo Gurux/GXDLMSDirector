@@ -4,7 +4,7 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GXDLMSDirector/Development/ManufacturerSettings/GXError.cs $
+// Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/ManufacturerSettings/GXError.cs $
 //
 // Version:         $Revision: 5901 $,
 //                  $Date: 2013-01-08 14:52:06 +0200 (ti, 08 tammi 2013) $

@@ -4,10 +4,10 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GXDLMSDirector/Development/GXDLMSDevice.cs $
+// Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDevice.cs $
 //
-// Version:         $Revision: 6528 $,
-//                  $Date: 2013-08-13 22:52:57 +0300 (ti, 13 elo 2013) $
+// Version:         $Revision: 6567 $,
+//                  $Date: 2013-09-25 10:03:56 +0300 (ke, 25 syys 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -625,6 +625,7 @@ namespace GXDLMSDirector
             try
             {
                 GXDLMSObjectCollection objs = Comm.GetObjects();
+                objs.Tag = this;
                 int pos = 0;
                 foreach (GXDLMSObject it in objs)
                 {

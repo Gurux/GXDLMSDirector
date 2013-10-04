@@ -1689,7 +1689,7 @@ namespace GXDLMSDirector
                         ObjectValueItems.Remove(obj);
                         lv.Remove();
                     }
-
+                    (obj.Parent.Tag as GXDLMSDevice).Objects.Remove(obj);
                     obj.Parent.Remove(obj);
                     TreeNode node = ObjectTreeItems[obj] as TreeNode;
                     if (node != null)

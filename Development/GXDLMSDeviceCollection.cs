@@ -36,9 +36,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace GXDLMSDirector
 {
+    /// <summary>
+    /// List of devices.
+    /// </summary>
     [Serializable]
     public class GXDLMSDeviceCollection : List<GXDLMSDevice>
     {

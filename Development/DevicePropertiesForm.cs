@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.cs $
 //
-// Version:         $Revision: 6556 $,
-//                  $Date: 2013-09-18 10:52:13 +0300 (ke, 18 syys 2013) $
+// Version:         $Revision: 6691 $,
+//                  $Date: 2013-11-08 11:02:53 +0200 (pe, 08 marras 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -116,8 +116,7 @@ namespace GXDLMSDirector
                     if (Manufacturers.Count != 0)
                     {
                         ManufacturerCB.SelectedIndex = 0;
-                    }
-
+                    }                    
                 }
                 else
                 {
@@ -136,7 +135,7 @@ namespace GXDLMSDirector
                     PhysicalServerAddressTB.Value = Convert.ToDecimal(Device.PhysicalAddress);
                     LogicalServerAddressTB.Value = Convert.ToDecimal(Device.LogicalAddress);
                     this.ClientAddTB.Value = Convert.ToDecimal(Convert.ToUInt32(Device.ClientID));
-                    WaitTimeTB.Value = Device.WaitTime;
+                    WaitTimeTB.Value = Device.WaitTime;                    
                 }
 
                 ManufacturerCB.DrawMode = MediasCB.DrawMode = DrawMode.OwnerDrawFixed;
@@ -227,14 +226,17 @@ namespace GXDLMSDirector
                 this.MediasCB.SelectedItem = SelectedMedia;
                 if (!string.IsNullOrEmpty(Device.Password))
                 {
-                    this.PasswordTB.Text = CryptHelper.Decrypt(Device.Password, Password.Key);
+                    this.PasswordTB.Text = ASCIIEncoding.ASCII.GetString(CryptHelper.Decrypt(Device.Password, Password.Key));
                 }
-
+                if (dev != null)
+                {
+                    this.UseLNCB.Checked = dev.UseLogicalNameReferencing;
+                }
                 this.AuthenticationCB.SelectedIndexChanged += new System.EventHandler(this.AuthenticationCB_SelectedIndexChanged);
                 bool bConnected = Device.Media != null && Device.Media.IsOpen;
                 SerialPortCB.Enabled = AdvancedBtn.Enabled = ManufacturerCB.Enabled = MediasCB.Enabled =
                     AuthenticationCB.Enabled = UseRemoteSerialCB.Enabled = OKBtn.Enabled = !bConnected;
-                HostNameTB.ReadOnly = PortTB.ReadOnly = PasswordTB.ReadOnly = WaitTimeTB.ReadOnly = PhysicalServerAddressTB.ReadOnly = NameTB.ReadOnly = bConnected;
+                HostNameTB.ReadOnly = PortTB.ReadOnly = PasswordTB.ReadOnly = WaitTimeTB.ReadOnly = PhysicalServerAddressTB.ReadOnly = NameTB.ReadOnly = bConnected;                
             }
             catch (Exception Ex)
             {
@@ -363,6 +365,7 @@ namespace GXDLMSDirector
                 {
                     Device.PhysicalAddress = Convert.ChangeType(PhysicalServerAddressTB.Value, server.PhysicalAddress.GetType());
                 }
+                Device.UseLogicalNameReferencing = this.UseLNCB.Checked;                
                 Device.LogicalAddress = Convert.ToInt32(LogicalServerAddressTB.Value);                              
                 Device.StartProtocol = (StartProtocolType) this.StartProtocolCB.SelectedItem;
             }
@@ -515,6 +518,7 @@ namespace GXDLMSDirector
         {
             //If IEC47 is used DLMS is only protocol.
             GXManufacturer man = this.ManufacturerCB.SelectedItem as GXManufacturer;
+            this.UseLNCB.Checked = man.UseLogicalNameReferencing;
             if (SelectedMedia is GXNet && man != null)
             {
                 StartProtocolCB.Enabled = !man.UseIEC47;
@@ -668,6 +672,20 @@ namespace GXDLMSDirector
                 PhysicalServerAddressLbl.Text = "Physical Server:";
 
             }
+        }
+
+        private void InitialSettingsBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                //http://www.gurux.fi/index.php?q=GXDLMSDirectorExample
+                System.Diagnostics.Process.Start("http://www.gurux.fi/index.php?q=GXDLMSDirectorExample");
+            }
+            catch (Exception Ex)
+            {
+                GXDLMS.Common.Error.ShowError(this, Ex);
+            }
+            
         }
     }
 }

@@ -479,7 +479,7 @@ namespace GXDLMSDirector
             {
                 m_Cosem.Password = CryptHelper.Decrypt(this.Parent.Password, Password.Key);
             }            
-            m_Cosem.UseLogicalNameReferencing = manufacturer.UseLogicalNameReferencing;
+            m_Cosem.UseLogicalNameReferencing = this.Parent.UseLogicalNameReferencing;
             //If network media is used check is manufacturer supporting IEC 62056-47
             if (!Parent.UseRemoteSerial && this.Media is GXNet && manufacturer.UseIEC47)
             {                

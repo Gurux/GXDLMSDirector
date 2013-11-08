@@ -108,6 +108,8 @@ namespace GXDLMSDirector
             this.label1 = new System.Windows.Forms.Label();
             this.SupportedServicesTab = new System.Windows.Forms.TabPage();
             this.SupportedServicesGrid = new System.Windows.Forms.PropertyGrid();
+            this.InitialSettingsBtn = new System.Windows.Forms.Button();
+            this.UseLNCB = new System.Windows.Forms.CheckBox();
             this.DeviceTab.SuspendLayout();
             this.DeviceSettingsTab.SuspendLayout();
             this.TerminalSettingsGB.SuspendLayout();
@@ -159,6 +161,7 @@ namespace GXDLMSDirector
             // 
             // DeviceSettingsTab
             // 
+            this.DeviceSettingsTab.Controls.Add(this.UseLNCB);
             this.DeviceSettingsTab.Controls.Add(this.ServerAddressTypeCB);
             this.DeviceSettingsTab.Controls.Add(this.label3);
             this.DeviceSettingsTab.Controls.Add(this.TerminalSettingsGB);
@@ -291,7 +294,7 @@ namespace GXDLMSDirector
             0});
             this.ClientAddTB.Name = "ClientAddTB";
             this.ClientAddTB.Size = new System.Drawing.Size(85, 20);
-            this.ClientAddTB.TabIndex = 7;
+            this.ClientAddTB.TabIndex = 8;
             this.ClientAddTB.Value = new decimal(new int[] {
             16,
             0,
@@ -428,7 +431,7 @@ namespace GXDLMSDirector
             0});
             this.LogicalServerAddressTB.Name = "LogicalServerAddressTB";
             this.LogicalServerAddressTB.Size = new System.Drawing.Size(85, 20);
-            this.LogicalServerAddressTB.TabIndex = 10;
+            this.LogicalServerAddressTB.TabIndex = 11;
             this.LogicalServerAddressTB.Value = new decimal(new int[] {
             1,
             0,
@@ -455,7 +458,7 @@ namespace GXDLMSDirector
             0});
             this.PhysicalServerAddressTB.Name = "PhysicalServerAddressTB";
             this.PhysicalServerAddressTB.Size = new System.Drawing.Size(85, 20);
-            this.PhysicalServerAddressTB.TabIndex = 9;
+            this.PhysicalServerAddressTB.TabIndex = 10;
             this.PhysicalServerAddressTB.Value = new decimal(new int[] {
             1,
             0,
@@ -486,7 +489,7 @@ namespace GXDLMSDirector
             0});
             this.WaitTimeTB.Name = "WaitTimeTB";
             this.WaitTimeTB.Size = new System.Drawing.Size(85, 20);
-            this.WaitTimeTB.TabIndex = 6;
+            this.WaitTimeTB.TabIndex = 7;
             this.WaitTimeTB.Value = new decimal(new int[] {
             5,
             0,
@@ -527,8 +530,8 @@ namespace GXDLMSDirector
             this.PasswordTB.Location = new System.Drawing.Point(109, 115);
             this.PasswordTB.Name = "PasswordTB";
             this.PasswordTB.PasswordChar = '*';
-            this.PasswordTB.Size = new System.Drawing.Size(274, 20);
-            this.PasswordTB.TabIndex = 5;
+            this.PasswordTB.Size = new System.Drawing.Size(87, 20);
+            this.PasswordTB.TabIndex = 6;
             // 
             // PasswordLbl
             // 
@@ -545,7 +548,7 @@ namespace GXDLMSDirector
             this.AuthenticationCB.FormattingEnabled = true;
             this.AuthenticationCB.Location = new System.Drawing.Point(109, 85);
             this.AuthenticationCB.Name = "AuthenticationCB";
-            this.AuthenticationCB.Size = new System.Drawing.Size(272, 21);
+            this.AuthenticationCB.Size = new System.Drawing.Size(87, 21);
             this.AuthenticationCB.TabIndex = 4;
             this.AuthenticationCB.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.AuthenticationCB_DrawItem);
             this.AuthenticationCB.SelectedIndexChanged += new System.EventHandler(this.AuthenticationCB_SelectedIndexChanged);
@@ -617,6 +620,27 @@ namespace GXDLMSDirector
             this.SupportedServicesGrid.TabIndex = 0;
             this.SupportedServicesGrid.ToolbarVisible = false;
             // 
+            // InitialSettingsBtn
+            // 
+            this.InitialSettingsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.InitialSettingsBtn.Location = new System.Drawing.Point(10, 359);
+            this.InitialSettingsBtn.Name = "InitialSettingsBtn";
+            this.InitialSettingsBtn.Size = new System.Drawing.Size(117, 23);
+            this.InitialSettingsBtn.TabIndex = 16;
+            this.InitialSettingsBtn.Text = "Initial settings...";
+            this.InitialSettingsBtn.UseVisualStyleBackColor = true;
+            this.InitialSettingsBtn.Click += new System.EventHandler(this.InitialSettingsBtn_Click);
+            // 
+            // UseLNCB
+            // 
+            this.UseLNCB.AutoSize = true;
+            this.UseLNCB.Location = new System.Drawing.Point(211, 87);
+            this.UseLNCB.Name = "UseLNCB";
+            this.UseLNCB.Size = new System.Drawing.Size(152, 17);
+            this.UseLNCB.TabIndex = 5;
+            this.UseLNCB.Text = "Logical Name Referencing";
+            this.UseLNCB.UseVisualStyleBackColor = true;
+            // 
             // DevicePropertiesForm
             // 
             this.AcceptButton = this.OKBtn;
@@ -624,6 +648,7 @@ namespace GXDLMSDirector
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.CancelBtn;
             this.ClientSize = new System.Drawing.Size(410, 393);
+            this.Controls.Add(this.InitialSettingsBtn);
             this.Controls.Add(this.DeviceTab);
             this.Controls.Add(this.OKBtn);
             this.Controls.Add(this.CancelBtn);
@@ -696,5 +721,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label TerminalPhoneNumberLbl;
         private System.Windows.Forms.ComboBox ServerAddressTypeCB;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button InitialSettingsBtn;
+        private System.Windows.Forms.CheckBox UseLNCB;
     }
 }

@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDevice.cs $
 //
-// Version:         $Revision: 6567 $,
-//                  $Date: 2013-09-25 10:03:56 +0300 (ke, 25 syys 2013) $
+// Version:         $Revision: 6646 $,
+//                  $Date: 2013-10-18 00:04:39 +0300 (pe, 18 loka 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -494,6 +494,17 @@ namespace GXDLMSDirector
             }
         }
 
+        /// <summary>
+        /// Is Logical name referencing used.
+        /// </summary>
+        [DefaultValue(false)]
+        [XmlElement("UseLN")]
+        public bool UseLogicalNameReferencing
+        {
+            get;
+            set;
+        }   
+
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         [XmlArray("Objects2")]
         public GXDLMSObjectCollection Objects
@@ -665,9 +676,14 @@ namespace GXDLMSDirector
                         try
                         {
                             data = Comm.ReadValue(data, it.ObjectType, 3, ref type);
-                            object[] scalerUnit = (object[])GXHelpers.ConvertFromDLMS(data, DataType.None, DataType.None, false);
-                            ((GXDLMSRegister)it).Scaler = Math.Pow(10, Convert.ToInt32(scalerUnit.GetValue(0)));
-                            ((GXDLMSRegister)it).Unit = (Unit)Convert.ToInt32(scalerUnit.GetValue(1));
+                            object tmp = GXHelpers.ConvertFromDLMS(data, DataType.None, DataType.None, false);
+                            //Actaris ACE 6000 is returning wrong value here.
+                            if (tmp is object[])
+                            {
+                                object[] scalerUnit = (object[])tmp;
+                                ((GXDLMSRegister)it).Scaler = Math.Pow(10, Convert.ToInt32(scalerUnit.GetValue(0)));
+                                ((GXDLMSRegister)it).Unit = (Unit)Convert.ToInt32(scalerUnit.GetValue(1));
+                            }
                         }
                         catch (Exception ex)
                         {

@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/CryptHelper.cs $
 //
-// Version:         $Revision: 3125 $,
-//                  $Date: 2010-12-14 10:08:50 +0200 (ti, 14 joulu 2010) $
+// Version:         $Revision: 6691 $,
+//                  $Date: 2013-11-08 11:02:53 +0200 (pe, 08 marras 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -254,7 +254,7 @@ internal class CryptHelper
 	/// <param name="cipherText">Input text.</param>
 	/// <param name="password">The password used in the decryptation.</param>
 	/// <returns>Clear text.</returns>
-	public static string Decrypt(string cipherText, string password)
+	public static byte[] Decrypt(string cipherText, string password)
 	{
 		// First we need to turn the input string into a byte array.
 		// We presume that Base64 encoding was used
@@ -279,7 +279,7 @@ internal class CryptHelper
 		// because not all byte values can be represented by characters.
 		// We are going to be using Base64 encoding that is designed exactly for what we are
 		// trying to do.
-		return System.Text.Encoding.Unicode.GetString(decryptedData);
+		return decryptedData;
 
 	}
 

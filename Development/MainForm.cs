@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/MainForm.cs $
 //
-// Version:         $Revision: 6556 $,
-//                  $Date: 2013-09-18 10:52:13 +0300 (ke, 18 syys 2013) $
+// Version:         $Revision: 6665 $,
+//                  $Date: 2013-10-30 12:36:23 +0200 (ke, 30 loka 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -852,13 +852,13 @@ namespace GXDLMSDirector
             types.Add(typeof(GXDLMSAttributeSettings));
             types.Add(typeof(GXDLMSAttribute));
             using (TextWriter writer = new StreamWriter(stream))
-            {
+            {             
                 XmlAttributeOverrides overrides = new XmlAttributeOverrides();
                 XmlAttributes attribs = new XmlAttributes();
                 attribs.XmlIgnore = true;
                 overrides.Add(typeof(GXDLMSDevice), "ObsoleteObjects", attribs);
                 overrides.Add(typeof(GXDLMSAttributeSettings), attribs);
-                XmlSerializer x = new XmlSerializer(typeof(GXDLMSDeviceCollection), overrides, types.ToArray(), null, null);                
+                XmlSerializer x = new XmlSerializer(typeof(GXDLMSDeviceCollection), overrides, types.ToArray(), null, "Gurux1");                
                 x.Serialize(writer, Devices);
                 writer.Close();
             }
@@ -1894,12 +1894,19 @@ namespace GXDLMSDirector
             //Clear log every time when new device list is loaded.
             GXLogWriter.ClearLog();
             Initialize();
-            using (TextReader reader = new StreamReader(path))
+            int version = 1;
+            using (XmlReader reader = XmlReader.Create(path))
             {
                 List<Type> types = new List<Type>(Gurux.DLMS.GXDLMSClient.GetObjectTypes());
                 types.Add(typeof(GXDLMSAttributeSettings));
                 types.Add(typeof(GXDLMSAttribute));
-                XmlSerializer x = new XmlSerializer(typeof(GXDLMSDeviceCollection), types.ToArray());
+                //Version is added to namespace.                
+                XmlSerializer x = new XmlSerializer(typeof(GXDLMSDeviceCollection), null, types.ToArray(), null, "Gurux1");
+                if (!x.CanDeserialize(reader))
+                {
+                    version = 0;
+                    x = new XmlSerializer(typeof(GXDLMSDeviceCollection), types.ToArray());                    
+                }
                 Devices = (GXDLMSDeviceCollection)x.Deserialize(reader);
                 reader.Close();
                 TreeNode node = ObjectTree.Nodes[0];
@@ -1915,6 +1922,10 @@ namespace GXDLMSDirector
                 {
                     throw new Exception("Load failed. Invalid manufacturer: " + dev.Manufacturer);
                 }
+                if (version == 0)
+                {
+                    dev.UseLogicalNameReferencing = m.UseLogicalNameReferencing;
+                }
                 dev.ObisCodes = m.ObisCodes;
                 //Update descriptions and values from the parser.
                 foreach (GXDLMSObject it in dev.Objects)
@@ -1929,7 +1940,7 @@ namespace GXDLMSDirector
             SetDirty(false);
             m_MruManager.Insert(0, path);
         }
-
+       
         /// <summary>
         /// Open media settings.
         /// </summary>

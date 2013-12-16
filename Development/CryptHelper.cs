@@ -103,7 +103,7 @@ internal class CryptHelper
 	public static string Encrypt(string clearText, string password)
 	{
 		// First we need to turn the input string into a byte array.
-		byte[] clearBytes = System.Text.Encoding.Unicode.GetBytes(clearText);
+		byte[] clearBytes = System.Text.Encoding.ASCII.GetBytes(clearText);
 
 		// Then, we need to turn the password into Key and IV
 		// We are using salt to make it harder to guess our key using a dictionary attack -

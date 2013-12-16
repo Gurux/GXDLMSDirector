@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.Designer.cs $
 //
-// Version:         $Revision: 3925 $,
-//                  $Date: 2011-08-30 10:40:29 +0300 (ti, 30 elo 2011) $
+// Version:         $Revision: 6743 $,
+//                  $Date: 2013-11-28 15:38:22 +0200 (to, 28 marras 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd

@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 6556 $,
-//                  $Date: 2013-09-18 10:52:13 +0300 (ke, 18 syys 2013) $
+// Version:         $Revision: 6743 $,
+//                  $Date: 2013-11-28 15:38:22 +0200 (to, 28 marras 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -118,7 +118,7 @@ namespace GXDLMSDirector
 
         public byte[] MethodRequest(object name, ObjectType type, int methodIndex)
         {
-            return ReadDataBlock(m_Cosem.Method(name, type, methodIndex, null, DataType.None), "");
+            return ReadDataBlock(m_Cosem.Method(name, type, methodIndex, null, DataType.None)[0], "");
         }
 
         public byte[] DisconnectRequest()

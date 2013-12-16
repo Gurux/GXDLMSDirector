@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDeviceCollection.cs $
 //
-// Version:         $Revision: 3125 $,
-//                  $Date: 2010-12-14 10:08:50 +0200 (ti, 14 joulu 2010) $
+// Version:         $Revision: 6743 $,
+//                  $Date: 2013-11-28 15:38:22 +0200 (to, 28 marras 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd

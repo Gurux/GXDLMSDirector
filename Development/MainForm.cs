@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/MainForm.cs $
 //
-// Version:         $Revision: 6665 $,
-//                  $Date: 2013-10-30 12:36:23 +0200 (ke, 30 loka 2013) $
+// Version:         $Revision: 6743 $,
+//                  $Date: 2013-11-28 15:38:22 +0200 (to, 28 marras 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd

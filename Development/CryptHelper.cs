@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/CryptHelper.cs $
 //
-// Version:         $Revision: 6691 $,
-//                  $Date: 2013-11-08 11:02:53 +0200 (pe, 08 marras 2013) $
+// Version:         $Revision: 6803 $,
+//                  $Date: 2013-12-16 09:52:30 +0200 (ma, 16 joulu 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd

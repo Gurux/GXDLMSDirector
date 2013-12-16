@@ -504,7 +504,6 @@ namespace GXDLMSDirector
                     formula = server.Formula;
                 }
                 m_Cosem.ServerID = GXManufacturer.CountServerAddress(Parent.HDLCAddressing, formula, Parent.PhysicalAddress, Parent.LogicalAddress);
-                m_Cosem.ServerID = (UInt32)0x20021;
             }
         }
 

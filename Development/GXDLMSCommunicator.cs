@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 6743 $,
-//                  $Date: 2013-11-28 15:38:22 +0200 (to, 28 marras 2013) $
+// Version:         $Revision: 6817 $,
+//                  $Date: 2013-12-18 11:24:53 +0200 (ke, 18 joulu 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -963,18 +963,18 @@ namespace GXDLMSDirector
                     DataType type = obj.GetDataType(it);
                     if (type == DataType.None)
                     {
-                        byte[] data = m_Cosem.Read(obj.ToString(), obj.ObjectType, it)[0];
+                        byte[] data = m_Cosem.Read(obj.Name, obj.ObjectType, it)[0];
                         data = ReadDataBlock(data, "Write object type " + obj.ObjectType);
                         type = m_Cosem.GetDLMSDataType(data);
                         if (type == DataType.None)
                         {
                             throw new Exception("Failed to write value. Data type not set.");
                         }
-                        obj.SetDataType(index, type);
+                        obj.SetDataType(it, type);
                     }
                     try
                     {
-                        foreach (byte[] tmp in m_Cosem.Write(obj.ToString(), value, type, obj.ObjectType, it))
+                        foreach (byte[] tmp in m_Cosem.Write(obj.Name, value, type, obj.ObjectType, it))
                         {
                             ReadDataBlock(tmp, "Write object");
                         }

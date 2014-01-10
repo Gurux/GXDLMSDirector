@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/Views/GXDLMSProfileGenericView.cs $
 //
-// Version:         $Revision: 6528 $,
-//                  $Date: 2013-08-13 22:52:57 +0300 (ti, 13 elo 2013) $
+// Version:         $Revision: 6830 $,
+//                  $Date: 2013-12-23 13:42:07 +0200 (ma, 23 joulu 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -137,7 +137,7 @@ namespace GXDLMSDirector.Views
                 }
 
                 ProfileGenericView.DataSource = dt;
-                if (m_Target.CaptureObjects.Count != 0)
+                if (m_Target.CaptureObjects.Count != 0 && (m_Target.CaptureObjects[0] as IGXDLMSColumnObject).SelectedAttributeIndex != 0)
                 {
                     //We can show graph only tables that are date based.
                     if (m_Target.CaptureObjects[0].GetUIDataType((m_Target.CaptureObjects[0] as IGXDLMSColumnObject).SelectedAttributeIndex) == DataType.DateTime)
@@ -184,7 +184,8 @@ namespace GXDLMSDirector.Views
                 return;
             }
             obj = m_Target.CaptureObjects[0] as IGXDLMSColumnObject;
-            if (m_Target.CaptureObjects[0].GetUIDataType(obj.SelectedAttributeIndex) != DataType.DateTime)
+            if (obj.SelectedAttributeIndex != 0 && 
+                m_Target.CaptureObjects[0].GetUIDataType(obj.SelectedAttributeIndex) != DataType.DateTime)
             {
                 ReadFromRB.Enabled = ReadLastRB.Enabled = false;
                 m_Target.AccessSelector = AccessRange.Entry;

@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 6817 $,
-//                  $Date: 2013-12-18 11:24:53 +0200 (ke, 18 joulu 2013) $
+// Version:         $Revision: 6830 $,
+//                  $Date: 2013-12-23 13:42:07 +0200 (ma, 23 joulu 2013) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -979,6 +979,10 @@ namespace GXDLMSDirector
                             ReadDataBlock(tmp, "Write object");
                         }
                         obj.ClearDirty(it);
+                        //Read data once again to make sure it is updated.
+                        byte[] data = m_Cosem.Read(obj.Name, obj.ObjectType, it)[0];
+                        data = ReadDataBlock(data, "Read object " + obj.ObjectType);
+                        value = m_Cosem.GetValue(data);
                         obj.SetValue(it, value);
                     }
                     catch (GXDLMSException ex)

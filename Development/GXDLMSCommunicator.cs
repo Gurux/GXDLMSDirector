@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 6830 $,
-//                  $Date: 2013-12-23 13:42:07 +0200 (ma, 23 joulu 2013) $
+// Version:         $Revision: 7165 $,
+//                  $Date: 2014-04-01 17:54:21 +0300 (ti, 01 huhti 2014) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -116,9 +116,9 @@ namespace GXDLMSDirector
             return tmp;
         }
 
-        public byte[] MethodRequest(object name, ObjectType type, int methodIndex)
+        public byte[] MethodRequest(GXDLMSObject target, int methodIndex, object data)
         {
-            return ReadDataBlock(m_Cosem.Method(name, type, methodIndex, null, DataType.None)[0], "");
+            return ReadDataBlock(m_Cosem.Method(target, methodIndex, data, DataType.None), "");
         }
 
         public byte[] DisconnectRequest()
@@ -143,6 +143,11 @@ namespace GXDLMSDirector
             }
         }
 
+        public byte[] ReadDLMSPacket(byte[] data)
+        {
+            return ReadDLMSPacket(data, 3);
+        }
+
         /// <summary>
         /// Read DLMS Data from the device.
         /// </summary>
@@ -151,7 +156,7 @@ namespace GXDLMSDirector
         /// </remarks>
         /// <param name="data">Data to send.</param>
         /// <returns>Received data.</returns>
-        public byte[] ReadDLMSPacket(byte[] data)
+        public byte[] ReadDLMSPacket(byte[] data, int tryCount)
         {
             if (data == null)
             {
@@ -184,7 +189,7 @@ namespace GXDLMSDirector
                     if (!succeeded)
                     {
                         //Try to read again...
-                        if (++pos != 3)
+                        if (++pos != tryCount)
                         {
                             //If Eop is not set read one byte at time.
                             if (p.Eop == null)
@@ -387,9 +392,9 @@ namespace GXDLMSDirector
                     System.Threading.Thread.Sleep(1000);
                     if (serial != null)
                     {
-                        serial.DtrEnable = serial.RtsEnable = false;
+                    //    serial.DtrEnable = serial.RtsEnable = false;
                         serial.BaudRate = BaudRate;
-                        serial.DtrEnable = serial.RtsEnable = true;
+                    //    serial.DtrEnable = serial.RtsEnable = true;
                     }
                     p.Reply = null;
                     p.WaitTime = 500;
@@ -404,14 +409,14 @@ namespace GXDLMSDirector
                     GXLogWriter.WriteLog("Received: " + p.Reply);
                     if (serial != null)
                     {
-                        System.Threading.Thread.Sleep(50);
-                        serial.DtrEnable = serial.RtsEnable = false;
+                      //  System.Threading.Thread.Sleep(50);
+                        //serial.DtrEnable = serial.RtsEnable = false;
                         serial.DataBits = 8;
                         serial.Parity = Parity.None;
                         serial.StopBits = StopBits.One;
-                        serial.DiscardOutBuffer();
-                        serial.DtrEnable = serial.RtsEnable = true;
-                        System.Threading.Thread.Sleep(200);
+                        //serial.DiscardOutBuffer();
+                        //serial.DtrEnable = serial.RtsEnable = true;
+                        //System.Threading.Thread.Sleep(200);
                         serial.ResetSynchronousBuffer();
                     }
                 }
@@ -583,7 +588,7 @@ namespace GXDLMSDirector
                 if (data != null)
                 {
                     GXLogWriter.WriteLog("Send SNRM request.", data);
-                    reply = ReadDLMSPacket(data);
+                    reply = ReadDLMSPacket(data, 1);
                     GXLogWriter.WriteLog("Parsing UA reply.", reply);
                     //Has server accepted client.
                     ParseUAResponse(reply);
@@ -639,6 +644,16 @@ namespace GXDLMSDirector
             }
         }
 
+        byte[] ReadDataBlock(byte[][] data, string text)
+        {
+            byte[] reply = null;
+            foreach (byte[] it in data)
+            {
+                reply = ReadDataBlock(it, text);
+            }
+            return reply;
+        }
+
         byte[] ReadDataBlock(byte[] data, string text)
         {
             return ReadDataBlock(data, text, 1);
@@ -653,7 +668,7 @@ namespace GXDLMSDirector
             object value = m_Cosem.TryGetValue(data);            
             if (value != null)
             {
-                (CurrentProfileGeneric as IGXDLMSBase).SetValue(2, value, false);                
+                (CurrentProfileGeneric as IGXDLMSBase).SetValue(2, value);                
                 if (OnAfterRead != null)
                 {
                     OnAfterRead(CurrentProfileGeneric, 2);
@@ -886,7 +901,9 @@ namespace GXDLMSDirector
                         OnDataReceived += new GXDLMSCommunicator.DataReceivedEventHandler(this.OnProfileGenericDataReceived);
                         if (CurrentProfileGeneric.AccessSelector != AccessRange.Entry)
                         {
-                            byte[] tmp = m_Cosem.ReadRowsByRange(CurrentProfileGeneric.Name, CurrentProfileGeneric.CaptureObjects[0].LogicalName, CurrentProfileGeneric.CaptureObjects[0].ObjectType, CurrentProfileGeneric.CaptureObjects[0].Version, Convert.ToDateTime(CurrentProfileGeneric.From), Convert.ToDateTime(CurrentProfileGeneric.To));
+                            byte[] tmp = m_Cosem.ReadRowsByRange(CurrentProfileGeneric.Name, CurrentProfileGeneric.CaptureObjects[0].LogicalName, 
+                                CurrentProfileGeneric.CaptureObjects[0].ObjectType, CurrentProfileGeneric.CaptureObjects[0].Version, 
+                                Convert.ToDateTime(CurrentProfileGeneric.From), Convert.ToDateTime(CurrentProfileGeneric.To));
                             ReadDataBlock(tmp, "Reading profile generic data", 1);
                         }
                         else
@@ -936,7 +953,7 @@ namespace GXDLMSDirector
                         {
                             value = GXDLMS.Common.GXHelpers.ConvertFromDLMS(value, obj.GetDataType(it), type, true);
                         }
-                        (obj as IGXDLMSBase).SetValue(it, value, false);
+                        (obj as IGXDLMSBase).SetValue(it, value);
                     }
                     if (OnAfterRead != null)
                     {

@@ -14,6 +14,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gurux.Terminal_2008", "..\..\GXCom\GXMedias\Gurux.Terminal\Development\Gurux.Terminal_2008.csproj", "{6210C774-782D-4292-AF4C-5998AC70BAFD}"
 EndProject
 Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = UnitTest_GuruxDLMS_20087.vsmdi
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU

@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/OBISCodesForm.cs $
 //
-// Version:         $Revision: 6333 $,
-//                  $Date: 2013-05-17 12:15:22 +0300 (pe, 17 touko 2013) $
+// Version:         $Revision: 7001 $,
+//                  $Date: 2014-02-06 16:20:13 +0200 (to, 06 helmi 2014) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -273,19 +273,7 @@ namespace GXDLMSDirector
 
         private void ManufacturersList_SizeChanged(object sender, EventArgs e)
         {
-            int w = ManufacturersList.Width - 6;
-            if ((GetVisibleScrollbars(ManufacturersList) & ScrollBars.Horizontal) != 0)
-            {
-                w -= SystemInformation.VerticalScrollBarWidth;
-            }
-            ManufacturerNameCH.Width = w;
-
-            w = OBISCodesList.Width - 4;
-            if ((GetVisibleScrollbars(OBISCodesList) & ScrollBars.Horizontal) != 0)
-            {
-                w -= SystemInformation.VerticalScrollBarWidth;
-            }
-            NameCH.Width = w;
+            ManufacturerNameCH.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
         }
 
         /// <summary>

@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/Views/GXDLMSProfileGenericView.cs $
 //
-// Version:         $Revision: 6830 $,
-//                  $Date: 2013-12-23 13:42:07 +0200 (ma, 23 joulu 2013) $
+// Version:         $Revision: 7165 $,
+//                  $Date: 2014-04-01 17:54:21 +0300 (ti, 01 huhti 2014) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -781,7 +781,14 @@ namespace GXDLMSDirector.Views
 
                 if (ToPick.Checked)
                 {
-                    m_Target.To = ToPick.Value.Date.AddDays(1).AddMinutes(-1);
+                    if (m_Target.CapturePeriod != 0)
+                    {
+                        m_Target.To = ToPick.Value.Date.AddDays(1).AddSeconds(-m_Target.CapturePeriod);
+                    }
+                    else
+                    {
+                        m_Target.To = ToPick.Value.Date.AddDays(1).AddMinutes(-1);
+                    }
                 }
                 else
                 {

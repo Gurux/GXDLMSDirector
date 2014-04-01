@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/Properties/AssemblyInfo.cs $
 //
-// Version:         $Revision: 6830 $,
-//                  $Date: 2013-12-23 13:42:07 +0200 (ma, 23 joulu 2013) $
+// Version:         $Revision: 7165 $,
+//                  $Date: 2014-04-01 17:54:21 +0300 (ti, 01 huhti 2014) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -45,7 +45,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Gurux Ltd")]
 [assembly: AssemblyProduct("Gurux DLMS Director Community Edition")]
-[assembly: AssemblyCopyright("Copyright (C) 1998-2013 Gurux Ltd.")]
+[assembly: AssemblyCopyright("Copyright (C) 1998-2014 Gurux Ltd.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -57,4 +57,4 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("e78762b5-4e85-45c8-a9fa-e95786f77684")]
 [assembly: AssemblyVersion("7.0.27.1")]
-[assembly: AssemblyFileVersion("7.0.27.1")]
+[assembly: AssemblyFileVersion("7.0.30.1")]

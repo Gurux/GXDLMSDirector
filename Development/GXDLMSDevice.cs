@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDevice.cs $
 //
-// Version:         $Revision: 6743 $,
-//                  $Date: 2013-11-28 15:38:22 +0200 (to, 28 marras 2013) $
+// Version:         $Revision: 7001 $,
+//                  $Date: 2014-02-06 16:20:13 +0200 (to, 06 helmi 2014) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -442,10 +442,9 @@ namespace GXDLMSDirector
             PhysicalAddress = 1;
             Password = "";
             Authentication = Authentication.None;
-            m_Objects = new GXDLMSObjectCollection(this);
-            m_Objects.Tag = this;
             m_Communicator = new GXDLMSCommunicator(this, media);
-            m_Communicator.m_Cosem.Objects = m_Objects;
+            m_Objects = m_Communicator.m_Cosem.Objects;
+            m_Objects.Tag = this;
             m_Communicator.OnProgress += new ProgressEventHandler(this.NotifyProgress);
             this.KeepAlive = new System.Timers.Timer();
             this.KeepAlive.Interval = 40000;

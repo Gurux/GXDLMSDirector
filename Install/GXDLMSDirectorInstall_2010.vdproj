@@ -787,15 +787,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:GXDLMSDirector 7.0 Community Edition"
-        "ProductCode" = "8:{3F9519B0-54B4-4971-9FA4-0C5D99808AB2}"
-        "PackageCode" = "8:{494E9E9F-0884-4F68-99B0-A9C0EB186647}"
+        "ProductCode" = "8:{CC281C47-FA3D-48D3-B24C-0A94D3ABD637}"
+        "PackageCode" = "8:{81DEA586-C598-4349-9E0A-CD8F2AE25D22}"
         "UpgradeCode" = "8:{11462D6C-0EE5-4B3F-8425-FFD5D7F828C4}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:7.0.27"
+        "ProductVersion" = "8:7.0.30"
         "Manufacturer" = "8:Gurux"
         "ARPHELPTELEPHONE" = "8:+358 3 265 1244"
         "ARPHELPLINK" = "8:http://www.gurux.org/gxdn"
@@ -1627,7 +1627,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_44C10BA25E954D788262906A5228BAEB"
             {
-            "SourcePath" = "8:..\\..\\GXCom\\Protocols\\Gurux.DLMS.Net\\Development\\bin\\Release\\Gurux.DLMS.XML"
+            "SourcePath" = "8:"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A65E75B4F31C4417AD765AD80DD75397"
@@ -1683,7 +1683,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_4E662491D4514C06B2B1EA1816419FD5"
             {
-            "SourcePath" = "8:..\\..\\GXCom\\Gurux.Common\\Development\\bin\\Release\\Gurux.Common.XML"
+            "SourcePath" = "8:"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A65E75B4F31C4417AD765AD80DD75397"
@@ -1963,7 +1963,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_75D71B58A194410C8BBB0269A72A69A6"
             {
-            "SourcePath" = "8:..\\..\\GXCom\\GXMedias\\Gurux.Serial\\Development\\bin\\Release\\Gurux.Serial.XML"
+            "SourcePath" = "8:"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A65E75B4F31C4417AD765AD80DD75397"
@@ -2075,7 +2075,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_8DF71DDCF4D14D1097E512EA3B76692C"
             {
-            "SourcePath" = "8:..\\..\\GXCom\\GXMedias\\Gurux.Net\\Development\\bin\\Release\\Gurux.Net.XML"
+            "SourcePath" = "8:"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A65E75B4F31C4417AD765AD80DD75397"

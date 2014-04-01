@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/Views/GXDLMSGprsSetupView.cs $
 //
-// Version:         $Revision: 6510 $,
-//                  $Date: 2013-08-08 16:24:58 +0300 (to, 08 elo 2013) $
+// Version:         $Revision: 6959 $,
+//                  $Date: 2014-02-03 09:52:28 +0200 (ma, 03 helmi 2014) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -113,7 +113,19 @@ namespace GXDLMSDirector.Views
         }
 
         public void OnAccessRightsChange(int attributeID, AccessMode access)
-        {            
+        {
+            if (attributeID == 4)
+            {
+                CPrecedenceTB.ReadOnly = !(access == AccessMode.Write || access == AccessMode.ReadWrite);
+                CReliabilityTB.ReadOnly = CDelayTB.ReadOnly = CPrecedenceTB.ReadOnly;                
+                CPeakThroughputTB.ReadOnly = CMeanThroughputTB.ReadOnly = CPrecedenceTB.ReadOnly;
+                MPrecedenceTB.ReadOnly = MDelayTB.ReadOnly = MReliabilityTB.ReadOnly = CPrecedenceTB.ReadOnly;
+                MPeakThroughputTB.ReadOnly = MMeanThroughputTB.ReadOnly = CPrecedenceTB.ReadOnly;
+            }
+            else
+            {
+                throw new IndexOutOfRangeException("attributeID");
+            }  
         }
 
         public System.Windows.Forms.ErrorProvider ErrorProvider

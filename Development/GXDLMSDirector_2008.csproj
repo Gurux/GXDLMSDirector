@@ -73,6 +73,9 @@
     <Compile Include="ManufacturerSettings\GXError.cs" />
     <Compile Include="MonoWrapper.cs" />
     <Compile Include="MRUManager.cs" />
+    <Compile Include="Views\GXDLMSMBusSlavePortSetupView.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Views\GXDLMSActionScheduleView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -179,6 +182,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GXObisValueItemForm.resx">
       <DependentUpon>GXObisValueItemForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\GXDLMSMBusSlavePortSetupView.resx">
+      <DependentUpon>GXDLMSMBusSlavePortSetupView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\GXDLMSActionScheduleView.resx">

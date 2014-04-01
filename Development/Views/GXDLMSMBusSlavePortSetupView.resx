@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,96 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="GXDLMSDirectorTxt" xml:space="preserve">
-    <value>Gurux DLMS/COSEMDirector</value>
-  </data>
-  <data name="ForMoreInfoTxt" xml:space="preserve">
-    <value>For information about Gurux products see:</value>
-  </data>
-  <data name="AboutGXDLMSDirectorTxt" xml:space="preserve">
-    <value>About Gurux DLMS/COSEM Director</value>
-  </data>
-  <data name="CopyrightTxt" xml:space="preserve">
-    <value>Copyright© 1998-2014 Gurux Ltd.
-All rights reserved.</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="NewMnu" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\NewMnu.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ConnectMnu" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ConnectMnu.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="DeleteMnu" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\DeleteMnu.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="OpenMnu" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\OpenMnu.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="OptionsMnu" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\OptionsMnu.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ReadMnu" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ReadMnu.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="SaveMnu" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SaveMnu.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="WriteMnu" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\WriteMnu.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="FilterTxt" xml:space="preserve">
-    <value>Gurux DLMS Director files (*.gxc)|*.gxc|All files (*.*)|*.*</value>
-  </data>
-  <data name="SaveChangesTxt" xml:space="preserve">
-    <value>Do you want to save the changes?</value>
-  </data>
-  <data name="RemoveDeviceConfirmation" xml:space="preserve">
-    <value>Are you sure that you want to remove selected device(s)?</value>
-  </data>
-  <data name="RemoveObjectConfirmation" xml:space="preserve">
-    <value>Are you sure that you want to remove selected object?</value>
-  </data>
-  <data name="InstallManufacturersOnlineTxt" xml:space="preserve">
-    <value>Device Manufacturer settings are not present. Do you want to install them online from Gurux Web?</value>
-  </data>
-  <data name="ValueChangedTxt" xml:space="preserve">
-    <value>Value changed</value>
-  </data>
-  <data name="UpdateManufacturersOnlineTxt" xml:space="preserve">
-    <value>New Device Manufacturer settings are available. Do you want to update them online from Gurux Web?</value>
-  </data>
-  <data name="HardwareFaultTxt" xml:space="preserve">
-    <value>Access Error : Device reports a hardware fault.</value>
-  </data>
-  <data name="InconsistentClassTxt" xml:space="preserve">
-    <value>Access Error : Device reports a inconsistent Class or Object.</value>
-  </data>
-  <data name="ReadWriteDeniedTxt" xml:space="preserve">
-    <value>Access Error : Device reports Read-Write denied.</value>
-  </data>
-  <data name="TemporaryFailureTxt" xml:space="preserve">
-    <value>Access Error : Device reports a temporary failure.</value>
-  </data>
-  <data name="UnavailableObjectTxt" xml:space="preserve">
-    <value>Access Error : Device reports a unavailable object.</value>
-  </data>
-  <data name="UndefinedObjectTxt" xml:space="preserve">
-    <value>Access Error : Device reports a undefined object.</value>
-  </data>
-  <data name="UnknownErrorTxt" xml:space="preserve">
-    <value>Unknown Error.</value>
-  </data>
-  <data name="UnmatchedTypeTxt" xml:space="preserve">
-    <value>Access Error : Device reports a unmatched type.</value>
-  </data>
-  <data name="ProtocolsUpdatedTxt" xml:space="preserve">
-    <value>Applications updated.</value>
-  </data>
-  <data name="RestartTxt" xml:space="preserve">
-    <value>The application must be restarted to apply the changes.</value>
-  </data>
-  <data name="UpdateManufacturersOnline2Txt" xml:space="preserve">
-    <value>New Device Manufacturer settings are available. Do you want to update them online from Gurux Web?</value>
+  <metadata name="errorProvider1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="errorProvider1.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        AAABAAEAEBAQAAAABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAABAA
+        AAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAgICAAMDAwAAAAP8AAP8AAAD//wD/AAAA/wD/AP//
+        AAD///8AAHd3d3d3d3AAAAAAAAAHd7u7u7u7u7B3u7u7ALu7u3A7u7sAu7uwcAu7u7u7u7cAA7u7ALu7
+        BwAAu7sAu7twAAA7uwC7sHAAAAu7ALu3AAAAA7sAuwcAAAAAuwC7cAAAAAA7u7BwAAAAAAu7twAAAAAA
+        A7sHAAAAAAAAuAAAAADAAQAAgAAAAAAEAAAAAQAAAAEAAIADAACDAwAAwAcAAMAHAADgDwAA4A8AAPAf
+        AADwHwAA+D8AAPg/AAD8/wAA
+</value>
   </data>
 </root>

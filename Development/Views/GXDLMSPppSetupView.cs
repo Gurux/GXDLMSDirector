@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/Views/GXDLMSPppSetupView.cs $
 //
-// Version:         $Revision: 5901 $,
-//                  $Date: 2013-01-08 14:52:06 +0200 (ti, 08 tammi 2013) $
+// Version:         $Revision: 6959 $,
+//                  $Date: 2014-02-03 09:52:28 +0200 (ma, 03 helmi 2014) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -45,27 +45,19 @@ namespace GXDLMSDirector.Views
     class GXDLMSPppSetupView : Form, IGXDLMSView
     {
         private GroupBox groupBox1;
-        private Label DataLinkLayerLbl;
+        private Label PHYReferenceLbl;
         private GXValueField LogicalNameTB;
-        private GXValueField SubnetMaskTB;
-        private Label SubnetMaskLbl;
-        private GXValueField IPOptionsTB;
-        private Label IPOptionsLbl;
-        private GXValueField MulticastIPAddressTB;
-        private Label MulticastIPAddressLbl;
-        private GXValueField IPAddressTB;
-        private Label IPAddressLbl;
-        private GXValueField DataLinkLayerTB;
-        private GXValueField SecondaryDNSAddressTB;
-        private Label SecondaryDNSAddressLbl;
-        private GXValueField PrimaryDNSAddressTB;
-        private Label PrimaryDNSAddressLbl;
-        private Label UseDHCPLbl;
-        private GXValueField GatewayIPAddressTB;
-        private Label GatewayIPAddressLbl;
-        private CheckBox UseDHCCB;
+        private Label UserNameLbl;
+        private GXValueField IPCPOptionsTB;
+        private Label IPCPOptionsLbl;
+        private GXValueField LCPOptionsTB;
+        private Label LCPOptionsLbl;
+        private GXValueField PHYReferenceTB;
         private ErrorProvider errorProvider1;
         private System.ComponentModel.IContainer components;
+        private Label PasswordLbl;
+        private TextBox PasswordTB;
+        private TextBox UserNameTB;
         private Label LogicalNameLbl;
         /// <summary>
         /// Constructor.
@@ -84,12 +76,27 @@ namespace GXDLMSDirector.Views
 
         public void OnValueChanged(int attributeID, object value)
         {
-            GXDLMSPppSetup target = Target as GXDLMSPppSetup;
-            if (attributeID == 8)
+            if (attributeID == 5)
             {
-                this.UseDHCCB.Checked = Convert.ToBoolean(target.PPPAuthentication); //TODO:
+                GXDLMSPppSetup target = Target as GXDLMSPppSetup;
+                if (target.UserName != null)
+                {
+                    UserNameTB.Text = ASCIIEncoding.ASCII.GetString(target.UserName);
+                }
+                else
+                {
+                    UserNameTB.Text = "";
+                }
+                if (target.Password != null)
+                {
+                    PasswordTB.Text = ASCIIEncoding.ASCII.GetString(target.Password);
+                }
+                else
+                {
+                    PasswordTB.Text = "";
+                }
             }
-            else if (attributeID != 0)
+            else
             {
                 throw new IndexOutOfRangeException("attributeID");
             }
@@ -97,9 +104,8 @@ namespace GXDLMSDirector.Views
 
         public void OnAccessRightsChange(int attributeID, AccessMode access)
         {
-            if (attributeID == 8)
+            if (attributeID == 5)
             {
-                this.UseDHCCB.Enabled = (access & Gurux.DLMS.AccessMode.Write) != 0;
             }
             else
             {
@@ -139,27 +145,19 @@ namespace GXDLMSDirector.Views
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GXDLMSPppSetupView));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.UseDHCCB = new System.Windows.Forms.CheckBox();
-            this.SecondaryDNSAddressTB = new GXDLMSDirector.Views.GXValueField();
-            this.SecondaryDNSAddressLbl = new System.Windows.Forms.Label();
-            this.PrimaryDNSAddressTB = new GXDLMSDirector.Views.GXValueField();
-            this.PrimaryDNSAddressLbl = new System.Windows.Forms.Label();
-            this.UseDHCPLbl = new System.Windows.Forms.Label();
-            this.GatewayIPAddressTB = new GXDLMSDirector.Views.GXValueField();
-            this.GatewayIPAddressLbl = new System.Windows.Forms.Label();
-            this.SubnetMaskTB = new GXDLMSDirector.Views.GXValueField();
-            this.SubnetMaskLbl = new System.Windows.Forms.Label();
-            this.IPOptionsTB = new GXDLMSDirector.Views.GXValueField();
-            this.IPOptionsLbl = new System.Windows.Forms.Label();
-            this.MulticastIPAddressTB = new GXDLMSDirector.Views.GXValueField();
-            this.MulticastIPAddressLbl = new System.Windows.Forms.Label();
-            this.IPAddressTB = new GXDLMSDirector.Views.GXValueField();
-            this.IPAddressLbl = new System.Windows.Forms.Label();
-            this.DataLinkLayerTB = new GXDLMSDirector.Views.GXValueField();
-            this.DataLinkLayerLbl = new System.Windows.Forms.Label();
+            this.PasswordLbl = new System.Windows.Forms.Label();
+            this.UserNameLbl = new System.Windows.Forms.Label();
+            this.IPCPOptionsTB = new GXDLMSDirector.Views.GXValueField();
+            this.IPCPOptionsLbl = new System.Windows.Forms.Label();
+            this.LCPOptionsTB = new GXDLMSDirector.Views.GXValueField();
+            this.LCPOptionsLbl = new System.Windows.Forms.Label();
+            this.PHYReferenceTB = new GXDLMSDirector.Views.GXValueField();
+            this.PHYReferenceLbl = new System.Windows.Forms.Label();
             this.LogicalNameTB = new GXDLMSDirector.Views.GXValueField();
             this.LogicalNameLbl = new System.Windows.Forms.Label();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.UserNameTB = new System.Windows.Forms.TextBox();
+            this.PasswordTB = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
@@ -168,219 +166,111 @@ namespace GXDLMSDirector.Views
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.UseDHCCB);
-            this.groupBox1.Controls.Add(this.SecondaryDNSAddressTB);
-            this.groupBox1.Controls.Add(this.SecondaryDNSAddressLbl);
-            this.groupBox1.Controls.Add(this.PrimaryDNSAddressTB);
-            this.groupBox1.Controls.Add(this.PrimaryDNSAddressLbl);
-            this.groupBox1.Controls.Add(this.UseDHCPLbl);
-            this.groupBox1.Controls.Add(this.GatewayIPAddressTB);
-            this.groupBox1.Controls.Add(this.GatewayIPAddressLbl);
-            this.groupBox1.Controls.Add(this.SubnetMaskTB);
-            this.groupBox1.Controls.Add(this.SubnetMaskLbl);
-            this.groupBox1.Controls.Add(this.IPOptionsTB);
-            this.groupBox1.Controls.Add(this.IPOptionsLbl);
-            this.groupBox1.Controls.Add(this.MulticastIPAddressTB);
-            this.groupBox1.Controls.Add(this.MulticastIPAddressLbl);
-            this.groupBox1.Controls.Add(this.IPAddressTB);
-            this.groupBox1.Controls.Add(this.IPAddressLbl);
-            this.groupBox1.Controls.Add(this.DataLinkLayerTB);
-            this.groupBox1.Controls.Add(this.DataLinkLayerLbl);
+            this.groupBox1.Controls.Add(this.PasswordTB);
+            this.groupBox1.Controls.Add(this.UserNameTB);
+            this.groupBox1.Controls.Add(this.PasswordLbl);
+            this.groupBox1.Controls.Add(this.UserNameLbl);
+            this.groupBox1.Controls.Add(this.IPCPOptionsTB);
+            this.groupBox1.Controls.Add(this.IPCPOptionsLbl);
+            this.groupBox1.Controls.Add(this.LCPOptionsTB);
+            this.groupBox1.Controls.Add(this.LCPOptionsLbl);
+            this.groupBox1.Controls.Add(this.PHYReferenceTB);
+            this.groupBox1.Controls.Add(this.PHYReferenceLbl);
             this.groupBox1.Controls.Add(this.LogicalNameTB);
             this.groupBox1.Controls.Add(this.LogicalNameLbl);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(296, 301);
+            this.groupBox1.Size = new System.Drawing.Size(296, 189);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "TCP/UDP Setup Object";
+            this.groupBox1.Text = "PPP Setup Object";
             this.groupBox1.UseCompatibleTextRendering = true;
             // 
-            // UseDHCCB
+            // PasswordLbl
             // 
-            this.UseDHCCB.Checked = true;
-            this.UseDHCCB.CheckState = System.Windows.Forms.CheckState.Indeterminate;
-            this.UseDHCCB.Location = new System.Drawing.Point(102, 204);
-            this.UseDHCCB.Name = "UseDHCCB";
-            this.UseDHCCB.Size = new System.Drawing.Size(37, 17);
-            this.UseDHCCB.TabIndex = 22;
-            this.UseDHCCB.UseVisualStyleBackColor = false;
+            this.PasswordLbl.AutoSize = true;
+            this.PasswordLbl.Location = new System.Drawing.Point(6, 154);
+            this.PasswordLbl.Name = "PasswordLbl";
+            this.PasswordLbl.Size = new System.Drawing.Size(56, 13);
+            this.PasswordLbl.TabIndex = 10;
+            this.PasswordLbl.Text = "Password:";
             // 
-            // SecondaryDNSAddressTB
+            // UserNameLbl
             // 
-            this.SecondaryDNSAddressTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.UserNameLbl.AutoSize = true;
+            this.UserNameLbl.Location = new System.Drawing.Point(6, 128);
+            this.UserNameLbl.Name = "UserNameLbl";
+            this.UserNameLbl.Size = new System.Drawing.Size(63, 13);
+            this.UserNameLbl.TabIndex = 8;
+            this.UserNameLbl.Text = "User Name:";
+            // 
+            // IPCPOptionsTB
+            // 
+            this.IPCPOptionsTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.SecondaryDNSAddressTB.AttributeID = 10;
-            this.SecondaryDNSAddressTB.Location = new System.Drawing.Point(102, 255);
-            this.SecondaryDNSAddressTB.Name = "SecondaryDNSAddressTB";
-            this.SecondaryDNSAddressTB.Size = new System.Drawing.Size(171, 20);
-            this.SecondaryDNSAddressTB.TabIndex = 19;
-            this.SecondaryDNSAddressTB.Type = GXDLMSDirector.Views.GXValueFieldType.TextBox;
+            this.IPCPOptionsTB.AttributeID = 4;
+            this.IPCPOptionsTB.Location = new System.Drawing.Point(114, 99);
+            this.IPCPOptionsTB.Name = "IPCPOptionsTB";
+            this.IPCPOptionsTB.Size = new System.Drawing.Size(171, 20);
+            this.IPCPOptionsTB.TabIndex = 7;
+            this.IPCPOptionsTB.Type = GXDLMSDirector.Views.GXValueFieldType.TextBox;
             // 
-            // SecondaryDNSAddressLbl
+            // IPCPOptionsLbl
             // 
-            this.SecondaryDNSAddressLbl.AutoSize = true;
-            this.SecondaryDNSAddressLbl.Location = new System.Drawing.Point(6, 258);
-            this.SecondaryDNSAddressLbl.Name = "SecondaryDNSAddressLbl";
-            this.SecondaryDNSAddressLbl.Size = new System.Drawing.Size(128, 13);
-            this.SecondaryDNSAddressLbl.TabIndex = 18;
-            this.SecondaryDNSAddressLbl.Text = "Secondary DNS Address:";
+            this.IPCPOptionsLbl.AutoSize = true;
+            this.IPCPOptionsLbl.Location = new System.Drawing.Point(6, 102);
+            this.IPCPOptionsLbl.Name = "IPCPOptionsLbl";
+            this.IPCPOptionsLbl.Size = new System.Drawing.Size(73, 13);
+            this.IPCPOptionsLbl.TabIndex = 6;
+            this.IPCPOptionsLbl.Text = "IPCP Options:";
             // 
-            // PrimaryDNSAddressTB
+            // LCPOptionsTB
             // 
-            this.PrimaryDNSAddressTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.LCPOptionsTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.PrimaryDNSAddressTB.AttributeID = 8;
-            this.PrimaryDNSAddressTB.Location = new System.Drawing.Point(102, 229);
-            this.PrimaryDNSAddressTB.Name = "PrimaryDNSAddressTB";
-            this.PrimaryDNSAddressTB.Size = new System.Drawing.Size(171, 20);
-            this.PrimaryDNSAddressTB.TabIndex = 17;
-            this.PrimaryDNSAddressTB.Type = GXDLMSDirector.Views.GXValueFieldType.TextBox;
+            this.LCPOptionsTB.AttributeID = 3;
+            this.LCPOptionsTB.Location = new System.Drawing.Point(114, 73);
+            this.LCPOptionsTB.Name = "LCPOptionsTB";
+            this.LCPOptionsTB.Size = new System.Drawing.Size(171, 20);
+            this.LCPOptionsTB.TabIndex = 5;
+            this.LCPOptionsTB.Type = GXDLMSDirector.Views.GXValueFieldType.TextBox;
             // 
-            // PrimaryDNSAddressLbl
+            // LCPOptionsLbl
             // 
-            this.PrimaryDNSAddressLbl.AutoSize = true;
-            this.PrimaryDNSAddressLbl.Location = new System.Drawing.Point(6, 232);
-            this.PrimaryDNSAddressLbl.Name = "PrimaryDNSAddressLbl";
-            this.PrimaryDNSAddressLbl.Size = new System.Drawing.Size(111, 13);
-            this.PrimaryDNSAddressLbl.TabIndex = 16;
-            this.PrimaryDNSAddressLbl.Text = "Primary DNS Address:";
+            this.LCPOptionsLbl.AutoSize = true;
+            this.LCPOptionsLbl.Location = new System.Drawing.Point(6, 76);
+            this.LCPOptionsLbl.Name = "LCPOptionsLbl";
+            this.LCPOptionsLbl.Size = new System.Drawing.Size(69, 13);
+            this.LCPOptionsLbl.TabIndex = 4;
+            this.LCPOptionsLbl.Text = "LCP Options:";
             // 
-            // UseDHCPLbl
+            // PHYReferenceTB
             // 
-            this.UseDHCPLbl.AutoSize = true;
-            this.UseDHCPLbl.Location = new System.Drawing.Point(6, 206);
-            this.UseDHCPLbl.Name = "UseDHCPLbl";
-            this.UseDHCPLbl.Size = new System.Drawing.Size(62, 13);
-            this.UseDHCPLbl.TabIndex = 14;
-            this.UseDHCPLbl.Text = "Use DHCP:";
-            // 
-            // GatewayIPAddressTB
-            // 
-            this.GatewayIPAddressTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.PHYReferenceTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.GatewayIPAddressTB.AttributeID = 7;
-            this.GatewayIPAddressTB.Location = new System.Drawing.Point(102, 177);
-            this.GatewayIPAddressTB.Name = "GatewayIPAddressTB";
-            this.GatewayIPAddressTB.Size = new System.Drawing.Size(171, 20);
-            this.GatewayIPAddressTB.TabIndex = 13;
-            this.GatewayIPAddressTB.Type = GXDLMSDirector.Views.GXValueFieldType.TextBox;
+            this.PHYReferenceTB.AttributeID = 2;
+            this.PHYReferenceTB.Location = new System.Drawing.Point(114, 47);
+            this.PHYReferenceTB.Name = "PHYReferenceTB";
+            this.PHYReferenceTB.Size = new System.Drawing.Size(171, 20);
+            this.PHYReferenceTB.TabIndex = 3;
+            this.PHYReferenceTB.Type = GXDLMSDirector.Views.GXValueFieldType.TextBox;
+            this.PHYReferenceTB.Load += new System.EventHandler(this.DataLinkLayerTB_Load);
             // 
-            // GatewayIPAddressLbl
+            // PHYReferenceLbl
             // 
-            this.GatewayIPAddressLbl.AutoSize = true;
-            this.GatewayIPAddressLbl.Location = new System.Drawing.Point(6, 180);
-            this.GatewayIPAddressLbl.Name = "GatewayIPAddressLbl";
-            this.GatewayIPAddressLbl.Size = new System.Drawing.Size(106, 13);
-            this.GatewayIPAddressLbl.TabIndex = 12;
-            this.GatewayIPAddressLbl.Text = "Gateway IP Address:";
-            // 
-            // SubnetMaskTB
-            // 
-            this.SubnetMaskTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.SubnetMaskTB.AttributeID = 6;
-            this.SubnetMaskTB.Location = new System.Drawing.Point(102, 151);
-            this.SubnetMaskTB.Name = "SubnetMaskTB";
-            this.SubnetMaskTB.Size = new System.Drawing.Size(171, 20);
-            this.SubnetMaskTB.TabIndex = 11;
-            this.SubnetMaskTB.Type = GXDLMSDirector.Views.GXValueFieldType.TextBox;
-            // 
-            // SubnetMaskLbl
-            // 
-            this.SubnetMaskLbl.AutoSize = true;
-            this.SubnetMaskLbl.Location = new System.Drawing.Point(6, 154);
-            this.SubnetMaskLbl.Name = "SubnetMaskLbl";
-            this.SubnetMaskLbl.Size = new System.Drawing.Size(73, 13);
-            this.SubnetMaskLbl.TabIndex = 10;
-            this.SubnetMaskLbl.Text = "Subnet Mask:";
-            // 
-            // IPOptionsTB
-            // 
-            this.IPOptionsTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.IPOptionsTB.AttributeID = 5;
-            this.IPOptionsTB.Location = new System.Drawing.Point(102, 125);
-            this.IPOptionsTB.Name = "IPOptionsTB";
-            this.IPOptionsTB.Size = new System.Drawing.Size(171, 20);
-            this.IPOptionsTB.TabIndex = 9;
-            this.IPOptionsTB.Type = GXDLMSDirector.Views.GXValueFieldType.TextBox;
-            // 
-            // IPOptionsLbl
-            // 
-            this.IPOptionsLbl.AutoSize = true;
-            this.IPOptionsLbl.Location = new System.Drawing.Point(6, 128);
-            this.IPOptionsLbl.Name = "IPOptionsLbl";
-            this.IPOptionsLbl.Size = new System.Drawing.Size(59, 13);
-            this.IPOptionsLbl.TabIndex = 8;
-            this.IPOptionsLbl.Text = "IP Options:";
-            // 
-            // MulticastIPAddressTB
-            // 
-            this.MulticastIPAddressTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.MulticastIPAddressTB.AttributeID = 4;
-            this.MulticastIPAddressTB.Location = new System.Drawing.Point(102, 99);
-            this.MulticastIPAddressTB.Name = "MulticastIPAddressTB";
-            this.MulticastIPAddressTB.Size = new System.Drawing.Size(171, 20);
-            this.MulticastIPAddressTB.TabIndex = 7;
-            this.MulticastIPAddressTB.Type = GXDLMSDirector.Views.GXValueFieldType.TextBox;
-            // 
-            // MulticastIPAddressLbl
-            // 
-            this.MulticastIPAddressLbl.AutoSize = true;
-            this.MulticastIPAddressLbl.Location = new System.Drawing.Point(6, 102);
-            this.MulticastIPAddressLbl.Name = "MulticastIPAddressLbl";
-            this.MulticastIPAddressLbl.Size = new System.Drawing.Size(106, 13);
-            this.MulticastIPAddressLbl.TabIndex = 6;
-            this.MulticastIPAddressLbl.Text = "Multicast IP Address:";
-            // 
-            // IPAddressTB
-            // 
-            this.IPAddressTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.IPAddressTB.AttributeID = 3;
-            this.IPAddressTB.Location = new System.Drawing.Point(102, 73);
-            this.IPAddressTB.Name = "IPAddressTB";
-            this.IPAddressTB.Size = new System.Drawing.Size(171, 20);
-            this.IPAddressTB.TabIndex = 5;
-            this.IPAddressTB.Type = GXDLMSDirector.Views.GXValueFieldType.TextBox;
-            // 
-            // IPAddressLbl
-            // 
-            this.IPAddressLbl.AutoSize = true;
-            this.IPAddressLbl.Location = new System.Drawing.Point(6, 76);
-            this.IPAddressLbl.Name = "IPAddressLbl";
-            this.IPAddressLbl.Size = new System.Drawing.Size(61, 13);
-            this.IPAddressLbl.TabIndex = 4;
-            this.IPAddressLbl.Text = "IP Address:";
-            // 
-            // DataLinkLayerTB
-            // 
-            this.DataLinkLayerTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.DataLinkLayerTB.AttributeID = 2;
-            this.DataLinkLayerTB.Location = new System.Drawing.Point(102, 47);
-            this.DataLinkLayerTB.Name = "DataLinkLayerTB";
-            this.DataLinkLayerTB.Size = new System.Drawing.Size(171, 20);
-            this.DataLinkLayerTB.TabIndex = 3;
-            this.DataLinkLayerTB.Type = GXDLMSDirector.Views.GXValueFieldType.TextBox;
-            // 
-            // DataLinkLayerLbl
-            // 
-            this.DataLinkLayerLbl.AutoSize = true;
-            this.DataLinkLayerLbl.Location = new System.Drawing.Point(6, 50);
-            this.DataLinkLayerLbl.Name = "DataLinkLayerLbl";
-            this.DataLinkLayerLbl.Size = new System.Drawing.Size(77, 13);
-            this.DataLinkLayerLbl.TabIndex = 2;
-            this.DataLinkLayerLbl.Text = "Data link layer:";
+            this.PHYReferenceLbl.AutoSize = true;
+            this.PHYReferenceLbl.Location = new System.Drawing.Point(6, 50);
+            this.PHYReferenceLbl.Name = "PHYReferenceLbl";
+            this.PHYReferenceLbl.Size = new System.Drawing.Size(85, 13);
+            this.PHYReferenceLbl.TabIndex = 2;
+            this.PHYReferenceLbl.Text = "PHY Reference:";
             // 
             // LogicalNameTB
             // 
             this.LogicalNameTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.LogicalNameTB.AttributeID = 1;
-            this.LogicalNameTB.Location = new System.Drawing.Point(102, 21);
+            this.LogicalNameTB.Location = new System.Drawing.Point(114, 21);
             this.LogicalNameTB.Name = "LogicalNameTB";
             this.LogicalNameTB.Size = new System.Drawing.Size(171, 20);
             this.LogicalNameTB.TabIndex = 1;
@@ -401,9 +291,27 @@ namespace GXDLMSDirector.Views
             this.errorProvider1.ContainerControl = this;
             this.errorProvider1.Icon = ((System.Drawing.Icon)(resources.GetObject("errorProvider1.Icon")));
             // 
+            // UserNameTB
+            // 
+            this.UserNameTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.UserNameTB.Location = new System.Drawing.Point(115, 126);
+            this.UserNameTB.Name = "UserNameTB";
+            this.UserNameTB.Size = new System.Drawing.Size(170, 20);
+            this.UserNameTB.TabIndex = 12;
+            // 
+            // PasswordTB
+            // 
+            this.PasswordTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.PasswordTB.Location = new System.Drawing.Point(116, 152);
+            this.PasswordTB.Name = "PasswordTB";
+            this.PasswordTB.Size = new System.Drawing.Size(170, 20);
+            this.PasswordTB.TabIndex = 13;
+            // 
             // GXDLMSPppSetupView
             // 
-            this.ClientSize = new System.Drawing.Size(320, 335);
+            this.ClientSize = new System.Drawing.Size(320, 211);
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "GXDLMSPppSetupView";
@@ -411,6 +319,11 @@ namespace GXDLMSDirector.Views
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.ResumeLayout(false);
+
+        }
+
+        private void DataLinkLayerTB_Load(object sender, EventArgs e)
+        {
 
         }
 

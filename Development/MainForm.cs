@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/MainForm.cs $
 //
-// Version:         $Revision: 6743 $,
-//                  $Date: 2013-11-28 15:38:22 +0200 (to, 28 marras 2013) $
+// Version:         $Revision: 7095 $,
+//                  $Date: 2014-03-12 20:23:23 +0200 (ke, 12 maalis 2014) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -571,7 +571,7 @@ namespace GXDLMSDirector
             try
             {
                 GXDLMSDevice dev = obj.Target.Parent.Tag as GXDLMSDevice;
-                dev.Comm.MethodRequest(obj.Target.Name, obj.Target.ObjectType, obj.AttributeID);
+                dev.Comm.MethodRequest(obj.Target, obj.AttributeID, null);
             }
             catch (Exception ex)
             {

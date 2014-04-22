@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 7165 $,
-//                  $Date: 2014-04-01 17:54:21 +0300 (ti, 01 huhti 2014) $
+// Version:         $Revision: 7247 $,
+//                  $Date: 2014-04-22 11:10:03 +0300 (ti, 22 huhti 2014) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -279,6 +279,7 @@ namespace GXDLMSDirector
                 GXLogWriter.WriteLog("HDLC sending:" + data);
                 ReceiveParameters<string> p = new ReceiveParameters<string>()
                 {
+                    AllData = true,
                     Eop = Terminator,                    
                     WaitTime = Parent.WaitTime * 1000                    
                 };
@@ -290,7 +291,6 @@ namespace GXDLMSDirector
                         //Try to move away from mode E.
                         try
                         {
-
                             this.ReadDLMSPacket(this.DisconnectRequest());
                         }
                         catch (Exception ex)
@@ -389,34 +389,26 @@ namespace GXDLMSDirector
                 lock (Media.Synchronous)
                 {
                     Media.Send(arr, null);
-                    System.Threading.Thread.Sleep(1000);
+                    System.Threading.Thread.Sleep(500);
                     if (serial != null)
                     {
-                    //    serial.DtrEnable = serial.RtsEnable = false;
                         serial.BaudRate = BaudRate;
-                    //    serial.DtrEnable = serial.RtsEnable = true;
                     }
                     p.Reply = null;
-                    p.WaitTime = 500;
-                    if (!Media.Receive(p))
+                    p.WaitTime = 100;
+                    //Note! All meters do not echo this.
+                    Media.Receive(p);
+                    if (p.Reply != null)
                     {
-                        //Try to move away from mode E.
-                        this.ReadDLMSPacket(this.DisconnectRequest());
-                        data = "Failed to receive reply from the device in given time.";
-                        GXLogWriter.WriteLog(data);
-                        throw new Exception(data);
+                        GXLogWriter.WriteLog("Received: " + p.Reply);
                     }
-                    GXLogWriter.WriteLog("Received: " + p.Reply);
                     if (serial != null)
                     {
-                      //  System.Threading.Thread.Sleep(50);
-                        //serial.DtrEnable = serial.RtsEnable = false;
                         serial.DataBits = 8;
                         serial.Parity = Parity.None;
                         serial.StopBits = StopBits.One;
-                        //serial.DiscardOutBuffer();
-                        //serial.DtrEnable = serial.RtsEnable = true;
-                        //System.Threading.Thread.Sleep(200);
+                        serial.DiscardInBuffer();
+                        serial.DiscardOutBuffer();
                         serial.ResetSynchronousBuffer();
                     }
                 }

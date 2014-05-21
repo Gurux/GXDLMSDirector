@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 7247 $,
-//                  $Date: 2014-04-22 11:10:03 +0300 (ti, 22 huhti 2014) $
+// Version:         $Revision: 7405 $,
+//                  $Date: 2014-05-07 10:30:16 +0300 (ke, 07 touko 2014) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -893,8 +893,9 @@ namespace GXDLMSDirector
                         OnDataReceived += new GXDLMSCommunicator.DataReceivedEventHandler(this.OnProfileGenericDataReceived);
                         if (CurrentProfileGeneric.AccessSelector != AccessRange.Entry)
                         {
-                            byte[] tmp = m_Cosem.ReadRowsByRange(CurrentProfileGeneric.Name, CurrentProfileGeneric.CaptureObjects[0].LogicalName, 
-                                CurrentProfileGeneric.CaptureObjects[0].ObjectType, CurrentProfileGeneric.CaptureObjects[0].Version, 
+                            GXDLMSObject obj2 = CurrentProfileGeneric.CaptureObjects[0].Key;
+                            byte[] tmp = m_Cosem.ReadRowsByRange(CurrentProfileGeneric.Name, obj2.LogicalName,
+                                obj2.ObjectType, obj2.Version, 
                                 Convert.ToDateTime(CurrentProfileGeneric.From), Convert.ToDateTime(CurrentProfileGeneric.To));
                             ReadDataBlock(tmp, "Reading profile generic data", 1);
                         }
@@ -1024,7 +1025,7 @@ namespace GXDLMSDirector
             return reply;
         }
 
-        public GXDLMSObjectCollection GetProfileGenericColumns(object name)
+        public List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> GetProfileGenericColumns(object name)
         {
             byte[] allData = ReadDataBlock(Read(name, ObjectType.ProfileGeneric, 3), "Get profile generic columns...");
             if (allData == null)

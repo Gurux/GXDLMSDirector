@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/MainForm.cs $
 //
-// Version:         $Revision: 7095 $,
-//                  $Date: 2014-03-12 20:23:23 +0200 (ke, 12 maalis 2014) $
+// Version:         $Revision: 7455 $,
+//                  $Date: 2014-05-21 13:06:40 +0300 (ke, 21 touko 2014) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -2341,21 +2341,7 @@ namespace GXDLMSDirector
         {
             try
             {
-                string HelpPath = string.Empty;
-                if (System.Diagnostics.Debugger.IsAttached)
-                {
-                    HelpPath = Directory.GetParent(Directory.GetParent(Application.StartupPath).FullName).FullName;
-                }
-                else
-                {
-                    HelpPath = Application.StartupPath;
-                }
-                HelpPath = Path.Combine(HelpPath, "GXDLMSDirector.chm");
-                bool exists = File.Exists(HelpPath);
-                if (exists)
-                {
-                    Help.ShowHelp(null, HelpPath);
-                }
+                System.Diagnostics.Process.Start("http://www.gurux.fi/index.php?q=GXDLMSDirectorHelp");
             }
             catch (Exception Ex)
             {

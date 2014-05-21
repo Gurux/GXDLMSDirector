@@ -67,7 +67,7 @@ namespace GXDLMSDirector
             return colors;
         }
         GXGraphItemCollection Items;
-        public GXGraphItemForm(GXGraphItemCollection items, GXDLMSObjectCollection columns, GXDLMSDevice device)
+        public GXGraphItemForm(GXGraphItemCollection items, List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> columns, GXDLMSDevice device)
         {
             InitializeComponent();
             GraphItemEditor_SizeChanged(null, null);
@@ -76,31 +76,31 @@ namespace GXDLMSDirector
             int pos = 0;
             List<string> colors = GetColors();
             GXManufacturer man = device.Manufacturers.FindByIdentification(device.Manufacturer);
-            foreach (GXDLMSObject it in columns)
+            foreach (var it in columns)
             {
-                IGXDLMSColumnObject obj = it as IGXDLMSColumnObject;
-                if (!GXHelpers.IsNumeric(it.GetDataType(obj.SelectedAttributeIndex)) || (obj.SelectedAttributeIndex > 0 && ((obj.SelectedAttributeIndex & 0x8) != 0 || (obj.SelectedAttributeIndex & 0x10) != 0)))
+                GXDLMSObject obj = it.Key;
+                int index = it.Value.AttributeIndex;
+                if (!GXHelpers.IsNumeric(obj.GetDataType(index)) || (index > 0 && ((index & 0x8) != 0 || (index & 0x10) != 0)))
                 {
                     continue;
                 }
-                GXGraphItem item = items.Find(it.LogicalName, obj.SelectedAttributeIndex);
+                GXGraphItem item = items.Find(obj.LogicalName, index);
                 if (item == null)
                 {
                     item = new GXGraphItem();
-                    item.LogicalName = it.LogicalName;
+                    item.LogicalName = obj.LogicalName;
                     item.Color = Color.FromName(colors[pos++]);
-                    item.AttributeIndex = obj.SelectedAttributeIndex;
+                    item.AttributeIndex = index;
                     items.Add(item);
                 }
-                string desc = it.Description;
-                GXObisCode code = man.ObisCodes.FindByLN(it.ObjectType, it.LogicalName, null);
+                string desc = obj.Description;
+                GXObisCode code = man.ObisCodes.FindByLN(obj.ObjectType, obj.LogicalName, null);
                 if (code != null)
                 {
                     desc = code.Description;
                 }
-                ListViewItem tmp = GraphItemList.Items.Add(it.LogicalName + " " + desc);
+                ListViewItem tmp = GraphItemList.Items.Add(obj.LogicalName + " " + desc);
                 tmp.Tag = item;
-                //tmp.StateImageIndex = tmp.ImageIndex = 1;
             }
         }
 

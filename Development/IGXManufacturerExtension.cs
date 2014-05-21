@@ -46,6 +46,6 @@ namespace GXDLMSDirector
         /// </summary>
         bool Read(object sender, GXDLMSObject item, GXDLMSObjectCollection columns, int attribute, GXDLMSCommunicator comm);
 
-        GXDLMSObjectCollection Refresh(GXDLMSProfileGeneric item, GXDLMSCommunicator comm);
+        List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> Refresh(GXDLMSProfileGeneric item, GXDLMSCommunicator comm);
     }
 }

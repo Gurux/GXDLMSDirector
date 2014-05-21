@@ -15,18 +15,6 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_1AAD6A0A7F9F421AB2E1F22E38230FFB"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_26D9ACB491F2473FBF0B3E4DCA82CB48"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_2777A2DB34EC26B1A1C6A9443A509D6B"
         "OwnerKey" = "8:_B572277871BE41FDA2AFD30871212CE7"
         "MsmSig" = "8:_UNDEFINED"
@@ -371,46 +359,6 @@
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1AAD6A0A7F9F421AB2E1F22E38230FFB"
-            {
-            "SourcePath" = "8:..\\Help\\GXDLMSDirector.chm"
-            "TargetName" = "8:GXDLMSDirector.chm"
-            "Tag" = "8:"
-            "Folder" = "8:_A65E75B4F31C4417AD765AD80DD75397"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_26D9ACB491F2473FBF0B3E4DCA82CB48"
-            {
-            "SourcePath" = "8:..\\..\\GXCom\\Install\\Files\\Help.ico"
-            "TargetName" = "8:Help.ico"
-            "Tag" = "8:"
-            "Folder" = "8:_A65E75B4F31C4417AD765AD80DD75397"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_2777A2DB34EC26B1A1C6A9443A509D6B"
             {
             "AssemblyRegister" = "3:1"
@@ -477,7 +425,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:ICSharpCode.SharpZipLib, Version=0.85.4.369, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_7AE945B1B2A28B4F2A779A215882E7F3"
@@ -822,15 +770,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:GXDLMSDirector 7.0 Community Edition"
-        "ProductCode" = "8:{BF12F691-07BD-4B97-8470-63AFAB8E7129}"
-        "PackageCode" = "8:{1D8774DB-88D6-42B5-ACF8-EF778B3D88DB}"
+        "ProductCode" = "8:{54C6380C-86D3-4891-A489-9665AE06A0F7}"
+        "PackageCode" = "8:{EA56224B-3D48-4B80-9970-58C07F0D77F3}"
         "UpgradeCode" = "8:{11462D6C-0EE5-4B3F-8425-FFD5D7F828C4}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:7.0.31"
+        "ProductVersion" = "8:7.0.32"
         "Manufacturer" = "8:Gurux"
         "ARPHELPTELEPHONE" = "8:+358 3 265 1244"
         "ARPHELPLINK" = "8:http://www.gurux.org/gxdn"
@@ -955,20 +903,6 @@
             "Folder" = "8:_CFEA81DE5F80457D9956297225C20798"
             "WorkingFolder" = "8:_A65E75B4F31C4417AD765AD80DD75397"
             "Icon" = "8:_B572277871BE41FDA2AFD30871212CE7"
-            "Feature" = "8:"
-            }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_E7D3E4E8970947C4884C6ABB63BB9EE3"
-            {
-            "Name" = "8:GXDLMSDirector.chm"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:_1AAD6A0A7F9F421AB2E1F22E38230FFB"
-            "Folder" = "8:_CFEA81DE5F80457D9956297225C20798"
-            "WorkingFolder" = "8:_A65E75B4F31C4417AD765AD80DD75397"
-            "Icon" = "8:_26D9ACB491F2473FBF0B3E4DCA82CB48"
             "Feature" = "8:"
             }
         }

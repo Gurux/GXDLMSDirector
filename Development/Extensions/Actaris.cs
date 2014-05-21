@@ -49,11 +49,11 @@ namespace Extensions
 
         #region IGXManufacturerExtension Members       
 
-        public GXDLMSObjectCollection Refresh(GXDLMSProfileGeneric item, GXDLMSCommunicator comm)
+        public List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> Refresh(GXDLMSProfileGeneric item, GXDLMSCommunicator comm)
         {
             if (item.LogicalName.CompareTo("0.0.99.1.2.255") == 0) // LoadProfile1EndOfRecordingData
             {
-                GXDLMSObjectCollection items = new GXDLMSObjectCollection();
+                List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> items = new List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>>();
                 //Read profile generic columns.             
                 object value = comm.GetProfileGenericColumns(item.Name);
                 byte[] data = comm.Read("0.0.99.128.1.255", ObjectType.ProfileGeneric, 2);
@@ -62,13 +62,11 @@ namespace Extensions
                 Array info = values[0] as Array;
                 GXDLMSObject obj = new GXDLMSData();
                 obj.Description = "DateTime";                
-                obj.SelectedAttributeIndex = 1;
                 obj.SetUIDataType(1, DataType.DateTime);
-                items.Add(obj);
+                items.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(obj, new GXDLMSCaptureObject(1, 0)));
                 obj = new GXDLMSData();
                 obj.Description = "Status";
-                items.Add(obj);
-                obj.SelectedAttributeIndex = 2;
+                items.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(obj, new GXDLMSCaptureObject(2, 0)));
                 //Two last items contains Start and end date.
                 int cnt = 4;
                 for (int pos = 0; pos < info.Length - 2; pos += 2)
@@ -77,8 +75,7 @@ namespace Extensions
                     obj.LogicalName = GXHelpers.ConvertFromDLMS(info.GetValue(pos), DataType.OctetString, DataType.OctetString, false).ToString();
                     object scalerUnit = info.GetValue(pos + 1);
                     obj.Description = "";
-                    obj.SelectedAttributeIndex = ++cnt;
-                    items.Add(obj);
+                    items.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(obj, new GXDLMSCaptureObject(++cnt, 0)));
                 }
                 LastDateTime = DateTime.Parse(GXDLMS.Common.GXHelpers.ConvertFromDLMS(info.GetValue(cnt), DataType.OctetString, DataType.DateTime, true).ToString());
                 return items;
@@ -297,7 +294,8 @@ namespace Extensions
                     //Read profile generic columns.                
                     if (pg.AccessSelector != AccessRange.Entry)
                     {
-                        data = comm.m_Cosem.ReadRowsByRange(pg.Name, pg.CaptureObjects[0].LogicalName, pg.CaptureObjects[0].ObjectType, pg.CaptureObjects[0].Version, Convert.ToDateTime(pg.From).Date, Convert.ToDateTime(pg.To).Date);
+                        data = comm.m_Cosem.ReadRowsByRange(pg.Name, pg.CaptureObjects[0].Key.LogicalName,
+                                        pg.CaptureObjects[0].Key.ObjectType, pg.CaptureObjects[0].Key.Version, Convert.ToDateTime(pg.From).Date, Convert.ToDateTime(pg.To).Date);
                         data = comm.ReadDataBlock(data, "Reading profile generic data", 1);
                     }
                     else

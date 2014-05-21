@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDevice.cs $
 //
-// Version:         $Revision: 7001 $,
-//                  $Date: 2014-02-06 16:20:13 +0200 (to, 06 helmi 2014) $
+// Version:         $Revision: 7405 $,
+//                  $Date: 2014-05-07 10:30:16 +0300 (ke, 07 touko 2014) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -614,7 +614,7 @@ namespace GXDLMSDirector
             }
             item.Buffer.Clear();
             item.CaptureObjects.Clear();
-            GXDLMSObjectCollection cols = null;
+            List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> cols = null;
             List<DataColumn> columns = new List<DataColumn>();
             if (this.Extension != null)
             {                

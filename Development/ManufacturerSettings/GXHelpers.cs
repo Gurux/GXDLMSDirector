@@ -258,53 +258,7 @@ namespace GXDLMS.Common
                 return BitConverter.ToString((byte[])data).Replace("-", " ");
             }
             return Convert.ToString(data);
-        }
-
-        static public Type FromDLMSDataType(DataType type)
-        {
-            switch (type)
-            {
-                case DataType.CompactArray:
-                case DataType.Array:
-                    return typeof(byte[]);
-                case DataType.Boolean:
-                    return typeof(bool);
-                case DataType.Date:                    
-                case DataType.DateTime:
-                case DataType.Time:
-                    return typeof(DateTime);
-                case DataType.Float32:
-                    return typeof(float);
-                case DataType.Float64:
-                    return typeof(double);
-                case DataType.Int16:
-                    return typeof(Int16);
-                case DataType.Int32:
-                    return typeof(Int32);
-                case DataType.Int64:
-                    return typeof(Int64);
-                case DataType.Int8:
-                    return typeof(Int16);
-                case DataType.String:
-                    return typeof(string);
-                case DataType.UInt16:
-                    return typeof(UInt16);
-                case DataType.UInt32:
-                    return typeof(UInt32);
-                case DataType.UInt64:
-                    return typeof(UInt64);
-                case DataType.UInt8:
-                    return typeof(byte);
-                case DataType.None:                    
-                case DataType.BinaryCodedDesimal:
-                case DataType.BitString:
-                case DataType.Enum:
-                case DataType.OctetString:
-                case DataType.Structure:
-                default:
-                    return null;
-            }
-        }
+        }       
 
         static public bool IsNumeric(DataType type)
         {
@@ -326,9 +280,87 @@ namespace GXDLMS.Common
             return false;
         }
 
+        struct Date
+        {
+            public override string ToString()
+            {
+                return "Date";
+            }
+        };
+
+        struct Time
+        {
+            public override string ToString()
+            {
+                return "Time";
+            }
+        };
+
+        /// <summary>
+        /// Convert DLMS data type to .Net data type.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        static public Type GetDataType(Gurux.DLMS.DataType type)
+        {
+            switch (type)
+            {
+                case Gurux.DLMS.DataType.None:
+                    return null;
+                case Gurux.DLMS.DataType.Array:
+                case Gurux.DLMS.DataType.CompactArray:
+                case Gurux.DLMS.DataType.Structure:
+                    return typeof(object[]);
+                case Gurux.DLMS.DataType.BinaryCodedDesimal:
+                    return typeof(string);
+                case Gurux.DLMS.DataType.BitString:
+                    return typeof(string);
+                case Gurux.DLMS.DataType.Boolean:
+                    return typeof(bool);
+                case Gurux.DLMS.DataType.Date:
+                    return typeof(Date);
+                case Gurux.DLMS.DataType.DateTime:
+                    return typeof(DateTime);
+                case Gurux.DLMS.DataType.Float32:
+                    return typeof(float);
+                case Gurux.DLMS.DataType.Float64:
+                    return typeof(double);
+                case Gurux.DLMS.DataType.Int16:
+                    return typeof(Int16);
+                case Gurux.DLMS.DataType.Int32:
+                    return typeof(Int32);
+                case Gurux.DLMS.DataType.Int64:
+                    return typeof(Int64);
+                case Gurux.DLMS.DataType.Int8:
+                    return typeof(sbyte);
+                case Gurux.DLMS.DataType.OctetString:
+                    return typeof(byte[]);
+                case Gurux.DLMS.DataType.String:
+                    return typeof(string);
+                case Gurux.DLMS.DataType.Time:
+                    return typeof(Time);
+                case Gurux.DLMS.DataType.UInt16:
+                    return typeof(UInt16);
+                case Gurux.DLMS.DataType.UInt32:
+                    return typeof(UInt32);
+                case Gurux.DLMS.DataType.UInt64:
+                    return typeof(UInt64);
+                case Gurux.DLMS.DataType.UInt8:
+                    return typeof(byte);
+                default:
+                case Gurux.DLMS.DataType.Enum:
+                    break;
+            }
+            throw new Exception("Invalid DLMS data type.");
+        }
+
         static public DataType GetDLMSDataType(Type type)
         {
             //If expected type is not given return property type.
+            if (type == null)
+            {
+                return DataType.None;
+            }
             if (type == typeof(Int32))
             {
                 return DataType.Int32;
@@ -377,9 +409,25 @@ namespace GXDLMS.Common
             {
                 return DataType.DateTime;
             }
+            if (type == typeof(Date))
+            {
+                return DataType.Date;
+            }
+            if (type == typeof(Time))
+            {
+                return DataType.Time;
+            }
             if (type == typeof(Boolean) || type == typeof(bool))
             {
                 return DataType.Boolean;
+            }
+            if (type == typeof(byte[]))
+            {
+                return DataType.OctetString;
+            }
+            if (type == typeof(object[]))
+            {
+                return DataType.Array;
             }
             throw new Exception("Failed to convert data type to DLMS data type. Unknown data type.");
         }

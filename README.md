@@ -20,5 +20,5 @@ So it's easy to start reading your meters.
 
 GXDLMSDirector [Help](http://www.gurux.fi/index.php?q=GXDLMSDirectorHelp "help") aids you to get started.
 
-If you have problems or ideas you can ask your questions in Gurux [Forum](http://www.gurux.org/forum).
+If you have problems or ideas you can ask your questions in Gurux GXDLMSDirector [Forum](http://www.gurux.fi/index.php?q=GXDLMSCOSEMDirectorForum).
 

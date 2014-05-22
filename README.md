@@ -22,6 +22,3 @@ GXDLMSDirector [Help](http://www.gurux.fi/index.php?q=GXDLMSDirectorHelp "help")
 
 If you have problems or ideas you can ask your questions in Gurux [Forum](http://www.gurux.org/forum).
 
-
-![alt tag](https://raw.github.com/username/projectname/branch/path/to/img.png)
-

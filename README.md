@@ -15,8 +15,8 @@ For more info check out [GXDLMSDirector](http://www.gurux.fi/index.php?q=GXDLMSD
 
 We are updating documentation on Gurux web page. 
 
-Because DLMS manufacturers are using different parameters for meters we are updating ["default meters settings"](http://www.gurux.fi/index.php?q=GXDLMSDirectorExample, "default meters settings").
-So it's easy to start reading your meters.
+Because DLMS manufacturers are using different parameters for meters we are updating [default meters settings](http://www.gurux.fi/index.php?q=GXDLMSDirectorExample).
+We'll try to make your meter reading as easy as possible.
 
 GXDLMSDirector [Help](http://www.gurux.fi/index.php?q=GXDLMSDirectorHelp "help") aids you to get started.
 

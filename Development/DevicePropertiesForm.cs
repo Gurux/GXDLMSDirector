@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.cs $
 //
-// Version:         $Revision: 6743 $,
-//                  $Date: 2013-11-28 15:38:22 +0200 (to, 28 marras 2013) $
+// Version:         $Revision: 7547 $,
+//                  $Date: 2014-06-30 15:54:17 +0300 (ma, 30 kesä 2014) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -62,6 +62,7 @@ namespace GXDLMSDirector
             try
             {
                 InitializeComponent();
+                NetProtocolCB.Items.AddRange(new object[] { NetworkType.Tcp, NetworkType.Udp });                
                 this.ServerAddressTypeCB.SelectedIndexChanged += new System.EventHandler(this.ServerAddressTypeCB_SelectedIndexChanged);
                 NetworkSettingsGB.Width = this.Width - NetworkSettingsGB.Left;
                 SerialSettingsGB.Bounds = TerminalSettingsGB.Bounds = NetworkSettingsGB.Bounds;
@@ -147,10 +148,11 @@ namespace GXDLMSDirector
                     net.Protocol = Gurux.Net.NetworkType.Tcp;
                     this.HostNameTB.Text = ((GXNet)SelectedMedia).HostName;
                     this.PortTB.Text = ((GXNet)SelectedMedia).Port.ToString();
+                    NetProtocolCB.SelectedItem = ((GXNet)SelectedMedia).Protocol;
                 }
                 else
                 {
-                    net.Protocol = Gurux.Net.NetworkType.Tcp;
+                    NetProtocolCB.SelectedItem = net.Protocol = Gurux.Net.NetworkType.Tcp;
                     this.MediasCB.Items.Add(net);
                 }
                 if (SelectedMedia is GXSerial)
@@ -337,6 +339,7 @@ namespace GXDLMSDirector
                     }
                     ((GXNet)SelectedMedia).Port = port;
                     Device.UseRemoteSerial = UseRemoteSerialCB.Checked;
+                    ((GXNet)SelectedMedia).Protocol = (NetworkType)NetProtocolCB.SelectedItem;
                 }
                 else if (SelectedMedia is Gurux.Terminal.GXTerminal)
                 {

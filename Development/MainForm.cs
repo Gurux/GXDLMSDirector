@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/MainForm.cs $
 //
-// Version:         $Revision: 7455 $,
-//                  $Date: 2014-05-21 13:06:40 +0300 (ke, 21 touko 2014) $
+// Version:         $Revision: 7547 $,
+//                  $Date: 2014-06-30 15:54:17 +0300 (ma, 30 kesä 2014) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -35,21 +35,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Gurux.Serial;
-using Gurux.Net;
 using System.IO;
 using System.Xml.Serialization;
 using System.Reflection;
 using System.Xml;
 using GXDLMS.ManufacturerSettings;
-using System.Security.Principal;
-using System.Security.AccessControl;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
 using GXDLMSDirector.Views;
 using System.Threading;
@@ -60,7 +52,6 @@ using Gurux.DLMS.ManufacturerSettings;
 using Gurux.DLMS.Objects;
 using Gurux.DLMS;
 using System.Linq;
-using System.Collections;
 
 namespace GXDLMSDirector
 {   

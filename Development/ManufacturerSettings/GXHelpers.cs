@@ -87,7 +87,7 @@ namespace GXDLMS.Common
                     data = System.Text.Encoding.ASCII.GetString(arr);
                 }
             }
-            //Convert DLMS datetime to Windows Time.
+            //Convert DLMS date time to Windows Time.
             else if (type == DataType.DateTime)
             {
                 if (data is byte[])
@@ -96,7 +96,7 @@ namespace GXDLMS.Common
                 }
                 return data;
             }
-            //Convert DLMS datetime to Windows Date.
+            //Convert DLMS date time to Windows Date.
             else if (type == DataType.Date)
             {                
                 if (data is DateTime)
@@ -113,7 +113,7 @@ namespace GXDLMS.Common
                 }                
                 return GXDLMSClient.ChangeType((byte[])data, DataType.Date);
             }
-            //Convert DLMS datetime to Windows Time.
+            //Convert DLMS date time to Windows Time.
             else if (type == DataType.Time)
             {
                 if (data is byte[])

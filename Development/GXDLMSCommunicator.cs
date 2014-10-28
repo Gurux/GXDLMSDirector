@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 7405 $,
-//                  $Date: 2014-05-07 10:30:16 +0300 (ke, 07 touko 2014) $
+// Version:         $Revision: 7686 $,
+//                  $Date: 2014-10-28 15:54:10 +0200 (ti, 28 loka 2014) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -1017,7 +1017,7 @@ namespace GXDLMSDirector
             allData = Read(data, interfaceClass, attributeOrdinal);
             allData = ReadDataBlock(allData, "Read object");             
             reply = m_Cosem.GetValue(allData);
-            //If datatype is unknown
+            //If data type is unknown
             if (type == DataType.None)
             {
                 type = m_Cosem.GetDLMSDataType(allData);

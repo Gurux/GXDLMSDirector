@@ -77,7 +77,7 @@ namespace Extensions
                     obj.Description = "";
                     items.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(obj, new GXDLMSCaptureObject(++cnt, 0)));
                 }
-                LastDateTime = DateTime.Parse(GXDLMS.Common.GXHelpers.ConvertFromDLMS(info.GetValue(cnt), DataType.OctetString, DataType.DateTime, true).ToString());
+                LastDateTime = ((GXDateTime) GXDLMS.Common.GXHelpers.ConvertFromDLMS(info.GetValue(info.Length - 1), DataType.OctetString, DataType.DateTime, true)).Value;
                 return items;
             }             
             return null;
@@ -262,7 +262,7 @@ namespace Extensions
         }
 
         /// <summary>
-        /// Returns collection of manufacturer Obiscodes to implement custom read.
+        /// Returns collection of manufacturer Obis codes to implement custom read.
         /// </summary>
         /// <param name="name">Short or Logical Name.</param>
         /// <param name="type">Interface type.</param>        

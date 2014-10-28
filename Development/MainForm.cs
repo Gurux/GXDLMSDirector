@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/MainForm.cs $
 //
-// Version:         $Revision: 7547 $,
-//                  $Date: 2014-06-30 15:54:17 +0300 (ma, 30 kesä 2014) $
+// Version:         $Revision: 7686 $,
+//                  $Date: 2014-10-28 15:54:10 +0200 (ti, 28 loka 2014) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -2027,8 +2027,8 @@ namespace GXDLMSDirector
                         RemoveObject(dev.Objects[0]);
                     }
                     GXManufacturer m = Manufacturers.FindByIdentification(dev.Manufacturer);
-                    dev.ObisCodes = m.ObisCodes;
-                    //Walk throught object tree.
+                    dev.ObisCodes = m.ObisCodes;                    
+                    //Walk through object tree.
                     dev.UpdateObjects();
                     //Read registers units and scalers.
                     int cnt = dev.Objects.Count;                    

@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDevice.cs $
 //
-// Version:         $Revision: 7405 $,
-//                  $Date: 2014-05-07 10:30:16 +0300 (ke, 07 touko 2014) $
+// Version:         $Revision: 7706 $,
+//                  $Date: 2014-12-04 12:50:37 +0200 (to, 04 joulu 2014) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -540,8 +540,7 @@ namespace GXDLMSDirector
                 }
                 if (m_Communicator.Media.IsOpen)
                 {
-                    byte[] data = (byte[])m_Communicator.DisconnectRequest();
-                    m_Communicator.ReadDLMSPacket(data);
+                    m_Communicator.ReadDLMSPacket(m_Communicator.DisconnectRequest(), 1);
                 }
             }
             catch (Exception Ex)

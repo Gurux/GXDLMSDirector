@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/ManufacturerForm.Designer.cs $
 //
-// Version:         $Revision: 4474 $,
-//                  $Date: 2011-11-29 15:19:33 +0200 (ti, 29 marras 2011) $
+// Version:         $Revision: 7706 $,
+//                  $Date: 2014-12-04 12:50:37 +0200 (to, 04 joulu 2014) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -74,6 +74,7 @@ namespace GXDLMSDirector
             this.StartProtocolLbl = new System.Windows.Forms.Label();
             this.StartProtocolCB = new System.Windows.Forms.ComboBox();
             this.AddressingGB = new System.Windows.Forms.GroupBox();
+            this.AdvancedBtn = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.ClientAddTypeCB = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -201,8 +202,9 @@ namespace GXDLMSDirector
             // 
             // AddressingGB
             // 
-            this.AddressingGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.AddressingGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.AddressingGB.Controls.Add(this.AdvancedBtn);
             this.AddressingGB.Controls.Add(this.groupBox2);
             this.AddressingGB.Controls.Add(this.groupBox1);
             this.AddressingGB.Controls.Add(this.AuthenticationCB);
@@ -213,6 +215,17 @@ namespace GXDLMSDirector
             this.AddressingGB.TabIndex = 7;
             this.AddressingGB.TabStop = false;
             this.AddressingGB.Text = "Addressing";
+            // 
+            // AdvancedBtn
+            // 
+            this.AdvancedBtn.Enabled = false;
+            this.AdvancedBtn.Location = new System.Drawing.Point(196, 18);
+            this.AdvancedBtn.Name = "AdvancedBtn";
+            this.AdvancedBtn.Size = new System.Drawing.Size(75, 23);
+            this.AdvancedBtn.TabIndex = 37;
+            this.AdvancedBtn.Text = "Advanced...";
+            this.AdvancedBtn.UseVisualStyleBackColor = true;
+            this.AdvancedBtn.Click += new System.EventHandler(this.AdvancedBtn_Click);
             // 
             // groupBox2
             // 
@@ -549,5 +562,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ComboBox ServerAddressTypeCB;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox ForceKeepAliveCB;
+        private System.Windows.Forms.Button AdvancedBtn;
     }
 }

@@ -73,7 +73,7 @@ namespace GXDLMSDirector
                 {
                     OKBtn.Enabled = false;
                 }
-                //Show supported services tab only when thay are read.
+                //Show supported services tab only when they are read.
                 if (dev == null || dev.Comm.m_Cosem.SNSettings == null && dev.Comm.m_Cosem.LNSettings == null)
                 {
                     DeviceTab.TabPages.Remove(SupportedServicesTab);

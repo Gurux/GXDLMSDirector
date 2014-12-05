@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/MainForm.cs $
 //
-// Version:         $Revision: 7686 $,
-//                  $Date: 2014-10-28 15:54:10 +0200 (ti, 28 loka 2014) $
+// Version:         $Revision: 7706 $,
+//                  $Date: 2014-12-04 12:50:37 +0200 (to, 04 joulu 2014) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -1172,6 +1172,13 @@ namespace GXDLMSDirector
         {
             try
             {
+                GXDLMSDirector.Properties.Settings.Default.ViewToolbar = ViewToolbarMnu.Checked;
+                GXDLMSDirector.Properties.Settings.Default.ViewStatusbar = ViewStatusbarMnu.Checked;
+                GXDLMSDirector.Properties.Settings.Default.ViewTree = ObjectTreeMnu.Checked;
+                GXDLMSDirector.Properties.Settings.Default.ViewList = ObjectListMnu.Checked;
+                GXDLMSDirector.Properties.Settings.Default.ViewGroups = GroupsMnu.Checked;
+                GXDLMSDirector.Properties.Settings.Default.Save();
+
                 string path = UserDataPath;
                 if (System.Environment.OSVersion.Platform == PlatformID.Unix)
                 {
@@ -1190,13 +1197,6 @@ namespace GXDLMSDirector
                 {
                     xtw.WriteStartDocument();
                     xtw.WriteStartElement("GXDLMSDirector");
-                    xtw.WriteStartElement("General");
-                    xtw.WriteAttributeString("ViewToolbar", ViewToolbarMnu.Checked ? "1" : "0");
-                    xtw.WriteAttributeString("ViewStatusbar", ViewStatusbarMnu.Checked ? "1" : "0");
-                    xtw.WriteAttributeString("ViewTree", this.ObjectTreeMnu.Checked ? "1" : "0");
-                    xtw.WriteAttributeString("ViewList", this.ObjectListMnu.Checked ? "1" : "0");
-                    xtw.WriteAttributeString("Groups", this.GroupsMnu.Checked ? "1" : "0");
-                    xtw.WriteEndElement();
                     xtw.WriteStartElement("MRU");
                     foreach (string it in m_MruManager.GetNames())
                     {
@@ -1237,6 +1237,16 @@ namespace GXDLMSDirector
         {
             try
             {
+                ViewToolbarMnu.Checked = !GXDLMSDirector.Properties.Settings.Default.ViewToolbar;
+                ViewToolbarMnu_Click(null, null);
+                ViewStatusbarMnu.Checked = !GXDLMSDirector.Properties.Settings.Default.ViewStatusbar;
+                ViewStatusbarMnu_Click(null, null);
+                ObjectTreeMnu.Checked = !GXDLMSDirector.Properties.Settings.Default.ViewTree;
+                ObjectTreeMnu_Click(null, null);
+                ObjectListMnu.Checked = !GXDLMSDirector.Properties.Settings.Default.ViewList;
+                ObjectListMnu_Click(null, null);
+                GroupsMnu.Checked = !GXDLMSDirector.Properties.Settings.Default.ViewGroups;
+                GroupsMnu_Click(null, null);
                 string path = UserDataPath;
                 if (System.Environment.OSVersion.Platform == PlatformID.Unix)
                 {
@@ -1257,16 +1267,6 @@ namespace GXDLMSDirector
                     {
                         if (xtr.Name == "General")
                         {
-                            ViewToolbarMnu.Checked = xtr.GetAttribute("ViewToolbar") == "0";
-                            ViewToolbarMnu_Click(null, null);
-                            ViewStatusbarMnu.Checked = xtr.GetAttribute("ViewStatusbar") == "0";
-                            ViewStatusbarMnu_Click(null, null);
-                            ObjectTreeMnu.Checked = xtr.GetAttribute("ViewTree") == "0";
-                            ObjectTreeMnu_Click(null, null);
-                            ObjectListMnu.Checked = xtr.GetAttribute("ViewList") == "0";
-                            ObjectListMnu_Click(null, null);
-                            GroupsMnu.Checked = xtr.GetAttribute("Groups") == "0";
-                            GroupsMnu_Click(null, null);
                         }
                         else if (xtr.Name == "MRU" && !xtr.IsEmptyElement)
                         {
@@ -1347,14 +1347,7 @@ namespace GXDLMSDirector
                 {
                     OnProgress(dev, "Reading " + it.LogicalName + "...", ++pos, cnt);
                     dev.Comm.Read(this, it, 0);
-                    if (InvokeRequired)
-                    {
-                        this.BeginInvoke(new ObjectChangeEventHandler(DLMSItemOnChange), it, false, 0, null);
-                    }
-                    else
-                    {
-                        DLMSItemOnChange(it, false, 0, null);
-                    }
+                    DLMSItemOnChange(it, false, 0, null);
                 }
             }
             catch (Exception Ex)
@@ -2674,14 +2667,11 @@ namespace GXDLMSDirector
             {
                 ProtocolUpdateStatus status = GXUpdateChecker.ShowUpdates(this, false, true);
                 updateProtocolsMnu.Visible = false;
-                if ((status & ProtocolUpdateStatus.Restart) != 0)
+                //Close application if new version is installed.
+                if ((status & (ProtocolUpdateStatus.Restart | ProtocolUpdateStatus.Changed)) != 0)
                 {
-                    MessageBox.Show(GXDLMSDirector.Properties.Resources.RestartTxt, GXDLMSDirector.Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else if ((status & ProtocolUpdateStatus.Changed) != 0)
-                {
-                    MessageBox.Show(GXDLMSDirector.Properties.Resources.ProtocolsUpdatedTxt, GXDLMSDirector.Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
+                    Close();
+                }                
             }
             catch (Exception Ex)
             {

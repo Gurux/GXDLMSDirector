@@ -57,6 +57,8 @@ namespace GXDLMSDirector.Views
         private Label label1;
         private ErrorProvider errorProvider1;
         private System.ComponentModel.IContainer components;
+        private GXValueField SecretTB;
+        private Label SecretLbl;
         private Label LogicalNameLbl;
         /// <summary>
         /// Constructor.
@@ -162,23 +164,27 @@ namespace GXDLMSDirector.Views
             this.gxValueField1 = new GXDLMSDirector.Views.GXValueField();
             this.label1 = new System.Windows.Forms.Label();
             this.CallingWindowLV = new System.Windows.Forms.ListView();
-            this.ClassIdHeader = new System.Windows.Forms.ColumnHeader();
-            this.VersionHeader = new System.Windows.Forms.ColumnHeader();
-            this.LogicalNameHeader = new System.Windows.Forms.ColumnHeader();
-            this.AttributeAccesssHeader = new System.Windows.Forms.ColumnHeader();
-            this.MethodAccessHeader = new System.Windows.Forms.ColumnHeader();
+            this.ClassIdHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.VersionHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.LogicalNameHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.AttributeAccesssHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.MethodAccessHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.LogicalNameTB = new GXDLMSDirector.Views.GXValueField();
             this.LogicalNameLbl = new System.Windows.Forms.Label();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.SecretTB = new GXDLMSDirector.Views.GXValueField();
+            this.SecretLbl = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.SecretTB);
+            this.groupBox1.Controls.Add(this.SecretLbl);
             this.groupBox1.Controls.Add(this.gxValueField1);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.CallingWindowLV);
@@ -193,8 +199,8 @@ namespace GXDLMSDirector.Views
             // 
             // gxValueField1
             // 
-            this.gxValueField1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.gxValueField1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gxValueField1.AttributeID = 8;
             this.gxValueField1.Location = new System.Drawing.Point(102, 47);
             this.gxValueField1.Name = "gxValueField1";
@@ -213,9 +219,9 @@ namespace GXDLMSDirector.Views
             // 
             // CallingWindowLV
             // 
-            this.CallingWindowLV.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.CallingWindowLV.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.CallingWindowLV.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.ClassIdHeader,
             this.VersionHeader,
@@ -258,8 +264,8 @@ namespace GXDLMSDirector.Views
             // 
             // LogicalNameTB
             // 
-            this.LogicalNameTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.LogicalNameTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.LogicalNameTB.AttributeID = 1;
             this.LogicalNameTB.Location = new System.Drawing.Point(102, 21);
             this.LogicalNameTB.Name = "LogicalNameTB";
@@ -281,6 +287,27 @@ namespace GXDLMSDirector.Views
             this.errorProvider1.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
             this.errorProvider1.ContainerControl = this;
             this.errorProvider1.Icon = ((System.Drawing.Icon)(resources.GetObject("errorProvider1.Icon")));
+            // 
+            // SecretTB
+            // 
+            this.SecretTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.SecretTB.AttributeID = 7;
+            this.SecretTB.Location = new System.Drawing.Point(102, 73);
+            this.SecretTB.Name = "SecretTB";
+            this.SecretTB.ReadOnly = true;
+            this.SecretTB.Size = new System.Drawing.Size(390, 20);
+            this.SecretTB.TabIndex = 13;
+            this.SecretTB.Type = GXDLMSDirector.Views.GXValueFieldType.TextBox;
+            // 
+            // SecretLbl
+            // 
+            this.SecretLbl.AutoSize = true;
+            this.SecretLbl.Location = new System.Drawing.Point(6, 76);
+            this.SecretLbl.Name = "SecretLbl";
+            this.SecretLbl.Size = new System.Drawing.Size(41, 13);
+            this.SecretLbl.TabIndex = 12;
+            this.SecretLbl.Text = "Secret:";
             // 
             // GXDLMSAssociationLogicalNameView
             // 

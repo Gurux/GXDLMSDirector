@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 7686 $,
-//                  $Date: 2014-10-28 15:54:10 +0200 (ti, 28 loka 2014) $
+// Version:         $Revision: 7706 $,
+//                  $Date: 2014-12-04 12:50:37 +0200 (to, 04 joulu 2014) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -172,7 +172,7 @@ namespace GXDLMSDirector
             bool succeeded = false;
             ReceiveParameters<byte[]> p = new ReceiveParameters<byte[]>()
             {
-                AllData = true,
+                AllData = false,
                 Eop = eop,
                 Count = 5,
                 WaitTime = Parent.WaitTime * 1000,
@@ -216,7 +216,7 @@ namespace GXDLMSDirector
                     if (!Media.Receive(p))
                     {
                         //Try to read again...
-                        if (++pos != 3)
+                        if (++pos != tryCount)
                         {
                             System.Diagnostics.Debug.WriteLine("Data send failed. Try to resend " + pos.ToString() + "/3");
                             continue;
@@ -279,7 +279,7 @@ namespace GXDLMSDirector
                 GXLogWriter.WriteLog("HDLC sending:" + data);
                 ReceiveParameters<string> p = new ReceiveParameters<string>()
                 {
-                    AllData = true,
+                    AllData = false,
                     Eop = Terminator,                    
                     WaitTime = Parent.WaitTime * 1000                    
                 };
@@ -291,7 +291,7 @@ namespace GXDLMSDirector
                         //Try to move away from mode E.
                         try
                         {
-                            this.ReadDLMSPacket(this.DisconnectRequest());
+                            this.ReadDLMSPacket(this.DisconnectRequest(), 1);
                         }
                         catch (Exception ex)
                         { 
@@ -299,9 +299,7 @@ namespace GXDLMSDirector
                         data = (char)0x01 + "B0" + (char)0x03 + "\r\n";
                         Media.Send(data, null);
                         p.Count = 1;
-                        if (!Media.Receive(p))
-                        {
-                        }
+                        Media.Receive(p);
                         data = "Failed to receive reply from the device in given time.";
                         GXLogWriter.WriteLog(data);
                         throw new Exception(data);
@@ -313,7 +311,7 @@ namespace GXDLMSDirector
                         if (!Media.Receive(p))
                         {
                             //Try to move away from mode E.
-                            this.ReadDLMSPacket(this.DisconnectRequest());
+                            this.ReadDLMSPacket(this.DisconnectRequest(), 1);
                             if (serial != null)
                             {
                                 data = (char)0x01 + "B0" + (char)0x03 + "\r\n";
@@ -328,9 +326,7 @@ namespace GXDLMSDirector
                                 data = (char)0x01 + "B0" + (char)0x03 + "\r\n";
                                 Media.Send(data, null);
                                 p.Count = 1;
-                                if (!Media.Receive(p))
-                                {
-                                }
+                                Media.Receive(p);
                             }
 
                             data = "Failed to receive reply from the device in given time.";
@@ -404,13 +400,13 @@ namespace GXDLMSDirector
                     }
                     if (serial != null)
                     {
+                        serial.Close();
                         serial.DataBits = 8;
                         serial.Parity = Parity.None;
                         serial.StopBits = StopBits.One;
-                        serial.DiscardInBuffer();
-                        serial.DiscardOutBuffer();
-                        serial.ResetSynchronousBuffer();
+                        serial.Open();
                     }
+                    System.Threading.Thread.Sleep(1000);
                 }
             }
         }
@@ -576,7 +572,6 @@ namespace GXDLMSDirector
             {
                 byte[] data, reply = null;
                 data = SNRMRequest();
-                System.Threading.Thread.Sleep(200);
                 if (data != null)
                 {
                     GXLogWriter.WriteLog("Send SNRM request.", data);
@@ -587,7 +582,7 @@ namespace GXDLMSDirector
                     GXLogWriter.WriteLog("Parsing UA reply succeeded.");
                 }
                 //Generate AARQ request.
-                //Split requests to multible packets if needed. 
+                //Split requests to multiple packets if needed. 
                 //If password is used all data might not fit to one packet.
                 foreach (byte[] it in AARQRequest())
                 {
@@ -602,8 +597,18 @@ namespace GXDLMSDirector
                 }
                 catch (Exception Ex)
                 {
-                    ReadDLMSPacket(DisconnectRequest());
+                    ReadDLMSPacket(DisconnectRequest(), 1);
                     throw Ex;
+                }
+                //If authentication is required.
+                if (m_Cosem.IsAuthenticationRequired)
+                {                    
+                    foreach (byte[] it in m_Cosem.GetApplicationAssociationRequest())
+                    {
+                        GXLogWriter.WriteLog("Authenticating", it);
+                        reply = ReadDLMSPacket(it);
+                    }
+                    m_Cosem.ParseApplicationAssociationResponse(reply);
                 }
             }
             catch (Exception ex)

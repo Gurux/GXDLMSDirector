@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/ManufacturerForm.cs $
 //
-// Version:         $Revision: 5618 $,
-//                  $Date: 2012-08-24 09:15:04 +0300 (pe, 24 elo 2012) $
+// Version:         $Revision: 7706 $,
+//                  $Date: 2014-12-04 12:50:37 +0200 (to, 04 joulu 2014) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -96,6 +96,12 @@ namespace GXDLMSDirector
                 manufacturer.Settings.Add(new GXAuthentication(Gurux.DLMS.Authentication.None, (byte)0x10));
                 manufacturer.Settings.Add(new GXAuthentication(Gurux.DLMS.Authentication.Low, (byte)0x11));
                 manufacturer.Settings.Add(new GXAuthentication(Gurux.DLMS.Authentication.High, (byte)0x12));
+                manufacturer.Settings.Add(new GXAuthentication(Gurux.DLMS.Authentication.HighMD5, (byte)0x13));
+                manufacturer.Settings.Add(new GXAuthentication(Gurux.DLMS.Authentication.HighSHA1, (byte)0x14));
+                GXAuthentication gmac = new GXAuthentication(Gurux.DLMS.Authentication.HighGMAC, (byte)0x15);
+                gmac.BlockCipherKey = new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F };
+                gmac.AuthenticationKey = new byte[] { 0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7, 0xD8, 0xD9, 0xDA, 0xDB, 0xDC, 0xDD, 0xDE, 0xDF };
+                manufacturer.Settings.Add(gmac);
             }
             GXAuthentication authentication = manufacturer.GetActiveAuthentication();
             foreach (GXAuthentication it in manufacturer.Settings)
@@ -103,6 +109,12 @@ namespace GXDLMSDirector
                 AuthenticationCB.Items.Add(it);
             }
             AuthenticationCB.SelectedItem = authentication;
+            if (authentication.Type == Gurux.DLMS.Authentication.High ||
+                authentication.Type == Gurux.DLMS.Authentication.HighSHA1 ||
+                authentication.Type == Gurux.DLMS.Authentication.HighGMAC)
+            {
+                AdvancedBtn.Enabled = true;
+            }
             this.AuthenticationCB.SelectedIndexChanged += new System.EventHandler(this.AuthenticationCB_SelectedIndexChanged);            
             if (manufacturer.ServerSettings.Count == 0)
             {
@@ -265,11 +277,14 @@ namespace GXDLMSDirector
         {
             try
             {
-                GXAuthentication authentication = Manufacturer.GetActiveAuthentication();
+                GXAuthentication authentication = Manufacturer.GetActiveAuthentication();                
                 authentication.Selected = false;                
                 //Save old values.
                 UpdateAuthentication(authentication);                
                 authentication = ((GXAuthentication)AuthenticationCB.SelectedItem);
+                AdvancedBtn.Enabled = authentication.Type == Gurux.DLMS.Authentication.High ||
+                        authentication.Type == Gurux.DLMS.Authentication.HighSHA1 ||
+                        authentication.Type == Gurux.DLMS.Authentication.HighGMAC;
                 authentication.Selected = true;
                 this.RefreshAuthentication(authentication);                
             }
@@ -360,6 +375,30 @@ namespace GXDLMSDirector
             catch (Exception Ex)
             {
                 GXDLMS.Common.Error.ShowError(this, Ex);
+            }
+        }
+
+        /// <summary>
+        /// SHow advanced authentication settings.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AdvancedBtn_Click(object sender, EventArgs e)
+        {
+            GXAuthentication authentication = Manufacturer.GetActiveAuthentication();
+            if (authentication.Type == Gurux.DLMS.Authentication.HighGMAC)
+            {
+                AuthenticationGmacForm dlg = new AuthenticationGmacForm(authentication);
+                dlg.ShowDialog(this);
+            }
+            else if (authentication.Type > Gurux.DLMS.Authentication.Low)
+            {
+                AuthenticationForm dlg = new AuthenticationForm(authentication);
+                dlg.ShowDialog(this);
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException("Invalid authentication type.");
             }
         }
     }

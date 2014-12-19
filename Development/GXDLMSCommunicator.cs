@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 7706 $,
-//                  $Date: 2014-12-04 12:50:37 +0200 (to, 04 joulu 2014) $
+// Version:         $Revision: 7735 $,
+//                  $Date: 2014-12-19 11:37:34 +0200 (pe, 19 joulu 2014) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -933,7 +933,8 @@ namespace GXDLMSDirector
                     }
                     catch (GXDLMSException ex)
                     {
-                        if (ex.ErrorCode == 3) //If read is denied.
+                        if (ex.ErrorCode == 3 ||  //If read is denied.
+                            ex.ErrorCode == 13) //Actaris returns access violation error.
                         {
                             obj.SetAccess(it, AccessMode.NoAccess);
                             continue;

@@ -4,7 +4,7 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.Designer.cs $
+// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.Designer.cs $
 //
 // Version:         $Revision: 7547 $,
 //                  $Date: 2014-06-30 15:54:17 +0300 (ma, 30 kesä 2014) $

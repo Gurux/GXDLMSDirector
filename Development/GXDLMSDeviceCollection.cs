@@ -4,7 +4,7 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDeviceCollection.cs $
+// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDeviceCollection.cs $
 //
 // Version:         $Revision: 6743 $,
 //                  $Date: 2013-11-28 15:38:22 +0200 (to, 28 marras 2013) $

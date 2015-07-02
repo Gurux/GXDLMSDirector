@@ -4,7 +4,7 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/GXDLMSModemConfiguration.cs $
+// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSModemConfiguration.cs $
 //
 // Version:         $Revision: 5551 $,
 //                  $Date: 2012-07-31 13:18:30 +0300 (ti, 31 heinä 2012) $

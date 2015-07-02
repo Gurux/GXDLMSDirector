@@ -88,23 +88,10 @@ namespace GXDLMSDirector.Views
                     foreach (GXDLMSObject it in items)
                     {
                         int sn = it.ShortName;
-                        /*
-                        int tmp = Convert.ToInt32(it[0]);
-                        if (((tmp >> 16) & 0xFFFF) == 0xFFFF)
-                        {
-                            tmp = tmp & 0xFFFF;
-                        }
-                         * */
                         ListViewItem li = CallingWindowLV.Items.Add(Convert.ToString(sn, 16));
-                        /*
-                        li.SubItems.Add(((ObjectType)Convert.ToInt32(it[1])).ToString());
-                        li.SubItems.Add(it[2].ToString());
-                        li.SubItems.Add(GXHelpers.ConvertFromDLMS(it[3],DataType.OctetString, DataType.OctetString, false).ToString());
-                        li.SubItems.Add("");
-                         * */
                         li.SubItems.AddRange(new string[] { it.ObjectType.ToString(), it.Version.ToString(), 
                                             it.LogicalName, "", ""});
-                        SNItems.Add(sn, li);                        
+                        SNItems.Add(sn, li);
                     }
                 }
             }

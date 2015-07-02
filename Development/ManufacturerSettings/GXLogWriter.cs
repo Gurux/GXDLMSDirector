@@ -4,7 +4,7 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/ManufacturerSettings/GXLogWriter.cs $
+// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/ManufacturerSettings/GXLogWriter.cs $
 //
 // Version:         $Revision: 5407 $,
 //                  $Date: 2012-06-04 12:47:32 +0300 (ma, 04 kesä 2012) $

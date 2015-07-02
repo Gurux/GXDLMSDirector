@@ -4,10 +4,10 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDevice.cs $
+// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDevice.cs $
 //
-// Version:         $Revision: 7706 $,
-//                  $Date: 2014-12-04 12:50:37 +0200 (to, 04 joulu 2014) $
+// Version:         $Revision: 7805 $,
+//                  $Date: 2015-03-18 15:37:57 +0200 (ke, 18 maalis 2015) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -626,6 +626,26 @@ namespace GXDLMSDirector
             item.CaptureObjects = cols;
         }
 
+        private static void UpdateError(GXDLMSObject it, int attributeIndex, Exception ex)
+        {
+            GXDLMSException t = ex as GXDLMSException;
+            if (t != null)
+            {
+                if (t.ErrorCode == 1 || t.ErrorCode == 3)
+                {
+                    it.SetAccess(attributeIndex, AccessMode.NoAccess);
+                }
+                else
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            else
+            {
+                throw ex;
+            }
+        }
+
         /// <summary>
         /// After UpdateObjects call objects can be read using Objects property.
         /// </summary>
@@ -652,8 +672,7 @@ namespace GXDLMSDirector
                     m_Objects.Add(it);                    
                 }
                 GXLogWriter.WriteLog("--- Created " + m_Objects.Count.ToString() + " objects. ---");
-                int objPos = 0;
-
+                int objPos = 0;               
                 //Read registers units and scalers.
                 int cnt = Objects.Count;
                 GXLogWriter.WriteLog("--- Reading scalers and units. ---");
@@ -685,7 +704,13 @@ namespace GXDLMSDirector
                         }
                         catch (Exception ex)
                         {
-                            GXLogWriter.WriteLog(ex.Message);                            
+                            GXLogWriter.WriteLog(ex.Message);
+                            UpdateError(it, 3, ex);
+                            if (ex is GXDLMSException)
+                            {
+                                continue;
+                            }
+                            throw ex;
                         }
                     }
                     if (it is GXDLMSDemandRegister)
@@ -714,7 +739,13 @@ namespace GXDLMSDirector
                         }
                         catch (Exception ex)
                         {
-                            GXLogWriter.WriteLog(ex.Message);                            
+                            GXLogWriter.WriteLog(ex.Message);
+                            UpdateError(it, 3, ex);
+                            if (ex is GXDLMSException)
+                            {
+                                continue;
+                            }
+                            throw ex;
                         }
                     }                  
                 }

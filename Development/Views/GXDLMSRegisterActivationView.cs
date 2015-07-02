@@ -4,7 +4,7 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/Views/GXDLMSRegisterActivationView.cs $
+// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/Views/GXDLMSRegisterActivationView.cs $
 //
 // Version:         $Revision: 6506 $,
 //                  $Date: 2013-08-08 09:09:04 +0300 (to, 08 elo 2013) $

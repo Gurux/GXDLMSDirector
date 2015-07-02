@@ -4,10 +4,10 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/Properties/AssemblyInfo.cs $
+// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/Properties/AssemblyInfo.cs $
 //
-// Version:         $Revision: 7735 $,
-//                  $Date: 2014-12-19 11:37:34 +0200 (pe, 19 joulu 2014) $
+// Version:         $Revision: 7852 $,
+//                  $Date: 2015-07-02 23:21:37 +0300 (to, 02 heinä 2015) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -45,7 +45,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Gurux Ltd")]
 [assembly: AssemblyProduct("GXDLMSDirector Community Edition")]
-[assembly: AssemblyCopyright("Copyright (C) 1998-2014 Gurux Ltd.")]
+[assembly: AssemblyCopyright("Copyright (c) 1998-2015 Gurux Ltd. All rights reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -56,5 +56,5 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("e78762b5-4e85-45c8-a9fa-e95786f77684")]
-[assembly: AssemblyVersion("7.0.40.1")]
-[assembly: AssemblyFileVersion("7.0.40.1")]
+[assembly: AssemblyVersion("7.0.46.1")]
+[assembly: AssemblyFileVersion("7.0.46.1")]

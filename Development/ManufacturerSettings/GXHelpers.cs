@@ -92,6 +92,10 @@ namespace GXDLMS.Common
             {
                 if (data is byte[])
                 {
+                    if (((byte[])data).Length == 5)
+                    {
+                        return GXDLMSClient.ChangeType((byte[])data, DataType.Date);
+                    }
                     return GXDLMSClient.ChangeType((byte[])data, DataType.DateTime);
                 }
                 return data;

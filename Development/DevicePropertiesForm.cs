@@ -4,10 +4,10 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.cs $
+// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.cs $
 //
-// Version:         $Revision: 7547 $,
-//                  $Date: 2014-06-30 15:54:17 +0300 (ma, 30 kesä 2014) $
+// Version:         $Revision: 7805 $,
+//                  $Date: 2015-03-18 15:37:57 +0200 (ke, 18 maalis 2015) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -105,18 +105,23 @@ namespace GXDLMSDirector
                 }
                 Device = dev;                
                 StartProtocolCB.Items.Add(StartProtocolType.IEC);
-                StartProtocolCB.Items.Add(StartProtocolType.DLMS);
+                StartProtocolCB.Items.Add(StartProtocolType.DLMS);                
+                int pos = 0;
                 foreach (GXManufacturer it in Manufacturers)
                 {
-                    int pos = this.ManufacturerCB.Items.Add(it);                    
+                    int index = this.ManufacturerCB.Items.Add(it);
+                    if (it.Name == GXDLMSDirector.Properties.Settings.Default.SelectedManufacturer)
+                    {
+                        pos = index;
+                    }
                 }
                 if (Device == null)
                 {
                     Device = new GXDLMSDevice(null);
                     //Select first manufacturer.
                     if (Manufacturers.Count != 0)
-                    {
-                        ManufacturerCB.SelectedIndex = 0;
+                    {                        
+                        ManufacturerCB.SelectedIndex = pos;
                     }                    
                 }
                 else
@@ -238,7 +243,7 @@ namespace GXDLMSDirector
                 bool bConnected = Device.Media != null && Device.Media.IsOpen;
                 SerialPortCB.Enabled = AdvancedBtn.Enabled = ManufacturerCB.Enabled = MediasCB.Enabled =
                     AuthenticationCB.Enabled = UseRemoteSerialCB.Enabled = OKBtn.Enabled = !bConnected;
-                HostNameTB.ReadOnly = PortTB.ReadOnly = PasswordTB.ReadOnly = WaitTimeTB.ReadOnly = PhysicalServerAddressTB.ReadOnly = NameTB.ReadOnly = bConnected;                
+                HostNameTB.ReadOnly = PortTB.ReadOnly = PasswordTB.ReadOnly = WaitTimeTB.ReadOnly = PhysicalServerAddressTB.ReadOnly = NameTB.ReadOnly = bConnected;
             }
             catch (Exception Ex)
             {
@@ -371,6 +376,7 @@ namespace GXDLMSDirector
                 Device.UseLogicalNameReferencing = this.UseLNCB.Checked;                
                 Device.LogicalAddress = Convert.ToInt32(LogicalServerAddressTB.Value);                              
                 Device.StartProtocol = (StartProtocolType) this.StartProtocolCB.SelectedItem;
+                GXDLMSDirector.Properties.Settings.Default.SelectedManufacturer = man.Name;
             }
             catch (Exception Ex)
             {

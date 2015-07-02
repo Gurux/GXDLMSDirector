@@ -4,10 +4,10 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/Views/GXValueField.cs $
+// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/Views/GXValueField.cs $
 //
-// Version:         $Revision: 6510 $,
-//                  $Date: 2013-08-08 16:24:58 +0300 (to, 08 elo 2013) $
+// Version:         $Revision: 7852 $,
+//                  $Date: 2015-07-02 23:21:37 +0300 (to, 02 heinä 2015) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -428,7 +428,14 @@ namespace GXDLMSDirector.Views
                 }
                 else
                 {
-                    OnUpdateValue(value);
+                    try
+                    {
+                        OnUpdateValue(value);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
                 }
             }
         }

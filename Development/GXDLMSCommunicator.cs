@@ -4,10 +4,8 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
+// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 7735 $,
-//                  $Date: 2014-12-19 11:37:34 +0200 (pe, 19 joulu 2014) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -205,7 +203,7 @@ namespace GXDLMSDirector
                         throw new Exception(err);
                     }
                 }
-                //Loop until whole Cosem packet is received.                
+                //Loop until whole COSEM packet is received.                
                 while (!m_Cosem.IsDLMSPacketComplete(p.Reply))
                 {
                     //If Eop is not set read one byte at time.
@@ -227,7 +225,7 @@ namespace GXDLMSDirector
                     }
                 }
             }
-            GXLogWriter.WriteLog("Reveived data", p.Reply);
+            GXLogWriter.WriteLog("Received data", p.Reply);
             object errors = m_Cosem.CheckReplyErrors(data, p.Reply);
             if (errors != null)
             {                
@@ -236,7 +234,7 @@ namespace GXDLMSDirector
                 if (error == -1)
                 {
                     //If data is reply to the previous packet sent.
-                    //This might happend sometimes.
+                    //This might happens sometimes.
                     if (m_Cosem.IsPreviousPacket(data, p.Reply))
                     {
                         return ReadDLMSPacket(null);
@@ -376,7 +374,7 @@ namespace GXDLMSDirector
                 //Send ACK
                 //Send Protocol control character
                 byte controlCharacter = (byte)'2';// "2" HDLC protocol procedure (Mode E)
-                //Send Baudrate character
+                //Send Baud rate character
                 //Mode control character 
                 byte ModeControlCharacter = (byte)'2';//"2" //(HDLC protocol procedure) (Binary mode)
                 //Set mode E.
@@ -386,10 +384,7 @@ namespace GXDLMSDirector
                 {
                     Media.Send(arr, null);
                     System.Threading.Thread.Sleep(500);
-                    if (serial != null)
-                    {
-                        serial.BaudRate = BaudRate;
-                    }
+                    serial.BaudRate = BaudRate;
                     p.Reply = null;
                     p.WaitTime = 100;
                     //Note! All meters do not echo this.
@@ -398,15 +393,12 @@ namespace GXDLMSDirector
                     {
                         GXLogWriter.WriteLog("Received: " + p.Reply);
                     }
-                    if (serial != null)
-                    {
-                        serial.Close();
-                        serial.DataBits = 8;
-                        serial.Parity = Parity.None;
-                        serial.StopBits = StopBits.One;
-                        serial.Open();
-                    }
-                    System.Threading.Thread.Sleep(1000);
+                    serial.Close();
+                    serial.DataBits = 8;
+                    serial.Parity = Parity.None;
+                    serial.StopBits = StopBits.One;
+                    serial.Open();
+                    System.Threading.Thread.Sleep(500);
                 }
             }
         }
@@ -671,104 +663,7 @@ namespace GXDLMSDirector
                     OnAfterRead(CurrentProfileGeneric, 2);
                 }  
             }
-        }
-
-        delegate void ShowRowsEventHandler(Array rows);
-        
-        private void ShowRows(Array rows)
-        {
-            /*
-            if (ParentForm.InvokeRequired)
-            {
-                ParentForm.BeginInvoke(new ShowRowsEventHandler(ShowRows), rows);
-                return;
-            }
-            DataType type = DataType.None;
-            DataType uiType = DataType.None;
-            foreach (object[] row in rows)
-            {
-                if (row != null)
-                {
-                    DataRow dr = CurrentProfileGeneric.Buffer.NewRow();
-                    object data = null;
-                    for (int pos = 0; pos < CurrentProfileGeneric.CaptureObjects.Count; ++pos)
-                    {
-                        if (Parent.Extension != null)
-                        {
-                            data = row[pos];
-                        }
-                        else
-                        {
-                            int index = 0;
-                            IGXDLMSColumnObject obj = CurrentProfileGeneric.CaptureObjects[pos] as IGXDLMSColumnObject;
-                            foreach (GXDLMSObject c in CurrentProfileGeneric.CaptureObjects)
-                            {
-                                IGXDLMSColumnObject obj2 = c as IGXDLMSColumnObject;
-                                if (c.ObjectType == CurrentProfileGeneric.CaptureObjects[pos].ObjectType &&
-                                    c.LogicalName == CurrentProfileGeneric.CaptureObjects[pos].LogicalName)
-                                {
-                                    if (obj2.SelectedAttributeIndex == obj.SelectedAttributeIndex)
-                                    {
-                                        data = row[index];
-                                        break;
-                                    }
-                                }
-                                ++index;
-                            }
-                        }
-                        if (data != null)
-                        {
-                            double scaler = 1;
-                            object obj = CurrentProfileGeneric.CaptureObjects[pos];
-                            if (obj is GXDLMSRegister)
-                            {
-                                scaler = ((GXDLMSRegister)obj).Scaler;
-                            }
-                            if (obj is GXDLMSDemandRegister)
-                            {
-                                scaler = ((GXDLMSDemandRegister)obj).Scaler;
-                            }
-                            IGXDLMSColumnObject tmp = CurrentProfileGeneric.CaptureObjects[pos] as IGXDLMSColumnObject;
-                            uiType = CurrentProfileGeneric.CaptureObjects[pos].GetUIDataType(tmp.SelectedAttributeIndex);
-                            type = CurrentProfileGeneric.CaptureObjects[pos].GetDataType(tmp.SelectedAttributeIndex);
-                            if (uiType == DataType.None)
-                            {
-                                uiType = type;
-                            }
-                            try
-                            {
-                                if (!data.GetType().IsArray && scaler != 1)
-                                {
-                                    if (type == DataType.None)
-                                    {
-                                        dr[pos] = Convert.ToDouble(data) * scaler;
-                                    }
-                                    else
-                                    {
-                                        dr[pos] = Convert.ToDouble(GXDLMS.Common.GXHelpers.ConvertFromDLMS(data, DataType.None, type, true)) * scaler;
-                                    }
-                                }
-                                else
-                                {
-                                    object tmp2 = GXDLMS.Common.GXHelpers.ConvertFromDLMS(data, type, uiType, true);
-                                    if (tmp2 is GXDateTime)
-                                    {
-                                        tmp2 = (tmp2 as GXDateTime).Value;
-                                    }
-                                    dr[pos] = tmp2;
-                                }
-                            }
-                            catch(Exception ex)
-                            {
-                                MessageBox.Show(ex.Message);
-                            }
-                        }
-                    }
-                    CurrentProfileGeneric.Buffer.Rows.InsertAt(dr, CurrentProfileGeneric.Buffer.Rows.Count);
-                }
-            } 
-             * */
-        }
+        }        
         
         /// <summary>
         /// Read data block from the device.
@@ -934,6 +829,7 @@ namespace GXDLMSDirector
                     catch (GXDLMSException ex)
                     {
                         if (ex.ErrorCode == 3 ||  //If read is denied.
+                            ex.ErrorCode == 4 || // Undefined object.
                             ex.ErrorCode == 13) //Actaris returns access violation error.
                         {
                             obj.SetAccess(it, AccessMode.NoAccess);

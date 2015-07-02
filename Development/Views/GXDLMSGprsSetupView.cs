@@ -4,7 +4,7 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/Views/GXDLMSGprsSetupView.cs $
+// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/Views/GXDLMSGprsSetupView.cs $
 //
 // Version:         $Revision: 6959 $,
 //                  $Date: 2014-02-03 09:52:28 +0200 (ma, 03 helmi 2014) $

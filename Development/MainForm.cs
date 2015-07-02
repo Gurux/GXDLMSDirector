@@ -4,10 +4,10 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GuruxClub/GXDLMSDirector/Development/MainForm.cs $
+// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/MainForm.cs $
 //
-// Version:         $Revision: 7706 $,
-//                  $Date: 2014-12-04 12:50:37 +0200 (to, 04 joulu 2014) $
+// Version:         $Revision: 7805 $,
+//                  $Date: 2015-03-18 15:37:57 +0200 (ke, 18 maalis 2015) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -1969,27 +1969,7 @@ namespace GXDLMSDirector
                 GXDLMS.Common.Error.ShowError(this, Ex);
             }
         }
-
-        void UpdateError(GXDLMSObject it, int attributeIndex, GXManufacturer man, Exception ex)
-        {
-            GXDLMSException t = ex as GXDLMSException;
-            if (t != null)
-            {
-                if (t.ErrorCode == 1 || t.ErrorCode == 3)
-                {
-                    it.SetAccess(attributeIndex, AccessMode.NoAccess);
-                }
-                else
-                {
-                    MessageBox.Show(ex.Message);
-                }
-            }
-            else
-            {
-                throw ex;
-            }
-        }
-
+       
         void UpdateFromObisCode(GXDLMSObject obj, GXObisCode item)
         {
             obj.Description = item.Description;
@@ -2029,62 +2009,7 @@ namespace GXDLMSDirector
                     for (int pos = 0; pos != cnt; ++pos)
                     {                        
                         GXDLMSObject it = dev.Objects[pos];
-                        it.UpdateDefaultValueItems();
-                        this.OnProgress(dev, "Reading scalers and units.", pos + 1, cnt);
-                        if (it is GXDLMSRegister)
-                        {
-                            object data = it.ShortName;
-                            if (it.ShortName == 0)
-                            {
-                                data = it.LogicalName;
-                            }
-                            //Read scaler first.
-                            DataType type = DataType.None;
-                            try
-                            {
-                                data = dev.Comm.ReadValue(data, it.ObjectType, 3, ref type);
-                                object[] scalerUnit = (object[])GXHelpers.ConvertFromDLMS(data, DataType.None, DataType.None, false);
-                                ((GXDLMSRegister)it).Scaler = Math.Pow(10, Convert.ToInt32(scalerUnit.GetValue(0)));
-                                ((GXDLMSRegister)it).Unit = (Unit) Convert.ToInt32(scalerUnit.GetValue(1));
-                            }
-                            catch (Exception Ex)
-                            {
-                                UpdateError(it, 3, m, Ex);
-                                if (Ex is GXDLMSException)
-                                {
-                                    continue;
-                                }
-                            }
-                        }                        
-                        if (it is GXDLMSDemandRegister)
-                        {
-                            object name = it.ShortName;
-                            object data;
-                            if (it.ShortName == 0)
-                            {
-                                name = it.LogicalName;
-                            }
-                            //Read scaler first.
-                            DataType type = DataType.None;
-                            byte attributeOrder = 4;
-                            try
-                            {
-                                data = dev.Comm.ReadValue(name, it.ObjectType, attributeOrder, ref type);
-                                Array scalerUnit = (Array)GXHelpers.ConvertFromDLMS(data, DataType.None, DataType.None, false);
-                                ((GXDLMSDemandRegister)it).Scaler = Math.Pow(10, Convert.ToInt32(scalerUnit.GetValue(0)));
-                                ((GXDLMSDemandRegister)it).Unit = (Unit) Convert.ToInt32(scalerUnit.GetValue(1));
-                                //Read Period
-                                data = dev.Comm.ReadValue(name, it.ObjectType, 8, ref type);
-                                ((GXDLMSDemandRegister)it).Period = Convert.ToUInt64(data);
-                                //Read number of periods
-                                data = dev.Comm.ReadValue(name, it.ObjectType, 9, ref type);
-                                ((GXDLMSDemandRegister)it).NumberOfPeriods = Convert.ToUInt32(data);
-                            }
-                            catch (Exception Ex)
-                            {
-                                UpdateError(it, attributeOrder, m, Ex);                                
-                            }
-                        }
+                        it.UpdateDefaultValueItems();                        
                         
                         GXObisCode obj = m.ObisCodes.FindByLN(it.ObjectType, it.LogicalName, null);
                         if (obj != null)

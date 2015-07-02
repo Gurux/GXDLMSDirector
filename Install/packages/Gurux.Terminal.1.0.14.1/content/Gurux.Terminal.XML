@@ -1,0 +1,600 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Gurux.Terminal</name>
+    </assembly>
+    <members>
+        <member name="T:Gurux.Terminal.GXTerminal">
+            <summary>
+            A media component that enables communication of Terminal port.
+            See help in http://www.gurux.org/index.php?q=Gurux.Terminal
+            </summary>
+        </member>
+        <member name="M:Gurux.Terminal.GXTerminal.GetAvailableBaudRates(System.String)">
+            <summary>
+            Get baud rates supported by given Terminal port.
+            </summary>
+        </member>
+        <member name="M:Gurux.Terminal.GXTerminal.#ctor">
+            <summary>
+            Constructor.
+            </summary>
+        </member>
+        <member name="M:Gurux.Terminal.GXTerminal.Close">
+            <summary>
+            Closes the port connection, sets the System.IO.Ports.SerialPort.IsOpen property to false, and disposes of the internal System.IO.Stream object.
+            </summary>
+        </member>
+        <member name="M:Gurux.Terminal.GXTerminal.DiscardInBuffer">
+            <summary>
+            Discards data from the Terminal driver's receive buffer.
+            </summary>
+        </member>
+        <member name="M:Gurux.Terminal.GXTerminal.DiscardOutBuffer">
+            <summary>
+            Discards data from the Terminal driver's transmit buffer.
+            </summary>
+        </member>
+        <member name="M:Gurux.Terminal.GXTerminal.GetPortNames">
+            <summary>
+            Gets an array of Terminal port names for the current computer.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Gurux.Terminal.GXTerminal.Open">
+            <summary>
+            Opens a new Terminal port connection.
+            </summary>
+            <remarks>
+            If connection is succeeded but Modem data is not move try to set following:
+            DTE/Modem flow control
+            AT&amp;K0  Disable flow control.
+            AT&amp;Q0  Direct Asynchronous mode
+            </remarks>
+        </member>
+        <member name="M:Gurux.Terminal.GXTerminal.Gurux#Common#IGXVirtualMedia#DataReceived(System.Byte[],System.String)">
+            <summary>
+            Called when new data is received to the virtual media.
+            </summary>
+            <param name="data">received data</param>
+            <param name="sender">Data sender.</param>
+        </member>
+        <member name="M:Gurux.Terminal.GXTerminal.ResetSynchronousBuffer">
+            <inheritdoc cref="M:Gurux.Common.IGXMedia.ResetSynchronousBuffer"/>
+        </member>
+        <member name="M:Gurux.Terminal.GXTerminal.ResetByteCounters">
+            <summary>
+            Resets BytesReceived and BytesSent counters.
+            </summary>
+            <seealso cref="P:Gurux.Terminal.GXTerminal.BytesSent">BytesSent</seealso>
+            <seealso cref="P:Gurux.Terminal.GXTerminal.BytesReceived">BytesReceived</seealso>
+        </member>
+        <member name="M:Gurux.Terminal.GXTerminal.Properties(System.Windows.Forms.Form)">
+            <summary>
+            Shows the serial port Properties dialog.
+            </summary>
+            <param name="parent">Owner window of the Properties dialog.</param>
+            <returns>True, if the user has accepted the changes.</returns>
+            <seealso cref="P:Gurux.Terminal.GXTerminal.PortName">PortName</seealso>
+            <seealso cref="P:Gurux.Terminal.GXTerminal.BaudRate">BaudRate</seealso>
+            <seealso cref="P:Gurux.Terminal.GXTerminal.DataBits">DataBits</seealso>
+            <seealso href="PropertiesDialog.html">Properties Dialog</seealso>
+        </member>
+        <member name="M:Gurux.Terminal.GXTerminal.Send(System.Object)">
+            <summary>
+            Sends data asynchronously. <br/>
+            No reply from the receiver, whether or not the operation was successful, is expected.
+            </summary>
+        </member>
+        <member name="M:Gurux.Terminal.GXTerminal.Receive``1(Gurux.Common.ReceiveParameters{``0})">
+            <inheritdoc cref="M:Gurux.Common.IGXMedia.Receive``1(Gurux.Common.ReceiveParameters{``0})"/>        
+        </member>
+        <member name="M:Gurux.Terminal.GXTerminal.Validate">
+            <inheritdoc cref="M:Gurux.Common.IGXMedia.Validate"/>
+        </member>
+        <member name="M:Gurux.Terminal.GXTerminal.Dispose">
+            <summary>
+            Closes the connection.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.Trace">
+            <summary>
+            What level of tracing is used.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.BaseStream">
+            <summary>
+            Gets the underlying System.IO.Stream object for a System.IO.Ports.SerialPort object.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.BaudRate">
+            <summary>
+            Used baud rate for communication.
+            </summary>
+            <remarks>Can be changed without disconnecting.</remarks>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.BreakState">
+            <summary>
+            True if the port is in a break state; otherwise, false.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.BytesToRead">
+            <summary>
+            Gets the number of bytes in the receive buffer.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.BytesToWrite">
+            <summary>
+            Gets the number of bytes in the send buffer.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.CDHolding">
+            <summary>
+            Gets the state of the Carrier Detect line for the port.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.CtsHolding">
+            <summary>
+            Gets the state of the Clear-to-Send line.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.DataBits">
+            <summary>
+            Gets or sets the standard length of data bits per byte.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.DiscardNull">
+            <summary>
+            Gets or sets a value indicating whether null bytes are ignored when transmitted between the port and the receive buffer.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.DsrHolding">
+            <summary>
+            Gets the state of the Data Set Ready (DSR) signal.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.DtrEnable">
+            <summary>
+            Gets or sets a value that enables the Data Terminal Ready (DTR) signal during Terminal communication.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.Encoding">
+            <summary>
+            Gets or sets the byte encoding for pre- and post-transmission conversion of text.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.Handshake">
+            <summary>
+            Gets or sets the handshaking protocol for Terminal port transmission of data.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.IsOpen">
+            <summary>
+            Gets a value indicating the open or closed status of the System.IO.Ports.SerialPort object.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.Parity">
+            <summary>
+            Gets or sets the parity-checking protocol.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.ParityReplace">
+            <summary>
+            Gets or sets the byte that replaces invalid bytes in a data stream when a parity error occurs.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.PhoneNumber">
+            <summary>
+            Gets or sets the phone number.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.ConnectionWaitTime">
+            <summary>
+            Gets or sets how long (ms.) modem answer is waited when connection is made.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.CommandWaitTime">
+            <summary>
+            Get or set how long (ms) modem answer is waited when command is send for the modem.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.Server">
+            <summary>
+            Server sunctionality is added later.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.PortName">
+            <summary>
+            Gets or sets the port for communications, including but not limited to all available COM ports.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.ReadBufferSize">
+            <summary>
+            Gets or sets the size of the System.IO.Ports.SerialPort input buffer.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.ReadTimeout">
+            <summary>
+            Gets or sets the number of milliseconds before a time-out occurs when a read operation does not finish.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.ReceivedBytesThreshold">
+            <summary>
+            Gets or sets the number of bytes in the internal input buffer before a System.IO.Ports.SerialPort.DataReceived event occurs.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.RtsEnable">
+            <summary>
+            Gets or sets a value indicating whether the Request to Send (RTS) signal is enabled during Terminal communication.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.StopBits">
+            <summary>
+            Gets or sets the standard number of stopbits per byte.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.WriteBufferSize">
+            <summary>
+            Gets or sets the size of the Terminal port output buffer.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.WriteTimeout">
+            <summary>
+            Gets or sets the number of milliseconds before a time-out occurs when a write operation does not finish.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.AvailablePorts">
+            <summary>
+            User defined available ports.
+            </summary>
+            <remarks>If this is not set ports are retrieved from current system.</remarks>
+        </member>
+        <member name="E:Gurux.Terminal.GXTerminal.OnReceived">
+            <summary>
+            GXNet component sends received data through this method.
+            </summary>
+        </member>
+        <member name="E:Gurux.Terminal.GXTerminal.OnError">
+            <summary>
+            Errors that occur after the connection is established, are sent through this method. 
+            </summary>       
+        </member>
+        <member name="E:Gurux.Terminal.GXTerminal.OnMediaStateChange">
+            <summary>
+            Media component sends notification, when its state changes.
+            </summary>       
+        </member>
+        <member name="E:Gurux.Terminal.GXTerminal.OnClientConnected">
+            <summary>
+            Called when the client is establishing a connection with a Net Server.
+            </summary>
+        </member>
+        <member name="E:Gurux.Terminal.GXTerminal.OnClientDisconnected">
+            <summary>
+            Called when the client has been disconnected from the network server.
+            </summary>
+        </member>
+        <member name="E:Gurux.Terminal.GXTerminal.System#ComponentModel#INotifyPropertyChanged#PropertyChanged">
+            <summary>
+            Occurs when a property value changes.
+            </summary>
+        </member>
+        <member name="E:Gurux.Terminal.GXTerminal.OnTrace">
+            <inheritdoc cref="T:Gurux.Common.TraceEventHandler"/>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.ConfigurableSettings">
+            <inheritdoc cref="P:Gurux.Common.IGXMedia.ConfigurableSettings"/>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.Tag">
+            <inheritdoc cref="P:Gurux.Common.IGXMedia.Tag"/>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.Gurux#Common#IGXMedia#MediaContainer">
+            <inheritdoc cref="P:Gurux.Common.IGXMedia.MediaContainer"/>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.SyncRoot">
+            <inheritdoc cref="P:Gurux.Common.IGXMedia.SyncRoot"/>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.Gurux#Common#IGXVirtualMedia#Virtual">
+            <inheritdoc cref="P:Gurux.Common.IGXVirtualMedia.Virtual"/>
+        </member>
+        <member name="E:Gurux.Terminal.GXTerminal.Gurux#Common#IGXVirtualMedia#OnGetPropertyValue">
+            <summary>
+            Occurs when a property value is asked.
+            </summary>
+        </member>
+        <member name="E:Gurux.Terminal.GXTerminal.Gurux#Common#IGXVirtualMedia#OnDataSend">
+            <summary>
+            Occurs when data is sent on virtual mode.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.Synchronous">
+            <inheritdoc cref="P:Gurux.Common.IGXMedia.Synchronous"/>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.IsSynchronous">
+            <inheritdoc cref="P:Gurux.Common.IGXMedia.IsSynchronous"/>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.BytesSent">
+            <summary>
+            Sent byte count.
+            </summary>
+            <seealso cref="P:Gurux.Terminal.GXTerminal.BytesReceived">BytesReceived</seealso>
+            <seealso cref="M:Gurux.Terminal.GXTerminal.ResetByteCounters">ResetByteCounters</seealso>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.BytesReceived">
+            <summary>
+            Received byte count.
+            </summary>
+            <seealso cref="P:Gurux.Terminal.GXTerminal.BytesSent">BytesSent</seealso>
+            <seealso cref="M:Gurux.Terminal.GXTerminal.ResetByteCounters">ResetByteCounters</seealso>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.Eop">
+            <inheritdoc cref="P:Gurux.Common.IGXMedia.Eop"/>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.InitializeCommands">
+            <summary>
+            Modem initial settings.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.Settings">
+            <summary>
+            Media settings as a XML string.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.GXTerminal.PropertiesForm">
+            <summary>
+            Returns a new instance of the Settings form.
+            </summary>
+        </member>
+        <member name="M:Gurux.Shared.PropertiesForm.#ctor(System.Windows.Forms.Form,System.String,System.Boolean)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="properties"></param>
+            <param name="title"></param>
+            <param name="open"></param>
+        </member>
+        <member name="F:Gurux.Shared.PropertiesForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Gurux.Shared.PropertiesForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Gurux.Shared.PropertiesForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:Gurux.Terminal.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.BaudRate">
+            <summary>
+              Looks up a localized string similar to Baud Rate:.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.BaudRateTxt">
+            <summary>
+              Looks up a localized string similar to Baud Rate.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.Connecting">
+            <summary>
+              Looks up a localized string similar to Connecting....
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.ConnectionFailedBusyWhenTelephoneCallWasBeingEstablished">
+            <summary>
+              Looks up a localized string similar to Connection failed: busy (when telephone call was being established)..
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.ConnectionFailedErrorWhenTelephoneCallWasBeingEstablished">
+            <summary>
+              Looks up a localized string similar to Connection failed: error (when telephone call was being established)..
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.ConnectionFailedNoCarrierWhenTelephoneCallWasBeingEstablished">
+            <summary>
+              Looks up a localized string similar to Connection failed: no carrier (when telephone call was being established). .
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.DataBits">
+            <summary>
+              Looks up a localized string similar to Data Bits:.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.DataBitsTxt">
+            <summary>
+              Looks up a localized string similar to Data Bits.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.Eop">
+            <summary>
+              Looks up a localized string similar to Eop:.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.FailedToReceiveAnswerFromTheModemCheckSerialPort">
+            <summary>
+              Looks up a localized string similar to Failed to receive answer from the modem. Check serial port..
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.InvalidReply">
+            <summary>
+              Looks up a localized string similar to Invalid reply..
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.None">
+            <summary>
+              Looks up a localized string similar to None.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.Parity">
+            <summary>
+              Looks up a localized string similar to Parity:.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.ParityTxt">
+            <summary>
+              Looks up a localized string similar to Parity.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.PhoneNumberTxt">
+            <summary>
+              Looks up a localized string similar to Phone Number.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.Port">
+            <summary>
+              Looks up a localized string similar to Port:.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.PortNameTxt">
+            <summary>
+              Looks up a localized string similar to Serial Port:.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.Settings">
+            <summary>
+              Looks up a localized string similar to Settings:.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.SettingsTxt">
+            <summary>
+              Looks up a localized string similar to Terminal Settings.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.StopBits">
+            <summary>
+              Looks up a localized string similar to Stop Bits:.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.StopBitsTxt">
+            <summary>
+              Looks up a localized string similar to Stop Bits.
+            </summary>
+        </member>
+        <member name="P:Gurux.Terminal.Properties.Resources.terminal">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="F:Gurux.Shared.GXSynchronousMediaBase.Trace">
+            <summary>
+            Trace level.
+            </summary>
+        </member>
+        <member name="T:Gurux.Terminal.Settings">
+            <summary>
+            Settings dialog.
+            </summary>
+        </member>
+        <member name="F:Gurux.Terminal.Settings.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Gurux.Terminal.Settings.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Gurux.Terminal.Settings.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:Gurux.Terminal.Settings.#ctor(Gurux.Terminal.GXTerminal)">
+            <summary>
+            Constructor.
+            </summary>
+        </member>
+        <member name="F:Gurux.Terminal.Connecting.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Gurux.Terminal.Connecting.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Gurux.Terminal.Connecting.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:Gurux.Terminal.AvailableMediaSettings">
+            <summary>
+            Describes available settings for the media.
+            </summary>
+        </member>
+        <member name="F:Gurux.Terminal.AvailableMediaSettings.All">
+            <summary>
+            All serial port properties are shown.
+            </summary>
+        </member>
+        <member name="F:Gurux.Terminal.AvailableMediaSettings.PortName">
+            <summary>
+            Is port name shown.
+            </summary>
+        </member>
+        <member name="F:Gurux.Terminal.AvailableMediaSettings.BaudRate">
+            <summary>
+            Is baud rate shown.
+            </summary>
+        </member>
+        <member name="F:Gurux.Terminal.AvailableMediaSettings.DataBits">
+            <summary>
+            Is data bits shown.
+            </summary>
+        </member>
+        <member name="F:Gurux.Terminal.AvailableMediaSettings.Parity">
+            <summary>
+            Is Parity shown.
+            </summary>
+        </member>
+        <member name="F:Gurux.Terminal.AvailableMediaSettings.StopBits">
+            <summary>
+            Is stop bits shown.
+            </summary>
+        </member>
+        <member name="F:Gurux.Terminal.AvailableMediaSettings.PhoneNumber">
+            <summary>
+            Is phone number shown.
+            </summary>
+        </member>
+        <member name="F:Gurux.Terminal.AvailableMediaSettings.Server">
+            <summary>
+            Is server mode shown.
+            </summary>
+        </member>
+        <member name="M:Gurux.Terminal.ReceiveThread.Receive">
+            <summary>
+            Receive data from the server using the established socket connection
+            </summary>
+            <returns>The data received from the server</returns>
+        </member>
+    </members>
+</doc>

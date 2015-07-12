@@ -6,6 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
+// Version:         $Revision: 7852 $,
+//                  $Date: 2015-07-02 23:21:37 +0300 (to, 02 heinä 2015) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd

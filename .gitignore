@@ -19,6 +19,7 @@ local.properties
 # External tool builders
 .externalToolBuilders/
 GXDLMSLog2Message/
+packages/
 
 # Locally stored "Eclipse launch configurations"
 *.launch

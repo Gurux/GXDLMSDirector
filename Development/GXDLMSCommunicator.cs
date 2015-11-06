@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 7852 $,
-//                  $Date: 2015-07-02 23:21:37 +0300 (to, 02 heinä 2015) $
+// Version:         $Revision: 7981 $,
+//                  $Date: 2015-11-06 09:06:22 +0200 (pe, 06 marras 2015) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -793,7 +793,8 @@ namespace GXDLMSDirector
                     {
                         CurrentProfileGeneric = obj as GXDLMSProfileGeneric;
                         OnDataReceived += new GXDLMSCommunicator.DataReceivedEventHandler(this.OnProfileGenericDataReceived);
-                        if (CurrentProfileGeneric.AccessSelector != AccessRange.Entry)
+                        if (CurrentProfileGeneric.AccessSelector == AccessRange.Range ||
+                            CurrentProfileGeneric.AccessSelector == AccessRange.Last)
                         {
                             GXDLMSObject obj2 = CurrentProfileGeneric.CaptureObjects[0].Key;
                             byte[] tmp = m_Cosem.ReadRowsByRange(CurrentProfileGeneric.Name, obj2.LogicalName,
@@ -801,9 +802,14 @@ namespace GXDLMSDirector
                                 Convert.ToDateTime(CurrentProfileGeneric.From), Convert.ToDateTime(CurrentProfileGeneric.To));
                             ReadDataBlock(tmp, "Reading profile generic data", 1);
                         }
-                        else
+                        else if (CurrentProfileGeneric.AccessSelector == AccessRange.Entry)
                         {
                             byte[] tmp = m_Cosem.ReadRowsByEntry(CurrentProfileGeneric.Name, Convert.ToInt32(CurrentProfileGeneric.From), Convert.ToInt32(CurrentProfileGeneric.To));
+                            ReadDataBlock(tmp, "Reading profile generic data " + CurrentProfileGeneric.Name, 1);
+                        }
+                        else //Read all.
+                        {
+                            byte[] tmp = m_Cosem.Read(CurrentProfileGeneric, 2)[0];
                             ReadDataBlock(tmp, "Reading profile generic data " + CurrentProfileGeneric.Name, 1);
                         }
                     }

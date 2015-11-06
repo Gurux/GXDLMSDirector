@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/Views/GXDLMSProfileGenericView.cs $
 //
-// Version:         $Revision: 7358 $,
-//                  $Date: 2014-05-05 14:06:51 +0300 (ma, 05 touko 2014) $
+// Version:         $Revision: 7981 $,
+//                  $Date: 2015-11-06 09:06:22 +0200 (pe, 06 marras 2015) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -78,6 +78,7 @@ namespace GXDLMSDirector.Views
         private Label label5;
         private GXValueField CapturePeriodTB;
         private ErrorProvider errorProvider1;
+        private RadioButton ReadAllRB;
         GXDLMSProfileGeneric m_Target;           
         /// <summary>
         /// Constructor.
@@ -92,7 +93,8 @@ namespace GXDLMSDirector.Views
             m_MyPane.GraphPane.XAxis.ScaleFormatEvent += new ZedGraph.Axis.ScaleFormatHandler(XAxis_ScaleFormatEvent);
             this.ReadFromRB.CheckedChanged += new System.EventHandler(this.ReadFromRB_CheckedChanged);
             this.ReadLastRB.CheckedChanged += new System.EventHandler(this.ReadLastRB_CheckedChanged);
-            this.ReadEntryBtn.CheckedChanged += new System.EventHandler(this.ReadAllRB_CheckedChanged);            
+            this.ReadEntryBtn.CheckedChanged += new System.EventHandler(this.ReadEntryRB_CheckedChanged);
+            this.ReadAllRB.CheckedChanged += new System.EventHandler(this.ReadAllRB_CheckedChanged);
         }
         
         #region IGXDLMSView Members
@@ -209,7 +211,7 @@ namespace GXDLMSDirector.Views
                 ReadLastTB.Value = diff.Days - 1;
                 ReadLastRB.Checked = true;
             }
-            else
+            else if (m_Target.AccessSelector == AccessRange.Range)
             {
                 if ((DateTime)m_Target.From == DateTime.MinValue)
                 {
@@ -228,7 +230,11 @@ namespace GXDLMSDirector.Views
                     ToPick.Value = (DateTime)m_Target.To;
                 }
                 ReadFromRB.Checked = true;
-            }      
+            }
+            else //All is checked.
+            {
+                ReadAllRB.Checked = true;
+            }
         }
 
         public GXDLMSObject Target
@@ -317,6 +323,7 @@ namespace GXDLMSDirector.Views
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.m_MyPane = new ZedGraph.ZedGraphControl();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.ReadAllRB = new System.Windows.Forms.RadioButton();
             this.ReadLastTB = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
             this.EndEntry = new System.Windows.Forms.NumericUpDown();
@@ -372,7 +379,7 @@ namespace GXDLMSDirector.Views
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(245, 122);
+            this.label5.Location = new System.Drawing.Point(245, 146);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(40, 13);
             this.label5.TabIndex = 14;
@@ -381,7 +388,7 @@ namespace GXDLMSDirector.Views
             // CapturePeriodTB
             // 
             this.CapturePeriodTB.AttributeID = 4;
-            this.CapturePeriodTB.Location = new System.Drawing.Point(297, 120);
+            this.CapturePeriodTB.Location = new System.Drawing.Point(297, 144);
             this.CapturePeriodTB.Name = "CapturePeriodTB";
             this.CapturePeriodTB.Size = new System.Drawing.Size(185, 20);
             this.CapturePeriodTB.TabIndex = 15;
@@ -394,7 +401,7 @@ namespace GXDLMSDirector.Views
             this.groupBox3.Controls.Add(this.SortObjectTB);
             this.groupBox3.Controls.Add(this.label4);
             this.groupBox3.Controls.Add(this.SortModeTB);
-            this.groupBox3.Location = new System.Drawing.Point(3, 169);
+            this.groupBox3.Location = new System.Drawing.Point(3, 193);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(486, 49);
             this.groupBox3.TabIndex = 12;
@@ -448,10 +455,10 @@ namespace GXDLMSDirector.Views
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(5, 224);
+            this.tabControl1.Location = new System.Drawing.Point(5, 249);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(490, 342);
+            this.tabControl1.Size = new System.Drawing.Size(490, 317);
             this.tabControl1.TabIndex = 9;
             // 
             // tabPage1
@@ -460,7 +467,7 @@ namespace GXDLMSDirector.Views
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(482, 316);
+            this.tabPage1.Size = new System.Drawing.Size(482, 291);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Data";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -477,7 +484,7 @@ namespace GXDLMSDirector.Views
             this.ProfileGenericView.ReadOnly = true;
             this.ProfileGenericView.ShowCellErrors = false;
             this.ProfileGenericView.ShowRowErrors = false;
-            this.ProfileGenericView.Size = new System.Drawing.Size(476, 310);
+            this.ProfileGenericView.Size = new System.Drawing.Size(476, 285);
             this.ProfileGenericView.TabIndex = 4;
             // 
             // tabPage2
@@ -486,7 +493,7 @@ namespace GXDLMSDirector.Views
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(482, 316);
+            this.tabPage2.Size = new System.Drawing.Size(482, 291);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Graph";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -496,18 +503,19 @@ namespace GXDLMSDirector.Views
             this.m_MyPane.Dock = System.Windows.Forms.DockStyle.Fill;
             this.m_MyPane.Location = new System.Drawing.Point(3, 3);
             this.m_MyPane.Name = "m_MyPane";
-            this.m_MyPane.ScrollGrace = 0;
-            this.m_MyPane.ScrollMaxX = 0;
-            this.m_MyPane.ScrollMaxY = 0;
-            this.m_MyPane.ScrollMaxY2 = 0;
-            this.m_MyPane.ScrollMinX = 0;
-            this.m_MyPane.ScrollMinY = 0;
-            this.m_MyPane.ScrollMinY2 = 0;
-            this.m_MyPane.Size = new System.Drawing.Size(476, 310);
+            this.m_MyPane.ScrollGrace = 0D;
+            this.m_MyPane.ScrollMaxX = 0D;
+            this.m_MyPane.ScrollMaxY = 0D;
+            this.m_MyPane.ScrollMaxY2 = 0D;
+            this.m_MyPane.ScrollMinX = 0D;
+            this.m_MyPane.ScrollMinY = 0D;
+            this.m_MyPane.ScrollMinY2 = 0D;
+            this.m_MyPane.Size = new System.Drawing.Size(476, 285);
             this.m_MyPane.TabIndex = 0;
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.ReadAllRB);
             this.groupBox2.Controls.Add(this.ReadLastTB);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.EndEntry);
@@ -521,10 +529,18 @@ namespace GXDLMSDirector.Views
             this.groupBox2.Controls.Add(this.ReadEntryBtn);
             this.groupBox2.Location = new System.Drawing.Point(5, 15);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(367, 97);
+            this.groupBox2.Size = new System.Drawing.Size(367, 120);
             this.groupBox2.TabIndex = 8;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Reading";
+            // 
+            // ReadAllRB
+            // 
+            this.ReadAllRB.Location = new System.Drawing.Point(6, 89);
+            this.ReadAllRB.Name = "ReadAllRB";
+            this.ReadAllRB.Size = new System.Drawing.Size(80, 16);
+            this.ReadAllRB.TabIndex = 12;
+            this.ReadAllRB.Text = "All";
             // 
             // ReadLastTB
             // 
@@ -639,7 +655,7 @@ namespace GXDLMSDirector.Views
             // EntriesTB
             // 
             this.EntriesTB.AttributeID = 8;
-            this.EntriesTB.Location = new System.Drawing.Point(186, 143);
+            this.EntriesTB.Location = new System.Drawing.Point(186, 167);
             this.EntriesTB.Name = "EntriesTB";
             this.EntriesTB.Size = new System.Drawing.Size(57, 20);
             this.EntriesTB.TabIndex = 7;
@@ -649,7 +665,7 @@ namespace GXDLMSDirector.Views
             // EntriesInUseTB
             // 
             this.EntriesInUseTB.AttributeID = 7;
-            this.EntriesInUseTB.Location = new System.Drawing.Point(94, 143);
+            this.EntriesInUseTB.Location = new System.Drawing.Point(94, 167);
             this.EntriesInUseTB.Name = "EntriesInUseTB";
             this.EntriesInUseTB.Size = new System.Drawing.Size(66, 20);
             this.EntriesInUseTB.TabIndex = 5;
@@ -659,7 +675,7 @@ namespace GXDLMSDirector.Views
             // LogicalNameLbl
             // 
             this.LogicalNameLbl.AutoSize = true;
-            this.LogicalNameLbl.Location = new System.Drawing.Point(10, 120);
+            this.LogicalNameLbl.Location = new System.Drawing.Point(10, 144);
             this.LogicalNameLbl.Name = "LogicalNameLbl";
             this.LogicalNameLbl.Size = new System.Drawing.Size(75, 13);
             this.LogicalNameLbl.TabIndex = 0;
@@ -668,7 +684,7 @@ namespace GXDLMSDirector.Views
             // LogicalNameTB
             // 
             this.LogicalNameTB.AttributeID = 1;
-            this.LogicalNameTB.Location = new System.Drawing.Point(94, 117);
+            this.LogicalNameTB.Location = new System.Drawing.Point(94, 141);
             this.LogicalNameTB.Name = "LogicalNameTB";
             this.LogicalNameTB.Size = new System.Drawing.Size(140, 20);
             this.LogicalNameTB.TabIndex = 1;
@@ -678,7 +694,7 @@ namespace GXDLMSDirector.Views
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 146);
+            this.label1.Location = new System.Drawing.Point(10, 170);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(42, 13);
             this.label1.TabIndex = 4;
@@ -739,9 +755,13 @@ namespace GXDLMSDirector.Views
                 m_Target.AccessSelector = AccessRange.Range;
                 StartPick_ValueChanged(null, null);
             }
+            else if (ReadAllRB.Checked)
+            {
+                m_Target.AccessSelector = AccessRange.All;
+            }
         }
 
-        private void ReadAllRB_CheckedChanged(object sender, EventArgs e)
+        private void ReadEntryRB_CheckedChanged(object sender, EventArgs e)
         {
             if (ReadEntryBtn.Checked)
             {
@@ -756,6 +776,14 @@ namespace GXDLMSDirector.Views
                 UpdateView();                
             }
         }
+        private void ReadAllRB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (ReadAllRB.Checked)
+            {
+                UpdateView();                
+            }
+        }
+        
 
         private void ReadFromRB_CheckedChanged(object sender, EventArgs e)
         {

@@ -292,15 +292,21 @@ namespace Extensions
                 {
                     comm.OnDataReceived += new GXDLMSCommunicator.DataReceivedEventHandler(this.OnProfileGenericDataReceived);
                     //Read profile generic columns.                
-                    if (pg.AccessSelector != AccessRange.Entry)
+                    if (pg.AccessSelector == AccessRange.Range ||
+                        pg.AccessSelector == AccessRange.Last)
                     {
                         data = comm.m_Cosem.ReadRowsByRange(pg.Name, pg.CaptureObjects[0].Key.LogicalName,
                                         pg.CaptureObjects[0].Key.ObjectType, pg.CaptureObjects[0].Key.Version, Convert.ToDateTime(pg.From).Date, Convert.ToDateTime(pg.To).Date);
                         data = comm.ReadDataBlock(data, "Reading profile generic data", 1);
                     }
-                    else
+                    else if (pg.AccessSelector == AccessRange.Entry)
                     {
                         data = comm.m_Cosem.ReadRowsByEntry(pg.Name, Convert.ToInt32(pg.From), Convert.ToInt32(pg.To));
+                        data = comm.ReadDataBlock(data, "Reading profile generic data " + pg.Name, 1);
+                    }
+                    else //Read All.
+                    {
+                        data = comm.m_Cosem.Read(pg, 2)[0];
                         data = comm.ReadDataBlock(data, "Reading profile generic data " + pg.Name, 1);
                     }
                 }

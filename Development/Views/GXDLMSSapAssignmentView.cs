@@ -39,6 +39,7 @@ using System.Windows.Forms;
 using GXDLMS.Common;
 using Gurux.DLMS.Objects;
 using Gurux.DLMS;
+using Gurux.DLMS.Enums;
 
 namespace GXDLMSDirector.Views
 {

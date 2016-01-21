@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/Views/GXDLMSActivityCalendarView.cs $
 //
-// Version:         $Revision: 6333 $,
-//                  $Date: 2013-05-17 12:15:22 +0300 (pe, 17 touko 2013) $
+// Version:         $Revision: 8063 $,
+//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -39,6 +39,7 @@ using System.Windows.Forms;
 using GXDLMS.Common;
 using Gurux.DLMS.Objects;
 using Gurux.DLMS;
+using Gurux.DLMS.Enums;
 
 namespace GXDLMSDirector.Views
 {

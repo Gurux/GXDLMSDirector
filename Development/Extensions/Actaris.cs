@@ -39,6 +39,8 @@ using GXDLMS.Common;
 using Gurux.DLMS.ManufacturerSettings;
 using Gurux.DLMS.Objects;
 using System.Data;
+using Gurux.DLMS.Enums;
+using Gurux.DLMS.Objects.Enums;
 
 namespace Extensions
 {
@@ -51,14 +53,15 @@ namespace Extensions
 
         public List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> Refresh(GXDLMSProfileGeneric item, GXDLMSCommunicator comm)
         {
+            GXReplyData reply = new GXReplyData();
             if (item.LogicalName.CompareTo("0.0.99.1.2.255") == 0) // LoadProfile1EndOfRecordingData
             {
                 List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> items = new List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>>();
                 //Read profile generic columns.             
-                object value = comm.GetProfileGenericColumns(item.Name);
-                byte[] data = comm.Read("0.0.99.128.1.255", ObjectType.ProfileGeneric, 2);
-                byte[] allData = comm.ReadDataBlock(data, "Get profile generic columns...", 1);
-                object[] values = (object[])comm.m_Cosem.GetValue(allData);
+                comm.GetProfileGenericColumns(item);
+                byte[] data = comm.Read(item, 2);
+                comm.ReadDataBlock(data, "Get profile generic columns...", 1, reply);
+                object[] values = (object[])reply.Value;
                 Array info = values[0] as Array;
                 GXDLMSObject obj = new GXDLMSData();
                 obj.Description = "DateTime";                
@@ -72,22 +75,22 @@ namespace Extensions
                 for (int pos = 0; pos < info.Length - 2; pos += 2)
                 {
                     obj = new GXDLMSData();
-                    obj.LogicalName = GXHelpers.ConvertFromDLMS(info.GetValue(pos), DataType.OctetString, DataType.OctetString, false).ToString();
+                    obj.LogicalName = Convert.ToString(GXDLMSClient.ChangeType((byte[])info.GetValue(pos), DataType.OctetString));
                     object scalerUnit = info.GetValue(pos + 1);
                     obj.Description = "";
                     items.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(obj, new GXDLMSCaptureObject(++cnt, 0)));
                 }
-                LastDateTime = ((GXDateTime) GXDLMS.Common.GXHelpers.ConvertFromDLMS(info.GetValue(info.Length - 1), DataType.OctetString, DataType.DateTime, true)).Value;
+                LastDateTime = (GXDateTime)GXDLMSClient.ChangeType((byte[]) info.GetValue(info.Length - 1), DataType.DateTime);
                 return items;
             }             
             return null;
         }
 
-        void OnProfileGenericDataReceived(object sender, byte[] buff)
+        void OnProfileGenericDataReceived(object sender, GXReplyData reply)
         {
             if (MainForm.InvokeRequired)
             {
-                MainForm.Invoke(new GXDLMSCommunicator.DataReceivedEventHandler(this.OnProfileGenericDataReceived), new object[] { sender, buff });
+                MainForm.Invoke(new GXDLMSCommunicator.DataReceivedEventHandler(this.OnProfileGenericDataReceived), new object[] { sender, reply });
                 return;
             }
             /*
@@ -287,7 +290,8 @@ namespace Extensions
             if (item is GXDLMSProfileGeneric)
             {
                 GXDLMSProfileGeneric pg = item as GXDLMSProfileGeneric;
-                byte[] data;
+                GXReplyData reply = new GXReplyData();
+                byte[][] data;
                 try
                 {
                     comm.OnDataReceived += new GXDLMSCommunicator.DataReceivedEventHandler(this.OnProfileGenericDataReceived);
@@ -295,19 +299,18 @@ namespace Extensions
                     if (pg.AccessSelector == AccessRange.Range ||
                         pg.AccessSelector == AccessRange.Last)
                     {
-                        data = comm.m_Cosem.ReadRowsByRange(pg.Name, pg.CaptureObjects[0].Key.LogicalName,
-                                        pg.CaptureObjects[0].Key.ObjectType, pg.CaptureObjects[0].Key.Version, Convert.ToDateTime(pg.From).Date, Convert.ToDateTime(pg.To).Date);
-                        data = comm.ReadDataBlock(data, "Reading profile generic data", 1);
+                        data = comm.client.ReadRowsByRange(pg, Convert.ToDateTime(pg.From).Date, Convert.ToDateTime(pg.To).Date);
+                        comm.ReadDataBlock(data[0], "Reading profile generic data", 1, reply);
                     }
                     else if (pg.AccessSelector == AccessRange.Entry)
                     {
-                        data = comm.m_Cosem.ReadRowsByEntry(pg.Name, Convert.ToInt32(pg.From), Convert.ToInt32(pg.To));
-                        data = comm.ReadDataBlock(data, "Reading profile generic data " + pg.Name, 1);
+                        data = comm.client.ReadRowsByEntry(pg, Convert.ToInt32(pg.From), Convert.ToInt32(pg.To));
+                        comm.ReadDataBlock(data[0], "Reading profile generic data " + pg.Name, 1, reply);
                     }
                     else //Read All.
                     {
-                        data = comm.m_Cosem.Read(pg, 2)[0];
-                        data = comm.ReadDataBlock(data, "Reading profile generic data " + pg.Name, 1);
+                        data = comm.client.Read(pg, 2);
+                        comm.ReadDataBlock(data[0], "Reading profile generic data " + pg.Name, 1, reply);
                     }
                 }
                 finally

@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 7981 $,
-//                  $Date: 2015-11-06 09:06:22 +0200 (pe, 06 marras 2015) $
+// Version:         $Revision: 8069 $,
+//                  $Date: 2016-01-21 11:11:13 +0200 (to, 21 tammi 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -51,6 +51,8 @@ using System.Xml.Serialization;
 using System.Reflection;
 using System.Linq;
 using System.Windows.Forms;
+using Gurux.DLMS.Enums;
+using Gurux.DLMS.Objects.Enums;
 
 namespace GXDLMSDirector
 {
@@ -65,18 +67,18 @@ namespace GXDLMSDirector
 
     public class GXDLMSCommunicator
     {
-        internal DateTime LastTransaction = DateTime.MinValue;
-        internal DateTime ConnectionStartTime;
-        internal GXDLMSDevice Parent;
-        public Control ParentForm;
-        public Gurux.Common.IGXMedia Media = null;
-        internal Gurux.DLMS.GXDLMSClient m_Cosem;
+        internal DateTime lastTransaction = DateTime.MinValue;
+        internal DateTime connectionStartTime;
+        internal GXDLMSDevice parent;
+        public Control parentForm;
+        public Gurux.Common.IGXMedia media = null;
+        internal Gurux.DLMS.GXDLMSClient client;
 
         public GXDLMSCommunicator(GXDLMSDevice parent, Gurux.Common.IGXMedia media)
         {
-            Parent = parent;            
-            Media = media;
-            m_Cosem = new Gurux.DLMS.GXDLMSClient();
+            this.parent = parent;
+            this.media = media;
+            client = new Gurux.DLMS.GXDLMSClient();
         }        
 
         public ProgressEventHandler OnProgress;
@@ -85,52 +87,47 @@ namespace GXDLMSDirector
 
         public byte[] SNRMRequest()
         {
-            return m_Cosem.SNRMRequest();
+            return client.SNRMRequest();
         }
 
-        public void ParseUAResponse(byte[] data)
+        public void ParseUAResponse(GXByteBuffer data)
         {
-            m_Cosem.ParseUAResponse(data);
+            client.ParseUAResponse(data);
         }
 
         public byte[][] AARQRequest()
         {
-            return m_Cosem.AARQRequest(null);
+            return client.AARQRequest();
         }
 
-        public void ParseAAREResponse(byte[] data)
+        public void ParseAAREResponse(GXByteBuffer data)
         {
-            m_Cosem.ParseAAREResponse(data);
+            client.ParseAAREResponse(data);
         }                
 
-        public byte[] Read(object data, ObjectType type, int AttributeOrdinal)
+        public byte[] Read(GXDLMSObject it, int attributeOrdinal)
         {
-            LastTransaction = DateTime.Now;
-            if (data is GXDLMSObject)
-            {
-                GXDLMSObject obj = data as GXDLMSObject;
-                data = obj.Name;
-            }
-            byte[] tmp = m_Cosem.Read(data, type, AttributeOrdinal)[0];
-            GXLogWriter.WriteLog(string.Format("Reading object {0} from interface {1}", data.ToString(), type.ToString()), tmp);
+            lastTransaction = DateTime.Now;
+            byte[] tmp = client.Read(it, attributeOrdinal)[0];
+            GXLogWriter.WriteLog(string.Format("Reading object {0} from interface {1}", it.LogicalName, it.ObjectType), tmp);
             return tmp;
         }
 
-        public byte[] MethodRequest(GXDLMSObject target, int methodIndex, object data)
+        public void MethodRequest(GXDLMSObject target, int methodIndex, object data, GXReplyData reply)
         {
-            return ReadDataBlock(m_Cosem.Method(target, methodIndex, data, DataType.None), "");
+            ReadDataBlock(client.Method(target, methodIndex, data, DataType.None), "", reply);
         }
 
         public byte[] DisconnectRequest()
         {
-            byte[] data = m_Cosem.DisconnectRequest();
+            byte[] data = client.DisconnectRequest();
             GXLogWriter.WriteLog("Disconnect request", data);
             return data;
         }
 
         public byte[] DisconnectedModeRequest()
         {
-            byte[] data = m_Cosem.DisconnectedModeRequest();
+            byte[] data = client.DisconnectedModeRequest();
             GXLogWriter.WriteLog("Disconnected Mode request", data);
             return data;
         }
@@ -139,13 +136,13 @@ namespace GXDLMSDirector
         {
             get
             {
-                return m_Cosem.UseLogicalNameReferencing;
+                return client.UseLogicalNameReferencing;
             }
         }
 
-        public byte[] ReadDLMSPacket(byte[] data)
+        public void ReadDLMSPacket(byte[] data, GXReplyData reply)
         {
-            return ReadDLMSPacket(data, 3);
+            ReadDLMSPacket(data, 3, reply);
         }
 
         /// <summary>
@@ -156,15 +153,15 @@ namespace GXDLMSDirector
         /// </remarks>
         /// <param name="data">Data to send.</param>
         /// <returns>Received data.</returns>
-        public byte[] ReadDLMSPacket(byte[] data, int tryCount)
+        public void ReadDLMSPacket(byte[] data, int tryCount, GXReplyData reply)
         {
             if (data == null)
             {
-                return null;
+                return;
             }
             object eop = (byte)0x7E;
             //In network connection terminator is not used.
-            if (m_Cosem.InterfaceType == InterfaceType.Net && Media is GXNet && !Parent.UseRemoteSerial)
+            if (client.InterfaceType == InterfaceType.WRAPPER && media is GXNet && !parent.UseRemoteSerial)
             {
                 eop = null;                
             }
@@ -175,17 +172,17 @@ namespace GXDLMSDirector
                 AllData = false,
                 Eop = eop,
                 Count = 5,
-                WaitTime = Parent.WaitTime * 1000,
+                WaitTime = parent.WaitTime * 1000,
             };
-            lock (Media.Synchronous)
+            lock (media.Synchronous)
             {
                 if (data != null)
                 {
-                    Media.Send(data, null);
+                    media.Send(data, null);
                 }
                 while (!succeeded && pos != 3)
                 {                    
-                    succeeded = Media.Receive(p);
+                    succeeded = media.Receive(p);
                     if (!succeeded)
                     {
                         //Try to read again...
@@ -197,7 +194,7 @@ namespace GXDLMSDirector
                                 p.Count = 1;
                             }
                             System.Diagnostics.Debug.WriteLine("Data send failed. Try to resend " + pos.ToString() + "/3");
-                            Media.Send(data, null);
+                            media.Send(data, null);
                             continue;
                         }
                         string err = "Failed to receive reply from the device in given time.";
@@ -205,101 +202,86 @@ namespace GXDLMSDirector
                         throw new Exception(err);
                     }
                 }
-                //Loop until whole COSEM packet is received.                
-                while (!m_Cosem.IsDLMSPacketComplete(p.Reply))
+                try
                 {
-                    //If Eop is not set read one byte at time.
-                    if (p.Eop == null)
+                    //Loop until whole COSEM packet is received.                
+                    while (!client.GetData(p.Reply, reply))
                     {
-                        p.Count = 1;
-                    }
-                    if (!Media.Receive(p))
-                    {
-                        //Try to read again...
-                        if (++pos != tryCount)
+                        //If Eop is not set read one byte at time.
+                        if (p.Eop == null)
                         {
-                            System.Diagnostics.Debug.WriteLine("Data send failed. Try to resend " + pos.ToString() + "/3");
-                            continue;
+                            p.Count = 1;
                         }
-                        string err = "Failed to receive reply from the device in given time.";
-                        GXLogWriter.WriteLog(err, p.Reply);
-                        throw new Exception(err);
+                        if (!media.Receive(p))
+                        {
+                            //Try to read again...
+                            if (++pos != tryCount)
+                            {
+                                System.Diagnostics.Debug.WriteLine("Data send failed. Try to resend " + pos.ToString() + "/3");
+                                continue;
+                            }
+                            string err = "Failed to receive reply from the device in given time.";
+                            GXLogWriter.WriteLog(err, p.Reply);
+                            throw new Exception(err);
+                        }
                     }
+                }
+                catch(Exception ex)
+                {
+                    GXLogWriter.WriteLog("Received data", p.Reply);
+                    throw ex;
                 }
             }
             GXLogWriter.WriteLog("Received data", p.Reply);
-            object errors = m_Cosem.CheckReplyErrors(data, p.Reply);
-            if (errors != null)
-            {                
-                object[,] arr = (object[,])errors;
-                int error = (int)arr[0, 0];                
-                if (error == -1)
-                {
-                    //If data is reply to the previous packet sent.
-                    //This might happens sometimes.
-                    if (m_Cosem.IsPreviousPacket(data, p.Reply))
-                    {
-                        return ReadDLMSPacket(null);
-                    }
-                    else
-                    {
-                        throw new Exception(arr[0, 1].ToString());
-                    }
-                }
-                throw new GXDLMSException(error);
+            if (reply.Error != 0)
+            {
+                throw new GXDLMSException(reply.Error);
             }
-            return p.Reply;
         }
 
         void InitializeIEC()
         {
-            GXManufacturer manufacturer = this.Parent.Manufacturers.FindByIdentification(Parent.Manufacturer);
+            GXManufacturer manufacturer = this.parent.Manufacturers.FindByIdentification(parent.Manufacturer);
             if (manufacturer == null)
             {
-                throw new Exception("Unknown manufacturer " + Parent.Manufacturer);
+                throw new Exception("Unknown manufacturer " + parent.Manufacturer);
             }
-            GXSerial serial = Media as GXSerial;            
+            GXSerial serial = media as GXSerial;            
             byte Terminator = (byte)0x0A;
-            if (serial != null && Parent.StartProtocol == StartProtocolType.IEC)
-            {
-                serial.BaudRate = 300;
-                serial.DataBits = 7;
-                serial.Parity = Parity.Even;
-                serial.StopBits = StopBits.One;
-            }
-            Media.Open();
+            media.Open();
             //Query device information.
-            if (Media != null && Parent.StartProtocol == StartProtocolType.IEC)
+            if (media != null && parent.StartProtocol == StartProtocolType.IEC)
             {
                 string data = "/?!\r\n";
-                if (this.Parent.HDLCAddressing == HDLCAddressType.SerialNumber)
+                if (this.parent.HDLCAddressing == HDLCAddressType.SerialNumber)
                 {
-                    data = "/?" + this.Parent.PhysicalAddress + "!\r\n";
+                    data = "/?" + this.parent.PhysicalAddress + "!\r\n";
                 }
                 GXLogWriter.WriteLog("HDLC sending:" + data);
                 ReceiveParameters<string> p = new ReceiveParameters<string>()
                 {
                     AllData = false,
                     Eop = Terminator,                    
-                    WaitTime = Parent.WaitTime * 1000                    
+                    WaitTime = parent.WaitTime * 1000                    
                 };
-                lock (Media.Synchronous)
+                lock (media.Synchronous)
                 {
-                    Media.Send(data, null);
-                    if (!Media.Receive(p))
+                    media.Send(data, null);
+                    if (!media.Receive(p))
                     {
                         //Try to move away from mode E.
                         try
                         {
-                            this.ReadDLMSPacket(this.DisconnectRequest(), 1);
+                            GXReplyData reply = new GXReplyData();
+                            this.ReadDLMSPacket(this.DisconnectRequest(), 1, reply);
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         { 
                         }
                         data = (char)0x01 + "B0" + (char)0x03 + "\r\n";
-                        Media.Send(data, null);
+                        media.Send(data, null);
                         p.Count = 1;
-                        Media.Receive(p);
+                        media.Receive(p);
                         data = "Failed to receive reply from the device in given time.";
                         GXLogWriter.WriteLog(data);
                         throw new Exception(data);
@@ -308,25 +290,26 @@ namespace GXDLMSDirector
                     if (p.Reply == data)
                     {
                         p.Reply = null;
-                        if (!Media.Receive(p))
+                        if (!media.Receive(p))
                         {
                             //Try to move away from mode E.
-                            this.ReadDLMSPacket(this.DisconnectRequest(), 1);
+                            GXReplyData reply = new GXReplyData();
+                            this.ReadDLMSPacket(this.DisconnectRequest(), 1, reply);
                             if (serial != null)
                             {
                                 data = (char)0x01 + "B0" + (char)0x03 + "\r\n";
-                                Media.Send(data, null);
+                                media.Send(data, null);
                                 p.Count = 1;
-                                if (!Media.Receive(p))
+                                if (!media.Receive(p))
                                 {
                                 }
                                 serial.DtrEnable = serial.RtsEnable = false;
                                 serial.BaudRate = 9600;
                                 serial.DtrEnable = serial.RtsEnable = true;
                                 data = (char)0x01 + "B0" + (char)0x03 + "\r\n";
-                                Media.Send(data, null);
+                                media.Send(data, null);
                                 p.Count = 1;
-                                Media.Receive(p);
+                                media.Receive(p);
                             }
 
                             data = "Failed to receive reply from the device in given time.";
@@ -339,7 +322,7 @@ namespace GXDLMSDirector
                 if (p.Reply[0] != '/')
                 {
                     p.WaitTime = 100;
-                    Media.Receive(p);
+                    media.Receive(p);
                     throw new Exception("Invalid responce.");
                 }
                 string manufactureID = p.Reply.Substring(1, 3);
@@ -382,15 +365,15 @@ namespace GXDLMSDirector
                 //Set mode E.
                 byte[] arr = new byte[] { 0x06, controlCharacter, (byte)baudrate, ModeControlCharacter, 13, 10 };
                 GXLogWriter.WriteLog("Moving to mode E.", arr);
-                lock (Media.Synchronous)
+                lock (media.Synchronous)
                 {
-                    Media.Send(arr, null);
+                    media.Send(arr, null);
                     System.Threading.Thread.Sleep(500);
                     serial.BaudRate = BaudRate;
                     p.Reply = null;
                     p.WaitTime = 100;
                     //Note! All meters do not echo this.
-                    Media.Receive(p);
+                    media.Receive(p);
                     if (p.Reply != null)
                     {
                         GXLogWriter.WriteLog("Received: " + p.Reply);
@@ -400,9 +383,13 @@ namespace GXDLMSDirector
                     serial.Parity = Parity.None;
                     serial.StopBits = StopBits.One;
                     serial.Open();
-                    System.Threading.Thread.Sleep(500);
                 }
             }
+        }
+
+        void Media_OnTrace(object sender, TraceEventArgs e)
+        {
+            GXLogWriter.WriteLog(e.ToString());
         }
 
         /// <summary>
@@ -413,84 +400,92 @@ namespace GXDLMSDirector
         {
             try
             {
-                if (Parent.UseRemoteSerial)
+                if (parent.UseRemoteSerial)
                 {
                     InitializeIEC();
                 }
                 else
                 {
-                    Media.Open();
+                    media.Open();
                 }
             }
             catch (Exception Ex)
             {
-                if (Media != null)
+                if (media != null)
                 {
-                    Media.Close();
+                    media.Close();
                 }
                 throw Ex;
             }
         }
 
-        public object ClientID
+        public int ClientAddress
         {
             get
             {
-                return m_Cosem.ClientID;
+                return client.ClientAddress;
             }
         }
 
-        public object ServerID
+        public int ServerAddress
         {
             get
             {
-                return m_Cosem.ServerID;
+                return client.ServerAddress;
             }
         }      
 
         public void UpdateManufactureSettings(string id)
         {
-            if (!string.IsNullOrEmpty(this.Parent.Manufacturer) && string.Compare(this.Parent.Manufacturer, id, true) != 0)
+            if (!string.IsNullOrEmpty(this.parent.Manufacturer) && string.Compare(this.parent.Manufacturer, id, true) != 0)
             {
-                throw new Exception(string.Format("Manufacturer type does not match. Manufacturer is {0} and it should be {1}.", id, this.Parent.Manufacturer));
+                throw new Exception(string.Format("Manufacturer type does not match. Manufacturer is {0} and it should be {1}.", id, this.parent.Manufacturer));
             }
-            GXManufacturer manufacturer = this.Parent.Manufacturers.FindByIdentification(id);
+            GXManufacturer manufacturer = this.parent.Manufacturers.FindByIdentification(id);
             if (manufacturer == null)
             {
                 throw new Exception("Unknown manufacturer " + id);
             }
-            this.Parent.Manufacturer = manufacturer.Identification;
-            m_Cosem.Authentication = this.Parent.Authentication;
-            m_Cosem.InterfaceType = InterfaceType.General;
-            if (!string.IsNullOrEmpty(this.Parent.Password))
+            this.parent.Manufacturer = manufacturer.Identification;
+            client.Authentication = this.parent.Authentication;
+            client.InterfaceType = InterfaceType.HDLC;
+            if (!string.IsNullOrEmpty(this.parent.Password))
             {
-                m_Cosem.Password = CryptHelper.Decrypt(this.Parent.Password, Password.Key);
+                client.Password = CryptHelper.Decrypt(this.parent.Password, Password.Key);
             }            
-            m_Cosem.UseLogicalNameReferencing = this.Parent.UseLogicalNameReferencing;
-            //If network media is used check is manufacturer supporting IEC 62056-47
-            if (!Parent.UseRemoteSerial && this.Media is GXNet && manufacturer.UseIEC47)
-            {                
-                m_Cosem.InterfaceType = InterfaceType.Net;
-                m_Cosem.ClientID = Convert.ToUInt16(Parent.ClientID);
-                m_Cosem.ServerID = Convert.ToUInt16((Parent.LogicalAddress << 9) | Convert.ToUInt16(Parent.PhysicalAddress));
-            }
-            else
+            client.UseLogicalNameReferencing = this.parent.UseLogicalNameReferencing;
+            //Show media verbose.
+            if (this.parent.Verbose && media.Trace != System.Diagnostics.TraceLevel.Verbose)
             {
-                if (Parent.HDLCAddressing == HDLCAddressType.Custom)
-                {
-                    m_Cosem.ClientID = Parent.ClientID;
-                }
-                else
-                {
-                    m_Cosem.ClientID = (byte) (Convert.ToByte(Parent.ClientID) << 1 | 0x1);                    
-                }
+                media.Trace = System.Diagnostics.TraceLevel.Verbose;
+                media.OnTrace += new TraceEventHandler(Media_OnTrace);
+            }
+            else if (!this.parent.Verbose && media.Trace == System.Diagnostics.TraceLevel.Verbose)
+            {
+                media.Trace = System.Diagnostics.TraceLevel.Off;
+                media.OnTrace -= new TraceEventHandler(Media_OnTrace);
+            }
+
+            //If network media is used check is manufacturer supporting IEC 62056-47
+            if (!parent.UseRemoteSerial && this.media is GXNet && manufacturer.UseIEC47)
+            {                
+                client.InterfaceType = InterfaceType.WRAPPER;
+            }
+
+            client.ClientAddress = parent.ClientAddress;
+            if (parent.HDLCAddressing == HDLCAddressType.SerialNumber)
+            {
                 string formula = null;
-                GXServerAddress server = manufacturer.GetServer(Parent.HDLCAddressing);
+                GXServerAddress server = manufacturer.GetServer(parent.HDLCAddressing);
                 if (server != null)
                 {
                     formula = server.Formula;
                 }
-                m_Cosem.ServerID = GXManufacturer.CountServerAddress(Parent.HDLCAddressing, formula, Parent.PhysicalAddress, Parent.LogicalAddress);
+                client.ServerAddress = GXDLMSClient.GetServerAddress(Convert.ToInt32(parent.PhysicalAddress), formula);
+            }
+            else
+            {
+                client.ServerAddress = GXDLMSClient.GetServerAddress(parent.LogicalAddress, Convert.ToInt32(parent.PhysicalAddress));
             }
         }
 
@@ -506,9 +501,9 @@ namespace GXDLMSDirector
             }
             catch (Exception Ex)
             {
-                if (Media != null)
+                if (media != null)
                 {
-                    Media.Close();
+                    media.Close();
                 }
                 throw Ex;
             }
@@ -526,9 +521,9 @@ namespace GXDLMSDirector
             }
             catch (Exception Ex)
             {
-                if (Media != null)
+                if (media != null)
                 {
-                    Media.Close();
+                    media.Close();
                 }
                 throw Ex;
             }
@@ -536,24 +531,24 @@ namespace GXDLMSDirector
 
         public void InitializeConnection()
         {
-            if (!string.IsNullOrEmpty(Parent.Manufacturer))
+            if (!string.IsNullOrEmpty(parent.Manufacturer))
             {
-                UpdateManufactureSettings(Parent.Manufacturer);
+                UpdateManufactureSettings(parent.Manufacturer);
             }
-            if (Media is GXSerial)
+            if (media is GXSerial)
             {
                 GXLogWriter.WriteLog("Initializing serial connection.");
                 InitSerial();
-                ConnectionStartTime = DateTime.Now;
+                connectionStartTime = DateTime.Now;
             }
-            else if (Media is GXNet)
+            else if (media is GXNet)
             {
                 GXLogWriter.WriteLog("Initializing Network connection.");
                 InitNet();
                 //Some Electricity meters need some time before first message can be send.
                 System.Threading.Thread.Sleep(500);
             }
-            else if (Media is Gurux.Terminal.GXTerminal)
+            else if (media is Gurux.Terminal.GXTerminal)
             {
                 GXLogWriter.WriteLog("Initializing Terminal connection.");
                 InitTerminal();
@@ -564,15 +559,16 @@ namespace GXDLMSDirector
             }
             try
             {
-                byte[] data, reply = null;
+                GXReplyData reply = new GXReplyData();
+                byte[] data;
                 data = SNRMRequest();
                 if (data != null)
                 {
                     GXLogWriter.WriteLog("Send SNRM request.", data);
-                    reply = ReadDLMSPacket(data, 1);
-                    GXLogWriter.WriteLog("Parsing UA reply.", reply);
+                    ReadDLMSPacket(data, 1, reply);
+                    GXLogWriter.WriteLog("Parsing UA reply.\r\n" + reply.Data.ToString());
                     //Has server accepted client.
-                    ParseUAResponse(reply);
+                    ParseUAResponse(reply.Data);
                     GXLogWriter.WriteLog("Parsing UA reply succeeded.");
                 }
                 //Generate AARQ request.
@@ -581,50 +577,53 @@ namespace GXDLMSDirector
                 foreach (byte[] it in AARQRequest())
                 {
                     GXLogWriter.WriteLog("Send AARQ request", it);
-                    reply = ReadDLMSPacket(it);
+                    reply.Clear();
+                    ReadDLMSPacket(it, reply);
                 }
-                GXLogWriter.WriteLog("Parsing AARE reply", (byte[])reply);
+                GXLogWriter.WriteLog("Parsing AARE reply\r\n" + reply.Data.ToString());
                 try
                 {
                     //Parse reply.
-                    ParseAAREResponse(reply);
+                    ParseAAREResponse(reply.Data);
                 }
                 catch (Exception Ex)
                 {
-                    ReadDLMSPacket(DisconnectRequest(), 1);
+                    reply.Clear();
+                    ReadDLMSPacket(DisconnectRequest(), 1, reply);
                     throw Ex;
                 }
                 //If authentication is required.
-                if (m_Cosem.IsAuthenticationRequired)
+                if (client.IsAuthenticationRequired)
                 {                    
-                    foreach (byte[] it in m_Cosem.GetApplicationAssociationRequest())
+                    foreach (byte[] it in client.GetApplicationAssociationRequest())
                     {
                         GXLogWriter.WriteLog("Authenticating", it);
-                        reply = ReadDLMSPacket(it);
+                        reply.Clear();
+                        ReadDLMSPacket(it, reply);
                     }
-                    m_Cosem.ParseApplicationAssociationResponse(reply);
+                    client.ParseApplicationAssociationResponse(reply.Data);
                 }
             }
             catch (Exception ex)
             {
-                if (Media is GXSerial && Parent.StartProtocol == StartProtocolType.IEC)
+                if (media is GXSerial && parent.StartProtocol == StartProtocolType.IEC)
                 {
                     ReceiveParameters<string> p = new ReceiveParameters<string>()
                     {
                         Eop = (byte) 0xA,
-                        WaitTime = Parent.WaitTime * 1000
+                        WaitTime = parent.WaitTime * 1000
                     };
-                    lock (Media.Synchronous)
+                    lock (media.Synchronous)
                     {
                         string data = (char)0x01 + "B0" + (char)0x03 + "\r\n";
-                        Media.Send(data, null);
-                        Media.Receive(p);
+                        media.Send(data, null);
+                        media.Receive(p);
                     }
                 }
                 throw ex;
             }
             GXLogWriter.WriteLog("Parsing AARE reply succeeded.");
-            Parent.KeepAliveStart();
+            parent.KeepAliveStart();
         }
 
         void NotifyProgress(string description, int current, int maximium)
@@ -635,31 +634,33 @@ namespace GXDLMSDirector
             }
         }
 
-        byte[] ReadDataBlock(byte[][] data, string text)
+        void ReadDataBlock(byte[][] data, string text, GXReplyData reply)
         {
-            byte[] reply = null;
             foreach (byte[] it in data)
             {
-                reply = ReadDataBlock(it, text);
+                reply.Clear();
+                ReadDataBlock(it, text, reply);
             }
-            return reply;
         }
 
-        byte[] ReadDataBlock(byte[] data, string text)
+        void ReadDataBlock(byte[] data, string text, GXReplyData reply)
         {
-            return ReadDataBlock(data, text, 1);
+            ReadDataBlock(data, text, 1, reply);
         }
 
-        public delegate void DataReceivedEventHandler(object sender, byte[] data);
+        public delegate void DataReceivedEventHandler(object sender, GXReplyData reply);
         public event DataReceivedEventHandler OnDataReceived;
         GXDLMSProfileGeneric CurrentProfileGeneric;
 
-        void OnProfileGenericDataReceived(object sender, byte[] data)
+        void OnProfileGenericDataReceived(object sender, GXReplyData reply)
         {
-            object value = m_Cosem.TryGetValue(data);            
-            if (value != null)
+            if (reply.Value != null)
             {
-                (CurrentProfileGeneric as IGXDLMSBase).SetValue(2, value);                
+                lock (reply)
+                {
+                    client.UpdateValue(CurrentProfileGeneric, 2, reply.Value);
+                    reply.Value = null;
+                }
                 if (OnAfterRead != null)
                 {
                     OnAfterRead(CurrentProfileGeneric, 2);
@@ -674,87 +675,62 @@ namespace GXDLMSDirector
         /// <param name="text">Progress text.</param>
         /// <param name="multiplier"></param>
         /// <returns>Received data.</returns>
-        internal byte[] ReadDataBlock(byte[] data, string text, double multiplier)
+        internal void ReadDataBlock(byte[] data, string text, int multiplier, GXReplyData reply)
         {
-            if (Parent.InactivityMode == InactivityMode.ReopenActive && Media is GXSerial && DateTime.Now.Subtract(ConnectionStartTime).TotalSeconds > 40)
+            if (parent.InactivityMode == InactivityMode.ReopenActive && media is GXSerial && DateTime.Now.Subtract(connectionStartTime).TotalSeconds > 40)
             {
-                Parent.Disconnect();
-                Parent.InitializeConnection();
+                parent.Disconnect();
+                parent.InitializeConnection();
             }            
             GXLogWriter.WriteLog(text, data);
-            byte[] reply = ReadDLMSPacket(data);
-            byte[] allData = null;
-            RequestTypes moredata = m_Cosem.GetDataFromPacket(reply, ref allData);            
+            ReadDLMSPacket(data, reply);
             if (OnDataReceived != null)
             {
-                OnDataReceived(this, (byte[])allData);
+                OnDataReceived(this, reply);
             }              
-            if ((moredata & (RequestTypes.Frame | RequestTypes.DataBlock)) != 0)
+            if (reply.IsMoreData)
             {
-                int maxProgress = m_Cosem.GetMaxProgressStatus(allData);
-                NotifyProgress(text, 1, maxProgress);
-                while (moredata != 0)
+                if (reply.TotalCount != 1)
                 {
-                    while ((moredata & RequestTypes.Frame) != 0)
+                    NotifyProgress(text, 1, multiplier * reply.TotalCount);
+                }
+                while (reply.IsMoreData)
+                {
+                    data = client.ReceiverReady(reply.MoreData);                    
+                    if ((reply.MoreData & RequestTypes.Frame) != 0)
                     {
-                        data = m_Cosem.ReceiverReady(RequestTypes.Frame);
-                        GXLogWriter.WriteLog("Get next frame: ", (byte[])data);
-                        reply = ReadDLMSPacket(data);
-                        RequestTypes tmp = m_Cosem.GetDataFromPacket(reply, ref allData);
-                        if (OnDataReceived != null)
-                        {
-                            OnDataReceived(this, (byte[])allData);
-                        }
-                        //If this was last frame.
-                        if ((tmp & RequestTypes.Frame) == 0)
-                        {
-                            moredata &= ~RequestTypes.Frame;
-                            break;
-                        }
-                        int current = m_Cosem.GetCurrentProgressStatus(allData);
-                        //TODO: System.Diagnostics.Debug.Assert(!(current == maxProgress && moredata != RequestTypes.None));
-                        NotifyProgress(text, (int)(multiplier * current), maxProgress);
+                         GXLogWriter.WriteLog("Get next frame: ", data);
                     }
-                    if (Parent.InactivityMode == InactivityMode.ReopenActive && Media is GXSerial && DateTime.Now.Subtract(ConnectionStartTime).TotalSeconds > 40)
+                    else
                     {
-                        Parent.Disconnect();
-                        Parent.InitializeConnection();
+                        GXLogWriter.WriteLog("Get Next Data block: ", data);
                     }
-                    if ((moredata & RequestTypes.DataBlock) != 0)
+                    ReadDLMSPacket(data, reply);
+                    if (OnDataReceived != null)
                     {
-                        //Send Receiver Ready.
-                        data = m_Cosem.ReceiverReady(RequestTypes.DataBlock);
-                        GXLogWriter.WriteLog("Get Next Data block: ", (byte[])data);
-                        reply = ReadDLMSPacket(data);
-                        moredata = m_Cosem.GetDataFromPacket(reply, ref allData);
-                        if (OnDataReceived != null)
-                        {
-                            OnDataReceived(this, (byte[])allData);
-                        }
-                        int current = m_Cosem.GetCurrentProgressStatus(allData);
-                        //TODO: System.Diagnostics.Debug.Assert(!(current == maxProgress && moredata != RequestTypes.None));
-                        NotifyProgress(text, (int)(multiplier * current), maxProgress);
-                    }                    
+                        OnDataReceived(this, reply);
+                    }
+                    if (reply.TotalCount != 1)
+                    {
+                        NotifyProgress(text, reply.Count, multiplier * reply.TotalCount);
+                    }
                 }
             }
-            return allData;
         }        
 
         public GXDLMSObjectCollection GetObjects()
         {
             GXLogWriter.WriteLog("--- Collecting objects. ---");
-            byte[] allData;
+            GXReplyData reply = new GXReplyData(){Peek = true};
             try
             {
-                NotifyProgress("Collecting objects", 0, 1);
-                allData = ReadDataBlock(m_Cosem.GetObjectsRequest(), "Collecting objects");
+                ReadDataBlock(client.GetObjectsRequest(), "Collecting objects", 3, reply);
             }
             catch (Exception Ex)
             {
                 throw new Exception("GetObjects failed. " + Ex.Message);
-            }            
-            GXDLMSObjectCollection objs = m_Cosem.ParseObjects(allData, true);
-            NotifyProgress("Collecting objects", objs.Count, objs.Count);
+            }
+            GXDLMSObjectCollection objs = client.ParseObjects(reply.Data, true);
             GXLogWriter.WriteLog("--- Collecting " + objs.Count.ToString() + " objects. ---");
             return objs;
         }
@@ -781,8 +757,10 @@ namespace GXDLMSDirector
         /// <param name="attribute"></param>
         public void Read(object sender, GXDLMSObject obj, int attribute)
         {
+            GXReplyData reply = new GXReplyData();
             foreach (int it in (obj as IGXDLMSBase).GetAttributeIndexToRead())
             {
+                reply.Clear();
                 if (obj is GXDLMSProfileGeneric && it == 2)
                 {
                     if (OnBeforeRead != null)
@@ -796,21 +774,18 @@ namespace GXDLMSDirector
                         if (CurrentProfileGeneric.AccessSelector == AccessRange.Range ||
                             CurrentProfileGeneric.AccessSelector == AccessRange.Last)
                         {
-                            GXDLMSObject obj2 = CurrentProfileGeneric.CaptureObjects[0].Key;
-                            byte[] tmp = m_Cosem.ReadRowsByRange(CurrentProfileGeneric.Name, obj2.LogicalName,
-                                obj2.ObjectType, obj2.Version, 
-                                Convert.ToDateTime(CurrentProfileGeneric.From), Convert.ToDateTime(CurrentProfileGeneric.To));
-                            ReadDataBlock(tmp, "Reading profile generic data", 1);
+                            byte[][] tmp = client.ReadRowsByRange(CurrentProfileGeneric, Convert.ToDateTime(CurrentProfileGeneric.From), Convert.ToDateTime(CurrentProfileGeneric.To));
+                            ReadDataBlock(tmp[0], "Reading profile generic data", 1, reply);
                         }
                         else if (CurrentProfileGeneric.AccessSelector == AccessRange.Entry)
                         {
-                            byte[] tmp = m_Cosem.ReadRowsByEntry(CurrentProfileGeneric.Name, Convert.ToInt32(CurrentProfileGeneric.From), Convert.ToInt32(CurrentProfileGeneric.To));
-                            ReadDataBlock(tmp, "Reading profile generic data " + CurrentProfileGeneric.Name, 1);
+                            byte[][] tmp = client.ReadRowsByEntry(CurrentProfileGeneric, Convert.ToInt32(CurrentProfileGeneric.From), Convert.ToInt32(CurrentProfileGeneric.To));
+                            ReadDataBlock(tmp[0], "Reading profile generic data " + CurrentProfileGeneric.Name, 1, reply);
                         }
                         else //Read all.
                         {
-                            byte[] tmp = m_Cosem.Read(CurrentProfileGeneric, 2)[0];
-                            ReadDataBlock(tmp, "Reading profile generic data " + CurrentProfileGeneric.Name, 1);
+                            byte[] tmp = client.Read(CurrentProfileGeneric, 2)[0];
+                            ReadDataBlock(tmp, "Reading profile generic data " + CurrentProfileGeneric.Name, 1, reply);
                         }
                     }
                     finally
@@ -829,10 +804,10 @@ namespace GXDLMSDirector
                     {
                         OnBeforeRead(obj, it);
                     }
-                    byte[] data = m_Cosem.Read(obj.Name, obj.ObjectType, it)[0];
+                    byte[] data = client.Read(obj.Name, obj.ObjectType, it)[0];
                     try
                     {
-                        data = ReadDataBlock(data, "Read object type " + obj.ObjectType + " index: " + it);
+                        ReadDataBlock(data, "Read object type " + obj.ObjectType + " index: " + it, reply);
                     }
                     catch (GXDLMSException ex)
                     {
@@ -850,13 +825,13 @@ namespace GXDLMSDirector
                     }
                     if (obj is IGXDLMSBase)
                     {
-                        object value = m_Cosem.GetValue(data);
+                        object value = reply.Value;
                         DataType type;
                         if (value is byte[] && (type = obj.GetUIDataType(it)) != DataType.None)
                         {
-                            value = GXDLMS.Common.GXHelpers.ConvertFromDLMS(value, obj.GetDataType(it), type, true);
+                            value = GXDLMSClient.ChangeType((byte[])value, type);
                         }
-                        (obj as IGXDLMSBase).SetValue(it, value);
+                        client.UpdateValue(obj, it, value);
                     }
                     if (OnAfterRead != null)
                     {
@@ -874,18 +849,20 @@ namespace GXDLMSDirector
        
         public void Write(GXDLMSObject obj, object target, int index, List<object> UpdatedObjects)
         {
+            object value;
+            GXReplyData reply = new GXReplyData();
             for (int it = 1; it != (obj as IGXDLMSBase).GetAttributeCount() + 1; ++it)
             {
-                object value;
+                reply.Clear();
                 if (obj.GetDirty(it, out value))
                 {
                     //Read DLMS data type if not known.
                     DataType type = obj.GetDataType(it);
                     if (type == DataType.None)
                     {
-                        byte[] data = m_Cosem.Read(obj.Name, obj.ObjectType, it)[0];
-                        data = ReadDataBlock(data, "Write object type " + obj.ObjectType);
-                        type = m_Cosem.GetDLMSDataType(data);
+                        byte[] data = client.Read(obj, it)[0];
+                        ReadDataBlock(data, "Write object type " + obj.ObjectType, reply);
+                        type = reply.DataType;
                         if (type == DataType.None)
                         {
                             throw new Exception("Failed to write value. Data type not set.");
@@ -894,16 +871,21 @@ namespace GXDLMSDirector
                     }
                     try
                     {
-                        foreach (byte[] tmp in m_Cosem.Write(obj.Name, value, type, obj.ObjectType, it))
+                        foreach (byte[] tmp in client.Write(obj.Name, value, type, obj.ObjectType, it))
                         {
-                            ReadDataBlock(tmp, "Write object");
+                            ReadDataBlock(tmp, "Write object", reply);
                         }
                         obj.ClearDirty(it);
                         //Read data once again to make sure it is updated.
-                        byte[] data = m_Cosem.Read(obj.Name, obj.ObjectType, it)[0];
-                        data = ReadDataBlock(data, "Read object " + obj.ObjectType);
-                        value = m_Cosem.GetValue(data);
-                        obj.SetValue(it, value);
+                        byte[] data = client.Read(obj, it)[0];
+                        ReadDataBlock(data, "Read object " + obj.ObjectType, reply);
+
+                        value = reply.Value;
+                        if (value is byte[] && (type = obj.GetUIDataType(it)) != DataType.None)
+                        {
+                            value = GXDLMSClient.ChangeType((byte[])value, type);
+                        }
+                        client.UpdateValue(obj, it, value);
                     }
                     catch (GXDLMSException ex)
                     {
@@ -920,39 +902,31 @@ namespace GXDLMSDirector
             }            
         }
 
-        public object ReadValue(object data, ObjectType interfaceClass, int attributeOrdinal, ref DataType type)
+        public void ReadValue(GXDLMSObject it, int attributeOrdinal)
         {
-            byte[] allData = null;
-            object reply;
-            allData = Read(data, interfaceClass, attributeOrdinal);
-            allData = ReadDataBlock(allData, "Read object");             
-            reply = m_Cosem.GetValue(allData);
+            GXReplyData reply = new GXReplyData();
+            ReadDataBlock(Read(it, attributeOrdinal), "Read object", reply);             
             //If data type is unknown
-            if (type == DataType.None)
+            if (it.GetDataType(attributeOrdinal) == DataType.None)
             {
-                type = m_Cosem.GetDLMSDataType(allData);
+                it.SetDataType(attributeOrdinal, reply.DataType);
             }
-            return reply;
+            client.UpdateValue(it, attributeOrdinal, reply.Value);
         }
 
-        public List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> GetProfileGenericColumns(object name)
+        public void GetProfileGenericColumns(GXDLMSProfileGeneric item)
         {
-            byte[] allData = ReadDataBlock(Read(name, ObjectType.ProfileGeneric, 3), "Get profile generic columns...");
-            if (allData == null)
-            {
-                return null;
-            }
-            return m_Cosem.ParseColumns(allData);            
+            GXReplyData reply = new GXReplyData();
+            ReadDataBlock(Read(item, 3), "Get profile generic columns...", reply);
+            client.UpdateValue(item, 3, reply.Value);
         }
 
         public void KeepAlive()
         {
-            byte[] allData = null, reply = null;
-            byte[] data = m_Cosem.GetKeepAlive();
+            GXReplyData reply = new GXReplyData();
+            byte[] data = client.GetKeepAlive();
             GXLogWriter.WriteLog("Send Keep Alive", data);
-            reply = ReadDLMSPacket(data);
-            m_Cosem.GetDataFromPacket(reply, ref allData);
-
+            ReadDLMSPacket(data, reply);
         }      
     }    
 }

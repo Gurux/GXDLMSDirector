@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using Gurux.DLMS.ManufacturerSettings;
 using Gurux.DLMS.Objects;
+using Gurux.DLMS;
 
 namespace GXDLMSDirector
 {

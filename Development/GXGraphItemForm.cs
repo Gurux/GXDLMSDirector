@@ -40,6 +40,7 @@ using GXDLMS.ManufacturerSettings;
 using GXDLMS.Common;
 using Gurux.DLMS.ManufacturerSettings;
 using Gurux.DLMS.Objects;
+using Gurux.DLMS;
 
 namespace GXDLMSDirector
 {

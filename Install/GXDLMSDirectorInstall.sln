@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "GXDLMSDirectorInstall", "GXDLMSDirectorInstall_2010.vdproj", "{855994D0-3251-4538-9056-AB1725EBDCF4}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "GXDLMSDirectorInstall", "GXDLMSDirectorInstall.vdproj", "{855994D0-3251-4538-9056-AB1725EBDCF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GXDLMSDirector_2010", "..\Development\GXDLMSDirector_2010.csproj", "{0CA083FF-4071-4E07-AFFF-5B2E31A11D45}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GXDLMSDirector", "..\Development\GXDLMSDirector.csproj", "{0CA083FF-4071-4E07-AFFF-5B2E31A11D45}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = UnitTest_GuruxDLMS_20107.vsmdi
+		CategoryFile = UnitTest_GuruxDLMS7.vsmdi
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

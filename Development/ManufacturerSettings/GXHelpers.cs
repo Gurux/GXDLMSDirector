@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Text;
 using Gurux.DLMS;
 using GXDLMS.ManufacturerSettings;
+using Gurux.DLMS.Enums;
 
 namespace GXDLMS.Common
 {
@@ -305,54 +306,54 @@ namespace GXDLMS.Common
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        static public Type GetDataType(Gurux.DLMS.DataType type)
+        static public Type GetDataType(DataType type)
         {
             switch (type)
             {
-                case Gurux.DLMS.DataType.None:
+                case DataType.None:
                     return null;
-                case Gurux.DLMS.DataType.Array:
-                case Gurux.DLMS.DataType.CompactArray:
-                case Gurux.DLMS.DataType.Structure:
+                case DataType.Array:
+                case DataType.CompactArray:
+                case DataType.Structure:
                     return typeof(object[]);
-                case Gurux.DLMS.DataType.BinaryCodedDesimal:
+                case DataType.BinaryCodedDesimal:
                     return typeof(string);
-                case Gurux.DLMS.DataType.BitString:
+                case DataType.BitString:
                     return typeof(string);
-                case Gurux.DLMS.DataType.Boolean:
+                case DataType.Boolean:
                     return typeof(bool);
-                case Gurux.DLMS.DataType.Date:
+                case DataType.Date:
                     return typeof(Date);
-                case Gurux.DLMS.DataType.DateTime:
+                case DataType.DateTime:
                     return typeof(DateTime);
-                case Gurux.DLMS.DataType.Float32:
+                case DataType.Float32:
                     return typeof(float);
-                case Gurux.DLMS.DataType.Float64:
+                case DataType.Float64:
                     return typeof(double);
-                case Gurux.DLMS.DataType.Int16:
+                case DataType.Int16:
                     return typeof(Int16);
-                case Gurux.DLMS.DataType.Int32:
+                case DataType.Int32:
                     return typeof(Int32);
-                case Gurux.DLMS.DataType.Int64:
+                case DataType.Int64:
                     return typeof(Int64);
-                case Gurux.DLMS.DataType.Int8:
+                case DataType.Int8:
                     return typeof(sbyte);
-                case Gurux.DLMS.DataType.OctetString:
+                case DataType.OctetString:
                     return typeof(byte[]);
-                case Gurux.DLMS.DataType.String:
+                case DataType.String:
                     return typeof(string);
-                case Gurux.DLMS.DataType.Time:
+                case DataType.Time:
                     return typeof(Time);
-                case Gurux.DLMS.DataType.UInt16:
+                case DataType.UInt16:
                     return typeof(UInt16);
-                case Gurux.DLMS.DataType.UInt32:
+                case DataType.UInt32:
                     return typeof(UInt32);
-                case Gurux.DLMS.DataType.UInt64:
+                case DataType.UInt64:
                     return typeof(UInt64);
-                case Gurux.DLMS.DataType.UInt8:
+                case DataType.UInt8:
                     return typeof(byte);
                 default:
-                case Gurux.DLMS.DataType.Enum:
+                case DataType.Enum:
                     break;
             }
             throw new Exception("Invalid DLMS data type.");

@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.cs $
 //
-// Version:         $Revision: 7805 $,
-//                  $Date: 2015-03-18 15:37:57 +0200 (ke, 18 maalis 2015) $
+// Version:         $Revision: 8063 $,
+//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -49,6 +49,7 @@ using System.Reflection;
 using System.IO.Ports;
 using Gurux.DLMS.ManufacturerSettings;
 using Gurux.Terminal;
+using Gurux.DLMS.Enums;
 
 namespace GXDLMSDirector
 {
@@ -74,20 +75,20 @@ namespace GXDLMSDirector
                     OKBtn.Enabled = false;
                 }
                 //Show supported services tab only when they are read.
-                if (dev == null || dev.Comm.m_Cosem.SNSettings == null && dev.Comm.m_Cosem.LNSettings == null)
+                if (dev == null || dev.Comm.client.SNSettings == null && dev.Comm.client.LNSettings == null)
                 {
                     DeviceTab.TabPages.Remove(SupportedServicesTab);
                 }
                 else
                 {
                     object settings = null;
-                    if (dev.Comm.m_Cosem.UseLogicalNameReferencing)
+                    if (dev.Comm.client.UseLogicalNameReferencing)
                     {
-                        settings = dev.Comm.m_Cosem.LNSettings;
+                        settings = dev.Comm.client.LNSettings;
                     }
                     else
                     {
-                        settings = dev.Comm.m_Cosem.SNSettings;
+                        settings = dev.Comm.client.SNSettings;
                     }
                     if (settings != null)
                     {
@@ -134,13 +135,14 @@ namespace GXDLMSDirector
                             break;
                         }
                     }
+                    this.VerboseModeCB.Checked = dev.Verbose;
                     this.NameTB.Text = dev.Name;
                     SelectedMedia = dev.Media;
                     UseRemoteSerialCB.Checked = Device.UseRemoteSerial;
                     StartProtocolCB.SelectedItem = Device.StartProtocol;
                     PhysicalServerAddressTB.Value = Convert.ToDecimal(Device.PhysicalAddress);
                     LogicalServerAddressTB.Value = Convert.ToDecimal(Device.LogicalAddress);
-                    this.ClientAddTB.Value = Convert.ToDecimal(Convert.ToUInt32(Device.ClientID));
+                    this.ClientAddTB.Value = Convert.ToDecimal(Convert.ToUInt32(Device.ClientAddress));
                     WaitTimeTB.Value = Device.WaitTime;                    
                 }
 
@@ -251,21 +253,6 @@ namespace GXDLMSDirector
             }
         }
 
-        /// <summary>
-        /// Enable or disable advanced button.
-        /// </summary>
-        /// <remarks>
-        /// Advanced button is enabled only when start mode is DLMS.
-        /// In IEC default start baud rate is 300.
-        /// </remarks>
-        void UpdateAdvancedBtn()
-        {
-            if (this.SerialSettingsGB.Visible)
-            {
-                AdvancedBtn.Enabled = (StartProtocolType)this.StartProtocolCB.SelectedItem == StartProtocolType.DLMS;
-            }            
-        }
-
         private void MediasCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
@@ -279,7 +266,6 @@ namespace GXDLMSDirector
                     this.PortTB.Text = "4059";
                 }
                 UpdateStartProtocol();
-                UpdateAdvancedBtn();
             }
             catch (Exception Ex)
             {
@@ -320,6 +306,8 @@ namespace GXDLMSDirector
                 Device.Media = SelectedMedia;
                 Device.Manufacturer = man.Identification;
                 Device.WaitTime = Convert.ToInt32(WaitTimeTB.Value);
+                Device.Verbose = VerboseModeCB.Checked;
+
                 if (SelectedMedia is GXSerial)
                 {
                     Device.UseRemoteSerial = false;
@@ -364,7 +352,7 @@ namespace GXDLMSDirector
                 }                                     
                 GXAuthentication authentication = (GXAuthentication)AuthenticationCB.SelectedItem;
                 Device.HDLCAddressing = ((GXServerAddress)ServerAddressTypeCB.SelectedItem).HDLCAddress;
-                Device.ClientID = Convert.ChangeType(ClientAddTB.Value, authentication.ClientID.GetType());
+                Device.ClientAddress = Convert.ToInt32(ClientAddTB.Value);
                 if (Device.HDLCAddressing == HDLCAddressType.SerialNumber)
                 {
                     Device.PhysicalAddress = PhysicalServerAddressTB.Value;
@@ -432,7 +420,7 @@ namespace GXDLMSDirector
             {
                 GXAuthentication authentication = (GXAuthentication)AuthenticationCB.SelectedItem;
                 PasswordTB.Enabled = authentication.Type != Authentication.None;
-                this.ClientAddTB.Value = Convert.ToUInt32( authentication.ClientID);
+                this.ClientAddTB.Value = authentication.ClientAddress;
             }
             catch (Exception Ex)
             {
@@ -548,7 +536,7 @@ namespace GXDLMSDirector
             {
                 GXManufacturer man = (GXManufacturer)ManufacturerCB.SelectedItem;
                 StartProtocolCB.SelectedItem = man.StartProtocol;
-                this.ClientAddTB.Value = Convert.ToDecimal(Convert.ToUInt32(man.GetActiveAuthentication().ClientID));
+                this.ClientAddTB.Value = man.GetActiveAuthentication().ClientAddress;
                 AuthenticationCB.Items.Clear();
                 foreach (GXAuthentication it in man.Settings)
                 {
@@ -591,7 +579,7 @@ namespace GXDLMSDirector
                     {
                         //Initialize serial settings.
                         GXSerial serial = (GXSerial)it;
-                        if (((GXManufacturer)ManufacturerCB.SelectedItem).StartProtocol == StartProtocolType.DLMS)
+                        if ((StartProtocolType) StartProtocolCB.SelectedItem == StartProtocolType.DLMS)
                         {
                             serial.BaudRate = 9600;
                             serial.DataBits = 8;
@@ -608,7 +596,6 @@ namespace GXDLMSDirector
                         break;
                     }                    
                 }
-                UpdateAdvancedBtn();
             }
             catch (Exception Ex)
             {

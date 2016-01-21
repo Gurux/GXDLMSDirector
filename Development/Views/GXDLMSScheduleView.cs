@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/Views/GXDLMSScheduleView.cs $
 //
-// Version:         $Revision: 5795 $,
-//                  $Date: 2012-10-02 13:22:54 +0300 (ti, 02 loka 2012) $
+// Version:         $Revision: 8063 $,
+//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -38,6 +38,7 @@ using System.Text;
 using System.Windows.Forms;
 using Gurux.DLMS.Objects;
 using Gurux.DLMS;
+using Gurux.DLMS.Enums;
 
 namespace GXDLMSDirector.Views
 {

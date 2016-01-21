@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/OBISCodesForm.cs $
 //
-// Version:         $Revision: 7001 $,
-//                  $Date: 2014-02-06 16:20:13 +0200 (to, 06 helmi 2014) $
+// Version:         $Revision: 8063 $,
+//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -41,13 +41,14 @@ using System.Text;
 using System.Windows.Forms;
 using GXDLMS.ManufacturerSettings;
 using Gurux.DLMS.ManufacturerSettings;
+using Gurux.DLMS.Enums;
 
 namespace GXDLMSDirector
 {
     public partial class OBISCodesForm : Form
     {
         System.Collections.Hashtable Items = new System.Collections.Hashtable();
-        public OBISCodesForm(GXManufacturerCollection manufacturers, string selectedManufacturer, Gurux.DLMS.ObjectType Interface, string ln)
+        public OBISCodesForm(GXManufacturerCollection manufacturers, string selectedManufacturer, ObjectType Interface, string ln)
         {
             InitializeComponent();
             ManufacturersList_SizeChanged(null, null);
@@ -183,7 +184,7 @@ namespace GXDLMSDirector
             return 0;
         }
 
-        void ShowOBISCOdes(GXObisCodeCollection collection, Gurux.DLMS.ObjectType Interface, string selectedLN)
+        void ShowOBISCOdes(GXObisCodeCollection collection, ObjectType Interface, string selectedLN)
         {
             Items.Clear();
             this.OBISCodesList.Items.Clear();

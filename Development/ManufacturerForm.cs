@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/ManufacturerForm.cs $
 //
-// Version:         $Revision: 7706 $,
-//                  $Date: 2014-12-04 12:50:37 +0200 (to, 04 joulu 2014) $
+// Version:         $Revision: 8063 $,
+//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -41,18 +41,18 @@ using System.Text;
 using System.Windows.Forms;
 using GXDLMS.ManufacturerSettings;
 using Gurux.DLMS.ManufacturerSettings;
+using Gurux.DLMS.Enums;
 
 namespace GXDLMSDirector
 {
     public partial class ManufacturerForm : Form
-    {                        
+    {
+        GXManufacturerCollection Manufacturers;
+        GXManufacturer Manufacturer;
+   
         void RefreshServer(GXServerAddress server)
         {
             SerialNumberFormulaTB.Text = server.Formula;
-            if (server.PhysicalAddress != null)
-            {
-                ServerAddTypeCB.SelectedItem = server.PhysicalAddress.GetType();
-            }
             PhysicalServerAddTB.Value = Convert.ToDecimal(server.PhysicalAddress);
             LogicalServerAddTB.Value = server.LogicalAddress;
             PhysicalServerAddTB.Hexadecimal = SerialNumberFormulaTB.ReadOnly = server.HDLCAddress != HDLCAddressType.SerialNumber;            
@@ -61,31 +61,10 @@ namespace GXDLMSDirector
         void UpdateServer(GXServerAddress server)
         {
             server.Formula = SerialNumberFormulaTB.Text;
-            server.PhysicalAddress = Convert.ChangeType(PhysicalServerAddTB.Value, (Type)ServerAddTypeCB.SelectedItem);
+            server.PhysicalAddress = Convert.ToInt32(PhysicalServerAddTB.Value);
             server.LogicalAddress = Convert.ToInt32(LogicalServerAddTB.Value);
         }
 
-        void RefreshAuthentication(GXAuthentication authentication)
-        {
-            if (authentication.ClientID != null)
-            {
-                ClientAddTypeCB.SelectedItem = authentication.ClientID.GetType();
-                ClientAddTB.Value = Convert.ToDecimal(authentication.ClientID);
-            }
-            else
-            {
-                ClientAddTypeCB.SelectedItem = typeof(byte);
-            }
-        }
-
-        void UpdateAuthentication(GXAuthentication authentication)
-        {
-            object value = Convert.ChangeType(this.ClientAddTB.Value, (Type)this.ClientAddTypeCB.SelectedItem);         
-            authentication.ClientID = value;
-        }
-
-        GXManufacturerCollection Manufacturers;
-        GXManufacturer Manufacturer;
         public ManufacturerForm(GXManufacturerCollection manufacturers, GXManufacturer manufacturer)
         {
             InitializeComponent();
@@ -93,12 +72,12 @@ namespace GXDLMSDirector
             Manufacturer = manufacturer;
             if (manufacturer.Settings.Count == 0)
             {
-                manufacturer.Settings.Add(new GXAuthentication(Gurux.DLMS.Authentication.None, (byte)0x10));
-                manufacturer.Settings.Add(new GXAuthentication(Gurux.DLMS.Authentication.Low, (byte)0x11));
-                manufacturer.Settings.Add(new GXAuthentication(Gurux.DLMS.Authentication.High, (byte)0x12));
-                manufacturer.Settings.Add(new GXAuthentication(Gurux.DLMS.Authentication.HighMD5, (byte)0x13));
-                manufacturer.Settings.Add(new GXAuthentication(Gurux.DLMS.Authentication.HighSHA1, (byte)0x14));
-                GXAuthentication gmac = new GXAuthentication(Gurux.DLMS.Authentication.HighGMAC, (byte)0x15);
+                manufacturer.Settings.Add(new GXAuthentication(Authentication.None, (byte)0x10));
+                manufacturer.Settings.Add(new GXAuthentication(Authentication.Low, (byte)0x11));
+                manufacturer.Settings.Add(new GXAuthentication(Authentication.High, (byte)0x12));
+                manufacturer.Settings.Add(new GXAuthentication(Authentication.HighMD5, (byte)0x13));
+                manufacturer.Settings.Add(new GXAuthentication(Authentication.HighSHA1, (byte)0x14));
+                GXAuthentication gmac = new GXAuthentication(Authentication.HighGMAC, (byte)0x15);
                 gmac.BlockCipherKey = new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F };
                 gmac.AuthenticationKey = new byte[] { 0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7, 0xD8, 0xD9, 0xDA, 0xDB, 0xDC, 0xDD, 0xDE, 0xDF };
                 manufacturer.Settings.Add(gmac);
@@ -109,9 +88,9 @@ namespace GXDLMSDirector
                 AuthenticationCB.Items.Add(it);
             }
             AuthenticationCB.SelectedItem = authentication;
-            if (authentication.Type == Gurux.DLMS.Authentication.High ||
-                authentication.Type == Gurux.DLMS.Authentication.HighSHA1 ||
-                authentication.Type == Gurux.DLMS.Authentication.HighGMAC)
+            if (authentication.Type == Authentication.High ||
+                authentication.Type == Authentication.HighSHA1 ||
+                authentication.Type == Authentication.HighGMAC)
             {
                 AdvancedBtn.Enabled = true;
             }
@@ -127,24 +106,13 @@ namespace GXDLMSDirector
                 ServerAddressTypeCB.Items.Add(it);
             }
 
-            ServerAddTypeCB.Items.Add(typeof(byte));
-            ServerAddTypeCB.Items.Add(typeof(ushort));
-            ServerAddTypeCB.Items.Add(typeof(uint));
             GXServerAddress server = manufacturer.GetActiveServer();
             ServerAddressTypeCB.SelectedItem = server;
             RefreshServer(server);
             this.ServerAddressTypeCB.SelectedIndexChanged += new System.EventHandler(this.ServerAddressTypeCB_SelectedIndexChanged);
             
-            ServerAddressTypeCB.DrawMode = AuthenticationCB.DrawMode = ClientAddTypeCB.DrawMode = ServerAddTypeCB.DrawMode = DrawMode.OwnerDrawFixed;
-            ClientAddTypeCB.Items.Add(typeof(byte));
-            ClientAddTypeCB.Items.Add(typeof(ushort));
-            ClientAddTypeCB.Items.Add(typeof(uint));
-            if (authentication.ClientID != null)
-            {
-                ClientAddTB.Value = Convert.ToDecimal(authentication.ClientID);
-                ClientAddTypeCB.SelectedItem = authentication.ClientID.GetType();
-            }
-            RefreshAuthentication(authentication);            
+            ServerAddressTypeCB.DrawMode = AuthenticationCB.DrawMode = DrawMode.OwnerDrawFixed;
+            ClientAddTB.Value = authentication.ClientAddress;
 
             InactivityModeCB.Items.Add(InactivityMode.None);
             InactivityModeCB.Items.Add(InactivityMode.KeepAlive);
@@ -194,7 +162,7 @@ namespace GXDLMSDirector
                 Manufacturer.ForceInactivity = ForceKeepAliveCB.Checked;
                 GXAuthentication authentication = Manufacturer.GetActiveAuthentication();                
                 Manufacturer.KeepAliveInterval = Convert.ToInt32(KeepAliveIntervalTB.Value) * 1000;
-                UpdateAuthentication(authentication);
+                authentication.ClientAddress = Convert.ToInt32(this.ClientAddTB.Value);
                 //Save server values.
                 UpdateServer((GXServerAddress) ServerAddressTypeCB.SelectedItem);
             }
@@ -280,52 +248,18 @@ namespace GXDLMSDirector
                 GXAuthentication authentication = Manufacturer.GetActiveAuthentication();                
                 authentication.Selected = false;                
                 //Save old values.
-                UpdateAuthentication(authentication);                
+                authentication.ClientAddress = Convert.ToInt32(this.ClientAddTB.Value);
                 authentication = ((GXAuthentication)AuthenticationCB.SelectedItem);
-                AdvancedBtn.Enabled = authentication.Type == Gurux.DLMS.Authentication.High ||
-                        authentication.Type == Gurux.DLMS.Authentication.HighSHA1 ||
-                        authentication.Type == Gurux.DLMS.Authentication.HighGMAC;
+                AdvancedBtn.Enabled = authentication.Type == Authentication.High ||
+                        authentication.Type == Authentication.HighSHA1 ||
+                        authentication.Type == Authentication.HighGMAC;
                 authentication.Selected = true;
-                this.RefreshAuthentication(authentication);                
+                ClientAddTB.Value = authentication.ClientAddress;
             }
             catch (Exception Ex)
             {
                 GXDLMS.Common.Error.ShowError(this, Ex);
             }
-        }
-
-        private void ClientAddTypeCB_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (ClientAddTypeCB.SelectedItem == typeof(byte))
-            {
-                ClientAddTB.Maximum = 0xFF;
-            }
-            else if (ClientAddTypeCB.SelectedItem == typeof(ushort))
-            {
-                ClientAddTB.Maximum = 0xFFFF;
-            }
-            else if (ClientAddTypeCB.SelectedItem == typeof(uint))
-            {
-                ClientAddTB.Maximum = 0xFFFFFFFF;
-            }
-        }
-
-        private void ServerAddTypeCB_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            uint value = 0;
-            if (ServerAddTypeCB.SelectedItem == typeof(byte))
-            {
-                value = 0xFF;
-            }
-            else if (ServerAddTypeCB.SelectedItem == typeof(ushort))
-            {
-                value = 0xFFFF;
-            }
-            else if (ServerAddTypeCB.SelectedItem == typeof(uint))
-            {
-                value = 0xFFFFFFFF;
-            }
-            PhysicalServerAddTB.Maximum = value;
         }
 
         private void ServerAddressTypeCB_DrawItem(object sender, DrawItemEventArgs e)
@@ -386,12 +320,12 @@ namespace GXDLMSDirector
         private void AdvancedBtn_Click(object sender, EventArgs e)
         {
             GXAuthentication authentication = Manufacturer.GetActiveAuthentication();
-            if (authentication.Type == Gurux.DLMS.Authentication.HighGMAC)
+            if (authentication.Type == Authentication.HighGMAC)
             {
                 AuthenticationGmacForm dlg = new AuthenticationGmacForm(authentication);
                 dlg.ShowDialog(this);
             }
-            else if (authentication.Type > Gurux.DLMS.Authentication.Low)
+            else if (authentication.Type > Authentication.Low)
             {
                 AuthenticationForm dlg = new AuthenticationForm(authentication);
                 dlg.ShowDialog(this);

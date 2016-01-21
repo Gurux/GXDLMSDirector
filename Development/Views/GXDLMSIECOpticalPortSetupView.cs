@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/Views/GXDLMSIECOpticalPortSetupView.cs $
 //
-// Version:         $Revision: 6489 $,
-//                  $Date: 2013-06-27 15:56:54 +0300 (to, 27 kesä 2013) $
+// Version:         $Revision: 8063 $,
+//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -38,6 +38,7 @@ using System.Text;
 using System.Windows.Forms;
 using Gurux.DLMS;
 using Gurux.DLMS.Objects;
+using Gurux.DLMS.Enums;
 
 namespace GXDLMSDirector.Views
 {

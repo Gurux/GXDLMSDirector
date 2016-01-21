@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/Views/GXDLMSProfileGenericView.cs $
 //
-// Version:         $Revision: 7981 $,
-//                  $Date: 2015-11-06 09:06:22 +0200 (pe, 06 marras 2015) $
+// Version:         $Revision: 8063 $,
+//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -40,6 +40,8 @@ using Gurux.DLMS;
 using System.Data;
 using GXDLMS.Common;
 using Gurux.DLMS.Objects;
+using Gurux.DLMS.Enums;
+using Gurux.DLMS.Objects.Enums;
 
 namespace GXDLMSDirector.Views
 {

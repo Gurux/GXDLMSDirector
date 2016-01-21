@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -13,6 +13,11 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>GXDLMSDirector.ico</ApplicationIcon>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -27,37 +32,57 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Gurux.Common, Version=7.0.2.1, Culture=neutral, PublicKeyToken=00bee6c3930228bf, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Common.7.0.32.1\lib\net35\Gurux.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Gurux.DLMS, Version=8.0.0.2, Culture=neutral, PublicKeyToken=93fe906382db03b2, processorArchitecture=MSIL">
+      <HintPath>..\Install\packages\Gurux.DLMS.8.0.0.2\lib\net35\Gurux.DLMS.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Gurux.Net, Version=7.0.2.1, Culture=neutral, PublicKeyToken=ca111c9ecfaf947d, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Net.7.0.25.1\lib\net35\Gurux.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Gurux.Serial, Version=7.0.2.1, Culture=neutral, PublicKeyToken=ab7382566107b371, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Serial.7.0.23.1\lib\net35\Gurux.Serial.dll</HintPath>
+    </Reference>
+    <Reference Include="Gurux.Terminal, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fac545f646930679, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Terminal.1.0.14.1\lib\net35\Gurux.Terminal.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.4.369, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>packages\ICSharpCode.SharpZipLib.dll.0.85.4.369\lib\net20\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Messaging" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="ZedGraph, Version=5.1.5.28844, Culture=neutral, PublicKeyToken=02a83cbd123fcd60">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="ZedGraph">
       <HintPath>ZedGraph.dll</HintPath>
-    </Reference>
-    <Reference Include="Gurux.Common, Version=7.0.2.1, Culture=neutral, PublicKeyToken=00bee6c3930228bf">
-      <Package>gurux.common</Package>
-    </Reference>
-    <Reference Include="Gurux.Net, Version=7.0.2.1, Culture=neutral, PublicKeyToken=ca111c9ecfaf947d">
-      <Package>gurux.net</Package>
-    </Reference>
-    <Reference Include="Gurux.Serial, Version=7.0.2.1, Culture=neutral, PublicKeyToken=ab7382566107b371">
-      <Package>gurux.serial</Package>
-    </Reference>
-    <Reference Include="Gurux.DLMS, Version=7.0.3.1, Culture=neutral, PublicKeyToken=93fe906382db03b2">
-      <Package>gurux.dlms</Package>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthenticationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AuthenticationForm.Designer.cs">
+      <DependentUpon>AuthenticationForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AuthenticationGmacForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AuthenticationGmacForm.Designer.cs">
+      <DependentUpon>AuthenticationGmacForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Extensions\Actaris.cs" />
     <Compile Include="GXAsyncWork.cs" />
     <Compile Include="CryptHelper.cs" />
@@ -84,6 +109,18 @@
     <Compile Include="ManufacturerSettings\GXError.cs" />
     <Compile Include="MonoWrapper.cs" />
     <Compile Include="MRUManager.cs" />
+    <Compile Include="Views\GXDLMSPushSetupView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\GXDLMSSecuritySetupView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\GXDLMSImageTransferView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\GXDLMSDisconnectControlView.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Views\GXDLMSActionScheduleView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -98,6 +135,9 @@
     </Compile>
     <Compile Include="Views\GXDLMSAutoAnswerView.Designer.cs">
       <DependentUpon>GXDLMSAutoAnswerView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\GXDLMSLimiterView.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Views\GXDLMSMacAddressSetupView.cs">
       <SubType>Form</SubType>
@@ -134,7 +174,7 @@
     </Compile>
     <Compile Include="Views\GXDLMSViewAttribute.cs" />
     <Compile Include="Views\GXValueField.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Views\GXValueField.Designer.cs">
       <DependentUpon>GXValueField.cs</DependentUpon>
@@ -185,11 +225,34 @@
       <DependentUpon>DevicePropertiesForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="AuthenticationForm.resx">
+      <DependentUpon>AuthenticationForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AuthenticationGmacForm.resx">
+      <DependentUpon>AuthenticationGmacForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GXGraphItemForm.resx">
       <DependentUpon>GXGraphItemForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GXObisValueItemForm.resx">
       <DependentUpon>GXObisValueItemForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\GXDLMSPushSetupView.resx">
+      <DependentUpon>GXDLMSPushSetupView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\GXDLMSSecuritySetupView.resx">
+      <DependentUpon>GXDLMSSecuritySetupView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\GXDLMSImageTransferView.resx">
+      <DependentUpon>GXDLMSImageTransferView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\GXDLMSDisconnectControlView.resx">
+      <DependentUpon>GXDLMSDisconnectControlView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\GXDLMSActionScheduleView.resx">
@@ -203,6 +266,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\GXDLMSAutoAnswerView.resx">
       <DependentUpon>GXDLMSAutoAnswerView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\GXDLMSLimiterView.resx">
+      <DependentUpon>GXDLMSLimiterView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\GXDLMSMacAddressSetupView.resx">
       <DependentUpon>GXDLMSMacAddressSetupView.cs</DependentUpon>
@@ -327,6 +393,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -398,8 +466,26 @@
     <None Include="Resources\ConnectMnu.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Gurux.DLMS.XML" />
     <Content Include="GXDLMSDirector.ico" />
     <Content Include="Resources\warning.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

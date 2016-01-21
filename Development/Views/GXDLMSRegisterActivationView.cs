@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/Views/GXDLMSRegisterActivationView.cs $
 //
-// Version:         $Revision: 6506 $,
-//                  $Date: 2013-08-08 09:09:04 +0300 (to, 08 elo 2013) $
+// Version:         $Revision: 8063 $,
+//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -38,6 +38,7 @@ using System.Text;
 using System.Windows.Forms;
 using Gurux.DLMS.Objects;
 using Gurux.DLMS;
+using Gurux.DLMS.Enums;
 
 namespace GXDLMSDirector.Views
 {

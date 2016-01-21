@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/Views/GXDLMSSpecialDaysTableView.cs $
 //
-// Version:         $Revision: 6512 $,
-//                  $Date: 2013-08-08 20:25:09 +0300 (to, 08 elo 2013) $
+// Version:         $Revision: 8063 $,
+//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -39,6 +39,7 @@ using System.Windows.Forms;
 using Gurux.DLMS;
 using GXDLMS.Common;
 using Gurux.DLMS.Objects;
+using Gurux.DLMS.Enums;
 
 namespace GXDLMSDirector.Views
 {

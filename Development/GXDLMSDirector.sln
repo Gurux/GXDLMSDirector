@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GXDLMSDirector_2010", "GXDLMSDirector_2010.csproj", "{0CA083FF-4071-4E07-AFFF-5B2E31A11D45}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GXDLMSDirector", "GXDLMSDirector.csproj", "{0CA083FF-4071-4E07-AFFF-5B2E31A11D45}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

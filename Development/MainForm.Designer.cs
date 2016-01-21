@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/MainForm.Designer.cs $
 //
-// Version:         $Revision: 5901 $,
-//                  $Date: 2013-01-08 14:52:06 +0200 (ti, 08 tammi 2013) $
+// Version:         $Revision: 8063 $,
+//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -115,6 +115,7 @@ namespace GXDLMSDirector
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ContentsMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.LibraryVersionsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.UpdatesMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem9 = new System.Windows.Forms.ToolStripSeparator();
             this.AboutMnu = new System.Windows.Forms.ToolStripMenuItem();
@@ -158,10 +159,10 @@ namespace GXDLMSDirector
             this.RemoveTBtn = new System.Windows.Forms.ToolBarButton();
             this.ObjectPanelFrame = new System.Windows.Forms.Panel();
             this.DeviceList = new System.Windows.Forms.ListView();
-            this.DeviceNameCH = new System.Windows.Forms.ColumnHeader();
+            this.DeviceNameCH = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ListView = new System.Windows.Forms.TabPage();
             this.ObjectList = new System.Windows.Forms.ListView();
-            this.DescriptionColumnHeader = new System.Windows.Forms.ColumnHeader();
+            this.DescriptionColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.TreeView = new System.Windows.Forms.TabPage();
             this.ObjectTree = new System.Windows.Forms.TreeView();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -173,14 +174,13 @@ namespace GXDLMSDirector
             this.ManufacturerValueLbl = new System.Windows.Forms.Label();
             this.DeviceStateLbl = new System.Windows.Forms.Label();
             this.PhysicalAddressLbl = new System.Windows.Forms.Label();
-            this.ClientIDValueLbl = new System.Windows.Forms.Label();
+            this.ClientAddressValueLbl = new System.Windows.Forms.Label();
             this.PhysicalAddressValueLbl = new System.Windows.Forms.Label();
-            this.ClientIDLbl = new System.Windows.Forms.Label();
+            this.ClientAddressLbl = new System.Windows.Forms.Label();
             this.LogicalAddressLbl = new System.Windows.Forms.Label();
             this.LogicalAddressValueLbl = new System.Windows.Forms.Label();
             this.ObjectValueView = new System.Windows.Forms.ListView();
-            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-            this.LibraryVersionsMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -589,6 +589,13 @@ namespace GXDLMSDirector
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(179, 6);
             // 
+            // LibraryVersionsMenu
+            // 
+            this.LibraryVersionsMenu.Name = "LibraryVersionsMenu";
+            this.LibraryVersionsMenu.Size = new System.Drawing.Size(182, 22);
+            this.LibraryVersionsMenu.Text = "Library Versions...";
+            this.LibraryVersionsMenu.Click += new System.EventHandler(this.LibraryVersionsMenu_Click);
+            // 
             // UpdatesMnu
             // 
             this.UpdatesMnu.Name = "UpdatesMnu";
@@ -953,9 +960,9 @@ namespace GXDLMSDirector
             this.ObjectList.TabIndex = 0;
             this.ObjectList.UseCompatibleStateImageBehavior = false;
             this.ObjectList.View = System.Windows.Forms.View.Details;
-            this.ObjectList.Resize += new System.EventHandler(this.ObjectList_Resize);
             this.ObjectList.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.ObjectList_ItemSelectionChanged);
             this.ObjectList.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ObjectList_KeyUp);
+            this.ObjectList.Resize += new System.EventHandler(this.ObjectList_Resize);
             // 
             // DescriptionColumnHeader
             // 
@@ -985,8 +992,8 @@ namespace GXDLMSDirector
             this.ObjectTree.SelectedImageIndex = 0;
             this.ObjectTree.Size = new System.Drawing.Size(186, 433);
             this.ObjectTree.TabIndex = 3;
-            this.ObjectTree.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ObjectTree_MouseUp);
             this.ObjectTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.ObjectTree_AfterSelect);
+            this.ObjectTree.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ObjectTree_MouseUp);
             // 
             // tabControl1
             // 
@@ -1024,9 +1031,9 @@ namespace GXDLMSDirector
             this.DeviceGb.Controls.Add(this.ManufacturerValueLbl);
             this.DeviceGb.Controls.Add(this.DeviceStateLbl);
             this.DeviceGb.Controls.Add(this.PhysicalAddressLbl);
-            this.DeviceGb.Controls.Add(this.ClientIDValueLbl);
+            this.DeviceGb.Controls.Add(this.ClientAddressValueLbl);
             this.DeviceGb.Controls.Add(this.PhysicalAddressValueLbl);
-            this.DeviceGb.Controls.Add(this.ClientIDLbl);
+            this.DeviceGb.Controls.Add(this.ClientAddressLbl);
             this.DeviceGb.Controls.Add(this.LogicalAddressLbl);
             this.DeviceGb.Controls.Add(this.LogicalAddressValueLbl);
             this.DeviceGb.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1081,14 +1088,14 @@ namespace GXDLMSDirector
             this.PhysicalAddressLbl.TabIndex = 4;
             this.PhysicalAddressLbl.Text = "Physical Address:";
             // 
-            // ClientIDValueLbl
+            // ClientAddressValueLbl
             // 
-            this.ClientIDValueLbl.AutoSize = true;
-            this.ClientIDValueLbl.Location = new System.Drawing.Point(114, 97);
-            this.ClientIDValueLbl.Name = "ClientIDValueLbl";
-            this.ClientIDValueLbl.Size = new System.Drawing.Size(85, 13);
-            this.ClientIDValueLbl.TabIndex = 9;
-            this.ClientIDValueLbl.Text = "ClientIDValueLbl";
+            this.ClientAddressValueLbl.AutoSize = true;
+            this.ClientAddressValueLbl.Location = new System.Drawing.Point(114, 97);
+            this.ClientAddressValueLbl.Name = "ClientAddressValueLbl";
+            this.ClientAddressValueLbl.Size = new System.Drawing.Size(112, 13);
+            this.ClientAddressValueLbl.TabIndex = 9;
+            this.ClientAddressValueLbl.Text = "ClientAddressValueLbl";
             // 
             // PhysicalAddressValueLbl
             // 
@@ -1099,14 +1106,14 @@ namespace GXDLMSDirector
             this.PhysicalAddressValueLbl.TabIndex = 5;
             this.PhysicalAddressValueLbl.Text = "PhysicalAddressValueLbl";
             // 
-            // ClientIDLbl
+            // ClientAddressLbl
             // 
-            this.ClientIDLbl.AutoSize = true;
-            this.ClientIDLbl.Location = new System.Drawing.Point(18, 97);
-            this.ClientIDLbl.Name = "ClientIDLbl";
-            this.ClientIDLbl.Size = new System.Drawing.Size(50, 13);
-            this.ClientIDLbl.TabIndex = 8;
-            this.ClientIDLbl.Text = "Client ID:";
+            this.ClientAddressLbl.AutoSize = true;
+            this.ClientAddressLbl.Location = new System.Drawing.Point(18, 97);
+            this.ClientAddressLbl.Name = "ClientAddressLbl";
+            this.ClientAddressLbl.Size = new System.Drawing.Size(77, 13);
+            this.ClientAddressLbl.TabIndex = 8;
+            this.ClientAddressLbl.Text = "Client Address:";
             // 
             // LogicalAddressLbl
             // 
@@ -1146,13 +1153,6 @@ namespace GXDLMSDirector
             this.columnHeader1.Text = "Name";
             this.columnHeader1.Width = 117;
             // 
-            // LibraryVersionsMenu
-            // 
-            this.LibraryVersionsMenu.Name = "LibraryVersionsMenu";
-            this.LibraryVersionsMenu.Size = new System.Drawing.Size(182, 22);
-            this.LibraryVersionsMenu.Text = "Library Versions...";
-            this.LibraryVersionsMenu.Click += new System.EventHandler(this.LibraryVersionsMenu_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1171,8 +1171,8 @@ namespace GXDLMSDirector
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
             this.Text = "Gurux COSEM Director Community Edition";
-            this.Load += new System.EventHandler(this.MainForm_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
@@ -1298,9 +1298,9 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label ManufacturerValueLbl;
         private System.Windows.Forms.Label DeviceStateLbl;
         private System.Windows.Forms.Label PhysicalAddressLbl;
-        private System.Windows.Forms.Label ClientIDValueLbl;
+        private System.Windows.Forms.Label ClientAddressValueLbl;
         private System.Windows.Forms.Label PhysicalAddressValueLbl;
-        private System.Windows.Forms.Label ClientIDLbl;
+        private System.Windows.Forms.Label ClientAddressLbl;
         private System.Windows.Forms.Label LogicalAddressLbl;
         private System.Windows.Forms.Label LogicalAddressValueLbl;
         private System.Windows.Forms.ListView ObjectValueView;

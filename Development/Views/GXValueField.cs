@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/Views/GXValueField.cs $
 //
-// Version:         $Revision: 7852 $,
-//                  $Date: 2015-07-02 23:21:37 +0300 (to, 02 heinä 2015) $
+// Version:         $Revision: 8063 $,
+//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -45,6 +45,7 @@ using Gurux.DLMS.ManufacturerSettings;
 using Gurux.DLMS;
 using Gurux.DLMS.Objects;
 using System.Reflection;
+using Gurux.DLMS.Enums;
 
 namespace GXDLMSDirector.Views
 {
@@ -270,7 +271,7 @@ namespace GXDLMSDirector.Views
                         comboBox1.Items.Add(it.UIValue);
                     }
                 }
-                ReadOnly = (target.GetAccess(index) & Gurux.DLMS.AccessMode.Write) == 0;
+                ReadOnly = (target.GetAccess(index) & AccessMode.Write) == 0;
             }
         }
 

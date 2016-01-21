@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/ManufacturerSettings/GXLogWriter.cs $
 //
-// Version:         $Revision: 5407 $,
-//                  $Date: 2012-06-04 12:47:32 +0300 (ma, 04 kesä 2012) $
+// Version:         $Revision: 8063 $,
+//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -95,7 +95,7 @@ namespace GXDLMS.ManufacturerSettings
             string str = DateTime.Now.ToLongTimeString() + " " + text;
             if (value != null)
             {
-                str += "\r\n" + BitConverter.ToString(value).Replace('-', ' ');
+                str += "\r\n" + GXCommon.ToHex(value, true);
             }
             System.Diagnostics.Trace.WriteLine(str);
         }

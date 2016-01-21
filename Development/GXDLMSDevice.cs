@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDevice.cs $
 //
-// Version:         $Revision: 7805 $,
-//                  $Date: 2015-03-18 15:37:57 +0200 (ke, 18 maalis 2015) $
+// Version:         $Revision: 8063 $,
+//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -47,6 +47,7 @@ using GXDLMS.ManufacturerSettings;
 using GXDLMS.Common;
 using Gurux.DLMS.ManufacturerSettings;
 using Gurux.DLMS.Objects;
+using Gurux.DLMS.Enums;
 
 namespace GXDLMSDirector
 {
@@ -281,17 +282,36 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
+        /// Used logical client ID.
+        /// </summary>
+        /// <remarks>
+        /// This is opsolite. Use ClientAddress.
+        /// </remarks>
+        [DefaultValue(null)]
+        public object ClientID
+        {
+            get
+            {
+                return null;
+            }
+            set
+            {
+                ClientAddress = Convert.ToInt32(value);
+            }
+        }
+
+        /// <summary>
         /// USed logical client ID.
         /// </summary>
         /// <remarks>
         /// Client ID is always 1 byte long.
         /// </remarks>
         [DefaultValue(0x10)]
-        public object ClientID
+        public int ClientAddress
         {
             get;
             set;
-        }    
+        }
 
         /// <summary>
         /// Is IEC 62056-21 skipped when using serial port connection.
@@ -322,6 +342,15 @@ namespace GXDLMSDirector
         }
 
         public string Name
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Is media verbose mode used.
+        /// </summary>
+        public bool Verbose
         {
             get;
             set;
@@ -360,11 +389,11 @@ namespace GXDLMSDirector
         {
             get
             {
-                return m_Communicator.m_Cosem.ObisCodes;
+                return m_Communicator.client.CustomObisCodes;
             }
             set
             {
-                m_Communicator.m_Cosem.ObisCodes = value;
+                m_Communicator.client.CustomObisCodes = value;
             }
         }
 
@@ -383,11 +412,11 @@ namespace GXDLMSDirector
         {
             get
             {
-                return m_Communicator.Media;
+                return m_Communicator.media;
             }
             set
             {
-                m_Communicator.Media = value;
+                m_Communicator.media = value;
             }
         }      
 
@@ -438,12 +467,12 @@ namespace GXDLMSDirector
         public GXDLMSDevice(Gurux.Common.IGXMedia media)
         {
             StartProtocol = StartProtocolType.IEC;
-            ClientID = 0x10; // Public client (lowest security level).
+            ClientAddress = 0x10; // Public client (lowest security level).
             PhysicalAddress = 1;
             Password = "";
             Authentication = Authentication.None;
             m_Communicator = new GXDLMSCommunicator(this, media);
-            m_Objects = m_Communicator.m_Cosem.Objects;
+            m_Objects = m_Communicator.client.Objects;
             m_Objects.Tag = this;
             m_Communicator.OnProgress += new ProgressEventHandler(this.NotifyProgress);
             this.KeepAlive = new System.Timers.Timer();
@@ -465,7 +494,7 @@ namespace GXDLMSDirector
         {
             get
             {
-                return m_Communicator.Media.GetType().ToString();
+                return m_Communicator.media.GetType().ToString();
             }
             set
             {
@@ -474,7 +503,7 @@ namespace GXDLMSDirector
                 {
                     throw new Exception("Invalid media type " + value);
                 }
-                m_Communicator.Media = (Gurux.Common.IGXMedia)Activator.CreateInstance(type);
+                m_Communicator.media = (Gurux.Common.IGXMedia)Activator.CreateInstance(type);
             }
         }        
 
@@ -485,11 +514,11 @@ namespace GXDLMSDirector
         {
             get
             {
-                return m_Communicator.Media.Settings;
+                return m_Communicator.media.Settings;
             }
             set
             {               
-                m_Communicator.Media.Settings = value;         
+                m_Communicator.media.Settings = value;         
             }
         }
 
@@ -538,9 +567,10 @@ namespace GXDLMSDirector
                 {
                     KeepAlive.Stop();
                 }
-                if (m_Communicator.Media.IsOpen)
+                if (m_Communicator.media.IsOpen)
                 {
-                    m_Communicator.ReadDLMSPacket(m_Communicator.DisconnectRequest(), 1);
+                    GXReplyData reply = new GXReplyData();
+                    m_Communicator.ReadDLMSPacket(m_Communicator.DisconnectRequest(), 1, reply);
                 }
             }
             catch (Exception Ex)
@@ -550,9 +580,9 @@ namespace GXDLMSDirector
             }
             finally
             {
-                if (m_Communicator.Media != null)
+                if (m_Communicator.media != null)
                 {
-                    m_Communicator.Media.Close();
+                    m_Communicator.media.Close();
                 }
                 UpdateStatus(DeviceState.Initialized);
             }
@@ -576,7 +606,7 @@ namespace GXDLMSDirector
         /// <param name="device"></param>
         /// <param name="it"></param>
         /// <returns></returns>
-        public static GXDLMSObject ConvertObject2Class(GXDLMSDevice device, Gurux.DLMS.ObjectType objectType, string logicalName)
+        public static GXDLMSObject ConvertObject2Class(GXDLMSDevice device, ObjectType objectType, string logicalName)
         {
             GXDLMSObject obj = Gurux.DLMS.GXDLMSClient.CreateObject(objectType);
             if (obj != null)
@@ -606,9 +636,9 @@ namespace GXDLMSDirector
 
         public void UpdateColumns(GXDLMSProfileGeneric item, GXManufacturer man)
         {
-            if (Comm.ParentForm.InvokeRequired)
+            if (Comm.parentForm.InvokeRequired)
             {
-                Comm.ParentForm.Invoke(new UpdateColumnsEventHandler(UpdateColumns), item, man);
+                Comm.parentForm.Invoke(new UpdateColumnsEventHandler(UpdateColumns), item, man);
                 return;
             }
             item.Buffer.Clear();
@@ -621,9 +651,8 @@ namespace GXDLMSDirector
             }
             if (cols == null)
             {
-                cols = Comm.GetProfileGenericColumns(item.Name);                
+                Comm.GetProfileGenericColumns(item);                
             }
-            item.CaptureObjects = cols;
         }
 
         private static void UpdateError(GXDLMSObject it, int attributeIndex, Exception ex)
@@ -662,45 +691,25 @@ namespace GXDLMSDirector
                     if (it.ObjectType == ObjectType.ProfileGeneric)
                     {
                         continue;
-                    }
-                    if (it.GetType() == typeof(GXDLMSObject))
-                    {
-                        continue;
-                    }
+                    }                   
                     ++pos;
                     NotifyProgress(this, "Creating object " + it.LogicalName, pos, objs.Count);
                     m_Objects.Add(it);                    
                 }
                 GXLogWriter.WriteLog("--- Created " + m_Objects.Count.ToString() + " objects. ---");
-                int objPos = 0;               
                 //Read registers units and scalers.
                 int cnt = Objects.Count;
                 GXLogWriter.WriteLog("--- Reading scalers and units. ---");
                 for (pos = 0; pos != cnt; ++pos)
                 {
                     GXDLMSObject it = Objects[pos];
-                    it.UpdateDefaultValueItems();
-                    this.OnProgress(this, "Reading scalers and units.", pos + 1, cnt);
+                    this.OnProgress(this, "Reading scalers and units.", cnt + pos + 1, 3 * cnt);
                     if (it is GXDLMSRegister)
                     {
-                        object data = it.ShortName;
-                        if (it.ShortName == 0)
-                        {
-                            data = it.LogicalName;
-                        }
                         //Read scaler first.
-                        DataType type = DataType.None;
                         try
                         {
-                            data = Comm.ReadValue(data, it.ObjectType, 3, ref type);
-                            object tmp = GXHelpers.ConvertFromDLMS(data, DataType.None, DataType.None, false);
-                            //Actaris ACE 6000 is returning wrong value here.
-                            if (tmp is object[])
-                            {
-                                object[] scalerUnit = (object[])tmp;
-                                ((GXDLMSRegister)it).Scaler = Math.Pow(10, Convert.ToInt32(scalerUnit.GetValue(0)));
-                                ((GXDLMSRegister)it).Unit = (Unit)Convert.ToInt32(scalerUnit.GetValue(1));
-                            }
+                            Comm.ReadValue(it, 3);
                         }
                         catch (Exception ex)
                         {
@@ -715,27 +724,14 @@ namespace GXDLMSDirector
                     }
                     if (it is GXDLMSDemandRegister)
                     {
-                        object name = it.ShortName;
-                        object data;
-                        if (it.ShortName == 0)
-                        {
-                            name = it.LogicalName;
-                        }
-                        //Read scaler first.
-                        DataType type = DataType.None;
-                        byte attributeOrder = 4;
                         try
                         {
-                            data = Comm.ReadValue(name, it.ObjectType, attributeOrder, ref type);
-                            Array scalerUnit = (Array)GXHelpers.ConvertFromDLMS(data, DataType.None, DataType.None, false);
-                            ((GXDLMSDemandRegister)it).Scaler = Math.Pow(10, Convert.ToInt32(scalerUnit.GetValue(0)));
-                            ((GXDLMSDemandRegister)it).Unit = (Unit)Convert.ToInt32(scalerUnit.GetValue(1));
+                            //Read scaler first.
+                            Comm.ReadValue(it, 4);
                             //Read Period
-                            data = Comm.ReadValue(name, it.ObjectType, 8, ref type);
-                            ((GXDLMSDemandRegister)it).Period = Convert.ToUInt64(data);
+                            Comm.ReadValue(it, 8);
                             //Read number of periods
-                            data = Comm.ReadValue(name, it.ObjectType, 9, ref type);
-                            ((GXDLMSDemandRegister)it).NumberOfPeriods = Convert.ToUInt32(data);
+                            Comm.ReadValue(it, 9);
                         }
                         catch (Exception ex)
                         {
@@ -776,7 +772,7 @@ namespace GXDLMSDirector
                     //Read Profile Generic Columns.                
                     try
                     {
-                        NotifyProgress(this, "Get profile generic columns", ++objPos, objs.Count);                    
+                        NotifyProgress(this, "Get profile generic columns", (2 * cnt) + pos, 3 * objs.Count);                    
                         UpdateColumns(it, Manufacturers.FindByIdentification(Manufacturer));
                         if (it.CaptureObjects == null || it.CaptureObjects.Count == 0)
                         {
@@ -818,11 +814,11 @@ namespace GXDLMSDirector
                 else if (this.InactivityMode == InactivityMode.Reopen || 
                     this.InactivityMode == InactivityMode.ReopenActive)
                 {
-                    if (DateTime.Now.Subtract(m_Communicator.ConnectionStartTime).TotalSeconds > 40)
+                    if (DateTime.Now.Subtract(m_Communicator.connectionStartTime).TotalSeconds > 40)
                     {
                         Disconnect();
                         InitializeConnection();
-                        m_Communicator.ConnectionStartTime = DateTime.Now;
+                        m_Communicator.connectionStartTime = DateTime.Now;
                     }
                 }
             }

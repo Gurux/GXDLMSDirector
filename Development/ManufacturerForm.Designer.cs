@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/ManufacturerForm.Designer.cs $
 //
-// Version:         $Revision: 7706 $,
-//                  $Date: 2014-12-04 12:50:37 +0200 (to, 04 joulu 2014) $
+// Version:         $Revision: 8063 $,
+//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -76,8 +76,6 @@ namespace GXDLMSDirector
             this.AddressingGB = new System.Windows.Forms.GroupBox();
             this.AdvancedBtn = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.ClientAddTypeCB = new System.Windows.Forms.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.ClientAddLbl = new System.Windows.Forms.Label();
             this.ClientAddTB = new System.Windows.Forms.NumericUpDown();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -87,8 +85,6 @@ namespace GXDLMSDirector
             this.SerialNumberFormulaLbl = new System.Windows.Forms.Label();
             this.PhysicalServerAddLbl = new System.Windows.Forms.Label();
             this.PhysicalServerAddTB = new System.Windows.Forms.NumericUpDown();
-            this.ServerAddTypeCB = new System.Windows.Forms.ComboBox();
-            this.ServerIDTypeLbl = new System.Windows.Forms.Label();
             this.LogicalServerAddTB = new System.Windows.Forms.NumericUpDown();
             this.LogicalServerAddLbl = new System.Windows.Forms.Label();
             this.AuthenticationCB = new System.Windows.Forms.ComboBox();
@@ -111,7 +107,7 @@ namespace GXDLMSDirector
             // 
             this.OKBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.OKBtn.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.OKBtn.Location = new System.Drawing.Point(168, 463);
+            this.OKBtn.Location = new System.Drawing.Point(168, 410);
             this.OKBtn.Name = "OKBtn";
             this.OKBtn.Size = new System.Drawing.Size(75, 23);
             this.OKBtn.TabIndex = 19;
@@ -123,7 +119,7 @@ namespace GXDLMSDirector
             // 
             this.CancelBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelBtn.Location = new System.Drawing.Point(249, 463);
+            this.CancelBtn.Location = new System.Drawing.Point(249, 410);
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.Size = new System.Drawing.Size(75, 23);
             this.CancelBtn.TabIndex = 20;
@@ -202,8 +198,8 @@ namespace GXDLMSDirector
             // 
             // AddressingGB
             // 
-            this.AddressingGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.AddressingGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.AddressingGB.Controls.Add(this.AdvancedBtn);
             this.AddressingGB.Controls.Add(this.groupBox2);
             this.AddressingGB.Controls.Add(this.groupBox1);
@@ -211,7 +207,7 @@ namespace GXDLMSDirector
             this.AddressingGB.Controls.Add(this.AuthenticationLbl);
             this.AddressingGB.Location = new System.Drawing.Point(2, 198);
             this.AddressingGB.Name = "AddressingGB";
-            this.AddressingGB.Size = new System.Drawing.Size(335, 261);
+            this.AddressingGB.Size = new System.Drawing.Size(335, 206);
             this.AddressingGB.TabIndex = 7;
             this.AddressingGB.TabStop = false;
             this.AddressingGB.Text = "Addressing";
@@ -229,36 +225,14 @@ namespace GXDLMSDirector
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.ClientAddTypeCB);
-            this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.ClientAddLbl);
             this.groupBox2.Controls.Add(this.ClientAddTB);
             this.groupBox2.Location = new System.Drawing.Point(2, 49);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(327, 66);
+            this.groupBox2.Size = new System.Drawing.Size(327, 43);
             this.groupBox2.TabIndex = 9;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Client Address:";
-            // 
-            // ClientAddTypeCB
-            // 
-            this.ClientAddTypeCB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ClientAddTypeCB.FormattingEnabled = true;
-            this.ClientAddTypeCB.Location = new System.Drawing.Point(231, 15);
-            this.ClientAddTypeCB.Name = "ClientAddTypeCB";
-            this.ClientAddTypeCB.Size = new System.Drawing.Size(85, 21);
-            this.ClientAddTypeCB.TabIndex = 11;
-            this.ClientAddTypeCB.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.Address_DrawItem);
-            this.ClientAddTypeCB.SelectedIndexChanged += new System.EventHandler(this.ClientAddTypeCB_SelectedIndexChanged);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(191, 19);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(34, 13);
-            this.label2.TabIndex = 44;
-            this.label2.Text = "Type:";
             // 
             // ClientAddLbl
             // 
@@ -295,13 +269,11 @@ namespace GXDLMSDirector
             this.groupBox1.Controls.Add(this.SerialNumberFormulaLbl);
             this.groupBox1.Controls.Add(this.PhysicalServerAddLbl);
             this.groupBox1.Controls.Add(this.PhysicalServerAddTB);
-            this.groupBox1.Controls.Add(this.ServerAddTypeCB);
-            this.groupBox1.Controls.Add(this.ServerIDTypeLbl);
             this.groupBox1.Controls.Add(this.LogicalServerAddTB);
             this.groupBox1.Controls.Add(this.LogicalServerAddLbl);
-            this.groupBox1.Location = new System.Drawing.Point(2, 121);
+            this.groupBox1.Location = new System.Drawing.Point(2, 93);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(332, 136);
+            this.groupBox1.Size = new System.Drawing.Size(332, 105);
             this.groupBox1.TabIndex = 13;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Server Address:";
@@ -327,7 +299,7 @@ namespace GXDLMSDirector
             // 
             // SerialNumberFormulaTB
             // 
-            this.SerialNumberFormulaTB.Location = new System.Drawing.Point(143, 82);
+            this.SerialNumberFormulaTB.Location = new System.Drawing.Point(143, 48);
             this.SerialNumberFormulaTB.Name = "SerialNumberFormulaTB";
             this.SerialNumberFormulaTB.Size = new System.Drawing.Size(173, 20);
             this.SerialNumberFormulaTB.TabIndex = 16;
@@ -335,7 +307,7 @@ namespace GXDLMSDirector
             // SerialNumberFormulaLbl
             // 
             this.SerialNumberFormulaLbl.AutoSize = true;
-            this.SerialNumberFormulaLbl.Location = new System.Drawing.Point(5, 82);
+            this.SerialNumberFormulaLbl.Location = new System.Drawing.Point(5, 48);
             this.SerialNumberFormulaLbl.Name = "SerialNumberFormulaLbl";
             this.SerialNumberFormulaLbl.Size = new System.Drawing.Size(116, 13);
             this.SerialNumberFormulaLbl.TabIndex = 47;
@@ -344,7 +316,7 @@ namespace GXDLMSDirector
             // PhysicalServerAddLbl
             // 
             this.PhysicalServerAddLbl.AutoSize = true;
-            this.PhysicalServerAddLbl.Location = new System.Drawing.Point(8, 108);
+            this.PhysicalServerAddLbl.Location = new System.Drawing.Point(8, 74);
             this.PhysicalServerAddLbl.Name = "PhysicalServerAddLbl";
             this.PhysicalServerAddLbl.Size = new System.Drawing.Size(49, 13);
             this.PhysicalServerAddLbl.TabIndex = 42;
@@ -353,7 +325,7 @@ namespace GXDLMSDirector
             // PhysicalServerAddTB
             // 
             this.PhysicalServerAddTB.Hexadecimal = true;
-            this.PhysicalServerAddTB.Location = new System.Drawing.Point(63, 108);
+            this.PhysicalServerAddTB.Location = new System.Drawing.Point(63, 74);
             this.PhysicalServerAddTB.Maximum = new decimal(new int[] {
             0,
             1,
@@ -368,30 +340,10 @@ namespace GXDLMSDirector
             0,
             0});
             // 
-            // ServerAddTypeCB
-            // 
-            this.ServerAddTypeCB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ServerAddTypeCB.FormattingEnabled = true;
-            this.ServerAddTypeCB.Location = new System.Drawing.Point(97, 45);
-            this.ServerAddTypeCB.Name = "ServerAddTypeCB";
-            this.ServerAddTypeCB.Size = new System.Drawing.Size(85, 21);
-            this.ServerAddTypeCB.TabIndex = 15;
-            this.ServerAddTypeCB.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.Address_DrawItem);
-            this.ServerAddTypeCB.SelectedIndexChanged += new System.EventHandler(this.ServerAddTypeCB_SelectedIndexChanged);
-            // 
-            // ServerIDTypeLbl
-            // 
-            this.ServerIDTypeLbl.AutoSize = true;
-            this.ServerIDTypeLbl.Location = new System.Drawing.Point(6, 49);
-            this.ServerIDTypeLbl.Name = "ServerIDTypeLbl";
-            this.ServerIDTypeLbl.Size = new System.Drawing.Size(34, 13);
-            this.ServerIDTypeLbl.TabIndex = 21;
-            this.ServerIDTypeLbl.Text = "Type:";
-            // 
             // LogicalServerAddTB
             // 
             this.LogicalServerAddTB.Hexadecimal = true;
-            this.LogicalServerAddTB.Location = new System.Drawing.Point(231, 108);
+            this.LogicalServerAddTB.Location = new System.Drawing.Point(231, 74);
             this.LogicalServerAddTB.Maximum = new decimal(new int[] {
             0,
             1,
@@ -404,7 +356,7 @@ namespace GXDLMSDirector
             // LogicalServerAddLbl
             // 
             this.LogicalServerAddLbl.AutoSize = true;
-            this.LogicalServerAddLbl.Location = new System.Drawing.Point(168, 108);
+            this.LogicalServerAddLbl.Location = new System.Drawing.Point(168, 74);
             this.LogicalServerAddLbl.Name = "LogicalServerAddLbl";
             this.LogicalServerAddLbl.Size = new System.Drawing.Size(44, 13);
             this.LogicalServerAddLbl.TabIndex = 39;
@@ -489,7 +441,7 @@ namespace GXDLMSDirector
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.CancelBtn;
-            this.ClientSize = new System.Drawing.Size(337, 498);
+            this.ClientSize = new System.Drawing.Size(337, 445);
             this.Controls.Add(this.ForceKeepAliveCB);
             this.Controls.Add(this.KeepAliveIntervalTB);
             this.Controls.Add(this.KeepAliveLbl);
@@ -539,8 +491,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label StartProtocolLbl;
         private System.Windows.Forms.ComboBox StartProtocolCB;
         private System.Windows.Forms.GroupBox AddressingGB;
-        private System.Windows.Forms.ComboBox ServerAddTypeCB;
-        private System.Windows.Forms.Label ServerIDTypeLbl;
         private System.Windows.Forms.ComboBox InactivityModeCB;
         private System.Windows.Forms.Label InactivityModeLbl;
         private System.Windows.Forms.ComboBox AuthenticationCB;
@@ -553,8 +503,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.NumericUpDown LogicalServerAddTB;
         private System.Windows.Forms.Label LogicalServerAddLbl;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.ComboBox ClientAddTypeCB;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label ClientAddLbl;
         private System.Windows.Forms.NumericUpDown ClientAddTB;
         private System.Windows.Forms.TextBox SerialNumberFormulaTB;

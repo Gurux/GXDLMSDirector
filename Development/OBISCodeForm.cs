@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/OBISCodeForm.cs $
 //
-// Version:         $Revision: 5618 $,
-//                  $Date: 2012-08-24 09:15:04 +0300 (pe, 24 elo 2012) $
+// Version:         $Revision: 8063 $,
+//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -47,6 +47,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using GXDLMS.Common;
 using Gurux.DLMS.ManufacturerSettings;
 using Gurux.DLMS.Objects;
+using Gurux.DLMS.Enums;
 
 namespace GXDLMSDirector
 {
@@ -89,7 +90,6 @@ namespace GXDLMSDirector
                 Target.LogicalName = "1.2.3.4.5";
             }
             ObisPropertyGrid.SelectedObject = Target;
-            ShowAttributes();           
             InterfaceCB.SelectedItem = Target;
         }
 
@@ -105,27 +105,7 @@ namespace GXDLMSDirector
                 InterfaceCB.Items.Add(obj.ObjectType);
             }
         }
-
-        /// <summary>
-        /// Find selected object type and create object.
-        /// After that try to find if there are any 
-        /// </summary>
-        void ShowAttributes()
-        {
-            foreach (Type type in Gurux.DLMS.GXDLMSClient.GetObjectTypes())
-            {
-                GXDLMSObject obj = Activator.CreateInstance(type) as GXDLMSObject;
-                if (obj.ObjectType == Target.ObjectType)
-                {
-                    if (Target.Attributes == null || Target.Attributes.Count == 0)
-                    {
-                        obj.UpdateDefaultValueItems();
-                    }                        
-                    break;
-                }
-            }
-        }
-
+       
         private void OKBtn_Click(object sender, EventArgs e)
         {
             try
@@ -160,8 +140,8 @@ namespace GXDLMSDirector
         {
             try
             {
-                bool bChange = Target.ObjectType != (Gurux.DLMS.ObjectType)InterfaceCB.SelectedItem;
-                Target.ObjectType = (Gurux.DLMS.ObjectType)InterfaceCB.SelectedItem;
+                bool bChange = Target.ObjectType != (ObjectType)InterfaceCB.SelectedItem;
+                Target.ObjectType = (ObjectType)InterfaceCB.SelectedItem;
                 if (bChange)
                 {
                     Target.Attributes.Clear();

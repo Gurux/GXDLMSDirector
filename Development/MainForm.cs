@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/MainForm.cs $
 //
-// Version:         $Revision: 7805 $,
-//                  $Date: 2015-03-18 15:37:57 +0200 (ke, 18 maalis 2015) $
+// Version:         $Revision: 8063 $,
+//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -52,6 +52,7 @@ using Gurux.DLMS.ManufacturerSettings;
 using Gurux.DLMS.Objects;
 using Gurux.DLMS;
 using System.Linq;
+using Gurux.DLMS.Enums;
 
 namespace GXDLMSDirector
 {   
@@ -182,21 +183,9 @@ namespace GXDLMSDirector
                     {
                         maximium = current;
                     }
-                    //if (maximium != 1 && ProgressBar.Value != 0)
-                    {
-                        bool bReady = current == maximium;
-                        ProgressBar.Visible = !bReady;
-                        if (bReady)
-                        {
-                            StatusLbl.Text = "Ready";
-                        }
-                        else
-                        {
-                            StatusLbl.Text = description;
-                        }
-                        ProgressBar.Maximum = maximium;
-                        ProgressBar.Value = current;
-                    }
+                    StatusLbl.Text = description;
+                    ProgressBar.Maximum = maximium;
+                    ProgressBar.Value = current;
                 }
             }
         }
@@ -301,7 +290,7 @@ namespace GXDLMSDirector
                     GXDLMSDevice dev = (GXDLMSDevice)obj;
                     DeviceGb.Text = dev.Name;
                     StatusValueLbl.Text = dev.Status.ToString();
-                    ClientIDValueLbl.Text = dev.ClientID.ToString();
+                    ClientAddressValueLbl.Text = dev.ClientAddress.ToString();
                     LogicalAddressValueLbl.Text = dev.LogicalAddress.ToString();
                     PhysicalAddressValueLbl.Text = dev.PhysicalAddress.ToString();
                     ManufacturerValueLbl.Text = dev.Manufacturers.FindByIdentification(dev.Manufacturer).Name;
@@ -561,8 +550,9 @@ namespace GXDLMSDirector
             GXButton obj = sender as GXButton;
             try
             {
+                GXReplyData reply = new GXReplyData();
                 GXDLMSDevice dev = obj.Target.Parent.Tag as GXDLMSDevice;
-                dev.Comm.MethodRequest(obj.Target, obj.AttributeID, null);
+                dev.Comm.MethodRequest(obj.Target, obj.AttributeID, null, reply);
             }
             catch (Exception ex)
             {
@@ -1357,8 +1347,7 @@ namespace GXDLMSDirector
             finally
             {
                 dev.Comm.OnBeforeRead -= new ReadEventHandler(OnBeforeRead);
-                dev.Comm.OnAfterRead -= new ReadEventHandler(OnAfterRead);
-                OnProgress(this, "Ready", 1, 1);
+                dev.Comm.OnAfterRead -= new ReadEventHandler(OnAfterRead);                
                 dev.KeepAliveStart();
             }
         }
@@ -1381,9 +1370,7 @@ namespace GXDLMSDirector
                 else
                 {
                     WriteBtn.Enabled = WriteMnu.Enabled = !start;
-                }
-                
-                
+                }                             
             }
         }
 
@@ -1455,6 +1442,7 @@ namespace GXDLMSDirector
 
         void Read(System.Windows.Forms.Control sender, object[] parameters)
         {
+            GXDLMSDevice dev = null;
             try
             {
                 UpdateTransaction(true);
@@ -1469,12 +1457,13 @@ namespace GXDLMSDirector
                     }
                     else if (item is GXDLMSDevice)
                     {
-                        ReadDevice(item as GXDLMSDevice);
+                        dev = item as GXDLMSDevice;
+                        ReadDevice(dev);
                     }
                     else if (item is GXDLMSObject)
                     {
                         GXDLMSObject obj = item as GXDLMSObject;
-                        GXDLMSDevice dev = obj.Parent.Tag as GXDLMSDevice;
+                        dev = obj.Parent.Tag as GXDLMSDevice;
                         IGXDLMSView view = Views[obj.GetType()];
                         dev.KeepAliveStop();
                         this.OnProgress(dev, "Reading...", 0, 1);
@@ -1500,7 +1489,7 @@ namespace GXDLMSDirector
                     else if (item is GXDLMSObjectCollection)
                     {
                         GXDLMSObjectCollection items = item as GXDLMSObjectCollection;
-                        GXDLMSDevice dev = items[0].Parent.Tag as GXDLMSDevice;
+                        dev = items[0].Parent.Tag as GXDLMSDevice;
                         dev.KeepAliveStop();
                         int pos = 0;
                         foreach (GXDLMSObject obj in items)
@@ -1530,11 +1519,14 @@ namespace GXDLMSDirector
             catch (Exception Ex)
             {
                 GXDLMS.Common.Error.ShowError(sender, Ex);
+                if (dev != null)
+                {
+                    dev.Disconnect();
+                }
             }
             finally
             {
                 UpdateTransaction(false);
-                OnProgress(sender, "Ready", 1, 1);                
             }
         }
 
@@ -1616,7 +1608,6 @@ namespace GXDLMSDirector
             finally
             {
                 UpdateTransaction(false);
-                OnProgress(this, "Ready", 1, 1);
             }
         }
 
@@ -1899,7 +1890,7 @@ namespace GXDLMSDirector
             //Add devices to the device tree and update parser.
             foreach (GXDLMSDevice dev in Devices)
             {
-                dev.Comm.ParentForm = this;
+                dev.Comm.parentForm = this;
                 dev.Manufacturers = this.Manufacturers;
                 GXManufacturer m = Manufacturers.FindByIdentification(dev.Manufacturer);
                 if (m == null)
@@ -1911,11 +1902,6 @@ namespace GXDLMSDirector
                     dev.UseLogicalNameReferencing = m.UseLogicalNameReferencing;
                 }
                 dev.ObisCodes = m.ObisCodes;
-                //Update descriptions and values from the parser.
-                foreach (GXDLMSObject it in dev.Objects)
-                {                                   
-                    it.UpdateDefaultValueItems();                    
-                }
                 this.AddDevice(dev, false);
                 RefreshDevice(dev, false);
             }
@@ -1993,6 +1979,7 @@ namespace GXDLMSDirector
                 TreeNode deviceNode = (TreeNode)ObjectTreeItems[dev];
                 if (bRefresh)
                 {
+                    OnProgress(dev, "Refresh device", 0, 1);
                     UpdateTransaction(true);
                     RemoveObject(dev);                    
                     while (dev.Objects.Count != 0)
@@ -2008,9 +1995,7 @@ namespace GXDLMSDirector
                     GXLogWriter.WriteLog("--- Reading scalers and units. ---");
                     for (int pos = 0; pos != cnt; ++pos)
                     {                        
-                        GXDLMSObject it = dev.Objects[pos];
-                        it.UpdateDefaultValueItems();                        
-                        
+                        GXDLMSObject it = dev.Objects[pos];                        
                         GXObisCode obj = m.ObisCodes.FindByLN(it.ObjectType, it.LogicalName, null);
                         if (obj != null)
                         {
@@ -2192,10 +2177,6 @@ namespace GXDLMSDirector
             {
                 GXDLMS.Common.Error.ShowError(sender, Ex);
             }
-            finally
-            {
-                OnProgress(sender, "Ready", 1, 1);
-            }
         }
 
         /// <summary>
@@ -2230,7 +2211,7 @@ namespace GXDLMSDirector
                 if (dlg.ShowDialog(this) == DialogResult.OK)
                 {
                     dlg.Device.Manufacturers = this.Manufacturers;
-                    dlg.Device.Comm.ParentForm = this;
+                    dlg.Device.Comm.parentForm = this;
                     AddDevice(dlg.Device, false);
                     Devices.Add(dlg.Device);                    
                     SetDirty(true);
@@ -2239,10 +2220,6 @@ namespace GXDLMSDirector
             catch (Exception Ex)
             {
                 GXDLMS.Common.Error.ShowError(this, Ex);
-            }
-            finally
-            {
-                OnProgress(this, "Ready", 1, 1);
             }
         }
 
@@ -2280,7 +2257,7 @@ namespace GXDLMSDirector
             string ln = null;
             string selectedManufacturer = null;
             TreeNode node = this.ObjectTree.SelectedNode;
-            Gurux.DLMS.ObjectType Interface = ObjectType.None;
+            ObjectType Interface = ObjectType.None;
             GXDLMSDevice dev = null;
             if (node != null)
             {
@@ -2616,6 +2593,12 @@ namespace GXDLMSDirector
                 if (state == AsyncState.Cancel)
                 {
                     DisconnectMnu_Click(this, null);
+                }
+                ProgressBar.Visible = state == AsyncState.Start;
+                if (state == AsyncState.Finish ||
+                    state == AsyncState.Cancel)
+                {
+                    StatusLbl.Text = "Ready";
                 }
             }
         }

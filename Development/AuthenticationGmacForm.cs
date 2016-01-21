@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Gurux.DLMS;
 using Gurux.DLMS.ManufacturerSettings;
 using Gurux.Common;
+using Gurux.DLMS.Enums;
 
 namespace GXDLMSDirector
 {

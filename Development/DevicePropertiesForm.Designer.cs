@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.Designer.cs $
 //
-// Version:         $Revision: 7547 $,
-//                  $Date: 2014-06-30 15:54:17 +0300 (ma, 30 kesä 2014) $
+// Version:         $Revision: 8049 $,
+//                  $Date: 2016-01-15 11:12:24 +0200 (pe, 15 tammi 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -68,6 +68,15 @@ namespace GXDLMSDirector
             this.OKBtn = new System.Windows.Forms.Button();
             this.DeviceTab = new System.Windows.Forms.TabControl();
             this.DeviceSettingsTab = new System.Windows.Forms.TabPage();
+            this.VerboseModeCB = new System.Windows.Forms.CheckBox();
+            this.NetworkSettingsGB = new System.Windows.Forms.GroupBox();
+            this.NetProtocolCB = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.UseRemoteSerialCB = new System.Windows.Forms.CheckBox();
+            this.PortTB = new System.Windows.Forms.TextBox();
+            this.PortLbl = new System.Windows.Forms.Label();
+            this.HostNameTB = new System.Windows.Forms.TextBox();
+            this.HostLbl = new System.Windows.Forms.Label();
             this.UseLNCB = new System.Windows.Forms.CheckBox();
             this.ServerAddressTypeCB = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -83,12 +92,6 @@ namespace GXDLMSDirector
             this.AdvancedBtn = new System.Windows.Forms.Button();
             this.SerialPortLbl = new System.Windows.Forms.Label();
             this.SerialPortCB = new System.Windows.Forms.ComboBox();
-            this.NetworkSettingsGB = new System.Windows.Forms.GroupBox();
-            this.UseRemoteSerialCB = new System.Windows.Forms.CheckBox();
-            this.PortTB = new System.Windows.Forms.TextBox();
-            this.PortLbl = new System.Windows.Forms.Label();
-            this.HostNameTB = new System.Windows.Forms.TextBox();
-            this.HostLbl = new System.Windows.Forms.Label();
             this.StartProtocolCB = new System.Windows.Forms.ComboBox();
             this.StartProtocolLbl = new System.Windows.Forms.Label();
             this.LogicalServerAddressTB = new System.Windows.Forms.NumericUpDown();
@@ -110,14 +113,12 @@ namespace GXDLMSDirector
             this.SupportedServicesTab = new System.Windows.Forms.TabPage();
             this.SupportedServicesGrid = new System.Windows.Forms.PropertyGrid();
             this.InitialSettingsBtn = new System.Windows.Forms.Button();
-            this.NetProtocolCB = new System.Windows.Forms.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.DeviceTab.SuspendLayout();
             this.DeviceSettingsTab.SuspendLayout();
+            this.NetworkSettingsGB.SuspendLayout();
             this.TerminalSettingsGB.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ClientAddTB)).BeginInit();
             this.SerialSettingsGB.SuspendLayout();
-            this.NetworkSettingsGB.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LogicalServerAddressTB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PhysicalServerAddressTB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.WaitTimeTB)).BeginInit();
@@ -128,7 +129,7 @@ namespace GXDLMSDirector
             // 
             this.CancelBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelBtn.Location = new System.Drawing.Point(323, 359);
+            this.CancelBtn.Location = new System.Drawing.Point(323, 375);
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.Size = new System.Drawing.Size(75, 23);
             this.CancelBtn.TabIndex = 15;
@@ -140,7 +141,7 @@ namespace GXDLMSDirector
             // 
             this.OKBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.OKBtn.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.OKBtn.Location = new System.Drawing.Point(242, 359);
+            this.OKBtn.Location = new System.Drawing.Point(242, 375);
             this.OKBtn.Name = "OKBtn";
             this.OKBtn.Size = new System.Drawing.Size(75, 23);
             this.OKBtn.TabIndex = 14;
@@ -158,11 +159,12 @@ namespace GXDLMSDirector
             this.DeviceTab.Location = new System.Drawing.Point(0, 0);
             this.DeviceTab.Name = "DeviceTab";
             this.DeviceTab.SelectedIndex = 0;
-            this.DeviceTab.Size = new System.Drawing.Size(411, 351);
+            this.DeviceTab.Size = new System.Drawing.Size(411, 367);
             this.DeviceTab.TabIndex = 0;
             // 
             // DeviceSettingsTab
             // 
+            this.DeviceSettingsTab.Controls.Add(this.VerboseModeCB);
             this.DeviceSettingsTab.Controls.Add(this.NetworkSettingsGB);
             this.DeviceSettingsTab.Controls.Add(this.UseLNCB);
             this.DeviceSettingsTab.Controls.Add(this.ServerAddressTypeCB);
@@ -192,10 +194,98 @@ namespace GXDLMSDirector
             this.DeviceSettingsTab.Location = new System.Drawing.Point(4, 22);
             this.DeviceSettingsTab.Name = "DeviceSettingsTab";
             this.DeviceSettingsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.DeviceSettingsTab.Size = new System.Drawing.Size(403, 325);
+            this.DeviceSettingsTab.Size = new System.Drawing.Size(403, 341);
             this.DeviceSettingsTab.TabIndex = 0;
             this.DeviceSettingsTab.Text = "Device Settings";
             this.DeviceSettingsTab.UseVisualStyleBackColor = true;
+            // 
+            // VerboseModeCB
+            // 
+            this.VerboseModeCB.AutoSize = true;
+            this.VerboseModeCB.Location = new System.Drawing.Point(8, 220);
+            this.VerboseModeCB.Name = "VerboseModeCB";
+            this.VerboseModeCB.Size = new System.Drawing.Size(95, 17);
+            this.VerboseModeCB.TabIndex = 12;
+            this.VerboseModeCB.Text = "Verbose Mode";
+            this.VerboseModeCB.UseVisualStyleBackColor = true;
+            // 
+            // NetworkSettingsGB
+            // 
+            this.NetworkSettingsGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.NetworkSettingsGB.Controls.Add(this.NetProtocolCB);
+            this.NetworkSettingsGB.Controls.Add(this.label2);
+            this.NetworkSettingsGB.Controls.Add(this.UseRemoteSerialCB);
+            this.NetworkSettingsGB.Controls.Add(this.PortTB);
+            this.NetworkSettingsGB.Controls.Add(this.PortLbl);
+            this.NetworkSettingsGB.Controls.Add(this.HostNameTB);
+            this.NetworkSettingsGB.Controls.Add(this.HostLbl);
+            this.NetworkSettingsGB.Location = new System.Drawing.Point(6, 238);
+            this.NetworkSettingsGB.Name = "NetworkSettingsGB";
+            this.NetworkSettingsGB.Size = new System.Drawing.Size(388, 99);
+            this.NetworkSettingsGB.TabIndex = 34;
+            this.NetworkSettingsGB.TabStop = false;
+            this.NetworkSettingsGB.Text = "Settings";
+            // 
+            // NetProtocolCB
+            // 
+            this.NetProtocolCB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.NetProtocolCB.FormattingEnabled = true;
+            this.NetProtocolCB.Location = new System.Drawing.Point(101, 70);
+            this.NetProtocolCB.Name = "NetProtocolCB";
+            this.NetProtocolCB.Size = new System.Drawing.Size(85, 21);
+            this.NetProtocolCB.TabIndex = 13;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(12, 74);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(49, 13);
+            this.label2.TabIndex = 12;
+            this.label2.Text = "Protocol:";
+            // 
+            // UseRemoteSerialCB
+            // 
+            this.UseRemoteSerialCB.AutoSize = true;
+            this.UseRemoteSerialCB.Location = new System.Drawing.Point(204, 71);
+            this.UseRemoteSerialCB.Name = "UseRemoteSerialCB";
+            this.UseRemoteSerialCB.Size = new System.Drawing.Size(179, 17);
+            this.UseRemoteSerialCB.TabIndex = 14;
+            this.UseRemoteSerialCB.Text = "Use Serial port through ethernet.";
+            this.UseRemoteSerialCB.UseVisualStyleBackColor = true;
+            // 
+            // PortTB
+            // 
+            this.PortTB.Location = new System.Drawing.Point(101, 45);
+            this.PortTB.Name = "PortTB";
+            this.PortTB.Size = new System.Drawing.Size(274, 20);
+            this.PortTB.TabIndex = 12;
+            // 
+            // PortLbl
+            // 
+            this.PortLbl.AutoSize = true;
+            this.PortLbl.Location = new System.Drawing.Point(12, 48);
+            this.PortLbl.Name = "PortLbl";
+            this.PortLbl.Size = new System.Drawing.Size(29, 13);
+            this.PortLbl.TabIndex = 11;
+            this.PortLbl.Text = "Port:";
+            // 
+            // HostNameTB
+            // 
+            this.HostNameTB.Location = new System.Drawing.Point(101, 19);
+            this.HostNameTB.Name = "HostNameTB";
+            this.HostNameTB.Size = new System.Drawing.Size(274, 20);
+            this.HostNameTB.TabIndex = 11;
+            // 
+            // HostLbl
+            // 
+            this.HostLbl.AutoSize = true;
+            this.HostLbl.Location = new System.Drawing.Point(12, 22);
+            this.HostLbl.Name = "HostLbl";
+            this.HostLbl.Size = new System.Drawing.Size(61, 13);
+            this.HostLbl.TabIndex = 9;
+            this.HostLbl.Text = "Host name:";
             // 
             // UseLNCB
             // 
@@ -214,7 +304,7 @@ namespace GXDLMSDirector
             this.ServerAddressTypeCB.Location = new System.Drawing.Point(107, 169);
             this.ServerAddressTypeCB.Name = "ServerAddressTypeCB";
             this.ServerAddressTypeCB.Size = new System.Drawing.Size(141, 21);
-            this.ServerAddressTypeCB.TabIndex = 8;
+            this.ServerAddressTypeCB.TabIndex = 9;
             this.ServerAddressTypeCB.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ServerAddressTypeCB_DrawItem);
             // 
             // label3
@@ -235,7 +325,7 @@ namespace GXDLMSDirector
             this.TerminalSettingsGB.Controls.Add(this.TerminalPortCB);
             this.TerminalSettingsGB.Controls.Add(this.TerminalPhoneNumberTB);
             this.TerminalSettingsGB.Controls.Add(this.TerminalPhoneNumberLbl);
-            this.TerminalSettingsGB.Location = new System.Drawing.Point(165, 208);
+            this.TerminalSettingsGB.Location = new System.Drawing.Point(165, 240);
             this.TerminalSettingsGB.Name = "TerminalSettingsGB";
             this.TerminalSettingsGB.Size = new System.Drawing.Size(362, 99);
             this.TerminalSettingsGB.TabIndex = 46;
@@ -308,7 +398,7 @@ namespace GXDLMSDirector
             this.ClientAddTB.Size = new System.Drawing.Size(85, 20);
             this.ClientAddTB.TabIndex = 8;
             this.ClientAddTB.Value = new decimal(new int[] {
-            16,
+            8,
             0,
             0,
             0});
@@ -320,7 +410,7 @@ namespace GXDLMSDirector
             this.SerialSettingsGB.Controls.Add(this.AdvancedBtn);
             this.SerialSettingsGB.Controls.Add(this.SerialPortLbl);
             this.SerialSettingsGB.Controls.Add(this.SerialPortCB);
-            this.SerialSettingsGB.Location = new System.Drawing.Point(82, 215);
+            this.SerialSettingsGB.Location = new System.Drawing.Point(82, 240);
             this.SerialSettingsGB.Name = "SerialSettingsGB";
             this.SerialSettingsGB.Size = new System.Drawing.Size(312, 89);
             this.SerialSettingsGB.TabIndex = 35;
@@ -354,66 +444,6 @@ namespace GXDLMSDirector
             this.SerialPortCB.Name = "SerialPortCB";
             this.SerialPortCB.Size = new System.Drawing.Size(139, 21);
             this.SerialPortCB.TabIndex = 11;
-            // 
-            // NetworkSettingsGB
-            // 
-            this.NetworkSettingsGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.NetworkSettingsGB.Controls.Add(this.NetProtocolCB);
-            this.NetworkSettingsGB.Controls.Add(this.label2);
-            this.NetworkSettingsGB.Controls.Add(this.UseRemoteSerialCB);
-            this.NetworkSettingsGB.Controls.Add(this.PortTB);
-            this.NetworkSettingsGB.Controls.Add(this.PortLbl);
-            this.NetworkSettingsGB.Controls.Add(this.HostNameTB);
-            this.NetworkSettingsGB.Controls.Add(this.HostLbl);
-            this.NetworkSettingsGB.Location = new System.Drawing.Point(6, 219);
-            this.NetworkSettingsGB.Name = "NetworkSettingsGB";
-            this.NetworkSettingsGB.Size = new System.Drawing.Size(388, 99);
-            this.NetworkSettingsGB.TabIndex = 34;
-            this.NetworkSettingsGB.TabStop = false;
-            this.NetworkSettingsGB.Text = "Settings";
-            // 
-            // UseRemoteSerialCB
-            // 
-            this.UseRemoteSerialCB.AutoSize = true;
-            this.UseRemoteSerialCB.Location = new System.Drawing.Point(204, 71);
-            this.UseRemoteSerialCB.Name = "UseRemoteSerialCB";
-            this.UseRemoteSerialCB.Size = new System.Drawing.Size(179, 17);
-            this.UseRemoteSerialCB.TabIndex = 14;
-            this.UseRemoteSerialCB.Text = "Use Serial port through ethernet.";
-            this.UseRemoteSerialCB.UseVisualStyleBackColor = true;
-            // 
-            // PortTB
-            // 
-            this.PortTB.Location = new System.Drawing.Point(101, 45);
-            this.PortTB.Name = "PortTB";
-            this.PortTB.Size = new System.Drawing.Size(274, 20);
-            this.PortTB.TabIndex = 12;
-            // 
-            // PortLbl
-            // 
-            this.PortLbl.AutoSize = true;
-            this.PortLbl.Location = new System.Drawing.Point(12, 48);
-            this.PortLbl.Name = "PortLbl";
-            this.PortLbl.Size = new System.Drawing.Size(29, 13);
-            this.PortLbl.TabIndex = 11;
-            this.PortLbl.Text = "Port:";
-            // 
-            // HostNameTB
-            // 
-            this.HostNameTB.Location = new System.Drawing.Point(101, 19);
-            this.HostNameTB.Name = "HostNameTB";
-            this.HostNameTB.Size = new System.Drawing.Size(274, 20);
-            this.HostNameTB.TabIndex = 11;
-            // 
-            // HostLbl
-            // 
-            this.HostLbl.AutoSize = true;
-            this.HostLbl.Location = new System.Drawing.Point(12, 22);
-            this.HostLbl.Name = "HostLbl";
-            this.HostLbl.Size = new System.Drawing.Size(61, 13);
-            this.HostLbl.TabIndex = 9;
-            this.HostLbl.Text = "Host name:";
             // 
             // StartProtocolCB
             // 
@@ -505,7 +535,7 @@ namespace GXDLMSDirector
             this.WaitTimeTB.Size = new System.Drawing.Size(85, 20);
             this.WaitTimeTB.TabIndex = 7;
             this.WaitTimeTB.Value = new decimal(new int[] {
-            5,
+            7,
             0,
             0,
             0});
@@ -618,7 +648,7 @@ namespace GXDLMSDirector
             this.SupportedServicesTab.Location = new System.Drawing.Point(4, 22);
             this.SupportedServicesTab.Name = "SupportedServicesTab";
             this.SupportedServicesTab.Padding = new System.Windows.Forms.Padding(3);
-            this.SupportedServicesTab.Size = new System.Drawing.Size(403, 325);
+            this.SupportedServicesTab.Size = new System.Drawing.Size(403, 341);
             this.SupportedServicesTab.TabIndex = 1;
             this.SupportedServicesTab.Text = "Supported Services";
             this.SupportedServicesTab.UseVisualStyleBackColor = true;
@@ -630,14 +660,14 @@ namespace GXDLMSDirector
             this.SupportedServicesGrid.Location = new System.Drawing.Point(3, 3);
             this.SupportedServicesGrid.Name = "SupportedServicesGrid";
             this.SupportedServicesGrid.PropertySort = System.Windows.Forms.PropertySort.NoSort;
-            this.SupportedServicesGrid.Size = new System.Drawing.Size(397, 319);
+            this.SupportedServicesGrid.Size = new System.Drawing.Size(397, 335);
             this.SupportedServicesGrid.TabIndex = 0;
             this.SupportedServicesGrid.ToolbarVisible = false;
             // 
             // InitialSettingsBtn
             // 
             this.InitialSettingsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.InitialSettingsBtn.Location = new System.Drawing.Point(10, 359);
+            this.InitialSettingsBtn.Location = new System.Drawing.Point(10, 375);
             this.InitialSettingsBtn.Name = "InitialSettingsBtn";
             this.InitialSettingsBtn.Size = new System.Drawing.Size(117, 23);
             this.InitialSettingsBtn.TabIndex = 16;
@@ -645,31 +675,13 @@ namespace GXDLMSDirector
             this.InitialSettingsBtn.UseVisualStyleBackColor = true;
             this.InitialSettingsBtn.Click += new System.EventHandler(this.InitialSettingsBtn_Click);
             // 
-            // NetProtocolCB
-            // 
-            this.NetProtocolCB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.NetProtocolCB.FormattingEnabled = true;
-            this.NetProtocolCB.Location = new System.Drawing.Point(101, 70);
-            this.NetProtocolCB.Name = "NetProtocolCB";
-            this.NetProtocolCB.Size = new System.Drawing.Size(85, 21);
-            this.NetProtocolCB.TabIndex = 13;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 74);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(49, 13);
-            this.label2.TabIndex = 12;
-            this.label2.Text = "Protocol:";
-            // 
             // DevicePropertiesForm
             // 
             this.AcceptButton = this.OKBtn;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.CancelBtn;
-            this.ClientSize = new System.Drawing.Size(410, 393);
+            this.ClientSize = new System.Drawing.Size(410, 409);
             this.Controls.Add(this.InitialSettingsBtn);
             this.Controls.Add(this.DeviceTab);
             this.Controls.Add(this.OKBtn);
@@ -682,13 +694,13 @@ namespace GXDLMSDirector
             this.DeviceTab.ResumeLayout(false);
             this.DeviceSettingsTab.ResumeLayout(false);
             this.DeviceSettingsTab.PerformLayout();
+            this.NetworkSettingsGB.ResumeLayout(false);
+            this.NetworkSettingsGB.PerformLayout();
             this.TerminalSettingsGB.ResumeLayout(false);
             this.TerminalSettingsGB.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ClientAddTB)).EndInit();
             this.SerialSettingsGB.ResumeLayout(false);
             this.SerialSettingsGB.PerformLayout();
-            this.NetworkSettingsGB.ResumeLayout(false);
-            this.NetworkSettingsGB.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LogicalServerAddressTB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PhysicalServerAddressTB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.WaitTimeTB)).EndInit();
@@ -747,5 +759,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.CheckBox UseLNCB;
         private System.Windows.Forms.ComboBox NetProtocolCB;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox VerboseModeCB;
     }
 }

@@ -258,11 +258,6 @@
             "AssemblyAsmDisplayName" = "8:Gurux.Serial, Version=7.0.2.1, Culture=neutral, PublicKeyToken=ab7382566107b371, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_2D09F640F8BC75CF064D118593E4EF53"
-                    {
-                    "Name" = "8:Gurux.Serial.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Gurux.Serial.dll"
             "TargetName" = "8:"
@@ -289,11 +284,6 @@
             "AssemblyAsmDisplayName" = "8:Gurux.Net, Version=7.0.2.1, Culture=neutral, PublicKeyToken=ca111c9ecfaf947d, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_3F6A9CEB969C575192B9C4ECAF013F99"
-                    {
-                    "Name" = "8:Gurux.Net.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Gurux.Net.dll"
             "TargetName" = "8:"
@@ -320,11 +310,6 @@
             "AssemblyAsmDisplayName" = "8:Gurux.DLMS, Version=8.0.0.3, Culture=neutral, PublicKeyToken=93fe906382db03b2, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_45F827330019D209722BB954D18A67F3"
-                    {
-                    "Name" = "8:Gurux.DLMS.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Gurux.DLMS.dll"
             "TargetName" = "8:"
@@ -351,11 +336,6 @@
             "AssemblyAsmDisplayName" = "8:Gurux.Terminal, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fac545f646930679, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_702870529D731ED6AF95B345A51522A9"
-                    {
-                    "Name" = "8:Gurux.Terminal.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Gurux.Terminal.dll"
             "TargetName" = "8:"
@@ -382,11 +362,6 @@
             "AssemblyAsmDisplayName" = "8:Gurux.Common, Version=7.0.2.1, Culture=neutral, PublicKeyToken=00bee6c3930228bf, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_ACF56535D21131362BEBC5A382353D70"
-                    {
-                    "Name" = "8:Gurux.Common.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Gurux.Common.dll"
             "TargetName" = "8:"
@@ -413,11 +388,6 @@
             "AssemblyAsmDisplayName" = "8:ZedGraph, Version=5.1.5.28844, Culture=neutral, PublicKeyToken=02a83cbd123fcd60, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_CE69B326A9B8052B1413BA19A1CA5EF3"
-                    {
-                    "Name" = "8:ZedGraph.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:ZedGraph.dll"
             "TargetName" = "8:"
@@ -464,11 +434,6 @@
             "AssemblyAsmDisplayName" = "8:ICSharpCode.SharpZipLib, Version=0.85.4.369, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_E44D67A796C751C6F36A0C86764FDA08"
-                    {
-                    "Name" = "8:ICSharpCode.SharpZipLib.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:ICSharpCode.SharpZipLib.dll"
             "TargetName" = "8:"
@@ -662,15 +627,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:GXDLMSDirector 8.0 Community Edition"
-        "ProductCode" = "8:{F40976B3-2AF0-4363-855E-7DE1E595A3A6}"
-        "PackageCode" = "8:{0B396309-2647-4267-9A1B-CC7F9E20681C}"
+        "ProductCode" = "8:{B4785176-08B2-440E-9F07-ED4A26A543E9}"
+        "PackageCode" = "8:{31E1CEEA-B033-41D4-9D9C-710EE9E8FAFA}"
         "UpgradeCode" = "8:{11462D6C-0EE5-4B3F-8425-FFD5D7F828C4}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:8.0.3"
+        "ProductVersion" = "8:8.0.5"
         "Manufacturer" = "8:Gurux"
         "ARPHELPTELEPHONE" = "8:+358 3 265 1244"
         "ARPHELPLINK" = "8:http://www.gurux.org/gxdn"

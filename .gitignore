@@ -19,7 +19,8 @@ local.properties
 # External tool builders
 .externalToolBuilders/
 GXDLMSLog2Message/
-packages/
+Development/packages/
+Install/packages/
 
 # Locally stored "Eclipse launch configurations"
 *.launch
@@ -215,3 +216,4 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+*.XML

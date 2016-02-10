@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/Properties/AssemblyInfo.cs $
 //
-// Version:         $Revision: 8076 $,
-//                  $Date: 2016-01-21 22:00:26 +0200 (to, 21 tammi 2016) $
+// Version:         $Revision: 8167 $,
+//                  $Date: 2016-02-10 08:57:35 +0200 (ke, 10 helmi 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -56,5 +56,5 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("e78762b5-4e85-45c8-a9fa-e95786f77684")]
-[assembly: AssemblyVersion("8.0.0.5")]
-[assembly: AssemblyFileVersion("8.0.0.5")]
+[assembly: AssemblyVersion("8.0.0.6")]
+[assembly: AssemblyFileVersion("8.0.0.6")]

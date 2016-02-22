@@ -22,3 +22,6 @@ GXDLMSDirector [Help](http://www.gurux.fi/index.php?q=GXDLMSDirectorHelp "help")
 
 If you have problems or ideas you can ask your questions in Gurux GXDLMSDirector [Forum](http://www.gurux.fi/index.php?q=GXDLMSCOSEMDirectorForum).
 
+If you want to build source codes you need Nuget package manager for Visual Studio.
+You can get it here:
+https://visualstudiogallery.msdn.microsoft.com/27077b70-9dad-4c64-adcf-c7cf6bc9970c

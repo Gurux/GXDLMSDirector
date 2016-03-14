@@ -486,6 +486,7 @@ namespace GXDLMSDirector
             else
             {
                 client.ServerAddress = GXDLMSClient.GetServerAddress(parent.LogicalAddress, Convert.ToInt32(parent.PhysicalAddress));
+                client.ServerAddressSize = 4;
             }
         }
 

@@ -40,7 +40,7 @@
         "Entry"
         {
         "MsmKey" = "8:_ACF56535D21131362BEBC5A382353D70"
-        "OwnerKey" = "8:_702870529D731ED6AF95B345A51522A9"
+        "OwnerKey" = "8:_C371824D032FF482261C55D06CB2539D"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -52,7 +52,7 @@
         "Entry"
         {
         "MsmKey" = "8:_ACF56535D21131362BEBC5A382353D70"
-        "OwnerKey" = "8:_C371824D032FF482261C55D06CB2539D"
+        "OwnerKey" = "8:_702870529D731ED6AF95B345A51522A9"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -112,31 +112,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_CE69B326A9B8052B1413BA19A1CA5EF3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_702870529D731ED6AF95B345A51522A9"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_2D09F640F8BC75CF064D118593E4EF53"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C371824D032FF482261C55D06CB2539D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_06C9231E0F2D118B4EC138614198CBFD"
+        "OwnerKey" = "8:_E44D67A796C751C6F36A0C86764FDA08"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -148,7 +124,31 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_E44D67A796C751C6F36A0C86764FDA08"
+        "OwnerKey" = "8:_06C9231E0F2D118B4EC138614198CBFD"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_C371824D032FF482261C55D06CB2539D"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_2D09F640F8BC75CF064D118593E4EF53"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_702870529D731ED6AF95B345A51522A9"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_CE69B326A9B8052B1413BA19A1CA5EF3"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -258,11 +258,6 @@
             "AssemblyAsmDisplayName" = "8:Gurux.DLMS, Version=8.0.0.14, Culture=neutral, PublicKeyToken=93fe906382db03b2, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_06C9231E0F2D118B4EC138614198CBFD"
-                    {
-                    "Name" = "8:Gurux.DLMS.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Gurux.DLMS.dll"
             "TargetName" = "8:"
@@ -289,11 +284,6 @@
             "AssemblyAsmDisplayName" = "8:Gurux.Serial, Version=7.0.2.1, Culture=neutral, PublicKeyToken=ab7382566107b371, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_2D09F640F8BC75CF064D118593E4EF53"
-                    {
-                    "Name" = "8:Gurux.Serial.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Gurux.Serial.dll"
             "TargetName" = "8:"
@@ -320,11 +310,6 @@
             "AssemblyAsmDisplayName" = "8:Gurux.Terminal, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fac545f646930679, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_702870529D731ED6AF95B345A51522A9"
-                    {
-                    "Name" = "8:Gurux.Terminal.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Gurux.Terminal.dll"
             "TargetName" = "8:"
@@ -351,11 +336,6 @@
             "AssemblyAsmDisplayName" = "8:Gurux.Common, Version=7.0.2.1, Culture=neutral, PublicKeyToken=00bee6c3930228bf, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_ACF56535D21131362BEBC5A382353D70"
-                    {
-                    "Name" = "8:Gurux.Common.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Gurux.Common.dll"
             "TargetName" = "8:"
@@ -382,11 +362,6 @@
             "AssemblyAsmDisplayName" = "8:Gurux.Net, Version=7.0.28.1, Culture=neutral, PublicKeyToken=ca111c9ecfaf947d, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_C371824D032FF482261C55D06CB2539D"
-                    {
-                    "Name" = "8:Gurux.Net.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Gurux.Net.dll"
             "TargetName" = "8:"
@@ -413,11 +388,6 @@
             "AssemblyAsmDisplayName" = "8:ZedGraph, Version=5.1.5.28844, Culture=neutral, PublicKeyToken=02a83cbd123fcd60, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_CE69B326A9B8052B1413BA19A1CA5EF3"
-                    {
-                    "Name" = "8:ZedGraph.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:ZedGraph.dll"
             "TargetName" = "8:"
@@ -464,11 +434,6 @@
             "AssemblyAsmDisplayName" = "8:ICSharpCode.SharpZipLib, Version=0.85.4.369, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_E44D67A796C751C6F36A0C86764FDA08"
-                    {
-                    "Name" = "8:ICSharpCode.SharpZipLib.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:ICSharpCode.SharpZipLib.dll"
             "TargetName" = "8:"
@@ -662,15 +627,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:GXDLMSDirector 8.0 Community Edition"
-        "ProductCode" = "8:{7E6D5588-7152-4687-AF20-A58E1C41CA43}"
-        "PackageCode" = "8:{0E878340-8C9D-40AB-8451-F67D3E9A84CC}"
-        "UpgradeCode" = "8:{11462D6C-0EE5-4B3F-8425-FFD5D7F828C4}"
+        "ProductCode" = "8:{B599E295-E656-4D3A-8744-39275770BD2B}"
+        "PackageCode" = "8:{D591960E-5A0A-4DD6-AE0E-4A76026687E1}"
+        "UpgradeCode" = "8:{A01B68F9-34E4-4A23-A317-DDF389ED2F3A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:8.0.8"
+        "ProductVersion" = "8:8.0.11"
         "Manufacturer" = "8:Gurux"
         "ARPHELPTELEPHONE" = "8:+358 3 265 1244"
         "ARPHELPLINK" = "8:http://www.gurux.org/gxdn"

@@ -732,6 +732,9 @@ namespace GXDLMSDirector
                 throw new Exception("GetObjects failed. " + Ex.Message);
             }
             GXDLMSObjectCollection objs = client.ParseObjects(reply.Data, true);
+            //Update OBIS code description.
+            GXDLMSConverter c = new GXDLMSConverter();
+            c.UpdateOBISCodeInformation(objs);
             GXLogWriter.WriteLog("--- Collecting " + objs.Count.ToString() + " objects. ---");
             return objs;
         }

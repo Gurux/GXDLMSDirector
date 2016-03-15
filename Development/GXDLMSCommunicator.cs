@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 8069 $,
-//                  $Date: 2016-01-21 11:11:13 +0200 (to, 21 tammi 2016) $
+// Version:         $Revision: 8251 $,
+//                  $Date: 2016-03-15 09:17:55 +0200 (ti, 15 maalis 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -482,11 +482,11 @@ namespace GXDLMSDirector
                     formula = server.Formula;
                 }
                 client.ServerAddress = GXDLMSClient.GetServerAddress(Convert.ToInt32(parent.PhysicalAddress), formula);
+                client.ServerAddressSize = 4;
             }
             else
             {
                 client.ServerAddress = GXDLMSClient.GetServerAddress(parent.LogicalAddress, Convert.ToInt32(parent.PhysicalAddress));
-                client.ServerAddressSize = 4;
             }
         }
 

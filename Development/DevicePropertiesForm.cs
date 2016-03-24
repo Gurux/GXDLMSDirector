@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.cs $
 //
-// Version:         $Revision: 8063 $,
-//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
+// Version:         $Revision: 8315 $,
+//                  $Date: 2016-03-24 16:17:17 +0200 (to, 24 maalis 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -162,6 +162,27 @@ namespace GXDLMSDirector
                     NetProtocolCB.SelectedItem = net.Protocol = Gurux.Net.NetworkType.Tcp;
                     this.MediasCB.Items.Add(net);
                 }
+
+                //Set maximum baud rate.
+                GXSerial serial = new GXSerial();
+                foreach (int it in serial.GetAvailableBaudRates(""))
+                {
+                    if (it != 0)
+                    {
+                        MaximumBaudRateCB.Items.Add(it);
+                    }
+                }
+                if (Device.MaximumBaudRate == 0)
+                {
+                    UseMaximumBaudRateCB.Checked = false;
+                    UseMaximumBaudRateCB_CheckedChanged(null, null);
+                }
+                else
+                {
+                    UseMaximumBaudRateCB.Checked = true;
+                    this.MaximumBaudRateCB.SelectedItem = Device.MaximumBaudRate;
+                }
+
                 if (SelectedMedia is GXSerial)
                 {
                     this.MediasCB.Items.Add(SelectedMedia);
@@ -175,7 +196,6 @@ namespace GXDLMSDirector
                 else
                 {
                     //Initialize serial settings.
-                    GXSerial serial = new GXSerial();
                     string[] ports = GXSerial.GetPortNames();
                     this.SerialPortCB.Items.AddRange(ports);
                     if (ports.Length != 0)
@@ -307,6 +327,7 @@ namespace GXDLMSDirector
                 Device.Manufacturer = man.Identification;
                 Device.WaitTime = Convert.ToInt32(WaitTimeTB.Value);
                 Device.Verbose = VerboseModeCB.Checked;
+                Device.MaximumBaudRate = 0;
 
                 if (SelectedMedia is GXSerial)
                 {
@@ -317,6 +338,10 @@ namespace GXDLMSDirector
                         throw new Exception("Invalid serial port.");
                     }
                     ((GXSerial)SelectedMedia).PortName = this.SerialPortCB.Text;
+                    if (UseMaximumBaudRateCB.Checked)
+                    {
+                        Device.MaximumBaudRate = (int)MaximumBaudRateCB.SelectedItem;
+                    }
                 }
                 else if (SelectedMedia is GXNet)
                 {
@@ -682,6 +707,15 @@ namespace GXDLMSDirector
                 GXDLMS.Common.Error.ShowError(this, Ex);
             }
             
+        }
+
+        private void UseMaximumBaudRateCB_CheckedChanged(object sender, EventArgs e)
+        {
+            MaximumBaudRateCB.Enabled = UseMaximumBaudRateCB.Checked;
+            if (MaximumBaudRateCB.SelectedItem == null)
+            {
+                MaximumBaudRateCB.SelectedItem = 300;
+            }
         }
     }
 }

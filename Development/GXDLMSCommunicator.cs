@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 8251 $,
-//                  $Date: 2016-03-15 09:17:55 +0200 (ti, 15 maalis 2016) $
+// Version:         $Revision: 8315 $,
+//                  $Date: 2016-03-24 16:17:17 +0200 (to, 24 maalis 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -53,6 +53,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Gurux.DLMS.Enums;
 using Gurux.DLMS.Objects.Enums;
+using System.Threading;
 
 namespace GXDLMSDirector
 {
@@ -163,7 +164,7 @@ namespace GXDLMSDirector
             //In network connection terminator is not used.
             if (client.InterfaceType == InterfaceType.WRAPPER && media is GXNet && !parent.UseRemoteSerial)
             {
-                eop = null;                
+                eop = null;
             }
             int pos = 0;
             bool succeeded = false;
@@ -181,7 +182,7 @@ namespace GXDLMSDirector
                     media.Send(data, null);
                 }
                 while (!succeeded && pos != 3)
-                {                    
+                {
                     succeeded = media.Receive(p);
                     if (!succeeded)
                     {
@@ -226,7 +227,7 @@ namespace GXDLMSDirector
                         }
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     GXLogWriter.WriteLog("Received data", p.Reply);
                     throw ex;
@@ -235,7 +236,15 @@ namespace GXDLMSDirector
             GXLogWriter.WriteLog("Received data", p.Reply);
             if (reply.Error != 0)
             {
-                throw new GXDLMSException(reply.Error);
+                if (reply.Error == (int)ErrorCode.Rejected)
+                {
+                    Thread.Sleep(1000);
+                    ReadDLMSPacket(data, tryCount, reply);
+                }
+                else
+                {
+                    throw new GXDLMSException(reply.Error);
+                }
             }
         }
 
@@ -354,6 +363,11 @@ namespace GXDLMSDirector
                         break;
                     default:
                         throw new Exception("Unknown baud rate.");
+                }
+                if (parent.MaximumBaudRate != 0)
+                {
+                    BaudRate = parent.MaximumBaudRate;
+                    GXLogWriter.WriteLog("Maximum BaudRate is set to : " + BaudRate.ToString());
                 }
                 GXLogWriter.WriteLog("BaudRate is : " + BaudRate.ToString());
                 //Send ACK

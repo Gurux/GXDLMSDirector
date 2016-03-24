@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDevice.cs $
 //
-// Version:         $Revision: 8063 $,
-//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
+// Version:         $Revision: 8315 $,
+//                  $Date: 2016-03-24 16:17:17 +0200 (to, 24 maalis 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -237,6 +237,16 @@ namespace GXDLMSDirector
             get;
             set;
         }     
+
+        /// <summary>
+        /// Maximum used baud rate.
+        /// </summary>
+        [DefaultValue(0)]
+        public int MaximumBaudRate
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// Used authentication.

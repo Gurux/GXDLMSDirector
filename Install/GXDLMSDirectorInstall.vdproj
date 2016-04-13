@@ -40,7 +40,7 @@
         "Entry"
         {
         "MsmKey" = "8:_ACF56535D21131362BEBC5A382353D70"
-        "OwnerKey" = "8:_702870529D731ED6AF95B345A51522A9"
+        "OwnerKey" = "8:_C371824D032FF482261C55D06CB2539D"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -52,7 +52,7 @@
         "Entry"
         {
         "MsmKey" = "8:_ACF56535D21131362BEBC5A382353D70"
-        "OwnerKey" = "8:_C371824D032FF482261C55D06CB2539D"
+        "OwnerKey" = "8:_702870529D731ED6AF95B345A51522A9"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -112,31 +112,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_CE69B326A9B8052B1413BA19A1CA5EF3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_702870529D731ED6AF95B345A51522A9"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_2D09F640F8BC75CF064D118593E4EF53"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C371824D032FF482261C55D06CB2539D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_06C9231E0F2D118B4EC138614198CBFD"
+        "OwnerKey" = "8:_E44D67A796C751C6F36A0C86764FDA08"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -148,7 +124,31 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_E44D67A796C751C6F36A0C86764FDA08"
+        "OwnerKey" = "8:_06C9231E0F2D118B4EC138614198CBFD"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_C371824D032FF482261C55D06CB2539D"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_2D09F640F8BC75CF064D118593E4EF53"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_702870529D731ED6AF95B345A51522A9"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_CE69B326A9B8052B1413BA19A1CA5EF3"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -627,15 +627,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:GXDLMSDirector 8.0 Community Edition"
-        "ProductCode" = "8:{CF4F28E0-9C7E-4ED2-95C4-454DFCC9F438}"
-        "PackageCode" = "8:{62DF5078-05EF-4E89-A536-2D9F6AE5C9D6}"
+        "ProductCode" = "8:{076536F1-19DB-465B-AA3C-4BDFB1F589F4}"
+        "PackageCode" = "8:{C6F9B24E-9F2B-4988-8E4B-B731880D22D4}"
         "UpgradeCode" = "8:{A01B68F9-34E4-4A23-A317-DDF389ED2F3A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:8.0.14"
+        "ProductVersion" = "8:8.0.15"
         "Manufacturer" = "8:Gurux"
         "ARPHELPTELEPHONE" = "8:+358 3 265 1244"
         "ARPHELPLINK" = "8:http://www.gurux.org/gxdn"

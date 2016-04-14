@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/ManufacturerForm.cs $
 //
-// Version:         $Revision: 8063 $,
-//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
+// Version:         $Revision: 8384 $,
+//                  $Date: 2016-04-14 09:12:49 +0200 (to, 14 huhti 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -88,12 +88,7 @@ namespace GXDLMSDirector
                 AuthenticationCB.Items.Add(it);
             }
             AuthenticationCB.SelectedItem = authentication;
-            if (authentication.Type == Authentication.High ||
-                authentication.Type == Authentication.HighSHA1 ||
-                authentication.Type == Authentication.HighGMAC)
-            {
-                AdvancedBtn.Enabled = true;
-            }
+            AdvancedBtn.Enabled = authentication.Type == Authentication.HighGMAC;
             this.AuthenticationCB.SelectedIndexChanged += new System.EventHandler(this.AuthenticationCB_SelectedIndexChanged);            
             if (manufacturer.ServerSettings.Count == 0)
             {
@@ -250,9 +245,7 @@ namespace GXDLMSDirector
                 //Save old values.
                 authentication.ClientAddress = Convert.ToInt32(this.ClientAddTB.Value);
                 authentication = ((GXAuthentication)AuthenticationCB.SelectedItem);
-                AdvancedBtn.Enabled = authentication.Type == Authentication.High ||
-                        authentication.Type == Authentication.HighSHA1 ||
-                        authentication.Type == Authentication.HighGMAC;
+                AdvancedBtn.Enabled = authentication.Type == Authentication.HighGMAC;
                 authentication.Selected = true;
                 ClientAddTB.Value = authentication.ClientAddress;
             }

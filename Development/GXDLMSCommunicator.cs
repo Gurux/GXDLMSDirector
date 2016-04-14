@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 8315 $,
-//                  $Date: 2016-03-24 16:17:17 +0200 (to, 24 maalis 2016) $
+// Version:         $Revision: 8384 $,
+//                  $Date: 2016-04-14 09:12:49 +0200 (to, 14 huhti 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -54,6 +54,7 @@ using System.Windows.Forms;
 using Gurux.DLMS.Enums;
 using Gurux.DLMS.Objects.Enums;
 using System.Threading;
+using Gurux.DLMS.Secure;
 
 namespace GXDLMSDirector
 {
@@ -73,13 +74,13 @@ namespace GXDLMSDirector
         internal GXDLMSDevice parent;
         public Control parentForm;
         public Gurux.Common.IGXMedia media = null;
-        internal Gurux.DLMS.GXDLMSClient client;
+        internal GXDLMSSecureClient client;
 
         public GXDLMSCommunicator(GXDLMSDevice parent, Gurux.Common.IGXMedia media)
         {
             this.parent = parent;
             this.media = media;
-            client = new Gurux.DLMS.GXDLMSClient();
+            client = new GXDLMSSecureClient();
         }        
 
         public ProgressEventHandler OnProgress;

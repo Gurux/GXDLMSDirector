@@ -127,13 +127,6 @@ namespace GXDLMSDirector
             return data;
         }
 
-        public byte[] DisconnectedModeRequest()
-        {
-            byte[] data = client.DisconnectedModeRequest();
-            GXLogWriter.WriteLog("Disconnected Mode request", data);
-            return data;
-        }
-
         public bool UseLogicalNameReferencing
         {
             get
@@ -737,7 +730,7 @@ namespace GXDLMSDirector
         public GXDLMSObjectCollection GetObjects()
         {
             GXLogWriter.WriteLog("--- Collecting objects. ---");
-            GXReplyData reply = new GXReplyData(){Peek = true};
+            GXReplyData reply = new GXReplyData(){Peek = false};
             try
             {
                 ReadDataBlock(client.GetObjectsRequest(), "Collecting objects", 3, reply);

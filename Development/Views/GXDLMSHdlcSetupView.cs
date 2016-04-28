@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/Views/GXDLMSHdlcSetupView.cs $
 //
-// Version:         $Revision: 8063 $,
-//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
+// Version:         $Revision: 8429 $,
+//                  $Date: 2016-04-28 13:44:52 +0300 (to, 28 huhti 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -235,15 +235,15 @@ namespace GXDLMSDirector.Views
             this.ReceiveMaxLengthLbl.AutoSize = true;
             this.ReceiveMaxLengthLbl.Location = new System.Drawing.Point(6, 48);
             this.ReceiveMaxLengthLbl.Name = "ReceiveMaxLengthLbl";
-            this.ReceiveMaxLengthLbl.Size = new System.Drawing.Size(37, 13);
+            this.ReceiveMaxLengthLbl.Size = new System.Drawing.Size(90, 13);
             this.ReceiveMaxLengthLbl.TabIndex = 14;
-            this.ReceiveMaxLengthLbl.Text = "Value:";
+            this.ReceiveMaxLengthLbl.Text = "Maximum Length:";
             // 
             // ReceiveWindowSizeTB
             // 
             this.ReceiveWindowSizeTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.ReceiveWindowSizeTB.AttributeID = 5;
+            this.ReceiveWindowSizeTB.AttributeID = 4;
             this.ReceiveWindowSizeTB.Location = new System.Drawing.Point(102, 19);
             this.ReceiveWindowSizeTB.Name = "ReceiveWindowSizeTB";
             this.ReceiveWindowSizeTB.Size = new System.Drawing.Size(208, 20);
@@ -289,7 +289,7 @@ namespace GXDLMSDirector.Views
             // 
             this.TransmitMaxLengthTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.TransmitMaxLengthTB.AttributeID = 4;
+            this.TransmitMaxLengthTB.AttributeID = 5;
             this.TransmitMaxLengthTB.Location = new System.Drawing.Point(102, 48);
             this.TransmitMaxLengthTB.Name = "TransmitMaxLengthTB";
             this.TransmitMaxLengthTB.Size = new System.Drawing.Size(208, 20);

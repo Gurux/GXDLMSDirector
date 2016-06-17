@@ -377,7 +377,8 @@ namespace GXDLMSDirector
                 {
                     media.Send(arr, null);
                     System.Threading.Thread.Sleep(500);
-                    serial.BaudRate = BaudRate;
+                    if (serial != null)
+                        serial.BaudRate = BaudRate;
                     p.Reply = null;
                     p.WaitTime = 100;
                     //Note! All meters do not echo this.
@@ -386,11 +387,14 @@ namespace GXDLMSDirector
                     {
                         GXLogWriter.WriteLog("Received: " + p.Reply);
                     }
-                    serial.Close();
-                    serial.DataBits = 8;
-                    serial.Parity = Parity.None;
-                    serial.StopBits = StopBits.One;
-                    serial.Open();
+                    if (serial != null)
+                    {
+                        serial.Close();
+                        serial.DataBits = 8;
+                        serial.Parity = Parity.None;
+                        serial.StopBits = StopBits.One;
+                        serial.Open();
+                    }
                 }
             }
         }

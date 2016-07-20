@@ -96,12 +96,12 @@ namespace GXDLMSDirector.Views
             if (attributeID == 2)
             {
                 ObjectsLV.Items.Clear();
-                foreach (GXDLMSPushObject it in ((GXDLMSPushSetup)Target).PushObjectList)
+                foreach (var it in ((GXDLMSPushSetup)Target).PushObjectList)
                 {
-                    ListViewItem li = new ListViewItem(it.Type.ToString());
-                    li.SubItems.Add(it.LogicalName);
-                    li.SubItems.Add(it.AttributeIndex.ToString());
-                    li.SubItems.Add(it.DataIndex.ToString());
+                    ListViewItem li = new ListViewItem(it.Key.ObjectType.ToString());
+                    li.SubItems.Add(it.Key.LogicalName);
+                    li.SubItems.Add(it.Value.AttributeIndex.ToString());
+                    li.SubItems.Add(it.Value.DataIndex.ToString());
                     ObjectsLV.Items.Add(li);
                 }
             }

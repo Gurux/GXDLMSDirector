@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 8384 $,
-//                  $Date: 2016-04-14 09:12:49 +0200 (to, 14 huhti 2016) $
+// Version:         $Revision: 8655 $,
+//                  $Date: 2016-07-20 15:55:25 +0300 (ke, 20 heinä 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -494,8 +494,19 @@ namespace GXDLMSDirector
             }
             else
             {
-                client.ServerAddress = GXDLMSClient.GetServerAddress(parent.LogicalAddress, Convert.ToInt32(parent.PhysicalAddress));
+                if (client.InterfaceType == InterfaceType.WRAPPER)
+                {
+                    client.ServerAddress = Convert.ToInt32(parent.PhysicalAddress);
+                }
+                else
+                {
+                    client.ServerAddress = GXDLMSClient.GetServerAddress(parent.LogicalAddress, Convert.ToInt32(parent.PhysicalAddress));
+                }
             }
+            client.Ciphering.Security = parent.Security;
+            client.Ciphering.SystemTitle = GXCommon.HexToBytes(parent.SystemTitle, true);
+            client.Ciphering.BlockCipherKey = GXCommon.HexToBytes(parent.BlockCipherKey, true);
+            client.Ciphering.AuthenticationKey = GXCommon.HexToBytes(parent.AuthenticationKey, true);
         }
 
         /// <summary>

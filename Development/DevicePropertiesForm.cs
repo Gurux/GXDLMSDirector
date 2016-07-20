@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.cs $
 //
-// Version:         $Revision: 8315 $,
-//                  $Date: 2016-03-24 16:17:17 +0200 (to, 24 maalis 2016) $
+// Version:         $Revision: 8655 $,
+//                  $Date: 2016-07-20 15:55:25 +0300 (ke, 20 heinä 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -50,6 +50,7 @@ using System.IO.Ports;
 using Gurux.DLMS.ManufacturerSettings;
 using Gurux.Terminal;
 using Gurux.DLMS.Enums;
+using Gurux.Common;
 
 namespace GXDLMSDirector
 {
@@ -63,6 +64,8 @@ namespace GXDLMSDirector
             try
             {
                 InitializeComponent();
+                SecurityCB.Items.AddRange(new object[] { Security.None, Security.Authentication, 
+                                                    Security.Encryption, Security.AuthenticationEncryption});
                 NetProtocolCB.Items.AddRange(new object[] { NetworkType.Tcp, NetworkType.Udp });                
                 this.ServerAddressTypeCB.SelectedIndexChanged += new System.EventHandler(this.ServerAddressTypeCB_SelectedIndexChanged);
                 NetworkSettingsGB.Width = this.Width - NetworkSettingsGB.Left;
@@ -143,7 +146,11 @@ namespace GXDLMSDirector
                     PhysicalServerAddressTB.Value = Convert.ToDecimal(Device.PhysicalAddress);
                     LogicalServerAddressTB.Value = Convert.ToDecimal(Device.LogicalAddress);
                     this.ClientAddTB.Value = Convert.ToDecimal(Convert.ToUInt32(Device.ClientAddress));
-                    WaitTimeTB.Value = Device.WaitTime;                    
+                    WaitTimeTB.Value = Device.WaitTime;
+                    SecurityCB.SelectedItem = dev.Security;
+                    SystemTitleTB.Text = dev.SystemTitle;
+                    BlockCipherKeyTB.Text = dev.BlockCipherKey;
+                    AuthenticationKeyTB.Text = dev.AuthenticationKey;
                 }
 
                 ManufacturerCB.DrawMode = MediasCB.DrawMode = DrawMode.OwnerDrawFixed;
@@ -390,6 +397,11 @@ namespace GXDLMSDirector
                 Device.LogicalAddress = Convert.ToInt32(LogicalServerAddressTB.Value);                              
                 Device.StartProtocol = (StartProtocolType) this.StartProtocolCB.SelectedItem;
                 GXDLMSDirector.Properties.Settings.Default.SelectedManufacturer = man.Name;
+
+                Device.Security = (Security)SecurityCB.SelectedItem;
+                Device.SystemTitle = SystemTitleTB.Text;
+                Device.BlockCipherKey = BlockCipherKeyTB.Text;
+                Device.AuthenticationKey = AuthenticationKeyTB.Text;
             }
             catch (Exception Ex)
             {
@@ -555,6 +567,21 @@ namespace GXDLMSDirector
             }
         }
 
+        bool IsPrintable(byte[] str)
+        {
+            if (str != null)
+            {
+                foreach (char it in str)
+                {
+                    if (!Char.IsLetterOrDigit(it))
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
         private void ManufacturerCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
@@ -568,7 +595,7 @@ namespace GXDLMSDirector
                     int pos = AuthenticationCB.Items.Add(it);
                     if (it.Type == Device.Authentication)
                     {
-                        this.AuthenticationCB.SelectedIndex = pos; 
+                        this.AuthenticationCB.SelectedIndex = pos;
                     }
                 }
                 ServerAddressTypeCB.Items.Clear();
@@ -576,7 +603,7 @@ namespace GXDLMSDirector
                 //If we are creating new device.
                 if (Device.Name == null)
                 {
-                    type = man.GetActiveServer().HDLCAddress;                    
+                    type = man.GetActiveServer().HDLCAddress;
                 }
                 foreach (GXServerAddress it in ((GXManufacturer)ManufacturerCB.SelectedItem).ServerSettings)
                 {
@@ -587,6 +614,38 @@ namespace GXDLMSDirector
                     }
                 }
                 UpdateStartProtocol();
+
+                SecurityCB.SelectedItem = man.Security;
+                if (man.SystemTitle != null || man.BlockCipherKey != null ||
+                    man.AuthenticationKey != null)
+                {
+                    SystemTitleTB.Text = GXCommon.ToHex(man.SystemTitle, true);
+                    BlockCipherKeyTB.Text = GXCommon.ToHex(man.BlockCipherKey, true);
+                    AuthenticationKeyTB.Text = GXCommon.ToHex(man.AuthenticationKey, true);
+                    if (!DeviceTab.TabPages.Contains(CipheringTab))
+                    {
+                        DeviceTab.TabPages.Add(CipheringTab);
+                        if (DeviceTab.TabPages.Contains(SupportedServicesTab))
+                        {
+                            DeviceTab.TabPages.Remove(SupportedServicesTab);
+                            DeviceTab.TabPages.Add(SupportedServicesTab);
+                        }
+                    }
+                    if (!IsPrintable(man.SystemTitle) ||
+                        !IsPrintable(man.BlockCipherKey) ||
+                        !IsPrintable(man.AuthenticationKey))
+                    {
+                        AsciiRB.Enabled = false;
+                    }
+                    else
+                    {
+                        AsciiRB.Enabled = true;
+                    }
+                }
+                else if (DeviceTab.TabPages.Contains(CipheringTab))
+                {
+                    DeviceTab.TabPages.Remove(CipheringTab);
+                }
             }
             catch (Exception Ex)
             {
@@ -699,7 +758,6 @@ namespace GXDLMSDirector
         {
             try
             {
-                //http://www.gurux.fi/index.php?q=GXDLMSDirectorExample
                 System.Diagnostics.Process.Start("http://www.gurux.fi/index.php?q=GXDLMSDirectorExample");
             }
             catch (Exception Ex)
@@ -715,6 +773,74 @@ namespace GXDLMSDirector
             if (MaximumBaudRateCB.SelectedItem == null)
             {
                 MaximumBaudRateCB.SelectedItem = 300;
+            }
+        }
+
+        private void SecurityCB_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            // If the index is invalid then simply exit.
+            if (e.Index == -1 || e.Index >= SecurityCB.Items.Count)
+            {
+                return;
+            }
+
+            // Draw the background of the item.
+            e.DrawBackground();
+
+            // Should we draw the focus rectangle?
+            if ((e.State & DrawItemState.Focus) != 0)
+            {
+                e.DrawFocusRectangle();
+            }
+
+            Font f = new Font(e.Font, FontStyle.Regular);
+            // Create a new background brush.
+            Brush b = new SolidBrush(e.ForeColor);
+            // Draw the item.			
+            Security security = (Security)SecurityCB.Items[e.Index];
+            string name = security.ToString();
+            SizeF s = e.Graphics.MeasureString(name, f);
+            e.Graphics.DrawString(name, f, b, e.Bounds);
+
+        }
+
+        private void HexRB_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (HexRB.Checked)
+                {
+                    SystemTitleTB.Text = GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(SystemTitleTB.Text), true);
+                    BlockCipherKeyTB.Text = GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(BlockCipherKeyTB.Text), true);
+                    AuthenticationKeyTB.Text = GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(AuthenticationKeyTB.Text), true);
+                }
+                else
+                {
+                    SystemTitleTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(SystemTitleTB.Text, true));
+                    BlockCipherKeyTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(BlockCipherKeyTB.Text, true));
+                    AuthenticationKeyTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(AuthenticationKeyTB.Text, true));
+                }
+            }
+            catch (Exception Ex)
+            {
+                GXDLMS.Common.Error.ShowError(this, Ex);
+            }
+        }
+
+        private void ValidateHex(object sender, KeyPressEventArgs e)
+        {
+            if (HexRB.Checked)
+            {
+                if (!Char.IsNumber(e.KeyChar) &&
+                       (Char.IsLetter(e.KeyChar) && !(e.KeyChar >= 'a' && e.KeyChar <= 'f' ||
+                       e.KeyChar >= 'A' && e.KeyChar <= 'F')))
+                {
+                    e.Handled = true;
+                }
+                if (AsciiRB.Enabled && !Char.IsLetterOrDigit(e.KeyChar))
+                {
+                    AsciiRB.Enabled = false;
+                }
             }
         }
     }

@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/ManufacturerForm.cs $
 //
-// Version:         $Revision: 8384 $,
-//                  $Date: 2016-04-14 09:12:49 +0200 (to, 14 huhti 2016) $
+// Version:         $Revision: 8655 $,
+//                  $Date: 2016-07-20 15:55:25 +0300 (ke, 20 heinä 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -78,9 +78,6 @@ namespace GXDLMSDirector
                 manufacturer.Settings.Add(new GXAuthentication(Authentication.HighMD5, (byte)0x13));
                 manufacturer.Settings.Add(new GXAuthentication(Authentication.HighSHA1, (byte)0x14));
                 GXAuthentication gmac = new GXAuthentication(Authentication.HighGMAC, (byte)0x15);
-                gmac.BlockCipherKey = new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F };
-                gmac.AuthenticationKey = new byte[] { 0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7, 0xD8, 0xD9, 0xDA, 0xDB, 0xDC, 0xDD, 0xDE, 0xDF };
-                manufacturer.Settings.Add(gmac);
             }
             GXAuthentication authentication = manufacturer.GetActiveAuthentication();
             foreach (GXAuthentication it in manufacturer.Settings)
@@ -88,7 +85,7 @@ namespace GXDLMSDirector
                 AuthenticationCB.Items.Add(it);
             }
             AuthenticationCB.SelectedItem = authentication;
-            AdvancedBtn.Enabled = authentication.Type == Authentication.HighGMAC;
+            //Mikko AdvancedBtn.Enabled = authentication.Type == Authentication.HighGMAC;
             this.AuthenticationCB.SelectedIndexChanged += new System.EventHandler(this.AuthenticationCB_SelectedIndexChanged);            
             if (manufacturer.ServerSettings.Count == 0)
             {
@@ -126,7 +123,8 @@ namespace GXDLMSDirector
             //Manufacturer ID can not change after creation.
             ManufacturerIdTB.Enabled = string.IsNullOrEmpty(manufacturer.Identification);
             KeepAliveIntervalTB.Value = Manufacturer.KeepAliveInterval / 1000;
-        }
+            AdvancedBtn.Enabled = SecuredConnectionCB.Checked = manufacturer.SystemTitle != null;
+                    }
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
@@ -245,7 +243,7 @@ namespace GXDLMSDirector
                 //Save old values.
                 authentication.ClientAddress = Convert.ToInt32(this.ClientAddTB.Value);
                 authentication = ((GXAuthentication)AuthenticationCB.SelectedItem);
-                AdvancedBtn.Enabled = authentication.Type == Authentication.HighGMAC;
+                //Mikko AdvancedBtn.Enabled = authentication.Type == Authentication.HighGMAC;
                 authentication.Selected = true;
                 ClientAddTB.Value = authentication.ClientAddress;
             }
@@ -306,27 +304,19 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// SHow advanced authentication settings.
+        /// Show advanced authentication settings.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void AdvancedBtn_Click(object sender, EventArgs e)
         {
-            GXAuthentication authentication = Manufacturer.GetActiveAuthentication();
-            if (authentication.Type == Authentication.HighGMAC)
-            {
-                AuthenticationGmacForm dlg = new AuthenticationGmacForm(authentication);
-                dlg.ShowDialog(this);
-            }
-            else if (authentication.Type > Authentication.Low)
-            {
-                AuthenticationForm dlg = new AuthenticationForm(authentication);
-                dlg.ShowDialog(this);
-            }
-            else
-            {
-                throw new ArgumentOutOfRangeException("Invalid authentication type.");
-            }
+            AuthenticationGmacForm dlg = new AuthenticationGmacForm(Manufacturer);
+            dlg.ShowDialog(this);
+        }
+
+        private void SecuredConnectionCB_CheckedChanged(object sender, EventArgs e)
+        {
+            AdvancedBtn.Enabled = SecuredConnectionCB.Checked;
         }
     }
 }

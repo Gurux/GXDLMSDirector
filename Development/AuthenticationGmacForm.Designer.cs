@@ -50,6 +50,7 @@
             this.SystemTitleTB.Name = "SystemTitleTB";
             this.SystemTitleTB.Size = new System.Drawing.Size(226, 20);
             this.SystemTitleTB.TabIndex = 1;
+            this.SystemTitleTB.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ValidateHex);
             // 
             // SecurityLbl
             // 
@@ -100,6 +101,7 @@
             this.BlockCipherKeyTB.Name = "BlockCipherKeyTB";
             this.BlockCipherKeyTB.Size = new System.Drawing.Size(226, 20);
             this.BlockCipherKeyTB.TabIndex = 2;
+            this.BlockCipherKeyTB.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ValidateHex);
             // 
             // BlockCipherKeyLbl
             // 
@@ -118,6 +120,7 @@
             this.AuthenticationKeyTB.Name = "AuthenticationKeyTB";
             this.AuthenticationKeyTB.Size = new System.Drawing.Size(226, 20);
             this.AuthenticationKeyTB.TabIndex = 3;
+            this.AuthenticationKeyTB.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ValidateHex);
             // 
             // AuthenticationKeyLbl
             // 
@@ -134,7 +137,7 @@
             this.SecurityCB.FormattingEnabled = true;
             this.SecurityCB.Location = new System.Drawing.Point(110, 6);
             this.SecurityCB.Name = "SecurityCB";
-            this.SecurityCB.Size = new System.Drawing.Size(85, 21);
+            this.SecurityCB.Size = new System.Drawing.Size(226, 21);
             this.SecurityCB.TabIndex = 0;
             this.SecurityCB.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.SecurityCB_DrawItem);
             // 
@@ -159,6 +162,7 @@
             this.AsciiRB.TabIndex = 29;
             this.AsciiRB.Text = "ASCII";
             this.AsciiRB.UseVisualStyleBackColor = true;
+            this.AsciiRB.CheckedChanged += new System.EventHandler(this.AsciiRB_CheckedChanged);
             // 
             // AuthenticationGmacForm
             // 

@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDevice.cs $
 //
-// Version:         $Revision: 8315 $,
-//                  $Date: 2016-03-24 16:17:17 +0200 (to, 24 maalis 2016) $
+// Version:         $Revision: 8655 $,
+//                  $Date: 2016-07-20 15:55:25 +0300 (ke, 20 heinä 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -266,7 +266,48 @@ namespace GXDLMSDirector
         {
             get;
             set;
-        }       
+        }
+
+        /// <summary>
+        /// Used communication security.
+        /// </summary>
+        [DefaultValue(Security.None)]
+        public Security Security
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// System Title.
+        /// </summary>
+        [DefaultValue("")]
+        public string SystemTitle
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Block cipher key.
+        /// </summary>
+        [DefaultValue("")]
+        public string BlockCipherKey
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Authentication key.
+        /// </summary>
+        [DefaultValue("")]
+        public string AuthenticationKey
+        {
+            get;
+            set;
+        }
+
 
         /// <summary>
         /// Used Physical address.

@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/ManufacturerForm.Designer.cs $
 //
-// Version:         $Revision: 8063 $,
-//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
+// Version:         $Revision: 8655 $,
+//                  $Date: 2016-07-20 15:55:25 +0300 (ke, 20 heinä 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -74,7 +74,6 @@ namespace GXDLMSDirector
             this.StartProtocolLbl = new System.Windows.Forms.Label();
             this.StartProtocolCB = new System.Windows.Forms.ComboBox();
             this.AddressingGB = new System.Windows.Forms.GroupBox();
-            this.AdvancedBtn = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.ClientAddLbl = new System.Windows.Forms.Label();
             this.ClientAddTB = new System.Windows.Forms.NumericUpDown();
@@ -94,6 +93,8 @@ namespace GXDLMSDirector
             this.KeepAliveLbl = new System.Windows.Forms.Label();
             this.KeepAliveIntervalTB = new System.Windows.Forms.NumericUpDown();
             this.ForceKeepAliveCB = new System.Windows.Forms.CheckBox();
+            this.SecuredConnectionCB = new System.Windows.Forms.CheckBox();
+            this.AdvancedBtn = new System.Windows.Forms.Button();
             this.AddressingGB.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ClientAddTB)).BeginInit();
@@ -129,7 +130,7 @@ namespace GXDLMSDirector
             // UseIEC47CB
             // 
             this.UseIEC47CB.AutoSize = true;
-            this.UseIEC47CB.Location = new System.Drawing.Point(12, 97);
+            this.UseIEC47CB.Location = new System.Drawing.Point(198, 79);
             this.UseIEC47CB.Name = "UseIEC47CB";
             this.UseIEC47CB.Size = new System.Drawing.Size(113, 17);
             this.UseIEC47CB.TabIndex = 3;
@@ -181,7 +182,7 @@ namespace GXDLMSDirector
             // StartProtocolLbl
             // 
             this.StartProtocolLbl.AutoSize = true;
-            this.StartProtocolLbl.Location = new System.Drawing.Point(12, 179);
+            this.StartProtocolLbl.Location = new System.Drawing.Point(12, 185);
             this.StartProtocolLbl.Name = "StartProtocolLbl";
             this.StartProtocolLbl.Size = new System.Drawing.Size(74, 13);
             this.StartProtocolLbl.TabIndex = 20;
@@ -191,43 +192,31 @@ namespace GXDLMSDirector
             // 
             this.StartProtocolCB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.StartProtocolCB.FormattingEnabled = true;
-            this.StartProtocolCB.Location = new System.Drawing.Point(121, 176);
+            this.StartProtocolCB.Location = new System.Drawing.Point(121, 182);
             this.StartProtocolCB.Name = "StartProtocolCB";
             this.StartProtocolCB.Size = new System.Drawing.Size(194, 21);
             this.StartProtocolCB.TabIndex = 7;
             // 
             // AddressingGB
             // 
-            this.AddressingGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddressingGB.Controls.Add(this.AdvancedBtn);
+            this.AddressingGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.AddressingGB.Controls.Add(this.groupBox2);
             this.AddressingGB.Controls.Add(this.groupBox1);
             this.AddressingGB.Controls.Add(this.AuthenticationCB);
             this.AddressingGB.Controls.Add(this.AuthenticationLbl);
-            this.AddressingGB.Location = new System.Drawing.Point(2, 198);
+            this.AddressingGB.Location = new System.Drawing.Point(2, 207);
             this.AddressingGB.Name = "AddressingGB";
-            this.AddressingGB.Size = new System.Drawing.Size(335, 206);
+            this.AddressingGB.Size = new System.Drawing.Size(335, 188);
             this.AddressingGB.TabIndex = 7;
             this.AddressingGB.TabStop = false;
             this.AddressingGB.Text = "Addressing";
-            // 
-            // AdvancedBtn
-            // 
-            this.AdvancedBtn.Enabled = false;
-            this.AdvancedBtn.Location = new System.Drawing.Point(196, 18);
-            this.AdvancedBtn.Name = "AdvancedBtn";
-            this.AdvancedBtn.Size = new System.Drawing.Size(75, 23);
-            this.AdvancedBtn.TabIndex = 37;
-            this.AdvancedBtn.Text = "Advanced...";
-            this.AdvancedBtn.UseVisualStyleBackColor = true;
-            this.AdvancedBtn.Click += new System.EventHandler(this.AdvancedBtn_Click);
             // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.ClientAddLbl);
             this.groupBox2.Controls.Add(this.ClientAddTB);
-            this.groupBox2.Location = new System.Drawing.Point(2, 49);
+            this.groupBox2.Location = new System.Drawing.Point(2, 40);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(327, 43);
             this.groupBox2.TabIndex = 9;
@@ -271,7 +260,7 @@ namespace GXDLMSDirector
             this.groupBox1.Controls.Add(this.PhysicalServerAddTB);
             this.groupBox1.Controls.Add(this.LogicalServerAddTB);
             this.groupBox1.Controls.Add(this.LogicalServerAddLbl);
-            this.groupBox1.Location = new System.Drawing.Point(2, 93);
+            this.groupBox1.Location = new System.Drawing.Point(2, 81);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(332, 105);
             this.groupBox1.TabIndex = 13;
@@ -385,7 +374,7 @@ namespace GXDLMSDirector
             // 
             this.InactivityModeCB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.InactivityModeCB.FormattingEnabled = true;
-            this.InactivityModeCB.Location = new System.Drawing.Point(121, 118);
+            this.InactivityModeCB.Location = new System.Drawing.Point(121, 124);
             this.InactivityModeCB.Name = "InactivityModeCB";
             this.InactivityModeCB.Size = new System.Drawing.Size(194, 21);
             this.InactivityModeCB.TabIndex = 4;
@@ -393,7 +382,7 @@ namespace GXDLMSDirector
             // InactivityModeLbl
             // 
             this.InactivityModeLbl.AutoSize = true;
-            this.InactivityModeLbl.Location = new System.Drawing.Point(12, 121);
+            this.InactivityModeLbl.Location = new System.Drawing.Point(12, 127);
             this.InactivityModeLbl.Name = "InactivityModeLbl";
             this.InactivityModeLbl.Size = new System.Drawing.Size(82, 13);
             this.InactivityModeLbl.TabIndex = 34;
@@ -402,7 +391,7 @@ namespace GXDLMSDirector
             // KeepAliveLbl
             // 
             this.KeepAliveLbl.AutoSize = true;
-            this.KeepAliveLbl.Location = new System.Drawing.Point(12, 148);
+            this.KeepAliveLbl.Location = new System.Drawing.Point(12, 154);
             this.KeepAliveLbl.Name = "KeepAliveLbl";
             this.KeepAliveLbl.Size = new System.Drawing.Size(95, 13);
             this.KeepAliveLbl.TabIndex = 36;
@@ -410,7 +399,7 @@ namespace GXDLMSDirector
             // 
             // KeepAliveIntervalTB
             // 
-            this.KeepAliveIntervalTB.Location = new System.Drawing.Point(121, 148);
+            this.KeepAliveIntervalTB.Location = new System.Drawing.Point(121, 154);
             this.KeepAliveIntervalTB.Minimum = new decimal(new int[] {
             1,
             0,
@@ -428,12 +417,33 @@ namespace GXDLMSDirector
             // ForceKeepAliveCB
             // 
             this.ForceKeepAliveCB.AutoSize = true;
-            this.ForceKeepAliveCB.Location = new System.Drawing.Point(231, 148);
+            this.ForceKeepAliveCB.Location = new System.Drawing.Point(231, 154);
             this.ForceKeepAliveCB.Name = "ForceKeepAliveCB";
             this.ForceKeepAliveCB.Size = new System.Drawing.Size(53, 17);
             this.ForceKeepAliveCB.TabIndex = 6;
             this.ForceKeepAliveCB.Text = "Force";
             this.ForceKeepAliveCB.UseVisualStyleBackColor = true;
+            // 
+            // SecuredConnectionCB
+            // 
+            this.SecuredConnectionCB.AutoSize = true;
+            this.SecuredConnectionCB.Location = new System.Drawing.Point(12, 101);
+            this.SecuredConnectionCB.Name = "SecuredConnectionCB";
+            this.SecuredConnectionCB.Size = new System.Drawing.Size(122, 17);
+            this.SecuredConnectionCB.TabIndex = 37;
+            this.SecuredConnectionCB.Text = "Secured connection";
+            this.SecuredConnectionCB.UseVisualStyleBackColor = true;
+            this.SecuredConnectionCB.CheckedChanged += new System.EventHandler(this.SecuredConnectionCB_CheckedChanged);
+            // 
+            // AdvancedBtn
+            // 
+            this.AdvancedBtn.Location = new System.Drawing.Point(198, 97);
+            this.AdvancedBtn.Name = "AdvancedBtn";
+            this.AdvancedBtn.Size = new System.Drawing.Size(75, 23);
+            this.AdvancedBtn.TabIndex = 38;
+            this.AdvancedBtn.Text = "Advanced...";
+            this.AdvancedBtn.UseVisualStyleBackColor = true;
+            this.AdvancedBtn.Click += new System.EventHandler(this.AdvancedBtn_Click);
             // 
             // ManufacturerForm
             // 
@@ -442,6 +452,8 @@ namespace GXDLMSDirector
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.CancelBtn;
             this.ClientSize = new System.Drawing.Size(337, 445);
+            this.Controls.Add(this.AdvancedBtn);
+            this.Controls.Add(this.SecuredConnectionCB);
             this.Controls.Add(this.ForceKeepAliveCB);
             this.Controls.Add(this.KeepAliveIntervalTB);
             this.Controls.Add(this.KeepAliveLbl);
@@ -510,6 +522,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ComboBox ServerAddressTypeCB;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox ForceKeepAliveCB;
+        private System.Windows.Forms.CheckBox SecuredConnectionCB;
         private System.Windows.Forms.Button AdvancedBtn;
     }
 }

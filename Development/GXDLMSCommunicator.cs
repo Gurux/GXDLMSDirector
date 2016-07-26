@@ -441,7 +441,7 @@ namespace GXDLMSDirector
             {
                 return client.ServerAddress;
             }
-        }      
+        }
 
         public void UpdateManufactureSettings(string id)
         {
@@ -460,7 +460,7 @@ namespace GXDLMSDirector
             if (!string.IsNullOrEmpty(this.parent.Password))
             {
                 client.Password = CryptHelper.Decrypt(this.parent.Password, Password.Key);
-            }            
+            }
             client.UseLogicalNameReferencing = this.parent.UseLogicalNameReferencing;
             //Show media verbose.
             if (this.parent.Verbose && media.Trace != System.Diagnostics.TraceLevel.Verbose)
@@ -476,7 +476,7 @@ namespace GXDLMSDirector
 
             //If network media is used check is manufacturer supporting IEC 62056-47
             if (!parent.UseRemoteSerial && this.media is GXNet && manufacturer.UseIEC47)
-            {                
+            {
                 client.InterfaceType = InterfaceType.WRAPPER;
             }
 
@@ -504,9 +504,18 @@ namespace GXDLMSDirector
                 }
             }
             client.Ciphering.Security = parent.Security;
-            client.Ciphering.SystemTitle = GXCommon.HexToBytes(parent.SystemTitle, true);
-            client.Ciphering.BlockCipherKey = GXCommon.HexToBytes(parent.BlockCipherKey, true);
-            client.Ciphering.AuthenticationKey = GXCommon.HexToBytes(parent.AuthenticationKey, true);
+            if (parent.SystemTitle != null && parent.BlockCipherKey != null && parent.AuthenticationKey != null)
+            {
+                client.Ciphering.SystemTitle = GXCommon.HexToBytes(parent.SystemTitle, true);
+                client.Ciphering.BlockCipherKey = GXCommon.HexToBytes(parent.BlockCipherKey, true);
+                client.Ciphering.AuthenticationKey = GXCommon.HexToBytes(parent.AuthenticationKey, true);
+            }
+            else
+            {
+                client.Ciphering.SystemTitle = null;
+                client.Ciphering.BlockCipherKey = null;
+                client.Ciphering.AuthenticationKey = null;
+            }
         }
 
         /// <summary>

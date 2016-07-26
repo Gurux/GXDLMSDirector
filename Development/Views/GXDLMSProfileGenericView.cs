@@ -358,9 +358,9 @@ namespace GXDLMSDirector.Views
             // 
             // groupBox1
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.CapturePeriodTB);
             this.groupBox1.Controls.Add(this.groupBox3);
@@ -452,9 +452,9 @@ namespace GXDLMSDirector.Views
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Location = new System.Drawing.Point(5, 249);
@@ -541,7 +541,7 @@ namespace GXDLMSDirector.Views
             this.ReadAllRB.Location = new System.Drawing.Point(6, 89);
             this.ReadAllRB.Name = "ReadAllRB";
             this.ReadAllRB.Size = new System.Drawing.Size(80, 16);
-            this.ReadAllRB.TabIndex = 12;
+            this.ReadAllRB.TabIndex = 9;
             this.ReadAllRB.Text = "All";
             // 
             // ReadLastTB
@@ -633,7 +633,7 @@ namespace GXDLMSDirector.Views
             this.ReadFromRB.Location = new System.Drawing.Point(6, 67);
             this.ReadFromRB.Name = "ReadFromRB";
             this.ReadFromRB.Size = new System.Drawing.Size(80, 16);
-            this.ReadFromRB.TabIndex = 11;
+            this.ReadFromRB.TabIndex = 9;
             this.ReadFromRB.Text = "Read From";
             // 
             // ReadLastRB
@@ -642,7 +642,7 @@ namespace GXDLMSDirector.Views
             this.ReadLastRB.Location = new System.Drawing.Point(6, 43);
             this.ReadLastRB.Name = "ReadLastRB";
             this.ReadLastRB.Size = new System.Drawing.Size(80, 16);
-            this.ReadLastRB.TabIndex = 10;
+            this.ReadLastRB.TabIndex = 9;
             this.ReadLastRB.TabStop = true;
             this.ReadLastRB.Text = "Read last";
             // 

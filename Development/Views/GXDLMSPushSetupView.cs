@@ -107,9 +107,9 @@ namespace GXDLMSDirector.Views
             }
             else if (attributeID == 3)
             {
-                ServiceTB.Text = ((GXDLMSPushSetup)Target).SendDestinationAndMethod.Service.ToString();
-                DestinationTB.Text = ((GXDLMSPushSetup)Target).SendDestinationAndMethod.Destination;
-                MessageTB.Text = ((GXDLMSPushSetup)Target).SendDestinationAndMethod.Message.ToString();
+                ServiceTB.Text = ((GXDLMSPushSetup)Target).Service.ToString();
+                DestinationTB.Text = ((GXDLMSPushSetup)Target).Destination;
+                MessageTB.Text = ((GXDLMSPushSetup)Target).Message.ToString();
             }
             else if (attributeID == 4)
             {

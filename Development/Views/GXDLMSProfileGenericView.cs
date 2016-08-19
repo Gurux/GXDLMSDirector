@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/Views/GXDLMSProfileGenericView.cs $
 //
-// Version:         $Revision: 8063 $,
-//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
+// Version:         $Revision: 8728 $,
+//                  $Date: 2016-08-12 13:51:34 +0300 (pe, 12 elo 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd

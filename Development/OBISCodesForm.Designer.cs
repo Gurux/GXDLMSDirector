@@ -1,14 +1,14 @@
 //
 // --------------------------------------------------------------------------
 //  Gurux Ltd
-// 
+//
 //
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/OBISCodesForm.Designer.cs $
 //
-// Version:         $Revision: 3125 $,
-//                  $Date: 2010-12-14 10:08:50 +0200 (ti, 14 joulu 2010) $
-//                  $Author: kurumi $
+// Version:         $Revision: 8885 $,
+//                  $Date: 2016-11-15 10:34:46 +0200 (ti, 15 marras 2016) $
+//                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -19,16 +19,16 @@
 // This file is a part of Gurux Device Framework.
 //
 // Gurux Device Framework is Open Source software; you can redistribute it
-// and/or modify it under the terms of the GNU General Public License 
+// and/or modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; version 2 of the License.
 // Gurux Device Framework is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
 //
 // More information of Gurux DLMS/COSEM Director: http://www.gurux.org/GXDLMSDirector
 //
-// This code is licensed under the GNU General Public License v2. 
+// This code is licensed under the GNU General Public License v2.
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
@@ -78,9 +78,9 @@ namespace GXDLMSDirector
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
-            // 
+            //
             // EditBtn
-            // 
+            //
             this.EditBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.EditBtn.Location = new System.Drawing.Point(91, 287);
             this.EditBtn.Name = "EditBtn";
@@ -89,9 +89,9 @@ namespace GXDLMSDirector
             this.EditBtn.Text = "Edit";
             this.EditBtn.UseVisualStyleBackColor = true;
             this.EditBtn.Click += new System.EventHandler(this.EditBtn_Click);
-            // 
+            //
             // RemoveBtn
-            // 
+            //
             this.RemoveBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.RemoveBtn.Location = new System.Drawing.Point(170, 287);
             this.RemoveBtn.Name = "RemoveBtn";
@@ -100,9 +100,9 @@ namespace GXDLMSDirector
             this.RemoveBtn.Text = "Remove";
             this.RemoveBtn.UseVisualStyleBackColor = true;
             this.RemoveBtn.Click += new System.EventHandler(this.RemoveBtn_Click);
-            // 
+            //
             // NewBtn
-            // 
+            //
             this.NewBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.NewBtn.Location = new System.Drawing.Point(10, 287);
             this.NewBtn.Name = "NewBtn";
@@ -111,9 +111,9 @@ namespace GXDLMSDirector
             this.NewBtn.Text = "New";
             this.NewBtn.UseVisualStyleBackColor = true;
             this.NewBtn.Click += new System.EventHandler(this.NewBtn_Click);
-            // 
+            //
             // panel2
-            // 
+            //
             this.panel2.Controls.Add(this.OBISCodesList);
             this.panel2.Controls.Add(this.EditBtn);
             this.panel2.Controls.Add(this.RemoveBtn);
@@ -123,14 +123,15 @@ namespace GXDLMSDirector
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(257, 316);
             this.panel2.TabIndex = 18;
-            // 
+            //
             // OBISCodesList
-            // 
+            //
             this.OBISCodesList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+                                         | System.Windows.Forms.AnchorStyles.Left)
+                                         | System.Windows.Forms.AnchorStyles.Right)));
             this.OBISCodesList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.NameCH});
+            this.NameCH
+        });
             this.OBISCodesList.FullRowSelect = true;
             this.OBISCodesList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.OBISCodesList.HideSelection = false;
@@ -143,24 +144,25 @@ namespace GXDLMSDirector
             this.OBISCodesList.View = System.Windows.Forms.View.Details;
             this.OBISCodesList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.OBISCodesList_MouseDoubleClick);
             this.OBISCodesList.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.OBISCodesList_ItemSelectionChanged);
-            // 
+            //
             // NameCH
-            // 
+            //
             this.NameCH.Text = "Name";
             this.NameCH.Width = 253;
-            // 
+            //
             // splitter1
-            // 
+            //
             this.splitter1.Location = new System.Drawing.Point(185, 0);
             this.splitter1.Name = "splitter1";
             this.splitter1.Size = new System.Drawing.Size(3, 316);
             this.splitter1.TabIndex = 17;
             this.splitter1.TabStop = false;
-            // 
+            //
             // ManufacturersList
-            // 
+            //
             this.ManufacturersList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.ManufacturerNameCH});
+            this.ManufacturerNameCH
+        });
             this.ManufacturersList.Dock = System.Windows.Forms.DockStyle.Left;
             this.ManufacturersList.FullRowSelect = true;
             this.ManufacturersList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
@@ -172,15 +174,14 @@ namespace GXDLMSDirector
             this.ManufacturersList.TabIndex = 15;
             this.ManufacturersList.UseCompatibleStateImageBehavior = false;
             this.ManufacturersList.View = System.Windows.Forms.View.Details;
-            this.ManufacturersList.SizeChanged += new System.EventHandler(this.ManufacturersList_SizeChanged);
-            // 
+            //
             // ManufacturerNameCH
-            // 
+            //
             this.ManufacturerNameCH.Text = "Name";
             this.ManufacturerNameCH.Width = 50;
-            // 
+            //
             // OKBtn
-            // 
+            //
             this.OKBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.OKBtn.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.OKBtn.Location = new System.Drawing.Point(277, 11);
@@ -190,9 +191,9 @@ namespace GXDLMSDirector
             this.OKBtn.Text = "&OK";
             this.OKBtn.UseVisualStyleBackColor = true;
             this.OKBtn.Click += new System.EventHandler(this.OKBtn_Click);
-            // 
+            //
             // panel1
-            // 
+            //
             this.panel1.Controls.Add(this.OKBtn);
             this.panel1.Controls.Add(this.CancelBtn);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -200,9 +201,9 @@ namespace GXDLMSDirector
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(445, 46);
             this.panel1.TabIndex = 16;
-            // 
+            //
             // CancelBtn
-            // 
+            //
             this.CancelBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.CancelBtn.Location = new System.Drawing.Point(358, 11);
@@ -211,9 +212,9 @@ namespace GXDLMSDirector
             this.CancelBtn.TabIndex = 8;
             this.CancelBtn.Text = "&Cancel";
             this.CancelBtn.UseVisualStyleBackColor = true;
-            // 
+            //
             // OBISCodesForm
-            // 
+            //
             this.AcceptButton = this.OKBtn;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;

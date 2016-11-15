@@ -1,14 +1,14 @@
 //
 // --------------------------------------------------------------------------
 //  Gurux Ltd
-// 
+//
 //
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/OBISCodesForm.cs $
 //
-// Version:         $Revision: 8063 $,
-//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
-//                  $Author: kurumi $
+// Version:         $Revision: 8885 $,
+//                  $Date: 2016-11-15 10:34:46 +0200 (ti, 15 marras 2016) $
+//                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -19,16 +19,16 @@
 // This file is a part of Gurux Device Framework.
 //
 // Gurux Device Framework is Open Source software; you can redistribute it
-// and/or modify it under the terms of the GNU General Public License 
+// and/or modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; version 2 of the License.
 // Gurux Device Framework is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
 //
 // More information of Gurux DLMS/COSEM Director: http://www.gurux.org/GXDLMSDirector
 //
-// This code is licensed under the GNU General Public License v2. 
+// This code is licensed under the GNU General Public License v2.
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
@@ -51,7 +51,7 @@ namespace GXDLMSDirector
         public OBISCodesForm(GXManufacturerCollection manufacturers, string selectedManufacturer, ObjectType Interface, string ln)
         {
             InitializeComponent();
-            ManufacturersList_SizeChanged(null, null);
+            ManufacturerNameCH.Width = -2;
             NewBtn.Enabled = manufacturers.Count != 0;
             EditBtn.Enabled = RemoveBtn.Enabled = false;
             bool bSelected = false;
@@ -131,7 +131,7 @@ namespace GXDLMSDirector
                 if (MessageBox.Show(this, GXDLMSDirector.Properties.Resources.RemoveObjectConfirmation, GXDLMSDirector.Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel) != DialogResult.Yes)
                 {
                     return;
-                } 
+                }
                 foreach (ListViewItem it in OBISCodesList.SelectedItems)
                 {
                     GXObisCode item = (GXObisCode)it.Tag;
@@ -158,7 +158,7 @@ namespace GXDLMSDirector
             return it;
         }
 
-        static int CompareOBISKeys(KeyValuePair<string, GXObisCode> a, KeyValuePair<string, GXObisCode> b) 
+        static int CompareOBISKeys(KeyValuePair<string, GXObisCode> a, KeyValuePair<string, GXObisCode> b)
         {
             if (a.Key == null || b.Key == null)
             {
@@ -270,11 +270,6 @@ namespace GXDLMSDirector
                 return vsVisible ? ScrollBars.Both : ScrollBars.Horizontal;
             }
             return vsVisible ? ScrollBars.Vertical : ScrollBars.None;
-        }
-
-        private void ManufacturersList_SizeChanged(object sender, EventArgs e)
-        {
-            ManufacturerNameCH.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
         }
 
         /// <summary>

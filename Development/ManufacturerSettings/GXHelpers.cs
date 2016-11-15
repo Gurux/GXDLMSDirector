@@ -1,7 +1,7 @@
 ﻿//
 // --------------------------------------------------------------------------
 //  Gurux Ltd
-// 
+//
 //
 //
 // Filename:        $HeadURL$
@@ -19,14 +19,14 @@
 // This file is a part of Gurux Device Framework.
 //
 // Gurux Device Framework is Open Source software; you can redistribute it
-// and/or modify it under the terms of the GNU General Public License 
+// and/or modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; version 2 of the License.
 // Gurux Device Framework is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
 //
-// This code is licensed under the GNU General Public License v2. 
+// This code is licensed under the GNU General Public License v2.
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 using System;
@@ -103,7 +103,7 @@ namespace GXDLMS.Common
             }
             //Convert DLMS date time to Windows Date.
             else if (type == DataType.Date)
-            {                
+            {
                 if (data is DateTime)
                 {
                     return data;
@@ -115,7 +115,7 @@ namespace GXDLMS.Common
                 if (!data.GetType().IsArray || ((Array)data).Length < 5)
                 {
                     throw new Exception("DateTime conversion failed. Invalid DLMS format.");
-                }                
+                }
                 return GXDLMSClient.ChangeType((byte[])data, DataType.Date);
             }
             //Convert DLMS date time to Windows Time.
@@ -159,7 +159,7 @@ namespace GXDLMS.Common
             {
                 return null;
             }
-            string[] splitted = hexString.Split(isOctetString ? '.': ' ');
+            string[] splitted = hexString.Split(isOctetString ? '.' : ' ');
             byte[] retVal = new byte[splitted.Length];
             int i = -1;
             foreach (string hexStr in splitted)
@@ -263,7 +263,7 @@ namespace GXDLMS.Common
                 return BitConverter.ToString((byte[])data).Replace("-", " ");
             }
             return Convert.ToString(data);
-        }       
+        }
 
         static public bool IsNumeric(DataType type)
         {
@@ -316,7 +316,7 @@ namespace GXDLMS.Common
                 case DataType.CompactArray:
                 case DataType.Structure:
                     return typeof(object[]);
-                case DataType.BinaryCodedDesimal:
+                case DataType.Bcd:
                     return typeof(string);
                 case DataType.BitString:
                     return typeof(string);

@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 8728 $,
-//                  $Date: 2016-08-12 13:51:34 +0300 (pe, 12 elo 2016) $
+// Version:         $Revision: 8777 $,
+//                  $Date: 2016-09-26 13:38:43 +0300 (ma, 26 syys 2016) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -688,7 +688,7 @@ namespace GXDLMSDirector
                 lock (reply)
                 {
                     client.UpdateValue(CurrentProfileGeneric, 2, reply.Value);
-                    reply.Value = null;
+                    reply.Value = new Object[0];
                 }
                 if (OnAfterRead != null)
                 {
@@ -789,7 +789,7 @@ namespace GXDLMSDirector
         /// <param name="attribute"></param>
         public void Read(object sender, GXDLMSObject obj, int attribute)
         {
-            GXReplyData reply = new GXReplyData();
+            GXReplyData reply = new GXReplyData() { Peek = true};
             foreach (int it in (obj as IGXDLMSBase).GetAttributeIndexToRead())
             {
                 reply.Clear();

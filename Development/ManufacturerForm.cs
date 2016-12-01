@@ -1,14 +1,14 @@
 //
 // --------------------------------------------------------------------------
 //  Gurux Ltd
-// 
+//
 //
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/ManufacturerForm.cs $
 //
-// Version:         $Revision: 8655 $,
-//                  $Date: 2016-07-20 15:55:25 +0300 (ke, 20 heinä 2016) $
-//                  $Author: kurumi $
+// Version:         $Revision: 8984 $,
+//                  $Date: 2016-12-01 14:50:51 +0200 (to, 01 joulu 2016) $
+//                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -19,16 +19,16 @@
 // This file is a part of Gurux Device Framework.
 //
 // Gurux Device Framework is Open Source software; you can redistribute it
-// and/or modify it under the terms of the GNU General Public License 
+// and/or modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; version 2 of the License.
 // Gurux Device Framework is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
 //
 // More information of Gurux DLMS/COSEM Director: http://www.gurux.org/GXDLMSDirector
 //
-// This code is licensed under the GNU General Public License v2. 
+// This code is licensed under the GNU General Public License v2.
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
@@ -49,13 +49,13 @@ namespace GXDLMSDirector
     {
         GXManufacturerCollection Manufacturers;
         GXManufacturer Manufacturer;
-   
+
         void RefreshServer(GXServerAddress server)
         {
             SerialNumberFormulaTB.Text = server.Formula;
             PhysicalServerAddTB.Value = Convert.ToDecimal(server.PhysicalAddress);
             LogicalServerAddTB.Value = server.LogicalAddress;
-            PhysicalServerAddTB.Hexadecimal = SerialNumberFormulaTB.ReadOnly = server.HDLCAddress != HDLCAddressType.SerialNumber;            
+            PhysicalServerAddTB.Hexadecimal = SerialNumberFormulaTB.ReadOnly = server.HDLCAddress != HDLCAddressType.SerialNumber;
         }
 
         void UpdateServer(GXServerAddress server)
@@ -85,14 +85,14 @@ namespace GXDLMSDirector
                 AuthenticationCB.Items.Add(it);
             }
             AuthenticationCB.SelectedItem = authentication;
-            //Mikko AdvancedBtn.Enabled = authentication.Type == Authentication.HighGMAC;
-            this.AuthenticationCB.SelectedIndexChanged += new System.EventHandler(this.AuthenticationCB_SelectedIndexChanged);            
+            AdvancedBtn.Enabled = authentication.Type == Authentication.HighGMAC;
+            this.AuthenticationCB.SelectedIndexChanged += new System.EventHandler(this.AuthenticationCB_SelectedIndexChanged);
             if (manufacturer.ServerSettings.Count == 0)
             {
-                manufacturer.ServerSettings.Add(new GXServerAddress(HDLCAddressType.Default, (byte) 1, true));
-                manufacturer.ServerSettings.Add(new GXServerAddress(HDLCAddressType.SerialNumber, (byte) 1, false));
+                manufacturer.ServerSettings.Add(new GXServerAddress(HDLCAddressType.Default, (byte)1, true));
+                manufacturer.ServerSettings.Add(new GXServerAddress(HDLCAddressType.SerialNumber, (byte)1, false));
                 manufacturer.ServerSettings.Add(new GXServerAddress(HDLCAddressType.Custom, (byte)1, false));
-            }            
+            }
             foreach (GXServerAddress it in manufacturer.ServerSettings)
             {
                 ServerAddressTypeCB.Items.Add(it);
@@ -102,7 +102,7 @@ namespace GXDLMSDirector
             ServerAddressTypeCB.SelectedItem = server;
             RefreshServer(server);
             this.ServerAddressTypeCB.SelectedIndexChanged += new System.EventHandler(this.ServerAddressTypeCB_SelectedIndexChanged);
-            
+
             ServerAddressTypeCB.DrawMode = AuthenticationCB.DrawMode = DrawMode.OwnerDrawFixed;
             ClientAddTB.Value = authentication.ClientAddress;
 
@@ -124,7 +124,7 @@ namespace GXDLMSDirector
             ManufacturerIdTB.Enabled = string.IsNullOrEmpty(manufacturer.Identification);
             KeepAliveIntervalTB.Value = Manufacturer.KeepAliveInterval / 1000;
             AdvancedBtn.Enabled = SecuredConnectionCB.Checked = manufacturer.SystemTitle != null;
-                    }
+        }
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
@@ -141,23 +141,23 @@ namespace GXDLMSDirector
                 if (ManufacturerIdTB.Enabled && Manufacturers.FindByIdentification(ManufacturerIdTB.Text) != null)
                 {
                     throw new Exception("Manufacturer identification already exists.");
-                }                
+                }
                 if (!SerialNumberFormulaTB.ReadOnly && SerialNumberFormulaTB.Text.Length == 0)
                 {
                     throw new Exception("Invalid Serial Number.");
-                }                 
+                }
                 Manufacturer.Name = NameTB.Text;
                 Manufacturer.Identification = ManufacturerIdTB.Text;
                 Manufacturer.UseLogicalNameReferencing = UseLNCB.Checked;
-                Manufacturer.UseIEC47 = UseIEC47CB.Checked;                
+                Manufacturer.UseIEC47 = UseIEC47CB.Checked;
                 Manufacturer.StartProtocol = (StartProtocolType)StartProtocolCB.SelectedItem;
                 Manufacturer.InactivityMode = (InactivityMode)InactivityModeCB.SelectedItem;
                 Manufacturer.ForceInactivity = ForceKeepAliveCB.Checked;
-                GXAuthentication authentication = Manufacturer.GetActiveAuthentication();                
+                GXAuthentication authentication = Manufacturer.GetActiveAuthentication();
                 Manufacturer.KeepAliveInterval = Convert.ToInt32(KeepAliveIntervalTB.Value) * 1000;
                 authentication.ClientAddress = Convert.ToInt32(this.ClientAddTB.Value);
                 //Save server values.
-                UpdateServer((GXServerAddress) ServerAddressTypeCB.SelectedItem);
+                UpdateServer((GXServerAddress)ServerAddressTypeCB.SelectedItem);
             }
             catch (Exception Ex)
             {
@@ -192,7 +192,7 @@ namespace GXDLMSDirector
             Font f = new Font(e.Font, FontStyle.Regular);
             // Create a new background brush.
             Brush b = new SolidBrush(e.ForeColor);
-            // Draw the item.			
+            // Draw the item.
             Type target = (Type)Sender.Items[e.Index];
             if (target == null)
             {
@@ -223,7 +223,7 @@ namespace GXDLMSDirector
             Font f = new Font(e.Font, FontStyle.Regular);
             // Create a new background brush.
             Brush b = new SolidBrush(e.ForeColor);
-            // Draw the item.			
+            // Draw the item.
             GXAuthentication authentication = (GXAuthentication)AuthenticationCB.Items[e.Index];
             if (authentication == null)
             {
@@ -238,12 +238,12 @@ namespace GXDLMSDirector
         {
             try
             {
-                GXAuthentication authentication = Manufacturer.GetActiveAuthentication();                
-                authentication.Selected = false;                
+                GXAuthentication authentication = Manufacturer.GetActiveAuthentication();
+                authentication.Selected = false;
                 //Save old values.
                 authentication.ClientAddress = Convert.ToInt32(this.ClientAddTB.Value);
                 authentication = ((GXAuthentication)AuthenticationCB.SelectedItem);
-                //Mikko AdvancedBtn.Enabled = authentication.Type == Authentication.HighGMAC;
+                AdvancedBtn.Enabled = authentication.Type == Authentication.HighGMAC;
                 authentication.Selected = true;
                 ClientAddTB.Value = authentication.ClientAddress;
             }
@@ -273,7 +273,7 @@ namespace GXDLMSDirector
             Font f = new Font(e.Font, FontStyle.Regular);
             // Create a new background brush.
             Brush b = new SolidBrush(e.ForeColor);
-            // Draw the item.			
+            // Draw the item.
             GXServerAddress item = (GXServerAddress)ServerAddressTypeCB.Items[e.Index];
             if (item == null)
             {
@@ -288,14 +288,14 @@ namespace GXDLMSDirector
         {
             try
             {
-                GXServerAddress server = Manufacturer.GetActiveServer();                
+                GXServerAddress server = Manufacturer.GetActiveServer();
                 server.Selected = false;
                 //Save old values.
                 UpdateServer(server);
-                
+
                 server = ((GXServerAddress)ServerAddressTypeCB.SelectedItem);
                 server.Selected = true;
-                RefreshServer(server);                
+                RefreshServer(server);
             }
             catch (Exception Ex)
             {

@@ -1,14 +1,14 @@
 //
 // --------------------------------------------------------------------------
 //  Gurux Ltd
-// 
+//
 //
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 8777 $,
-//                  $Date: 2016-09-26 13:38:43 +0300 (ma, 26 syys 2016) $
-//                  $Author: kurumi $
+// Version:         $Revision: 8932 $,
+//                  $Date: 2016-11-22 16:36:52 +0200 (ti, 22 marras 2016) $
+//                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -19,16 +19,16 @@
 // This file is a part of Gurux Device Framework.
 //
 // Gurux Device Framework is Open Source software; you can redistribute it
-// and/or modify it under the terms of the GNU General Public License 
+// and/or modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; version 2 of the License.
 // Gurux Device Framework is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
 //
 // More information of Gurux DLMS/COSEM Director: http://www.gurux.org/GXDLMSDirector
 //
-// This code is licensed under the GNU General Public License v2. 
+// This code is licensed under the GNU General Public License v2.
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
@@ -81,7 +81,7 @@ namespace GXDLMSDirector
             this.parent = parent;
             this.media = media;
             client = new GXDLMSSecureClient();
-        }        
+        }
 
         public ProgressEventHandler OnProgress;
         public ReadEventHandler OnBeforeRead;
@@ -105,7 +105,7 @@ namespace GXDLMSDirector
         public void ParseAAREResponse(GXByteBuffer data)
         {
             client.ParseAAREResponse(data);
-        }                
+        }
 
         public byte[] Read(GXDLMSObject it, int attributeOrdinal)
         {
@@ -199,7 +199,7 @@ namespace GXDLMSDirector
                 }
                 try
                 {
-                    //Loop until whole COSEM packet is received.                
+                    //Loop until whole COSEM packet is received.
                     while (!client.GetData(p.Reply, reply))
                     {
                         //If Eop is not set read one byte at time.
@@ -249,7 +249,7 @@ namespace GXDLMSDirector
             {
                 throw new Exception("Unknown manufacturer " + parent.Manufacturer);
             }
-            GXSerial serial = media as GXSerial;            
+            GXSerial serial = media as GXSerial;
             byte Terminator = (byte)0x0A;
             media.Open();
             //Query device information.
@@ -264,8 +264,8 @@ namespace GXDLMSDirector
                 ReceiveParameters<string> p = new ReceiveParameters<string>()
                 {
                     AllData = false,
-                    Eop = Terminator,                    
-                    WaitTime = parent.WaitTime * 1000                    
+                    Eop = Terminator,
+                    WaitTime = parent.WaitTime * 1000
                 };
                 lock (media.Synchronous)
                 {
@@ -279,7 +279,7 @@ namespace GXDLMSDirector
                             this.ReadDLMSPacket(this.DisconnectRequest(), 1, reply);
                         }
                         catch (Exception)
-                        { 
+                        {
                         }
                         data = (char)0x01 + "B0" + (char)0x03 + "\r\n";
                         media.Send(data, null);
@@ -320,7 +320,7 @@ namespace GXDLMSDirector
                             throw new Exception(data);
                         }
                     }
-                }                                               
+                }
                 GXLogWriter.WriteLog("HDLC received: " + p.Reply);
                 if (p.Reply[0] != '/')
                 {
@@ -366,10 +366,12 @@ namespace GXDLMSDirector
                 GXLogWriter.WriteLog("BaudRate is : " + BaudRate.ToString());
                 //Send ACK
                 //Send Protocol control character
-                byte controlCharacter = (byte)'2';// "2" HDLC protocol procedure (Mode E)
+                // "2" HDLC protocol procedure (Mode E)
+                byte controlCharacter = (byte)'2';
                 //Send Baud rate character
-                //Mode control character 
-                byte ModeControlCharacter = (byte)'2';//"2" //(HDLC protocol procedure) (Binary mode)
+                //Mode control character
+                byte ModeControlCharacter = (byte)'2';
+                //"2" //(HDLC protocol procedure) (Binary mode)
                 //Set mode E.
                 byte[] arr = new byte[] { 0x06, controlCharacter, (byte)baudrate, ModeControlCharacter, 13, 10 };
                 GXLogWriter.WriteLog("Moving to mode E.", arr);
@@ -506,9 +508,9 @@ namespace GXDLMSDirector
             client.Ciphering.Security = parent.Security;
             if (parent.SystemTitle != null && parent.BlockCipherKey != null && parent.AuthenticationKey != null)
             {
-                client.Ciphering.SystemTitle = GXCommon.HexToBytes(parent.SystemTitle, true);
-                client.Ciphering.BlockCipherKey = GXCommon.HexToBytes(parent.BlockCipherKey, true);
-                client.Ciphering.AuthenticationKey = GXCommon.HexToBytes(parent.AuthenticationKey, true);
+                client.Ciphering.SystemTitle = GXCommon.HexToBytes(parent.SystemTitle);
+                client.Ciphering.BlockCipherKey = GXCommon.HexToBytes(parent.BlockCipherKey);
+                client.Ciphering.AuthenticationKey = GXCommon.HexToBytes(parent.AuthenticationKey);
             }
             else
             {
@@ -601,7 +603,7 @@ namespace GXDLMSDirector
                     GXLogWriter.WriteLog("Parsing UA reply succeeded.");
                 }
                 //Generate AARQ request.
-                //Split requests to multiple packets if needed. 
+                //Split requests to multiple packets if needed.
                 //If password is used all data might not fit to one packet.
                 foreach (byte[] it in AARQRequest())
                 {
@@ -623,7 +625,7 @@ namespace GXDLMSDirector
                 }
                 //If authentication is required.
                 if (client.IsAuthenticationRequired)
-                {                    
+                {
                     foreach (byte[] it in client.GetApplicationAssociationRequest())
                     {
                         GXLogWriter.WriteLog("Authenticating", it);
@@ -639,7 +641,7 @@ namespace GXDLMSDirector
                 {
                     ReceiveParameters<string> p = new ReceiveParameters<string>()
                     {
-                        Eop = (byte) 0xA,
+                        Eop = (byte)0xA,
                         WaitTime = parent.WaitTime * 1000
                     };
                     lock (media.Synchronous)
@@ -693,10 +695,10 @@ namespace GXDLMSDirector
                 if (OnAfterRead != null)
                 {
                     OnAfterRead(CurrentProfileGeneric, 2);
-                }  
+                }
             }
-        }        
-        
+        }
+
         /// <summary>
         /// Read data block from the device.
         /// </summary>
@@ -710,13 +712,13 @@ namespace GXDLMSDirector
             {
                 parent.Disconnect();
                 parent.InitializeConnection();
-            }            
+            }
             GXLogWriter.WriteLog(text, data);
             ReadDLMSPacket(data, reply);
             if (OnDataReceived != null)
             {
                 OnDataReceived(this, reply);
-            }              
+            }
             if (reply.IsMoreData)
             {
                 if (reply.TotalCount != 1)
@@ -725,10 +727,10 @@ namespace GXDLMSDirector
                 }
                 while (reply.IsMoreData)
                 {
-                    data = client.ReceiverReady(reply.MoreData);                    
+                    data = client.ReceiverReady(reply.MoreData);
                     if ((reply.MoreData & RequestTypes.Frame) != 0)
                     {
-                         GXLogWriter.WriteLog("Get next frame: ", data);
+                        GXLogWriter.WriteLog("Get next frame: ", data);
                     }
                     else
                     {
@@ -745,12 +747,15 @@ namespace GXDLMSDirector
                     }
                 }
             }
-        }        
+        }
 
         public GXDLMSObjectCollection GetObjects()
         {
             GXLogWriter.WriteLog("--- Collecting objects. ---");
-            GXReplyData reply = new GXReplyData(){Peek = false};
+            GXReplyData reply = new GXReplyData()
+            {
+                Peek = false
+            };
             try
             {
                 ReadDataBlock(client.GetObjectsRequest(), "Collecting objects", 3, reply);
@@ -789,7 +794,10 @@ namespace GXDLMSDirector
         /// <param name="attribute"></param>
         public void Read(object sender, GXDLMSObject obj, int attribute)
         {
-            GXReplyData reply = new GXReplyData() { Peek = true};
+            GXReplyData reply = new GXReplyData()
+            {
+                Peek = true
+            };
             foreach (int it in (obj as IGXDLMSBase).GetAttributeIndexToRead())
             {
                 reply.Clear();
@@ -804,7 +812,7 @@ namespace GXDLMSDirector
                         CurrentProfileGeneric = obj as GXDLMSProfileGeneric;
                         OnDataReceived += new GXDLMSCommunicator.DataReceivedEventHandler(this.OnProfileGenericDataReceived);
                         if (CurrentProfileGeneric.AccessSelector == AccessRange.Range ||
-                            CurrentProfileGeneric.AccessSelector == AccessRange.Last)
+                                CurrentProfileGeneric.AccessSelector == AccessRange.Last)
                         {
                             byte[][] tmp = client.ReadRowsByRange(CurrentProfileGeneric, Convert.ToDateTime(CurrentProfileGeneric.From), Convert.ToDateTime(CurrentProfileGeneric.To));
                             ReadDataBlock(tmp[0], "Reading profile generic data", 1, reply);
@@ -830,7 +838,7 @@ namespace GXDLMSDirector
                     }
                     continue;
                 }
-                else               
+                else
                 {
                     if (OnBeforeRead != null)
                     {
@@ -844,8 +852,8 @@ namespace GXDLMSDirector
                     catch (GXDLMSException ex)
                     {
                         if (ex.ErrorCode == 3 ||  //If read is denied.
-                            ex.ErrorCode == 4 || // Undefined object.
-                            ex.ErrorCode == 13) //Actaris returns access violation error.
+                                ex.ErrorCode == 4 || // Undefined object.
+                                ex.ErrorCode == 13) //Actaris returns access violation error.
                         {
                             obj.SetAccess(it, AccessMode.NoAccess);
                             continue;
@@ -877,8 +885,8 @@ namespace GXDLMSDirector
                     }
                 }
             }
-        }    
-       
+        }
+
         public void Write(GXDLMSObject obj, object target, int index, List<object> UpdatedObjects)
         {
             object value;
@@ -903,12 +911,16 @@ namespace GXDLMSDirector
                     }
                     try
                     {
-                        foreach (byte[] tmp in client.Write(obj.Name, value, type, obj.ObjectType, it))
+                        ValueEventArgs e = new ValueEventArgs(obj, it, 0, null);
+                        e.Value = value;
+                        ((IGXDLMSBase)obj).SetValue(null, e);
+                        foreach (byte[] tmp in client.Write(obj, it))
                         {
                             ReadDataBlock(tmp, "Write object", reply);
                         }
                         obj.ClearDirty(it);
                         //Read data once again to make sure it is updated.
+                        reply.Clear();
                         byte[] data = client.Read(obj, it)[0];
                         ReadDataBlock(data, "Read object " + obj.ObjectType, reply);
 
@@ -931,13 +943,13 @@ namespace GXDLMSDirector
                         }
                     }
                 }
-            }            
+            }
         }
 
         public void ReadValue(GXDLMSObject it, int attributeOrdinal)
         {
             GXReplyData reply = new GXReplyData();
-            ReadDataBlock(Read(it, attributeOrdinal), "Read object", reply);             
+            ReadDataBlock(Read(it, attributeOrdinal), "Read object", reply);
             //If data type is unknown
             if (it.GetDataType(attributeOrdinal) == DataType.None)
             {
@@ -959,6 +971,6 @@ namespace GXDLMSDirector
             byte[] data = client.GetKeepAlive();
             GXLogWriter.WriteLog("Send Keep Alive", data);
             ReadDLMSPacket(data, reply);
-        }      
-    }    
+        }
+    }
 }

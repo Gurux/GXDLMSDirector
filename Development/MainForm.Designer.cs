@@ -1,14 +1,14 @@
 //
 // --------------------------------------------------------------------------
 //  Gurux Ltd
-// 
+//
 //
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/MainForm.Designer.cs $
 //
-// Version:         $Revision: 8063 $,
-//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
-//                  $Author: kurumi $
+// Version:         $Revision: 8984 $,
+//                  $Date: 2016-12-01 14:50:51 +0200 (to, 01 joulu 2016) $
+//                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -19,16 +19,16 @@
 // This file is a part of Gurux Device Framework.
 //
 // Gurux Device Framework is Open Source software; you can redistribute it
-// and/or modify it under the terms of the GNU General Public License 
+// and/or modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; version 2 of the License.
 // Gurux Device Framework is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
 //
 // More information of Gurux DLMS/COSEM Director: http://www.gurux.org/GXDLMSDirector
 //
-// This code is licensed under the GNU General Public License v2. 
+// This code is licensed under the GNU General Public License v2.
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
@@ -102,21 +102,11 @@ namespace GXDLMSDirector
             this.toolStripMenuItem8 = new System.Windows.Forms.ToolStripSeparator();
             this.ManufacturersMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.OBISCodesMnu = new System.Windows.Forms.ToolStripMenuItem();
-            this.GraphMnu = new System.Windows.Forms.ToolStripMenuItem();
-            this.DisplayedDataMnu = new System.Windows.Forms.ToolStripMenuItem();
-            this.GroupByMnu = new System.Windows.Forms.ToolStripMenuItem();
-            this.GroupByNoneMnu = new System.Windows.Forms.ToolStripMenuItem();
-            this.GroupByHourMnu = new System.Windows.Forms.ToolStripMenuItem();
-            this.GroupByDayMnu = new System.Windows.Forms.ToolStripMenuItem();
-            this.GroupByMonthMnu = new System.Windows.Forms.ToolStripMenuItem();
-            this.GroupByWeekMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.updateManufactureSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.updateProtocolsMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ContentsMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.LibraryVersionsMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.UpdatesMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem9 = new System.Windows.Forms.ToolStripSeparator();
             this.AboutMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -198,9 +188,7 @@ namespace GXDLMSDirector
             this.fileToolStripMenuItem,
             this.viewToolStripMenuItem,
             this.toolsToolStripMenuItem,
-            this.GraphMnu,
             this.updateManufactureSettingsToolStripMenuItem,
-            this.updateProtocolsMnu,
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -385,7 +373,7 @@ namespace GXDLMSDirector
             this.ManufacturersMnu,
             this.OBISCodesMnu});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.toolsToolStripMenuItem.Text = "&Tools";
             // 
             // ConnectMnu
@@ -482,72 +470,6 @@ namespace GXDLMSDirector
             this.OBISCodesMnu.Text = "OBIS Codes...";
             this.OBISCodesMnu.Click += new System.EventHandler(this.OBISCodesMnu_Click);
             // 
-            // GraphMnu
-            // 
-            this.GraphMnu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.DisplayedDataMnu,
-            this.GroupByMnu});
-            this.GraphMnu.Name = "GraphMnu";
-            this.GraphMnu.Size = new System.Drawing.Size(51, 20);
-            this.GraphMnu.Text = "&Graph";
-            // 
-            // DisplayedDataMnu
-            // 
-            this.DisplayedDataMnu.Name = "DisplayedDataMnu";
-            this.DisplayedDataMnu.Size = new System.Drawing.Size(161, 22);
-            this.DisplayedDataMnu.Text = "&Displayed Data...";
-            this.DisplayedDataMnu.Click += new System.EventHandler(this.DisplayedDataMnu_Click);
-            // 
-            // GroupByMnu
-            // 
-            this.GroupByMnu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.GroupByNoneMnu,
-            this.GroupByHourMnu,
-            this.GroupByDayMnu,
-            this.GroupByMonthMnu,
-            this.GroupByWeekMnu});
-            this.GroupByMnu.Name = "GroupByMnu";
-            this.GroupByMnu.Size = new System.Drawing.Size(161, 22);
-            this.GroupByMnu.Text = "Group By";
-            this.GroupByMnu.Visible = false;
-            // 
-            // GroupByNoneMnu
-            // 
-            this.GroupByNoneMnu.Checked = true;
-            this.GroupByNoneMnu.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.GroupByNoneMnu.Name = "GroupByNoneMnu";
-            this.GroupByNoneMnu.Size = new System.Drawing.Size(110, 22);
-            this.GroupByNoneMnu.Text = "None";
-            this.GroupByNoneMnu.Click += new System.EventHandler(this.GroupByItem_Click);
-            // 
-            // GroupByHourMnu
-            // 
-            this.GroupByHourMnu.Name = "GroupByHourMnu";
-            this.GroupByHourMnu.Size = new System.Drawing.Size(110, 22);
-            this.GroupByHourMnu.Text = "Hour";
-            this.GroupByHourMnu.Click += new System.EventHandler(this.GroupByItem_Click);
-            // 
-            // GroupByDayMnu
-            // 
-            this.GroupByDayMnu.Name = "GroupByDayMnu";
-            this.GroupByDayMnu.Size = new System.Drawing.Size(110, 22);
-            this.GroupByDayMnu.Text = "Day";
-            this.GroupByDayMnu.Click += new System.EventHandler(this.GroupByItem_Click);
-            // 
-            // GroupByMonthMnu
-            // 
-            this.GroupByMonthMnu.Name = "GroupByMonthMnu";
-            this.GroupByMonthMnu.Size = new System.Drawing.Size(110, 22);
-            this.GroupByMonthMnu.Text = "Month";
-            this.GroupByMonthMnu.Click += new System.EventHandler(this.GroupByItem_Click);
-            // 
-            // GroupByWeekMnu
-            // 
-            this.GroupByWeekMnu.Name = "GroupByWeekMnu";
-            this.GroupByWeekMnu.Size = new System.Drawing.Size(110, 22);
-            this.GroupByWeekMnu.Text = "Week";
-            this.GroupByWeekMnu.Click += new System.EventHandler(this.GroupByItem_Click);
-            // 
             // updateManufactureSettingsToolStripMenuItem
             // 
             this.updateManufactureSettingsToolStripMenuItem.Name = "updateManufactureSettingsToolStripMenuItem";
@@ -556,21 +478,12 @@ namespace GXDLMSDirector
             this.updateManufactureSettingsToolStripMenuItem.Visible = false;
             this.updateManufactureSettingsToolStripMenuItem.Click += new System.EventHandler(this.updateManufactureSettingsToolStripMenuItem_Click);
             // 
-            // updateProtocolsMnu
-            // 
-            this.updateProtocolsMnu.Name = "updateProtocolsMnu";
-            this.updateProtocolsMnu.Size = new System.Drawing.Size(149, 20);
-            this.updateProtocolsMnu.Text = "New Updates Available...";
-            this.updateProtocolsMnu.Visible = false;
-            this.updateProtocolsMnu.Click += new System.EventHandler(this.UpdatesMnu_Click);
-            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ContentsMnu,
             this.toolStripMenuItem1,
             this.LibraryVersionsMenu,
-            this.UpdatesMnu,
             this.toolStripMenuItem9,
             this.AboutMnu});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
@@ -580,38 +493,31 @@ namespace GXDLMSDirector
             // ContentsMnu
             // 
             this.ContentsMnu.Name = "ContentsMnu";
-            this.ContentsMnu.Size = new System.Drawing.Size(182, 22);
+            this.ContentsMnu.Size = new System.Drawing.Size(165, 22);
             this.ContentsMnu.Text = "Contents...";
             this.ContentsMnu.Click += new System.EventHandler(this.ContentsMnu_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(179, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(162, 6);
             // 
             // LibraryVersionsMenu
             // 
             this.LibraryVersionsMenu.Name = "LibraryVersionsMenu";
-            this.LibraryVersionsMenu.Size = new System.Drawing.Size(182, 22);
+            this.LibraryVersionsMenu.Size = new System.Drawing.Size(165, 22);
             this.LibraryVersionsMenu.Text = "Library Versions...";
             this.LibraryVersionsMenu.Click += new System.EventHandler(this.LibraryVersionsMenu_Click);
-            // 
-            // UpdatesMnu
-            // 
-            this.UpdatesMnu.Name = "UpdatesMnu";
-            this.UpdatesMnu.Size = new System.Drawing.Size(182, 22);
-            this.UpdatesMnu.Text = "Check For Updates...";
-            this.UpdatesMnu.Click += new System.EventHandler(this.UpdatesMnu_Click);
             // 
             // toolStripMenuItem9
             // 
             this.toolStripMenuItem9.Name = "toolStripMenuItem9";
-            this.toolStripMenuItem9.Size = new System.Drawing.Size(179, 6);
+            this.toolStripMenuItem9.Size = new System.Drawing.Size(162, 6);
             // 
             // AboutMnu
             // 
             this.AboutMnu.Name = "AboutMnu";
-            this.AboutMnu.Size = new System.Drawing.Size(182, 22);
+            this.AboutMnu.Size = new System.Drawing.Size(165, 22);
             this.AboutMnu.Text = "&About...";
             this.AboutMnu.Click += new System.EventHandler(this.AboutMnu_Click);
             // 
@@ -1215,7 +1121,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ToolStripMenuItem ViewToolbarMnu;
         private System.Windows.Forms.ToolStripMenuItem ViewStatusbarMnu;
         private System.Windows.Forms.ToolStripStatusLabel StatusLbl;
-		private System.Windows.Forms.ToolStripProgressBar ProgressBar;
+        private System.Windows.Forms.ToolStripProgressBar ProgressBar;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripMenuItem DeleteMnu;
@@ -1252,32 +1158,24 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ToolStripMenuItem LogMnu;
         private System.Windows.Forms.ToolStripMenuItem ClearLogMnu;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem8;
-		private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-		private System.Windows.Forms.ToolStripMenuItem ConnectCMnu;
-		private System.Windows.Forms.ToolStripMenuItem AddDeviceCMnu;
-		private System.Windows.Forms.ToolStripMenuItem DisconnectCMnu;
-		private System.Windows.Forms.ToolStripMenuItem ReadCMnu;
-		private System.Windows.Forms.ToolStripSeparator Line1CMnu;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem ConnectCMnu;
+        private System.Windows.Forms.ToolStripMenuItem AddDeviceCMnu;
+        private System.Windows.Forms.ToolStripMenuItem DisconnectCMnu;
+        private System.Windows.Forms.ToolStripMenuItem ReadCMnu;
+        private System.Windows.Forms.ToolStripSeparator Line1CMnu;
         private System.Windows.Forms.ToolStripMenuItem DeleteCMnu;
         private System.Windows.Forms.ToolStripMenuItem WriteMnu;
         private System.Windows.Forms.ToolStripButton WriteBtn;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripMenuItem GraphMnu;
-        private System.Windows.Forms.ToolStripMenuItem DisplayedDataMnu;
-        private System.Windows.Forms.ToolStripMenuItem GroupByMnu;
-        private System.Windows.Forms.ToolStripMenuItem GroupByNoneMnu;
-        private System.Windows.Forms.ToolStripMenuItem GroupByHourMnu;
-        private System.Windows.Forms.ToolStripMenuItem GroupByDayMnu;
-        private System.Windows.Forms.ToolStripMenuItem GroupByMonthMnu;
-        private System.Windows.Forms.ToolStripMenuItem GroupByWeekMnu;
+
         private System.Windows.Forms.ToolStripMenuItem updateManufactureSettingsToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem5;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem5;
         private System.Windows.Forms.ToolStripMenuItem PropertiesCMnu;
-        private System.Windows.Forms.ToolStripMenuItem UpdatesMnu;
+
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem9;
         private System.Windows.Forms.ToolStripMenuItem CancelBtn;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem10;
-        private System.Windows.Forms.ToolStripMenuItem updateProtocolsMnu;
         private System.Windows.Forms.ToolStripMenuItem RecentFilesMnu;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem11;
         private System.Windows.Forms.ToolStripMenuItem GroupsMnu;

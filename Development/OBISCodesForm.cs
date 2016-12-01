@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/OBISCodesForm.cs $
 //
-// Version:         $Revision: 8885 $,
-//                  $Date: 2016-11-15 10:34:46 +0200 (ti, 15 marras 2016) $
+// Version:         $Revision: 8937 $,
+//                  $Date: 2016-11-23 14:03:11 +0200 (ke, 23 marras 2016) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -45,241 +45,241 @@ using Gurux.DLMS.Enums;
 
 namespace GXDLMSDirector
 {
-    public partial class OBISCodesForm : Form
+public partial class OBISCodesForm : Form
+{
+    System.Collections.Hashtable Items = new System.Collections.Hashtable();
+    public OBISCodesForm(GXManufacturerCollection manufacturers, string selectedManufacturer, ObjectType Interface, string ln)
     {
-        System.Collections.Hashtable Items = new System.Collections.Hashtable();
-        public OBISCodesForm(GXManufacturerCollection manufacturers, string selectedManufacturer, ObjectType Interface, string ln)
+        InitializeComponent();
+        ManufacturerNameCH.Width = -2;
+        NewBtn.Enabled = manufacturers.Count != 0;
+        EditBtn.Enabled = RemoveBtn.Enabled = false;
+        bool bSelected = false;
+        //Add manufacturers
+        foreach (GXManufacturer it in manufacturers)
         {
-            InitializeComponent();
-            ManufacturerNameCH.Width = -2;
-            NewBtn.Enabled = manufacturers.Count != 0;
-            EditBtn.Enabled = RemoveBtn.Enabled = false;
-            bool bSelected = false;
-            //Add manufacturers
-            foreach (GXManufacturer it in manufacturers)
+            if (!it.Removed)
             {
-                if (!it.Removed)
+                ListViewItem item = AddManufacturer(it);
+                if (it.Identification == selectedManufacturer)
                 {
-                    ListViewItem item = AddManufacturer(it);
-                    if (it.Identification == selectedManufacturer)
+                    bSelected = item.Selected = true;
+                }
+            }
+        }
+        //Select first item
+        if (!bSelected && ManufacturersList.Items.Count != 0)
+        {
+            ManufacturersList.Items[0].Selected = true;
+        }
+        //Add OBIS Codes.
+        ManufacturersList_SelectedIndexChanged(null, null);
+        //Select OBIS code by Logical name.
+        if (ManufacturersList.SelectedItems.Count == 1)
+        {
+            ShowOBISCOdes(((GXManufacturer)ManufacturersList.SelectedItems[0].Tag).ObisCodes, Interface, ln);
+        }
+        this.ManufacturersList.SelectedIndexChanged += new System.EventHandler(this.ManufacturersList_SelectedIndexChanged);
+    }
+
+    ListViewItem AddManufacturer(GXManufacturer manufacturer)
+    {
+        ListViewItem it = ManufacturersList.Items.Add(manufacturer.Name);
+        it.Tag = manufacturer;
+        return it;
+    }
+
+    private void NewBtn_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            GXObisCode item = new GXObisCode();
+            OBISCodeForm dlg = new OBISCodeForm(((GXManufacturer)ManufacturersList.SelectedItems[0].Tag).ObisCodes, item);
+            if (dlg.ShowDialog(this) == DialogResult.OK)
+            {
+                AddItem(item);
+                ((GXManufacturer)ManufacturersList.SelectedItems[0].Tag).ObisCodes.Add(item);
+            }
+        }
+        catch (Exception Ex)
+        {
+            GXDLMS.Common.Error.ShowError(this, Ex);
+        }
+    }
+
+    private void EditBtn_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            GXObisCode item = (GXObisCode)OBISCodesList.SelectedItems[0].Tag;
+            OBISCodeForm dlg = new OBISCodeForm(((GXManufacturer)ManufacturersList.SelectedItems[0].Tag).ObisCodes, item);
+            if (dlg.ShowDialog(this) == DialogResult.OK)
+            {
+                OBISCodesList.SelectedItems[0].Text = item.LogicalName + " " + item.Description;
+            }
+        }
+        catch (Exception Ex)
+        {
+            GXDLMS.Common.Error.ShowError(this, Ex);
+        }
+    }
+
+    private void RemoveBtn_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            if (MessageBox.Show(this, GXDLMSDirector.Properties.Resources.RemoveObjectConfirmation, GXDLMSDirector.Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel) != DialogResult.Yes)
+            {
+                return;
+            }
+            foreach (ListViewItem it in OBISCodesList.SelectedItems)
+            {
+                GXObisCode item = (GXObisCode)it.Tag;
+                ((GXManufacturer)ManufacturersList.SelectedItems[0].Tag).ObisCodes.Remove(item);
+                Items.Remove(item);
+                it.Remove();
+            }
+        }
+        catch (Exception Ex)
+        {
+            GXDLMS.Common.Error.ShowError(this, Ex);
+        }
+    }
+
+    /// <summary>
+    /// Add item to OBIS list.
+    /// </summary>
+    /// <param name="item"></param>
+    ListViewItem AddItem(GXObisCode item)
+    {
+        ListViewItem it = OBISCodesList.Items.Add(item.LogicalName + " " + item.Description);
+        it.Tag = item;
+        Items[item] = it;
+        return it;
+    }
+
+    static int CompareOBISKeys(KeyValuePair<string, GXObisCode> a, KeyValuePair<string, GXObisCode> b)
+    {
+        if (a.Key == null || b.Key == null)
+        {
+            return 0;
+        }
+        string[] keyA = a.Key.Split('.');
+        string[] keyB = b.Key.Split('.');
+        if (keyA.Length != 6 || keyB.Length != 6)
+        {
+            return -1;
+        }
+        for (int pos = 0; pos != keyA.Length; ++pos)
+        {
+            if (keyA[pos] != keyB[pos])
+            {
+                if (int.Parse(keyA[pos]) < int.Parse(keyB[pos]))
+                {
+                    return -1;
+                }
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    void ShowOBISCOdes(GXObisCodeCollection collection, ObjectType Interface, string selectedLN)
+    {
+        Items.Clear();
+        this.OBISCodesList.Items.Clear();
+        if (collection != null)
+        {
+            List<KeyValuePair<string, GXObisCode>> list = new List<KeyValuePair<string, GXObisCode>>();
+            foreach (GXObisCode it in collection)
+            {
+                if (!string.IsNullOrEmpty(it.LogicalName))
+                {
+                    list.Add(new KeyValuePair<string, GXObisCode>(it.LogicalName, it));
+                }
+            }
+            try
+            {
+                list.Sort(CompareOBISKeys);
+            }
+            catch
+            {
+                //This fails if there is empty key. Remove key.
+            }
+            bool bSelected = false;
+            if (collection != null)
+            {
+                foreach (KeyValuePair<string, GXObisCode> it in list)
+                {
+                    ListViewItem item = AddItem(it.Value);
+                    if (!bSelected && Interface == it.Value.ObjectType && it.Value.LogicalName == selectedLN)
                     {
                         bSelected = item.Selected = true;
                     }
                 }
             }
-            //Select first item
-            if (!bSelected && ManufacturersList.Items.Count != 0)
-            {
-                ManufacturersList.Items[0].Selected = true;
-            }
-            //Add OBIS Codes.
-            ManufacturersList_SelectedIndexChanged(null, null);
-            //Select OBIS code by Logical name.
-            if (ManufacturersList.SelectedItems.Count == 1)
-            {
-                ShowOBISCOdes(((GXManufacturer)ManufacturersList.SelectedItems[0].Tag).ObisCodes, Interface, ln);
-            }
-            this.ManufacturersList.SelectedIndexChanged += new System.EventHandler(this.ManufacturersList_SelectedIndexChanged);
-        }
 
-        ListViewItem AddManufacturer(GXManufacturer manufacturer)
-        {
-            ListViewItem it = ManufacturersList.Items.Add(manufacturer.Name);
-            it.Tag = manufacturer;
-            return it;
-        }
-
-        private void NewBtn_Click(object sender, EventArgs e)
-        {
-            try
+            bool bEnabled = this.OBISCodesList.Items.Count != 0;
+            EditBtn.Enabled = RemoveBtn.Enabled = bEnabled;
+            if (!bSelected && bEnabled)
             {
-                GXObisCode item = new GXObisCode();
-                OBISCodeForm dlg = new OBISCodeForm(((GXManufacturer)ManufacturersList.SelectedItems[0].Tag).ObisCodes, item);
-                if (dlg.ShowDialog(this) == DialogResult.OK)
-                {
-                    AddItem(item);
-                    ((GXManufacturer)ManufacturersList.SelectedItems[0].Tag).ObisCodes.Add(item);
-                }
-            }
-            catch (Exception Ex)
-            {
-                GXDLMS.Common.Error.ShowError(this, Ex);
+                this.OBISCodesList.Items[0].Selected = true;
             }
         }
+        this.OBISCodesList.Select();
+    }
 
-        private void EditBtn_Click(object sender, EventArgs e)
+    /// <summary>
+    /// Show manufacturer's OBIS Codes.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void ManufacturersList_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (ManufacturersList.SelectedItems.Count == 1)
         {
-            try
-            {
-                GXObisCode item = (GXObisCode)OBISCodesList.SelectedItems[0].Tag;
-                OBISCodeForm dlg = new OBISCodeForm(((GXManufacturer)ManufacturersList.SelectedItems[0].Tag).ObisCodes, item);
-                if (dlg.ShowDialog(this) == DialogResult.OK)
-                {
-                    OBISCodesList.SelectedItems[0].Text = item.LogicalName + " " + item.Description;
-                }
-            }
-            catch (Exception Ex)
-            {
-                GXDLMS.Common.Error.ShowError(this, Ex);
-            }
+            ShowOBISCOdes(((GXManufacturer)ManufacturersList.SelectedItems[0].Tag).ObisCodes, 0, null);
         }
-
-        private void RemoveBtn_Click(object sender, EventArgs e)
+        else
         {
-            try
-            {
-                if (MessageBox.Show(this, GXDLMSDirector.Properties.Resources.RemoveObjectConfirmation, GXDLMSDirector.Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel) != DialogResult.Yes)
-                {
-                    return;
-                }
-                foreach (ListViewItem it in OBISCodesList.SelectedItems)
-                {
-                    GXObisCode item = (GXObisCode)it.Tag;
-                    ((GXManufacturer)ManufacturersList.SelectedItems[0].Tag).ObisCodes.Remove(item);
-                    Items.Remove(item);
-                    it.Remove();
-                }
-            }
-            catch (Exception Ex)
-            {
-                GXDLMS.Common.Error.ShowError(this, Ex);
-            }
-        }
-
-        /// <summary>
-        /// Add item to OBIS list.
-        /// </summary>
-        /// <param name="item"></param>
-        ListViewItem AddItem(GXObisCode item)
-        {
-            ListViewItem it = OBISCodesList.Items.Add(item.LogicalName + " " + item.Description);
-            it.Tag = item;
-            Items[item] = it;
-            return it;
-        }
-
-        static int CompareOBISKeys(KeyValuePair<string, GXObisCode> a, KeyValuePair<string, GXObisCode> b)
-        {
-            if (a.Key == null || b.Key == null)
-            {
-                return 0;
-            }
-            string[] keyA = a.Key.Split('.');
-            string[] keyB = b.Key.Split('.');
-            if (keyA.Length != 6 || keyB.Length != 6)
-            {
-                return -1;
-            }
-            for (int pos = 0; pos != keyA.Length; ++pos)
-            {
-                if (keyA[pos] != keyB[pos])
-                {
-                    if (int.Parse(keyA[pos]) < int.Parse(keyB[pos]))
-                    {
-                        return -1;
-                    }
-                    return 1;
-                }
-            }
-            return 0;
-        }
-
-        void ShowOBISCOdes(GXObisCodeCollection collection, ObjectType Interface, string selectedLN)
-        {
-            Items.Clear();
-            this.OBISCodesList.Items.Clear();
-            if (collection != null)
-            {
-                List<KeyValuePair<string, GXObisCode>> list = new List<KeyValuePair<string, GXObisCode>>();
-                foreach (GXObisCode it in collection)
-                {
-                    if (!string.IsNullOrEmpty(it.LogicalName))
-                    {
-                        list.Add(new KeyValuePair<string, GXObisCode>(it.LogicalName, it));
-                    }
-                }
-                try
-                {
-                    list.Sort(CompareOBISKeys);
-                }
-                catch
-                {
-                    //This fails if there is empty key. Remove key.
-                }
-                bool bSelected = false;
-                if (collection != null)
-                {
-                    foreach (KeyValuePair<string, GXObisCode> it in list)
-                    {
-                        ListViewItem item = AddItem(it.Value);
-                        if (!bSelected && Interface == it.Value.ObjectType && it.Value.LogicalName == selectedLN)
-                        {
-                            bSelected = item.Selected = true;
-                        }
-                    }
-                }
-
-                bool bEnabled = this.OBISCodesList.Items.Count != 0;
-                EditBtn.Enabled = RemoveBtn.Enabled = bEnabled;
-                if (!bSelected && bEnabled)
-                {
-                    this.OBISCodesList.Items[0].Selected = true;
-                }
-            }
-            this.OBISCodesList.Select();
-        }
-
-        /// <summary>
-        /// Show manufacturer's OBIS Codes.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ManufacturersList_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (ManufacturersList.SelectedItems.Count == 1)
-            {
-                ShowOBISCOdes(((GXManufacturer)ManufacturersList.SelectedItems[0].Tag).ObisCodes, 0, null);
-            }
-            else
-            {
-                ShowOBISCOdes(null, 0, null);
-            }
-        }
-
-        /// <summary>
-        /// Update Edit and Remove buttons when new item is selected from the list.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OBISCodesList_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
-        {
-            EditBtn.Enabled = RemoveBtn.Enabled = OBISCodesList.SelectedItems.Count == 1;
-        }
-
-        private void OKBtn_Click(object sender, EventArgs e)
-        {
-        }
-
-        protected static ScrollBars GetVisibleScrollbars(Control ctl)
-        {
-            int wndStyle = Gurux.Win32.GetWindowLong(ctl.Handle, Gurux.Win32.GWL_STYLE);
-            bool hsVisible = (wndStyle & Gurux.Win32.WS_HSCROLL) != 0;
-            bool vsVisible = (wndStyle & Gurux.Win32.WS_VSCROLL) != 0;
-            if (hsVisible)
-            {
-                return vsVisible ? ScrollBars.Both : ScrollBars.Horizontal;
-            }
-            return vsVisible ? ScrollBars.Vertical : ScrollBars.None;
-        }
-
-        /// <summary>
-        /// Edit item when user double clicks item.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OBISCodesList_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            EditBtn_Click(null, null);
+            ShowOBISCOdes(null, 0, null);
         }
     }
+
+    /// <summary>
+    /// Update Edit and Remove buttons when new item is selected from the list.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void OBISCodesList_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+    {
+        EditBtn.Enabled = RemoveBtn.Enabled = OBISCodesList.SelectedItems.Count == 1;
+    }
+
+    private void OKBtn_Click(object sender, EventArgs e)
+    {
+    }
+
+    protected static ScrollBars GetVisibleScrollbars(Control ctl)
+    {
+        int wndStyle = Gurux.Win32.GetWindowLong(ctl.Handle, Gurux.Win32.GWL_STYLE);
+        bool hsVisible = (wndStyle & Gurux.Win32.WS_HSCROLL) != 0;
+        bool vsVisible = (wndStyle & Gurux.Win32.WS_VSCROLL) != 0;
+        if (hsVisible)
+        {
+            return vsVisible ? ScrollBars.Both : ScrollBars.Horizontal;
+        }
+        return vsVisible ? ScrollBars.Vertical : ScrollBars.None;
+    }
+
+    /// <summary>
+    /// Edit item when user double clicks item.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void OBISCodesList_MouseDoubleClick(object sender, MouseEventArgs e)
+    {
+        EditBtn_Click(null, null);
+    }
+}
 }

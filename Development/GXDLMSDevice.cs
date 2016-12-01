@@ -1,14 +1,14 @@
 //
 // --------------------------------------------------------------------------
 //  Gurux Ltd
-// 
+//
 //
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDevice.cs $
 //
-// Version:         $Revision: 8655 $,
-//                  $Date: 2016-07-20 15:55:25 +0300 (ke, 20 heinä 2016) $
-//                  $Author: kurumi $
+// Version:         $Revision: 8914 $,
+//                  $Date: 2016-11-21 17:40:57 +0200 (ma, 21 marras 2016) $
+//                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -19,16 +19,16 @@
 // This file is a part of Gurux Device Framework.
 //
 // Gurux Device Framework is Open Source software; you can redistribute it
-// and/or modify it under the terms of the GNU General Public License 
+// and/or modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; version 2 of the License.
 // Gurux Device Framework is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
 //
 // More information of Gurux DLMS/COSEM Director: http://www.gurux.org/GXDLMSDirector
 //
-// This code is licensed under the GNU General Public License v2. 
+// This code is licensed under the GNU General Public License v2.
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
@@ -99,112 +99,17 @@ namespace GXDLMSDirector
             }
         }
 
-        /// <summary>
-        /// This method is used to solve Column's data type in Profile Generic table.
-        /// </summary>
-        /// <param name="component"></param>
-        /// <param name="attributeIndex"></param>
-        /// <returns></returns>
-        internal static DataType GetAttributeType(GXDLMSObject component, int attributeIndex)
-        {
-            if (attributeIndex != 0)
-            {
-                if (attributeIndex > 0x10)
-                {
-                    attributeIndex = 2;
-                }
-                GXDLMSAttributeSettings att2 = component.Attributes.Find(attributeIndex);
-                if (att2 != null && att2.Type != DataType.None)
-                {
-                    return att2.Type;
-                }
-                PropertyDescriptorCollection pdc = TypeDescriptor.GetProperties(component);
-                foreach (PropertyDescriptor pd in pdc)
-                {
-                    GXDLMSAttributeSettings att = (GXDLMSAttributeSettings)pd.Attributes[typeof(GXDLMSAttributeSettings)];
-                    if (att != null)
-                    {
-                        if (att.Index == attributeIndex)
-                        {
-                            if (att.UIType != DataType.None)
-                            {
-                                return att.UIType;
-                            }
-                            //If expected type is not given return property type.
-                            if (pd.PropertyType == typeof(Int32))
-                            {
-                                return DataType.Int32;
-                            }
-                            if (pd.PropertyType == typeof(UInt32))
-                            {
-                                return DataType.UInt32;
-                            }
-                            if (pd.PropertyType == typeof(String))
-                            {
-                                return DataType.String;
-                            }
-                            if (pd.PropertyType == typeof(byte))
-                            {
-                                return DataType.UInt8;
-                            }
-                            if (pd.PropertyType == typeof(sbyte))
-                            {
-                                return DataType.Int8;
-                            }
-                            if (pd.PropertyType == typeof(Int16))
-                            {
-                                return DataType.Int16;
-                            }
-                            if (pd.PropertyType == typeof(UInt16))
-                            {
-                                return DataType.UInt16;
-                            }
-                            if (pd.PropertyType == typeof(Int64))
-                            {
-                                return DataType.Int64;
-                            }
-                            if (pd.PropertyType == typeof(UInt64))
-                            {
-                                return DataType.UInt64;
-                            }
-                            if (pd.PropertyType == typeof(float))
-                            {
-                                return DataType.Float32;
-                            }
-                            if (pd.PropertyType == typeof(double))
-                            {
-                                return DataType.Float64;
-                            }
-                            if (pd.PropertyType == typeof(DateTime))
-                            {
-                                return DataType.DateTime;
-                            }
-                            if (pd.PropertyType == typeof(Boolean) || pd.PropertyType == typeof(bool))
-                            {
-                                return DataType.Boolean;
-                            }
-                            if (pd.PropertyType == typeof(object))
-                            {
-                                return DataType.None;
-                            }
-                        }
-                    }
-                }
-            }
-            return DataType.None;
-        }
-
         [Browsable(false)]
         [System.Xml.Serialization.XmlIgnore()]
         GXDLMSObjectCollection m_Objects;
-        
+
         [Browsable(false)]
         [System.Xml.Serialization.XmlIgnore()]
         public ProgressEventHandler OnProgress;
-        
+
         [Browsable(false)]
         [System.Xml.Serialization.XmlIgnore()]
-        public StatusEventHandler OnStatusChanged;        
+        public StatusEventHandler OnStatusChanged;
 
         [Browsable(false)]
         [System.Xml.Serialization.XmlIgnore()]
@@ -215,12 +120,12 @@ namespace GXDLMSDirector
         GXDLMSCommunicator m_Communicator;
 
         public void KeepAliveStart()
-        {            
+        {
             if (InactivityMode != InactivityMode.None)
             {
-                KeepAlive.Interval = Manufacturers.FindByIdentification(this.Manufacturer).KeepAliveInterval;                
+                KeepAlive.Interval = Manufacturers.FindByIdentification(this.Manufacturer).KeepAliveInterval;
                 KeepAlive.Start();
-            }           
+            }
         }
 
         public void KeepAliveStop()
@@ -236,7 +141,7 @@ namespace GXDLMSDirector
         {
             get;
             set;
-        }     
+        }
 
         /// <summary>
         /// Maximum used baud rate.
@@ -469,7 +374,7 @@ namespace GXDLMSDirector
             {
                 m_Communicator.media = value;
             }
-        }      
+        }
 
         [Browsable(false)]
         [System.Xml.Serialization.XmlIgnore()]
@@ -477,7 +382,7 @@ namespace GXDLMSDirector
         {
             get;
             set;
-        }        
+        }
 
         /// <summary>
         /// Save name of the manufacturer.
@@ -498,7 +403,7 @@ namespace GXDLMSDirector
             get;
             set;
         }
-        
+
 
         /// <summary>
         /// Save name of the manufacturer.
@@ -508,7 +413,7 @@ namespace GXDLMSDirector
         {
             get
             {
-                return Manufacturers.FindByIdentification(this.Manufacturer).UseIEC47; 
+                return Manufacturers.FindByIdentification(this.Manufacturer).UseIEC47;
             }
         }
 
@@ -531,7 +436,7 @@ namespace GXDLMSDirector
             this.KeepAlive.Elapsed += new System.Timers.ElapsedEventHandler(KeepAlive_Elapsed);
             m_Status = DeviceState.Initialized;
             WaitTime = 5;
-        }        
+        }
 
         /// <summary>
         /// Constructor for serializing.
@@ -556,7 +461,7 @@ namespace GXDLMSDirector
                 }
                 m_Communicator.media = (Gurux.Common.IGXMedia)Activator.CreateInstance(type);
             }
-        }        
+        }
 
         /// <summary>
         /// Media settings as a string.
@@ -568,8 +473,8 @@ namespace GXDLMSDirector
                 return m_Communicator.media.Settings;
             }
             set
-            {               
-                m_Communicator.media.Settings = value;         
+            {
+                m_Communicator.media.Settings = value;
             }
         }
 
@@ -582,7 +487,7 @@ namespace GXDLMSDirector
         {
             get;
             set;
-        }   
+        }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         [XmlArray("Objects2")]
@@ -591,7 +496,7 @@ namespace GXDLMSDirector
             get
             {
                 return m_Objects;
-            }            
+            }
         }
 
         /// <summary>
@@ -637,7 +542,7 @@ namespace GXDLMSDirector
                 }
                 UpdateStatus(DeviceState.Initialized);
             }
-        }        
+        }
 
         GXDLMSObject FindObject(ObjectType type, string logicalName)
         {
@@ -671,7 +576,7 @@ namespace GXDLMSDirector
                 }
             }
             return obj;
-        }       
+        }
 
         bool ShouldSkip(GXDLMSObject it, int index)
         {
@@ -697,12 +602,12 @@ namespace GXDLMSDirector
             List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> cols = null;
             List<DataColumn> columns = new List<DataColumn>();
             if (this.Extension != null)
-            {                
-                cols = this.Extension.Refresh(item, this.Comm);                
+            {
+                cols = this.Extension.Refresh(item, this.Comm);
             }
             if (cols == null)
             {
-                Comm.GetProfileGenericColumns(item);                
+                Comm.GetProfileGenericColumns(item);
             }
         }
 
@@ -742,10 +647,10 @@ namespace GXDLMSDirector
                     if (it.ObjectType == ObjectType.ProfileGeneric)
                     {
                         continue;
-                    }                   
+                    }
                     ++pos;
                     NotifyProgress(this, "Creating object " + it.LogicalName, pos, objs.Count);
-                    m_Objects.Add(it);                    
+                    m_Objects.Add(it);
                 }
                 GXLogWriter.WriteLog("--- Created " + m_Objects.Count.ToString() + " objects. ---");
                 //Read registers units and scalers.
@@ -794,7 +699,7 @@ namespace GXDLMSDirector
                             }
                             throw ex;
                         }
-                    }                  
+                    }
                 }
                 GXLogWriter.WriteLog("--- Reading scalers and units end. ---");
                 /* TODO:
@@ -817,13 +722,13 @@ namespace GXDLMSDirector
                  * */
                 this.OnProgress(this, "Reading scalers and units.", cnt, cnt);
                 foreach (Gurux.DLMS.Objects.GXDLMSProfileGeneric it in objs.GetObjects(ObjectType.ProfileGeneric))
-                {                    
+                {
                     ++pos;
                     NotifyProgress(this, "Creating object " + it.LogicalName, pos, objs.Count);
-                    //Read Profile Generic Columns.                
+                    //Read Profile Generic Columns.
                     try
                     {
-                        NotifyProgress(this, "Get profile generic columns", (2 * cnt) + pos, 3 * objs.Count);                    
+                        NotifyProgress(this, "Get profile generic columns", (2 * cnt) + pos, 3 * objs.Count);
                         UpdateColumns(it, Manufacturers.FindByIdentification(Manufacturer));
                         if (it.CaptureObjects == null || it.CaptureObjects.Count == 0)
                         {
@@ -840,7 +745,7 @@ namespace GXDLMSDirector
             }
             finally
             {
-                NotifyProgress(this, "", 0, 0); 
+                NotifyProgress(this, "", 0, 0);
             }
         }
 
@@ -862,8 +767,8 @@ namespace GXDLMSDirector
                     NotifyProgress(this, "Keep Alive", 0, 1);
                     m_Communicator.KeepAlive();
                 }
-                else if (this.InactivityMode == InactivityMode.Reopen || 
-                    this.InactivityMode == InactivityMode.ReopenActive)
+                else if (this.InactivityMode == InactivityMode.Reopen ||
+                         this.InactivityMode == InactivityMode.ReopenActive)
                 {
                     if (DateTime.Now.Subtract(m_Communicator.connectionStartTime).TotalSeconds > 40)
                     {
@@ -883,5 +788,5 @@ namespace GXDLMSDirector
                 NotifyProgress(this, "Ready", 1, 1);
             }
         }
-    }    
+    }
 }

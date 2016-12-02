@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 8932 $,
-//                  $Date: 2016-11-22 16:36:52 +0200 (ti, 22 marras 2016) $
+// Version:         $Revision: 8991 $,
+//                  $Date: 2016-12-02 13:54:21 +0200 (pe, 02 joulu 2016) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -765,9 +765,6 @@ namespace GXDLMSDirector
                 throw new Exception("GetObjects failed. " + Ex.Message);
             }
             GXDLMSObjectCollection objs = client.ParseObjects(reply.Data, true);
-            //Update OBIS code description.
-            GXDLMSConverter c = new GXDLMSConverter();
-            c.UpdateOBISCodeInformation(objs);
             GXLogWriter.WriteLog("--- Collecting " + objs.Count.ToString() + " objects. ---");
             return objs;
         }
@@ -851,9 +848,11 @@ namespace GXDLMSDirector
                     }
                     catch (GXDLMSException ex)
                     {
-                        if (ex.ErrorCode == 3 ||  //If read is denied.
-                                ex.ErrorCode == 4 || // Undefined object.
-                                ex.ErrorCode == 13) //Actaris returns access violation error.
+                        if (ex.ErrorCode == (int)ErrorCode.ReadWriteDenied ||
+                                ex.ErrorCode == (int)ErrorCode.UndefinedObject ||
+                                ex.ErrorCode == (int)ErrorCode.UnavailableObject ||
+                                //Actaris returns access violation error.
+                                ex.ErrorCode == (int)ErrorCode.AccessViolated)
                         {
                             obj.SetAccess(it, AccessMode.NoAccess);
                             continue;

@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/OBISCodeForm.cs $
 //
-// Version:         $Revision: 8937 $,
-//                  $Date: 2016-11-23 14:03:11 +0200 (ke, 23 marras 2016) $
+// Version:         $Revision: 8991 $,
+//                  $Date: 2016-12-02 13:54:21 +0200 (pe, 02 joulu 2016) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -51,107 +51,108 @@ using Gurux.DLMS.Enums;
 
 namespace GXDLMSDirector
 {
-public partial class OBISCodeForm : Form
-{
-    System.Collections.Hashtable Items = new System.Collections.Hashtable();
-    GXObisCodeCollection ObisCodeCollection;
-    GXObisCode Target;
-    GXObisCode OriginalTarget;
-
-    public OBISCodeForm(GXObisCodeCollection collection, GXObisCode item)
+    public partial class OBISCodeForm : Form
     {
-        InitializeComponent();
-        OriginalTarget = item;
-        //Create clone from original items.
-        MemoryStream ms = new MemoryStream();
-        BinaryFormatter bf = new BinaryFormatter();
-        bf.Serialize(ms, item);
-        ms.Position = 0;
-        Target = (GXObisCode)bf.Deserialize(ms);
-        ms.Close();
-        ObisCodeCollection = collection;
-        ShowInterfaces();
-        if (Target.ObjectType == ObjectType.None)
-        {
-            InterfaceCB.SelectedIndex = 0;
-        }
-        else
-        {
-            InterfaceCB.SelectedItem = Target.ObjectType;
-        }
-        UpdateTarget();
-    }
+        System.Collections.Hashtable Items = new System.Collections.Hashtable();
+        GXObisCodeCollection ObisCodeCollection;
+        GXObisCode Target;
+        GXObisCode OriginalTarget;
 
-    void UpdateTarget()
-    {
-        //If logical name is not given set default value.
-        if (string.IsNullOrEmpty(Target.LogicalName))
+        public OBISCodeForm(GXObisCodeCollection collection, GXObisCode item)
         {
-            Target.LogicalName = "1.2.3.4.5";
-        }
-        ObisPropertyGrid.SelectedObject = Target;
-        InterfaceCB.SelectedItem = Target;
-    }
-
-    /// <summary>
-    /// Show all interfaces
-    /// </summary>
-    void ShowInterfaces()
-    {
-        InterfaceCB.Items.Clear();
-        foreach (Type type in Gurux.DLMS.GXDLMSClient.GetObjectTypes())
-        {
-            GXDLMSObject obj = Activator.CreateInstance(type) as GXDLMSObject;
-            InterfaceCB.Items.Add(obj.ObjectType);
-        }
-    }
-
-    private void OKBtn_Click(object sender, EventArgs e)
-    {
-        try
-        {
-            if (string.IsNullOrEmpty(Target.LogicalName))
+            InitializeComponent();
+            OriginalTarget = item;
+            //Create clone from original items.
+            MemoryStream ms = new MemoryStream();
+            BinaryFormatter bf = new BinaryFormatter();
+            bf.Serialize(ms, item);
+            ms.Position = 0;
+            Target = (GXObisCode)bf.Deserialize(ms);
+            ms.Close();
+            ObisCodeCollection = collection;
+            ShowInterfaces();
+            if (Target.ObjectType == ObjectType.None)
             {
-                throw new Exception("Invalid logical name.");
+                InterfaceCB.SelectedIndex = 0;
             }
-            OriginalTarget.Description = Target.Description;
-            OriginalTarget.ObjectType = Target.ObjectType;
-            OriginalTarget.LogicalName = Target.LogicalName;
-            OriginalTarget.Attributes.Clear();
-            OriginalTarget.Attributes.AddRange(Target.Attributes);
-            if (ObisCodeCollection.FindByLN(OriginalTarget.ObjectType, OriginalTarget.LogicalName, OriginalTarget) != null)
+            else
             {
-                throw new Exception("OBIS code already exists.");
-            }
-        }
-        catch (Exception Ex)
-        {
-            GXDLMS.Common.Error.ShowError(this, Ex);
-            DialogResult = DialogResult.None;
-        }
-    }
-
-    void UpdateObisValueText(ListViewItem item, GXObisValueItem obj)
-    {
-        item.Text = obj.Value + " / " + obj.UIValue;
-    }
-
-    private void InterfaceCB_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        try
-        {
-            bool bChange = Target.ObjectType != (ObjectType)InterfaceCB.SelectedItem;
-            Target.ObjectType = (ObjectType)InterfaceCB.SelectedItem;
-            if (bChange)
-            {
-                Target.Attributes.Clear();
+                InterfaceCB.SelectedItem = Target.ObjectType;
             }
             UpdateTarget();
         }
-        catch (Exception Ex)
+
+        void UpdateTarget()
         {
-            GXDLMS.Common.Error.ShowError(this, Ex);
+            //If logical name is not given set default value.
+            if (string.IsNullOrEmpty(Target.LogicalName))
+            {
+                Target.LogicalName = "1.2.3.4.5";
+            }
+            ObisPropertyGrid.SelectedObject = Target;
+            InterfaceCB.SelectedItem = Target;
+        }
+
+        /// <summary>
+        /// Show all interfaces
+        /// </summary>
+        void ShowInterfaces()
+        {
+            InterfaceCB.Items.Clear();
+            foreach (Type type in Gurux.DLMS.GXDLMSClient.GetObjectTypes())
+            {
+                GXDLMSObject obj = Activator.CreateInstance(type) as GXDLMSObject;
+                InterfaceCB.Items.Add(obj.ObjectType);
+            }
+        }
+
+        private void OKBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!GXDLMSObject.ValidateLogicalName(Target.LogicalName))
+                {
+                    throw new Exception("Invalid logical name.");
+                }
+                OriginalTarget.Description = Target.Description;
+                OriginalTarget.ObjectType = Target.ObjectType;
+                OriginalTarget.LogicalName = Target.LogicalName;
+                OriginalTarget.Append = Target.Append;
+                OriginalTarget.Attributes.Clear();
+                OriginalTarget.Attributes.AddRange(Target.Attributes);
+                if (ObisCodeCollection.FindByLN(OriginalTarget.ObjectType, OriginalTarget.LogicalName, OriginalTarget) != null)
+                {
+                    throw new Exception("OBIS code already exists.");
+                }
+            }
+            catch (Exception Ex)
+            {
+                GXDLMS.Common.Error.ShowError(this, Ex);
+                DialogResult = DialogResult.None;
+            }
+        }
+
+        void UpdateObisValueText(ListViewItem item, GXObisValueItem obj)
+        {
+            item.Text = obj.Value + " / " + obj.UIValue;
+        }
+
+        private void InterfaceCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                bool bChange = Target.ObjectType != (ObjectType)InterfaceCB.SelectedItem;
+                Target.ObjectType = (ObjectType)InterfaceCB.SelectedItem;
+                if (bChange)
+                {
+                    Target.Attributes.Clear();
+                }
+                UpdateTarget();
+            }
+            catch (Exception Ex)
+            {
+                GXDLMS.Common.Error.ShowError(this, Ex);
+            }
         }
     }
-}
 }

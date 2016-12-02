@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/MainForm.cs $
 //
-// Version:         $Revision: 8984 $,
-//                  $Date: 2016-12-01 14:50:51 +0200 (to, 01 joulu 2016) $
+// Version:         $Revision: 8991 $,
+//                  $Date: 2016-12-02 13:54:21 +0200 (pe, 02 joulu 2016) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1836,7 +1836,10 @@ namespace GXDLMSDirector
 
         void UpdateFromObisCode(GXDLMSObject obj, GXObisCode item)
         {
-            obj.Description = item.Description;
+            if (!String.IsNullOrEmpty(item.Description))
+            {
+                obj.Description = item.Description;
+            }
             foreach (GXDLMSAttributeSettings it in item.Attributes)
             {
                 if (obj.Attributes.Find(it.Index) == null)

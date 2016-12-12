@@ -97,12 +97,12 @@
       <HintPath>packages\Gurux.Common.8.1.1611.2901\lib\portable-win+net35\Gurux.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=8.5.1612.901, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.8.5.1612.901\lib\portable-win+net35\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=8.5.1612.1201, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.8.5.1612.1201\lib\portable-win+net35\Gurux.DLMS.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=8.5.1612.901, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.8.5.1612.901\lib\portable-win+net35\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=8.5.1612.1201, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.8.5.1612.1201\lib\portable-win+net35\Gurux.DLMS.UI.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Gurux.Net, Version=8.1.1611.2903, Culture=neutral, processorArchitecture=MSIL">

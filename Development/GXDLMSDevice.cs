@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDevice.cs $
 //
-// Version:         $Revision: 8914 $,
-//                  $Date: 2016-11-21 17:40:57 +0200 (ma, 21 marras 2016) $
+// Version:         $Revision: 9048 $,
+//                  $Date: 2016-12-20 16:35:34 +0200 (ti, 20 joulu 2016) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -254,6 +254,18 @@ namespace GXDLMSDirector
             {
                 ClientAddress = Convert.ToInt32(value);
             }
+        }
+
+
+        /// <summary>
+        /// Standard says that Time zone is from normal time to UTC in minutes.
+        /// If meter is configured to use UTC time (UTC to normal time) set this to true.
+        /// </summary>
+        [DefaultValue(false)]
+        public bool UtcTimeZone
+        {
+            get;
+            set;
         }
 
         /// <summary>

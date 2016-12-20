@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 8991 $,
-//                  $Date: 2016-12-02 13:54:21 +0200 (pe, 02 joulu 2016) $
+// Version:         $Revision: 9048 $,
+//                  $Date: 2016-12-20 16:35:34 +0200 (ti, 20 joulu 2016) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -125,14 +125,6 @@ namespace GXDLMSDirector
             byte[] data = client.DisconnectRequest();
             GXLogWriter.WriteLog("Disconnect request", data);
             return data;
-        }
-
-        public bool UseLogicalNameReferencing
-        {
-            get
-            {
-                return client.UseLogicalNameReferencing;
-            }
         }
 
         public void ReadDLMSPacket(byte[] data, GXReplyData reply)
@@ -464,6 +456,7 @@ namespace GXDLMSDirector
                 client.Password = CryptHelper.Decrypt(this.parent.Password, Password.Key);
             }
             client.UseLogicalNameReferencing = this.parent.UseLogicalNameReferencing;
+            client.UtcTimeZone = parent.UtcTimeZone;
             //Show media verbose.
             if (this.parent.Verbose && media.Trace != System.Diagnostics.TraceLevel.Verbose)
             {

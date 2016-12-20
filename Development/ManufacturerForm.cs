@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/ManufacturerForm.cs $
 //
-// Version:         $Revision: 8984 $,
-//                  $Date: 2016-12-01 14:50:51 +0200 (to, 01 joulu 2016) $
+// Version:         $Revision: 9048 $,
+//                  $Date: 2016-12-20 16:35:34 +0200 (ti, 20 joulu 2016) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -124,6 +124,18 @@ namespace GXDLMSDirector
             ManufacturerIdTB.Enabled = string.IsNullOrEmpty(manufacturer.Identification);
             KeepAliveIntervalTB.Value = Manufacturer.KeepAliveInterval / 1000;
             AdvancedBtn.Enabled = SecuredConnectionCB.Checked = manufacturer.SystemTitle != null;
+            WebAddressTB.Text = Manufacturer.WebAddress;
+            if (!string.IsNullOrEmpty(Manufacturer.Info))
+            {
+                try
+                {
+                    InfoTB.Text = ASCIIEncoding.UTF8.GetString(Convert.FromBase64String(Manufacturer.Info));
+                }
+                catch (Exception)
+                {
+                    InfoTB.Text = "";
+                }
+            }
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
@@ -158,6 +170,15 @@ namespace GXDLMSDirector
                 authentication.ClientAddress = Convert.ToInt32(this.ClientAddTB.Value);
                 //Save server values.
                 UpdateServer((GXServerAddress)ServerAddressTypeCB.SelectedItem);
+                Manufacturer.WebAddress = WebAddressTB.Text;
+                if (!string.IsNullOrEmpty(InfoTB.Text))
+                {
+                    Manufacturer.Info = Convert.ToBase64String(ASCIIEncoding.UTF8.GetBytes(InfoTB.Text));
+                }
+                else
+                {
+                    Manufacturer.Info = null;
+                }
             }
             catch (Exception Ex)
             {

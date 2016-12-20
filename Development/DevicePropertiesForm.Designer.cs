@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.Designer.cs $
 //
-// Version:         $Revision: 8984 $,
-//                  $Date: 2016-12-01 14:50:51 +0200 (to, 01 joulu 2016) $
+// Version:         $Revision: 9048 $,
+//                  $Date: 2016-12-20 16:35:34 +0200 (ti, 20 joulu 2016) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -126,6 +126,7 @@ partial class DevicePropertiesForm
             this.TerminalPhoneNumberTB = new System.Windows.Forms.TextBox();
             this.TerminalPhoneNumberLbl = new System.Windows.Forms.Label();
             this.DeviceTab = new System.Windows.Forms.TabControl();
+            this.UseUtcTimeZone = new System.Windows.Forms.CheckBox();
             this.SupportedServicesTab.SuspendLayout();
             this.CipheringTab.SuspendLayout();
             this.DeviceSettingsTab.SuspendLayout();
@@ -315,6 +316,7 @@ partial class DevicePropertiesForm
             // 
             // DeviceSettingsTab
             // 
+            this.DeviceSettingsTab.Controls.Add(this.UseUtcTimeZone);
             this.DeviceSettingsTab.Controls.Add(this.VerboseModeCB);
             this.DeviceSettingsTab.Controls.Add(this.UseLNCB);
             this.DeviceSettingsTab.Controls.Add(this.ServerAddressTypeCB);
@@ -829,6 +831,16 @@ partial class DevicePropertiesForm
             this.DeviceTab.Size = new System.Drawing.Size(411, 367);
             this.DeviceTab.TabIndex = 0;
             // 
+            // UseUtcTimeZone
+            // 
+            this.UseUtcTimeZone.AutoSize = true;
+            this.UseUtcTimeZone.Location = new System.Drawing.Point(211, 115);
+            this.UseUtcTimeZone.Name = "UseUtcTimeZone";
+            this.UseUtcTimeZone.Size = new System.Drawing.Size(183, 17);
+            this.UseUtcTimeZone.TabIndex = 6;
+            this.UseUtcTimeZone.Text = "Use UTC time zone, not standard";
+            this.UseUtcTimeZone.UseVisualStyleBackColor = true;
+            // 
             // DevicePropertiesForm
             // 
             this.AcceptButton = this.OKBtn;
@@ -929,5 +941,6 @@ partial class DevicePropertiesForm
     private System.Windows.Forms.TextBox TerminalPhoneNumberTB;
     private System.Windows.Forms.Label TerminalPhoneNumberLbl;
     private System.Windows.Forms.TabControl DeviceTab;
-}
+        private System.Windows.Forms.CheckBox UseUtcTimeZone;
+    }
 }

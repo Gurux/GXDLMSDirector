@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 9048 $,
-//                  $Date: 2016-12-20 16:35:34 +0200 (ti, 20 joulu 2016) $
+// Version:         $Revision: 9055 $,
+//                  $Date: 2017-01-02 17:34:34 +0200 (ma, 02 tammi 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -75,6 +75,10 @@ namespace GXDLMSDirector
         public Control parentForm;
         public Gurux.Common.IGXMedia media = null;
         internal GXDLMSSecureClient client;
+        /// <summary>
+        /// Serial init settings.
+        /// </summary>
+        private string serialSettings = null;
 
         public GXDLMSCommunicator(GXDLMSDevice parent, Gurux.Common.IGXMedia media)
         {
@@ -120,11 +124,34 @@ namespace GXDLMSDirector
             ReadDataBlock(client.Method(target, methodIndex, data, DataType.None), "", reply);
         }
 
-        public byte[] DisconnectRequest()
+        byte[] DisconnectRequest()
         {
             byte[] data = client.DisconnectRequest();
             GXLogWriter.WriteLog("Disconnect request", data);
             return data;
+        }
+
+        public void Disconnect()
+        {
+            if (media != null && media.IsOpen)
+            {
+                try
+                {
+                    GXReplyData reply = new GXReplyData();
+                    ReadDLMSPacket(DisconnectRequest(), 1, reply);
+                }
+                finally
+                {
+                    if (media != null)
+                    {
+                        media.Close();
+                        if (serialSettings != null)
+                        {
+                            media.Settings = serialSettings;
+                        }
+                    }
+                }
+            }
         }
 
         public void ReadDLMSPacket(byte[] data, GXReplyData reply)
@@ -234,6 +261,38 @@ namespace GXDLMSDirector
             }
         }
 
+        private char GetIecBaudRate(int baudrate)
+        {
+            char rate = '5';
+            switch (baudrate)
+            {
+                case 300:
+                    rate = '0';
+                    break;
+                case 600:
+                    rate = '1';
+                    break;
+                case 1200:
+                    rate = '2';
+                    break;
+                case 2400:
+                    rate = '3';
+                    break;
+                case 4800:
+                    rate = '4';
+                    break;
+                case 9600:
+                    rate = '5';
+                    break;
+                case 19200:
+                    rate = '6';
+                    break;
+                default:
+                    throw new Exception("Unknown baud rate.");
+            }
+            return rate;
+        }
+
         void InitializeIEC()
         {
             GXManufacturer manufacturer = this.parent.Manufacturers.FindByIdentification(parent.Manufacturer);
@@ -245,8 +304,12 @@ namespace GXDLMSDirector
             byte Terminator = (byte)0x0A;
             media.Open();
             //Query device information.
-            if (media != null && parent.StartProtocol == StartProtocolType.IEC)
+            if (serial != null && parent.StartProtocol == StartProtocolType.IEC)
             {
+                if (serial != null)
+                {
+                    serialSettings = serial.Settings;
+                }
                 string data = "/?!\r\n";
                 if (this.parent.HDLCAddressing == HDLCAddressType.SerialNumber)
                 {
@@ -306,7 +369,10 @@ namespace GXDLMSDirector
                                 p.Count = 1;
                                 media.Receive(p);
                             }
-
+                            if (serialSettings != null)
+                            {
+                                media.Settings = serialSettings;
+                            }
                             data = "Failed to receive reply from the device in given time.";
                             GXLogWriter.WriteLog(data);
                             throw new Exception(data);
@@ -353,6 +419,7 @@ namespace GXDLMSDirector
                 if (parent.MaximumBaudRate != 0)
                 {
                     BaudRate = parent.MaximumBaudRate;
+                    baudrate = GetIecBaudRate(BaudRate);
                     GXLogWriter.WriteLog("Maximum BaudRate is set to : " + BaudRate.ToString());
                 }
                 GXLogWriter.WriteLog("BaudRate is : " + BaudRate.ToString());
@@ -369,10 +436,9 @@ namespace GXDLMSDirector
                 GXLogWriter.WriteLog("Moving to mode E.", arr);
                 lock (media.Synchronous)
                 {
+                    p.Reply = null;
                     media.Send(arr, null);
                     System.Threading.Thread.Sleep(500);
-                    serial.BaudRate = BaudRate;
-                    p.Reply = null;
                     p.WaitTime = 100;
                     //Note! All meters do not echo this.
                     media.Receive(p);
@@ -380,11 +446,10 @@ namespace GXDLMSDirector
                     {
                         GXLogWriter.WriteLog("Received: " + p.Reply);
                     }
-                    serial.Close();
+                    serial.BaudRate = BaudRate;
                     serial.DataBits = 8;
                     serial.Parity = Parity.None;
                     serial.StopBits = StopBits.One;
-                    serial.Open();
                 }
             }
         }

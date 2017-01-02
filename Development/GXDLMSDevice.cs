@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDevice.cs $
 //
-// Version:         $Revision: 9048 $,
-//                  $Date: 2016-12-20 16:35:34 +0200 (ti, 20 joulu 2016) $
+// Version:         $Revision: 9055 $,
+//                  $Date: 2017-01-02 17:34:34 +0200 (ma, 02 tammi 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -117,7 +117,7 @@ namespace GXDLMSDirector
 
         [Browsable(false)]
         [System.Xml.Serialization.XmlIgnore()]
-        GXDLMSCommunicator m_Communicator;
+        GXDLMSCommunicator communicator;
 
         public void KeepAliveStart()
         {
@@ -329,7 +329,7 @@ namespace GXDLMSDirector
             try
             {
                 UpdateStatus(DeviceState.Connecting);
-                m_Communicator.InitializeConnection();
+                communicator.InitializeConnection();
                 UpdateStatus(DeviceState.Connected);
             }
             catch (Exception Ex)
@@ -347,7 +347,7 @@ namespace GXDLMSDirector
         {
             get
             {
-                return m_Communicator;
+                return communicator;
             }
         }
 
@@ -357,11 +357,11 @@ namespace GXDLMSDirector
         {
             get
             {
-                return m_Communicator.client.CustomObisCodes;
+                return communicator.client.CustomObisCodes;
             }
             set
             {
-                m_Communicator.client.CustomObisCodes = value;
+                communicator.client.CustomObisCodes = value;
             }
         }
 
@@ -380,11 +380,11 @@ namespace GXDLMSDirector
         {
             get
             {
-                return m_Communicator.media;
+                return communicator.media;
             }
             set
             {
-                m_Communicator.media = value;
+                communicator.media = value;
             }
         }
 
@@ -439,10 +439,10 @@ namespace GXDLMSDirector
             PhysicalAddress = 1;
             Password = "";
             Authentication = Authentication.None;
-            m_Communicator = new GXDLMSCommunicator(this, media);
-            m_Objects = m_Communicator.client.Objects;
+            communicator = new GXDLMSCommunicator(this, media);
+            m_Objects = communicator.client.Objects;
             m_Objects.Tag = this;
-            m_Communicator.OnProgress += new ProgressEventHandler(this.NotifyProgress);
+            communicator.OnProgress += new ProgressEventHandler(this.NotifyProgress);
             this.KeepAlive = new System.Timers.Timer();
             this.KeepAlive.Interval = 40000;
             this.KeepAlive.Elapsed += new System.Timers.ElapsedEventHandler(KeepAlive_Elapsed);
@@ -462,7 +462,7 @@ namespace GXDLMSDirector
         {
             get
             {
-                return m_Communicator.media.GetType().ToString();
+                return communicator.media.GetType().ToString();
             }
             set
             {
@@ -471,7 +471,7 @@ namespace GXDLMSDirector
                 {
                     throw new Exception("Invalid media type " + value);
                 }
-                m_Communicator.media = (Gurux.Common.IGXMedia)Activator.CreateInstance(type);
+                communicator.media = (Gurux.Common.IGXMedia)Activator.CreateInstance(type);
             }
         }
 
@@ -482,11 +482,11 @@ namespace GXDLMSDirector
         {
             get
             {
-                return m_Communicator.media.Settings;
+                return communicator.media.Settings;
             }
             set
             {
-                m_Communicator.media.Settings = value;
+                communicator.media.Settings = value;
             }
         }
 
@@ -535,11 +535,7 @@ namespace GXDLMSDirector
                 {
                     KeepAlive.Stop();
                 }
-                if (m_Communicator.media.IsOpen)
-                {
-                    GXReplyData reply = new GXReplyData();
-                    m_Communicator.ReadDLMSPacket(m_Communicator.DisconnectRequest(), 1, reply);
-                }
+                communicator.Disconnect();
             }
             catch (Exception Ex)
             {
@@ -548,10 +544,6 @@ namespace GXDLMSDirector
             }
             finally
             {
-                if (m_Communicator.media != null)
-                {
-                    m_Communicator.media.Close();
-                }
                 UpdateStatus(DeviceState.Initialized);
             }
         }
@@ -777,16 +769,16 @@ namespace GXDLMSDirector
                 else if (this.InactivityMode == InactivityMode.KeepAlive)
                 {
                     NotifyProgress(this, "Keep Alive", 0, 1);
-                    m_Communicator.KeepAlive();
+                    communicator.KeepAlive();
                 }
                 else if (this.InactivityMode == InactivityMode.Reopen ||
                          this.InactivityMode == InactivityMode.ReopenActive)
                 {
-                    if (DateTime.Now.Subtract(m_Communicator.connectionStartTime).TotalSeconds > 40)
+                    if (DateTime.Now.Subtract(communicator.connectionStartTime).TotalSeconds > 40)
                     {
                         Disconnect();
                         InitializeConnection();
-                        m_Communicator.connectionStartTime = DateTime.Now;
+                        communicator.connectionStartTime = DateTime.Now;
                     }
                 }
             }

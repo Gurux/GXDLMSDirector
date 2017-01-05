@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 9055 $,
-//                  $Date: 2017-01-02 17:34:34 +0200 (ma, 02 tammi 2017) $
+// Version:         $Revision: 9065 $,
+//                  $Date: 2017-01-05 09:35:39 +0200 (to, 05 tammi 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -75,10 +75,6 @@ namespace GXDLMSDirector
         public Control parentForm;
         public Gurux.Common.IGXMedia media = null;
         internal GXDLMSSecureClient client;
-        /// <summary>
-        /// Serial init settings.
-        /// </summary>
-        private string serialSettings = null;
 
         public GXDLMSCommunicator(GXDLMSDevice parent, Gurux.Common.IGXMedia media)
         {
@@ -145,9 +141,10 @@ namespace GXDLMSDirector
                     if (media != null)
                     {
                         media.Close();
-                        if (serialSettings != null)
+                        //Restore old settings.
+                        if (media is GXSerial)
                         {
-                            media.Settings = serialSettings;
+                            media.Settings = parent.StartMediaSettings;
                         }
                     }
                 }
@@ -306,10 +303,7 @@ namespace GXDLMSDirector
             //Query device information.
             if (serial != null && parent.StartProtocol == StartProtocolType.IEC)
             {
-                if (serial != null)
-                {
-                    serialSettings = serial.Settings;
-                }
+                parent.StartMediaSettings = media.Settings;
                 string data = "/?!\r\n";
                 if (this.parent.HDLCAddressing == HDLCAddressType.SerialNumber)
                 {
@@ -368,10 +362,6 @@ namespace GXDLMSDirector
                                 media.Send(data, null);
                                 p.Count = 1;
                                 media.Receive(p);
-                            }
-                            if (serialSettings != null)
-                            {
-                                media.Settings = serialSettings;
                             }
                             data = "Failed to receive reply from the device in given time.";
                             GXLogWriter.WriteLog(data);
@@ -593,6 +583,8 @@ namespace GXDLMSDirector
                 if (media != null)
                 {
                     media.Close();
+                    //Restore old settings.
+                    media.Settings = parent.StartMediaSettings;
                 }
                 throw Ex;
             }

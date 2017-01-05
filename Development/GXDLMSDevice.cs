@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDevice.cs $
 //
-// Version:         $Revision: 9055 $,
-//                  $Date: 2017-01-02 17:34:34 +0200 (ma, 02 tammi 2017) $
+// Version:         $Revision: 9065 $,
+//                  $Date: 2017-01-05 09:35:39 +0200 (to, 05 tammi 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -338,6 +338,10 @@ namespace GXDLMSDirector
                 if (Media != null)
                 {
                     Media.Close();
+                    if (Media is GXSerial)
+                    {
+                        Media.Settings = StartMediaSettings;
+                    }
                 }
                 throw Ex;
             }
@@ -489,6 +493,11 @@ namespace GXDLMSDirector
                 communicator.media.Settings = value;
             }
         }
+
+        /// <summary>
+        /// Media settings are changed for serial port connection.
+        /// </summary>
+        public string StartMediaSettings;
 
         /// <summary>
         /// Is Logical name referencing used.

@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 9065 $,
-//                  $Date: 2017-01-05 09:35:39 +0200 (to, 05 tammi 2017) $
+// Version:         $Revision: 9152 $,
+//                  $Date: 2017-01-23 10:12:50 +0200 (ma, 23 tammi 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -290,6 +290,23 @@ namespace GXDLMSDirector
             return rate;
         }
 
+        /// <summary>
+        /// Send IEC disconnect message.
+        /// </summary>
+        void DiscIEC()
+        {
+            ReceiveParameters<string> p = new ReceiveParameters<string>()
+            {
+                AllData = false,
+                Eop = (byte)0x0A,
+                WaitTime = parent.WaitTime * 1000
+            };
+            string data = (char)0x01 + "B0" + (char)0x03 + "\r\n";
+            media.Send(data, null);
+            p.Count = 1;
+            media.Receive(p);
+        }
+
         void InitializeIEC()
         {
             GXManufacturer manufacturer = this.parent.Manufacturers.FindByIdentification(parent.Manufacturer);
@@ -330,13 +347,14 @@ namespace GXDLMSDirector
                         catch (Exception)
                         {
                         }
-                        data = (char)0x01 + "B0" + (char)0x03 + "\r\n";
+                        DiscIEC();
+                        string str = "Failed to receive reply from the device in given time.";
+                        GXLogWriter.WriteLog(str);
                         media.Send(data, null);
-                        p.Count = 1;
-                        media.Receive(p);
-                        data = "Failed to receive reply from the device in given time.";
-                        GXLogWriter.WriteLog(data);
-                        throw new Exception(data);
+                        if (!media.Receive(p))
+                        {
+                            throw new Exception(str);
+                        }
                     }
                     //If echo is used.
                     if (p.Reply == data)
@@ -349,19 +367,11 @@ namespace GXDLMSDirector
                             this.ReadDLMSPacket(this.DisconnectRequest(), 1, reply);
                             if (serial != null)
                             {
-                                data = (char)0x01 + "B0" + (char)0x03 + "\r\n";
-                                media.Send(data, null);
-                                p.Count = 1;
-                                if (!media.Receive(p))
-                                {
-                                }
+                                DiscIEC();
                                 serial.DtrEnable = serial.RtsEnable = false;
                                 serial.BaudRate = 9600;
                                 serial.DtrEnable = serial.RtsEnable = true;
-                                data = (char)0x01 + "B0" + (char)0x03 + "\r\n";
-                                media.Send(data, null);
-                                p.Count = 1;
-                                media.Receive(p);
+                                DiscIEC();
                             }
                             data = "Failed to receive reply from the device in given time.";
                             GXLogWriter.WriteLog(data);
@@ -428,23 +438,28 @@ namespace GXDLMSDirector
                 {
                     p.Reply = null;
                     media.Send(arr, null);
-                    System.Threading.Thread.Sleep(500);
-                    p.WaitTime = 100;
+                    p.WaitTime = 2000;
                     //Note! All meters do not echo this.
                     media.Receive(p);
                     if (p.Reply != null)
                     {
                         GXLogWriter.WriteLog("Received: " + p.Reply);
                     }
+                    media.Close();
                     serial.BaudRate = BaudRate;
                     serial.DataBits = 8;
                     serial.Parity = Parity.None;
                     serial.StopBits = StopBits.One;
+                    media.Open();
+                    //Some meters need this sleep. Do not remove.
+                    Thread.Sleep(500);
                 }
             }
         }
 
         void Media_OnTrace(object sender, TraceEventArgs e)
+
+
         {
             GXLogWriter.WriteLog(e.ToString());
         }

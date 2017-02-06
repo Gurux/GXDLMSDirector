@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/MainForm.Designer.cs $
 //
-// Version:         $Revision: 8984 $,
-//                  $Date: 2016-12-01 14:50:51 +0200 (to, 01 joulu 2016) $
+// Version:         $Revision: 9204 $,
+//                  $Date: 2017-02-06 12:36:45 +0200 (ma, 06 helmi 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -85,6 +85,7 @@ namespace GXDLMSDirector
             this.ObjectTreeMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.ObjectListMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.GroupsMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.TraceMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripSeparator();
             this.PropertiesMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -147,9 +148,6 @@ namespace GXDLMSDirector
             this.Separator2TBtn = new System.Windows.Forms.ToolBarButton();
             this.PropertiesTBtn = new System.Windows.Forms.ToolBarButton();
             this.RemoveTBtn = new System.Windows.Forms.ToolBarButton();
-            this.ObjectPanelFrame = new System.Windows.Forms.Panel();
-            this.DeviceList = new System.Windows.Forms.ListView();
-            this.DeviceNameCH = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ListView = new System.Windows.Forms.TabPage();
             this.ObjectList = new System.Windows.Forms.ListView();
             this.DescriptionColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -157,6 +155,10 @@ namespace GXDLMSDirector
             this.ObjectTree = new System.Windows.Forms.TreeView();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.splitter1 = new System.Windows.Forms.Splitter();
+            this.TraceView = new System.Windows.Forms.TextBox();
+            this.splitter2 = new System.Windows.Forms.Splitter();
+            this.ObjectValueView = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.DeviceInfoView = new System.Windows.Forms.Panel();
             this.DeviceGb = new System.Windows.Forms.GroupBox();
             this.ManufacturerLbl = new System.Windows.Forms.Label();
@@ -169,8 +171,9 @@ namespace GXDLMSDirector
             this.ClientAddressLbl = new System.Windows.Forms.Label();
             this.LogicalAddressLbl = new System.Windows.Forms.Label();
             this.LogicalAddressValueLbl = new System.Windows.Forms.Label();
-            this.ObjectValueView = new System.Windows.Forms.ListView();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.DeviceList = new System.Windows.Forms.ListView();
+            this.DeviceNameCH = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ObjectPanelFrame = new System.Windows.Forms.Panel();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -297,6 +300,7 @@ namespace GXDLMSDirector
             this.ObjectTreeMnu,
             this.ObjectListMnu,
             this.GroupsMnu,
+            this.TraceMnu,
             this.toolStripMenuItem7,
             this.PropertiesMnu});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
@@ -342,6 +346,13 @@ namespace GXDLMSDirector
             this.GroupsMnu.Size = new System.Drawing.Size(136, 22);
             this.GroupsMnu.Text = "Groups";
             this.GroupsMnu.Click += new System.EventHandler(this.GroupsMnu_Click);
+            // 
+            // TraceMnu
+            // 
+            this.TraceMnu.Name = "TraceMnu";
+            this.TraceMnu.Size = new System.Drawing.Size(136, 22);
+            this.TraceMnu.Text = "&Trace";
+            this.TraceMnu.Click += new System.EventHandler(this.TraceMenu_Click);
             // 
             // toolStripMenuItem7
             // 
@@ -818,30 +829,6 @@ namespace GXDLMSDirector
             this.RemoveTBtn.ImageIndex = 9;
             this.RemoveTBtn.Name = "RemoveTBtn";
             // 
-            // ObjectPanelFrame
-            // 
-            this.ObjectPanelFrame.Location = new System.Drawing.Point(227, 347);
-            this.ObjectPanelFrame.Name = "ObjectPanelFrame";
-            this.ObjectPanelFrame.Size = new System.Drawing.Size(187, 142);
-            this.ObjectPanelFrame.TabIndex = 12;
-            // 
-            // DeviceList
-            // 
-            this.DeviceList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.DeviceNameCH});
-            this.DeviceList.Location = new System.Drawing.Point(449, 347);
-            this.DeviceList.MultiSelect = false;
-            this.DeviceList.Name = "DeviceList";
-            this.DeviceList.Size = new System.Drawing.Size(134, 87);
-            this.DeviceList.TabIndex = 13;
-            this.DeviceList.UseCompatibleStateImageBehavior = false;
-            this.DeviceList.View = System.Windows.Forms.View.Details;
-            // 
-            // DeviceNameCH
-            // 
-            this.DeviceNameCH.Text = "Name";
-            this.DeviceNameCH.Width = 117;
-            // 
             // ListView
             // 
             this.ListView.Controls.Add(this.ObjectList);
@@ -922,13 +909,53 @@ namespace GXDLMSDirector
             this.splitter1.TabIndex = 11;
             this.splitter1.TabStop = false;
             // 
+            // TraceView
+            // 
+            this.TraceView.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.TraceView.Location = new System.Drawing.Point(201, 465);
+            this.TraceView.Multiline = true;
+            this.TraceView.Name = "TraceView";
+            this.TraceView.ReadOnly = true;
+            this.TraceView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.TraceView.Size = new System.Drawing.Size(524, 49);
+            this.TraceView.TabIndex = 16;
+            // 
+            // splitter2
+            // 
+            this.splitter2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.splitter2.Location = new System.Drawing.Point(201, 462);
+            this.splitter2.Name = "splitter2";
+            this.splitter2.Size = new System.Drawing.Size(524, 3);
+            this.splitter2.TabIndex = 17;
+            this.splitter2.TabStop = false;
+            // 
+            // ObjectValueView
+            // 
+            this.ObjectValueView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1});
+            this.ObjectValueView.FullRowSelect = true;
+            this.ObjectValueView.HideSelection = false;
+            this.ObjectValueView.Location = new System.Drawing.Point(564, 317);
+            this.ObjectValueView.MultiSelect = false;
+            this.ObjectValueView.Name = "ObjectValueView";
+            this.ObjectValueView.Size = new System.Drawing.Size(134, 87);
+            this.ObjectValueView.TabIndex = 21;
+            this.ObjectValueView.UseCompatibleStateImageBehavior = false;
+            this.ObjectValueView.View = System.Windows.Forms.View.Details;
+            this.ObjectValueView.DoubleClick += new System.EventHandler(this.ObjectValueView_DoubleClick);
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Name";
+            this.columnHeader1.Width = 117;
+            // 
             // DeviceInfoView
             // 
             this.DeviceInfoView.Controls.Add(this.DeviceGb);
-            this.DeviceInfoView.Location = new System.Drawing.Point(276, 56);
+            this.DeviceInfoView.Location = new System.Drawing.Point(269, 45);
             this.DeviceInfoView.Name = "DeviceInfoView";
             this.DeviceInfoView.Size = new System.Drawing.Size(422, 266);
-            this.DeviceInfoView.TabIndex = 14;
+            this.DeviceInfoView.TabIndex = 20;
             // 
             // DeviceGb
             // 
@@ -1039,25 +1066,29 @@ namespace GXDLMSDirector
             this.LogicalAddressValueLbl.TabIndex = 7;
             this.LogicalAddressValueLbl.Text = "LogicalAddressValueLbl";
             // 
-            // ObjectValueView
+            // DeviceList
             // 
-            this.ObjectValueView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1});
-            this.ObjectValueView.FullRowSelect = true;
-            this.ObjectValueView.HideSelection = false;
-            this.ObjectValueView.Location = new System.Drawing.Point(591, 402);
-            this.ObjectValueView.MultiSelect = false;
-            this.ObjectValueView.Name = "ObjectValueView";
-            this.ObjectValueView.Size = new System.Drawing.Size(134, 87);
-            this.ObjectValueView.TabIndex = 15;
-            this.ObjectValueView.UseCompatibleStateImageBehavior = false;
-            this.ObjectValueView.View = System.Windows.Forms.View.Details;
-            this.ObjectValueView.DoubleClick += new System.EventHandler(this.ObjectValueView_DoubleClick);
+            this.DeviceList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.DeviceNameCH});
+            this.DeviceList.Location = new System.Drawing.Point(424, 306);
+            this.DeviceList.MultiSelect = false;
+            this.DeviceList.Name = "DeviceList";
+            this.DeviceList.Size = new System.Drawing.Size(134, 87);
+            this.DeviceList.TabIndex = 19;
+            this.DeviceList.UseCompatibleStateImageBehavior = false;
+            this.DeviceList.View = System.Windows.Forms.View.Details;
             // 
-            // columnHeader1
+            // DeviceNameCH
             // 
-            this.columnHeader1.Text = "Name";
-            this.columnHeader1.Width = 117;
+            this.DeviceNameCH.Text = "Name";
+            this.DeviceNameCH.Width = 117;
+            // 
+            // ObjectPanelFrame
+            // 
+            this.ObjectPanelFrame.Location = new System.Drawing.Point(218, 306);
+            this.ObjectPanelFrame.Name = "ObjectPanelFrame";
+            this.ObjectPanelFrame.Size = new System.Drawing.Size(187, 142);
+            this.ObjectPanelFrame.TabIndex = 18;
             // 
             // MainForm
             // 
@@ -1068,6 +1099,8 @@ namespace GXDLMSDirector
             this.Controls.Add(this.DeviceInfoView);
             this.Controls.Add(this.DeviceList);
             this.Controls.Add(this.ObjectPanelFrame);
+            this.Controls.Add(this.splitter2);
+            this.Controls.Add(this.TraceView);
             this.Controls.Add(this.splitter1);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.statusStrip1);
@@ -1179,9 +1212,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ToolStripMenuItem RecentFilesMnu;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem11;
         private System.Windows.Forms.ToolStripMenuItem GroupsMnu;
-        private System.Windows.Forms.Panel ObjectPanelFrame;
-        private System.Windows.Forms.ListView DeviceList;
-        private System.Windows.Forms.ColumnHeader DeviceNameCH;
         private System.Windows.Forms.TabPage ListView;
         private System.Windows.Forms.ListView ObjectList;
         private System.Windows.Forms.ColumnHeader DescriptionColumnHeader;
@@ -1189,6 +1219,15 @@ namespace GXDLMSDirector
         private System.Windows.Forms.TreeView ObjectTree;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.Splitter splitter1;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem12;
+        private System.Windows.Forms.ToolStripMenuItem ObjectTreeMnu;
+        private System.Windows.Forms.ToolStripMenuItem ObjectListMnu;
+        private System.Windows.Forms.ToolStripMenuItem LibraryVersionsMenu;
+        private System.Windows.Forms.ToolStripMenuItem TraceMnu;
+        private System.Windows.Forms.TextBox TraceView;
+        private System.Windows.Forms.Splitter splitter2;
+        private System.Windows.Forms.ListView ObjectValueView;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.Panel DeviceInfoView;
         private System.Windows.Forms.GroupBox DeviceGb;
         private System.Windows.Forms.Label ManufacturerLbl;
@@ -1201,12 +1240,9 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label ClientAddressLbl;
         private System.Windows.Forms.Label LogicalAddressLbl;
         private System.Windows.Forms.Label LogicalAddressValueLbl;
-        private System.Windows.Forms.ListView ObjectValueView;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem12;
-        private System.Windows.Forms.ToolStripMenuItem ObjectTreeMnu;
-        private System.Windows.Forms.ToolStripMenuItem ObjectListMnu;
-        private System.Windows.Forms.ToolStripMenuItem LibraryVersionsMenu;
+        private System.Windows.Forms.ListView DeviceList;
+        private System.Windows.Forms.ColumnHeader DeviceNameCH;
+        private System.Windows.Forms.Panel ObjectPanelFrame;
     }
 }
 

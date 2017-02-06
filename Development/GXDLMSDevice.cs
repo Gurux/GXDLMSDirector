@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDevice.cs $
 //
-// Version:         $Revision: 9065 $,
-//                  $Date: 2017-01-05 09:35:39 +0200 (to, 05 tammi 2017) $
+// Version:         $Revision: 9204 $,
+//                  $Date: 2017-02-06 12:36:45 +0200 (ma, 06 helmi 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -110,6 +110,10 @@ namespace GXDLMSDirector
         [Browsable(false)]
         [System.Xml.Serialization.XmlIgnore()]
         public StatusEventHandler OnStatusChanged;
+
+        [Browsable(false)]
+        [System.Xml.Serialization.XmlIgnore()]
+        public MessageTraceEventHandler OnTrace;
 
         [Browsable(false)]
         [System.Xml.Serialization.XmlIgnore()]
@@ -401,7 +405,7 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// Save name of the manufacturer.
+        /// Name of the manufacturer.
         /// </summary>
         [Browsable(false)]
         public string Manufacturer
@@ -411,7 +415,7 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// What HSLC Addressing is used.
+        /// What HDLC Addressing is used.
         /// </summary>
         [Browsable(false)]
         public HDLCAddressType HDLCAddressing
@@ -656,11 +660,6 @@ namespace GXDLMSDirector
                 int pos = 0;
                 foreach (GXDLMSObject it in objs)
                 {
-                    //Profile Generic objects are added later.
-                    if (it.ObjectType == ObjectType.ProfileGeneric)
-                    {
-                        continue;
-                    }
                     ++pos;
                     NotifyProgress(this, "Creating object " + it.LogicalName, pos, objs.Count);
                     m_Objects.Add(it);
@@ -733,11 +732,10 @@ namespace GXDLMSDirector
                     GXLogWriter.WriteLog("--- Reading Access rights end. ---");
                 }
                  * */
-                this.OnProgress(this, "Reading scalers and units.", cnt, cnt);
+                this.OnProgress(this, "Reading profile generic columns.", cnt, cnt);
                 foreach (Gurux.DLMS.Objects.GXDLMSProfileGeneric it in objs.GetObjects(ObjectType.ProfileGeneric))
                 {
                     ++pos;
-                    NotifyProgress(this, "Creating object " + it.LogicalName, pos, objs.Count);
                     //Read Profile Generic Columns.
                     try
                     {
@@ -753,7 +751,6 @@ namespace GXDLMSDirector
                         GXLogWriter.WriteLog(string.Format("Failed to read Profile Generic {0} columns.", it.LogicalName));
                         continue;
                     }
-                    m_Objects.Add(it);
                 }
             }
             finally

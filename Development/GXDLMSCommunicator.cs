@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 9152 $,
-//                  $Date: 2017-01-23 10:12:50 +0200 (ma, 23 tammi 2017) $
+// Version:         $Revision: 9204 $,
+//                  $Date: 2017-02-06 12:36:45 +0200 (ma, 06 helmi 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -66,6 +66,7 @@ namespace GXDLMSDirector
     public delegate void ProgressEventHandler(object sender, string description, int current, int maximium);
     public delegate void StatusEventHandler(object sender, DeviceState status);
     public delegate void ReadEventHandler(GXDLMSObject sender, int index);
+    public delegate void MessageTraceEventHandler(GXDLMSDevice sender, string trace);
 
     public class GXDLMSCommunicator
     {
@@ -176,6 +177,10 @@ namespace GXDLMSDirector
             {
                 eop = null;
             }
+            if (parent.OnTrace != null)
+            {
+                parent.OnTrace(parent, "<- " + DateTime.Now.ToLongTimeString() + " " + GXCommon.ToHex(data, true));
+            }
             int pos = 0;
             bool succeeded = false;
             ReceiveParameters<byte[]> p = new ReceiveParameters<byte[]>()
@@ -242,6 +247,10 @@ namespace GXDLMSDirector
                     GXLogWriter.WriteLog("Received data", p.Reply);
                     throw ex;
                 }
+            }
+            if (parent.OnTrace != null)
+            {
+                parent.OnTrace(parent, "-> " + DateTime.Now.ToLongTimeString() + " " + GXCommon.ToHex(p.Reply, true));
             }
             GXLogWriter.WriteLog("Received data", p.Reply);
             if (reply.Error != 0)
@@ -458,8 +467,6 @@ namespace GXDLMSDirector
         }
 
         void Media_OnTrace(object sender, TraceEventArgs e)
-
-
         {
             GXLogWriter.WriteLog(e.ToString());
         }

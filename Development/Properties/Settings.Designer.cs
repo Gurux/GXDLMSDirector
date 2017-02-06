@@ -94,5 +94,17 @@ namespace GXDLMSDirector.Properties {
                 this["ViewGroups"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ViewTrace {
+            get {
+                return ((bool)(this["ViewTrace"]));
+            }
+            set {
+                this["ViewTrace"] = value;
+            }
+        }
     }
 }

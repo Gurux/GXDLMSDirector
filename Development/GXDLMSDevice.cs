@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDevice.cs $
 //
-// Version:         $Revision: 9204 $,
-//                  $Date: 2017-02-06 12:36:45 +0200 (ma, 06 helmi 2017) $
+// Version:         $Revision: 9232 $,
+//                  $Date: 2017-02-20 09:13:38 +0200 (ma, 20 helmi 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -474,12 +474,22 @@ namespace GXDLMSDirector
             }
             set
             {
-                Type type = Type.GetType(value);
-                if (type == null)
+                if (string.Compare(value, typeof(Gurux.Net.GXNet).FullName, true) == 0)
+                {
+                    communicator.media = new Gurux.Net.GXNet();
+                }
+                else if (string.Compare(value, typeof(Gurux.Serial.GXSerial).FullName, true) == 0)
+                {
+                    communicator.media = new Gurux.Serial.GXSerial();
+                }
+                else if (string.Compare(value, typeof(Gurux.Terminal.GXTerminal).FullName, true) == 0)
+                {
+                    communicator.media = new Gurux.Terminal.GXTerminal();
+                }
+                else
                 {
                     throw new Exception("Invalid media type " + value);
                 }
-                communicator.media = (Gurux.Common.IGXMedia)Activator.CreateInstance(type);
             }
         }
 

@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 9204 $,
-//                  $Date: 2017-02-06 12:36:45 +0200 (ma, 06 helmi 2017) $
+// Version:         $Revision: 9232 $,
+//                  $Date: 2017-02-20 09:13:38 +0200 (ma, 20 helmi 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -883,7 +883,17 @@ namespace GXDLMSDirector
                         if (CurrentProfileGeneric.AccessSelector == AccessRange.Range ||
                                 CurrentProfileGeneric.AccessSelector == AccessRange.Last)
                         {
-                            byte[][] tmp = client.ReadRowsByRange(CurrentProfileGeneric, Convert.ToDateTime(CurrentProfileGeneric.From), Convert.ToDateTime(CurrentProfileGeneric.To));
+                            GXDateTime start = CurrentProfileGeneric.From as GXDateTime;
+                            if (start == null)
+                            {
+                                start = Convert.ToDateTime(CurrentProfileGeneric.From);
+                            }
+                            GXDateTime end = CurrentProfileGeneric.To as GXDateTime;
+                            if (end == null)
+                            {
+                                end = Convert.ToDateTime(CurrentProfileGeneric.To);
+                            }
+                            byte[][] tmp = client.ReadRowsByRange(CurrentProfileGeneric, start, end);
                             ReadDataBlock(tmp[0], "Reading profile generic data", 1, reply);
                         }
                         else if (CurrentProfileGeneric.AccessSelector == AccessRange.Entry)

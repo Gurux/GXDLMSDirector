@@ -6,9 +6,9 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/ManufacturerSettings/GXLogWriter.cs $
 //
-// Version:         $Revision: 8063 $,
-//                  $Date: 2016-01-20 14:17:03 +0200 (ke, 20 tammi 2016) $
-//                  $Author: kurumi $
+// Version:         $Revision: 9233 $,
+//                  $Date: 2017-02-20 09:17:34 +0200 (ma, 20 helmi 2017) $
+//                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -54,24 +54,24 @@ namespace GXDLMS.ManufacturerSettings
                 string path = string.Empty;
                 if (Environment.OSVersion.Platform == PlatformID.Unix)
                 {
-                    path = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
-					path = System.IO.Path.Combine(path, ".Gurux");
+                    path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+                    path = System.IO.Path.Combine(path, ".Gurux");
                 }
-				else
-				{
-	                //Vista: C:\ProgramData
-	                //XP: c:\Program Files\Common Files                
-	                //XP = 5.1 & Vista = 6.0
-	                if (Environment.OSVersion.Version.Major >= 6)
-	                {
-	                    path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-	                }
-	                else
-	                {
-	                    path = Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles);
-	                }
-					path = System.IO.Path.Combine(path, "Gurux");
-				}                
+                else
+                {
+                    //Vista: C:\ProgramData
+                    //XP: c:\Program Files\Common Files                
+                    //XP = 5.1 & Vista = 6.0
+                    if (Environment.OSVersion.Version.Major >= 6)
+                    {
+                        path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+                    }
+                    else
+                    {
+                        path = Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles);
+                    }
+                    path = System.IO.Path.Combine(path, "Gurux");
+                }
                 path = System.IO.Path.Combine(path, "GXDLMSDirector");
                 path = System.IO.Path.Combine(path, "GXDLMSDirector.log");
                 return path;
@@ -121,6 +121,10 @@ namespace GXDLMS.ManufacturerSettings
                     break;
                 }
             }
+            //Get version info
+            System.Reflection.Assembly asm = System.Reflection.Assembly.GetExecutingAssembly();
+            System.Diagnostics.FileVersionInfo info = System.Diagnostics.FileVersionInfo.GetVersionInfo(asm.Location);
+            Debug.WriteLine("GXDLMSDirector " + info.FileVersion);
             Debug.WriteLine("Log created " + DateTime.Now.ToLongTimeString());
         }
     }

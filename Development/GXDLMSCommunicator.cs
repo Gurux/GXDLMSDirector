@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 9232 $,
-//                  $Date: 2017-02-20 09:13:38 +0200 (ma, 20 helmi 2017) $
+// Version:         $Revision: 9239 $,
+//                  $Date: 2017-03-07 11:39:07 +0200 (ti, 07 maalis 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -461,7 +461,7 @@ namespace GXDLMSDirector
                     serial.StopBits = StopBits.One;
                     media.Open();
                     //Some meters need this sleep. Do not remove.
-                    Thread.Sleep(500);
+                    Thread.Sleep(1000);
                 }
             }
         }

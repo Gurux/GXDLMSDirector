@@ -136,6 +136,15 @@ namespace GXDLMSDirector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No Help topic is associated with this item..
+        /// </summary>
+        internal static string HelpNotAvailable {
+            get {
+                return ResourceManager.GetString("HelpNotAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Access Error : Device reports a inconsistent Class or Object..
         /// </summary>
         internal static string InconsistentClassTxt {

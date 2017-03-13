@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDevice.cs $
 //
-// Version:         $Revision: 9232 $,
-//                  $Date: 2017-02-20 09:13:38 +0200 (ma, 20 helmi 2017) $
+// Version:         $Revision: 9247 $,
+//                  $Date: 2017-03-13 14:59:30 +0200 (ma, 13 maalis 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -328,6 +328,21 @@ namespace GXDLMSDirector
             set;
         }
 
+        /// <summary>
+        /// Used Conformance.
+        /// </summary>
+        public int Conformance
+        {
+            get
+            {
+                return (int)communicator.client.ProposedConformance;
+            }
+            set
+            {
+                communicator.client.ProposedConformance = (Conformance)value;
+            }
+        }
+
         public void InitializeConnection()
         {
             try
@@ -581,28 +596,6 @@ namespace GXDLMSDirector
                 }
             }
             return null;
-        }
-
-        /// <summary>
-        /// Find correct DLMS class by Interface Type from the assembly.
-        /// </summary>
-        /// <param name="device"></param>
-        /// <param name="it"></param>
-        /// <returns></returns>
-        public static GXDLMSObject ConvertObject2Class(GXDLMSDevice device, ObjectType objectType, string logicalName)
-        {
-            GXDLMSObject obj = Gurux.DLMS.GXDLMSClient.CreateObject(objectType);
-            if (obj != null)
-            {
-                GXManufacturer m = device.Manufacturers.FindByIdentification(device.Manufacturer);
-                GXObisCode item = m.ObisCodes.FindByLN(obj.ObjectType, logicalName, null);
-                obj.LogicalName = logicalName;
-                if (item != null)
-                {
-                    obj.Description = item.Description;
-                }
-            }
-            return obj;
         }
 
         bool ShouldSkip(GXDLMSObject it, int index)

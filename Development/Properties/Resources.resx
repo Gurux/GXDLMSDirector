@@ -209,4 +209,7 @@ All rights reserved.</value>
   <data name="UpdateManufacturersOnline2Txt" xml:space="preserve">
     <value>New Device Manufacturer settings are available. Do you want to update them online from Gurux Web?</value>
   </data>
+  <data name="HelpNotAvailable" xml:space="preserve">
+    <value>No Help topic is associated with this item.</value>
+  </data>
 </root>

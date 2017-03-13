@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.cs $
 //
-// Version:         $Revision: 9048 $,
-//                  $Date: 2016-12-20 16:35:34 +0200 (ti, 20 joulu 2016) $
+// Version:         $Revision: 9247 $,
+//                  $Date: 2017-03-13 14:59:30 +0200 (ma, 13 maalis 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -64,6 +64,40 @@ namespace GXDLMSDirector
             try
             {
                 InitializeComponent();
+                LNSettings.Dock = SNSettings.Dock = DockStyle.Fill;
+
+                /*
+                .Checked = (c & Conformance.GeneralBlockTransfer) != 0;
+                Attribute0SetReferencingCB.Checked = (c & Conformance.Attribute0SupportedWithSet) != 0;
+                PriorityManagementCB.Checked = (c & Conformance.PriorityMgmtSupported) != 0;
+                Attribute0GetReferencingCB.Checked = (c & Conformance.Attribute0SupportedWithGet) != 0;
+                GetBlockTransferCB.Checked = (c & Conformance.BlockTransferWithGetOrRead) != 0;
+                SetBlockTransferCB.Checked = (c & Conformance.BlockTransferWithSetOrWrite) != 0;
+                ActionBlockTransferCB.Checked = (c & Conformance.BlockTransferWithAction) != 0;
+                MultipleReferencesCB.Checked = (c & Conformance.MultipleReferences) != 0;
+                DataNotificationCB.Checked = (c & Conformance.DataNotification) != 0;
+                AccessCB.Checked = (c & Conformance.Access) != 0;
+                GetCB.Checked = (c & Conformance.Get) != 0;
+                SetCB.Checked = (c & Conformance.Set) != 0;
+                SelectiveAccessCB.Checked = (c & Conformance.SelectiveAccess) != 0;
+                EventNotificationCB.Checked = (c & Conformance.EventNotification) != 0;
+                ActionCB.Checked = (c & Conformance.EventNotification) != 0;
+            }
+            else
+            {
+                SNGeneralProtectionCB.Checked = (c & Conformance.GeneralProtection) != 0;
+                SNGeneralBlockTransferCB.Checked = (c & Conformance.GeneralBlockTransfer) != 0;
+                ReadCB.Checked = (c & Conformance.Read) != 0;
+                WriteCB.Checked = (c & Conformance.Write) != 0;
+                UnconfirmedWriteCB.Checked = (c & Conformance.UnconfirmedWrite) != 0;
+                ReadBlockTransferCB.Checked = (c & Conformance.BlockTransferWithGetOrRead) != 0;
+                WriteBlockTransferCB.Checked = (c & Conformance.BlockTransferWithSetOrWrite) != 0;
+                SNMultipleReferencesCB.Checked = (c & Conformance.MultipleReferences) != 0;
+                InformationReportCB.Checked = (c & Conformance.InformationReport) != 0;
+                SNDataNotificationCB.Checked = (c & Conformance.DataNotification) != 0;
+                ParameterizedAccessCB.Checked = (c & Conformance.ParameterizedAccess) != 0;
+                */
+
                 SecurityCB.Items.AddRange(new object[] { Security.None, Security.Authentication,
                                       Security.Encryption, Security.AuthenticationEncryption
                                                    });
@@ -77,36 +111,6 @@ namespace GXDLMSDirector
                 if (Manufacturers.Count == 0)
                 {
                     OKBtn.Enabled = false;
-                }
-                //Show supported services tab only when they are read.
-                if (dev == null || dev.Comm.client.SNSettings == null && dev.Comm.client.LNSettings == null)
-                {
-                    DeviceTab.TabPages.Remove(SupportedServicesTab);
-                }
-                else
-                {
-                    object settings = null;
-                    if (dev.Comm.client.UseLogicalNameReferencing)
-                    {
-                        settings = dev.Comm.client.LNSettings;
-                    }
-                    else
-                    {
-                        settings = dev.Comm.client.SNSettings;
-                    }
-                    if (settings != null)
-                    {
-                        SupportedServicesGrid.SelectedObject = settings;
-                        foreach (PropertyDescriptor it in TypeDescriptor.GetProperties(settings))
-                        {
-                            ReadOnlyAttribute att = (ReadOnlyAttribute)it.Attributes[typeof(ReadOnlyAttribute)];
-                            if (att != null)
-                            {
-                                FieldInfo[] f = att.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
-                                f[0].SetValue(att, true);
-                            }
-                        }
-                    }
                 }
                 Device = dev;
                 StartProtocolCB.Items.Add(StartProtocolType.IEC);
@@ -128,6 +132,7 @@ namespace GXDLMSDirector
                     {
                         ManufacturerCB.SelectedIndex = pos;
                     }
+                    Device.Comm.client.ProposedConformance = GXDLMSClient.GetInitialConformance(UseLNCB.Checked);
                 }
                 else
                 {
@@ -154,7 +159,14 @@ namespace GXDLMSDirector
                     AuthenticationKeyTB.Text = dev.AuthenticationKey;
                     UseUtcTimeZone.Checked = Device.UtcTimeZone;
                 }
-
+                if (SelectedMedia != null && SelectedMedia.IsOpen)
+                {
+                    ShowConformance(Device.Comm.client.NegotiatedConformance);
+                }
+                else
+                {
+                    ShowConformance(Device.Comm.client.ProposedConformance);
+                }
                 ManufacturerCB.DrawMode = MediasCB.DrawMode = DrawMode.OwnerDrawFixed;
                 Gurux.Net.GXNet net = new Gurux.Net.GXNet();
                 //Initialize network settings.
@@ -275,11 +287,189 @@ namespace GXDLMSDirector
                 SerialPortCB.Enabled = AdvancedBtn.Enabled = ManufacturerCB.Enabled = MediasCB.Enabled =
                                            AuthenticationCB.Enabled = UseRemoteSerialCB.Enabled = OKBtn.Enabled = !bConnected;
                 HostNameTB.ReadOnly = PortTB.ReadOnly = PasswordTB.ReadOnly = WaitTimeTB.ReadOnly = PhysicalServerAddressTB.ReadOnly = NameTB.ReadOnly = bConnected;
+                this.UseLNCB.CheckedChanged += new System.EventHandler(this.UseLNCB_CheckedChanged);
             }
             catch (Exception Ex)
             {
                 GXDLMS.Common.Error.ShowError(this, Ex);
             }
+        }
+        private void ShowConformance(Conformance c)
+        {
+            if (UseLNCB.Checked)
+            {
+                GeneralProtectionCB.Checked = (c & Conformance.GeneralProtection) != 0;
+                GeneralBlockTransferCB.Checked = (c & Conformance.GeneralBlockTransfer) != 0;
+                Attribute0SetReferencingCB.Checked = (c & Conformance.Attribute0SupportedWithSet) != 0;
+                PriorityManagementCB.Checked = (c & Conformance.PriorityMgmtSupported) != 0;
+                Attribute0GetReferencingCB.Checked = (c & Conformance.Attribute0SupportedWithGet) != 0;
+                GetBlockTransferCB.Checked = (c & Conformance.BlockTransferWithGetOrRead) != 0;
+                SetBlockTransferCB.Checked = (c & Conformance.BlockTransferWithSetOrWrite) != 0;
+                ActionBlockTransferCB.Checked = (c & Conformance.BlockTransferWithAction) != 0;
+                MultipleReferencesCB.Checked = (c & Conformance.MultipleReferences) != 0;
+                DataNotificationCB.Checked = (c & Conformance.DataNotification) != 0;
+                AccessCB.Checked = (c & Conformance.Access) != 0;
+                GetCB.Checked = (c & Conformance.Get) != 0;
+                SetCB.Checked = (c & Conformance.Set) != 0;
+                SelectiveAccessCB.Checked = (c & Conformance.SelectiveAccess) != 0;
+                EventNotificationCB.Checked = (c & Conformance.EventNotification) != 0;
+                ActionCB.Checked = (c & Conformance.EventNotification) != 0;
+            }
+            else
+            {
+                SNGeneralProtectionCB.Checked = (c & Conformance.GeneralProtection) != 0;
+                SNGeneralBlockTransferCB.Checked = (c & Conformance.GeneralBlockTransfer) != 0;
+                ReadCB.Checked = (c & Conformance.Read) != 0;
+                WriteCB.Checked = (c & Conformance.Write) != 0;
+                UnconfirmedWriteCB.Checked = (c & Conformance.UnconfirmedWrite) != 0;
+                ReadBlockTransferCB.Checked = (c & Conformance.BlockTransferWithGetOrRead) != 0;
+                WriteBlockTransferCB.Checked = (c & Conformance.BlockTransferWithSetOrWrite) != 0;
+                SNMultipleReferencesCB.Checked = (c & Conformance.MultipleReferences) != 0;
+                InformationReportCB.Checked = (c & Conformance.InformationReport) != 0;
+                SNDataNotificationCB.Checked = (c & Conformance.DataNotification) != 0;
+                ParameterizedAccessCB.Checked = (c & Conformance.ParameterizedAccess) != 0;
+            }
+            LNSettings.Visible = UseLNCB.Checked;
+            SNSettings.Visible = !UseLNCB.Checked;
+        }
+
+        /// <summary>
+        /// Show help not available message.
+        /// </summary>
+        /// <param name="hevent">A HelpEventArgs that contains the event data.</param>
+        protected override void OnHelpRequested(HelpEventArgs hevent)
+        {
+            // Get the control where the user clicked
+            Control ctl = this.GetChildAtPoint(this.PointToClient(hevent.MousePos));
+            string str = GXDLMSDirector.Properties.Resources.HelpNotAvailable;
+            // Show as a Help pop-up
+            if (str != "")
+            {
+                Help.ShowPopup(ctl, str, hevent.MousePos);
+            }
+            // Set flag to show that the Help event as been handled
+            hevent.Handled = true;
+        }
+
+
+        private void UpdateConformance()
+        {
+            Conformance c = (Conformance)0;
+            if (UseLNCB.Checked)
+            {
+                if (GeneralProtectionCB.Checked)
+                {
+                    c |= Conformance.GeneralProtection;
+                }
+                if (GeneralBlockTransferCB.Checked)
+                {
+                    c |= Conformance.GeneralBlockTransfer;
+                }
+                if (Attribute0SetReferencingCB.Checked)
+                {
+                    c |= Conformance.Attribute0SupportedWithSet;
+                }
+                if (PriorityManagementCB.Checked)
+                {
+                    c |= Conformance.PriorityMgmtSupported;
+                }
+                if (Attribute0GetReferencingCB.Checked)
+                {
+                    c |= Conformance.Attribute0SupportedWithGet;
+                }
+                if (GetBlockTransferCB.Checked)
+                {
+                    c |= Conformance.BlockTransferWithGetOrRead;
+                }
+                if (SetBlockTransferCB.Checked)
+                {
+                    c |= Conformance.BlockTransferWithSetOrWrite;
+                }
+                if (ActionBlockTransferCB.Checked)
+                {
+                    c |= Conformance.BlockTransferWithAction;
+                }
+                if (MultipleReferencesCB.Checked)
+                {
+                    c |= Conformance.MultipleReferences;
+                }
+                if (DataNotificationCB.Checked)
+                {
+                    c |= Conformance.DataNotification;
+                }
+                if (AccessCB.Checked)
+                {
+                    c |= Conformance.Access;
+                }
+                if (GetCB.Checked)
+                {
+                    c |= Conformance.Get;
+                }
+                if (SetCB.Checked)
+                {
+                    c |= Conformance.Set;
+                }
+                if (SelectiveAccessCB.Checked)
+                {
+                    c |= Conformance.SelectiveAccess;
+                }
+                if (EventNotificationCB.Checked)
+                {
+                    c |= Conformance.EventNotification;
+                }
+                if (ActionCB.Checked)
+                {
+                    c |= Conformance.EventNotification;
+                }
+            }
+            else
+            {
+                if (SNGeneralProtectionCB.Checked)
+                {
+                    c |= Conformance.GeneralProtection;
+                }
+                if (SNGeneralBlockTransferCB.Checked)
+                {
+                    c |= Conformance.GeneralBlockTransfer;
+                }
+                if (ReadCB.Checked)
+                {
+                    c |= Conformance.Read;
+                }
+                if (WriteCB.Checked)
+                {
+                    c |= Conformance.Write;
+                }
+                if (UnconfirmedWriteCB.Checked)
+                {
+                    c |= Conformance.UnconfirmedWrite;
+                }
+                if (ReadBlockTransferCB.Checked)
+                {
+                    c |= Conformance.BlockTransferWithGetOrRead;
+                }
+                if (WriteBlockTransferCB.Checked)
+                {
+                    c |= Conformance.BlockTransferWithSetOrWrite;
+                }
+                if (SNMultipleReferencesCB.Checked)
+                {
+                    c |= Conformance.MultipleReferences;
+                }
+                if (InformationReportCB.Checked)
+                {
+                    c |= Conformance.InformationReport;
+                }
+                if (SNDataNotificationCB.Checked)
+                {
+                    c |= Conformance.DataNotification;
+                }
+                if (ParameterizedAccessCB.Checked)
+                {
+                    c |= Conformance.ParameterizedAccess;
+                }
+            }
+            Device.Comm.client.ProposedConformance = c;
         }
 
         private void MediasCB_SelectedIndexChanged(object sender, EventArgs e)
@@ -405,6 +595,7 @@ namespace GXDLMSDirector
                 Device.SystemTitle = SystemTitleTB.Text;
                 Device.BlockCipherKey = BlockCipherKeyTB.Text;
                 Device.AuthenticationKey = AuthenticationKeyTB.Text;
+                UpdateConformance();
             }
             catch (Exception Ex)
             {
@@ -845,6 +1036,12 @@ namespace GXDLMSDirector
                     AsciiRB.Enabled = false;
                 }
             }
+        }
+
+        private void UseLNCB_CheckedChanged(object sender, EventArgs e)
+        {
+            Conformance c = GXDLMSClient.GetInitialConformance(UseLNCB.Checked);
+            ShowConformance(c);
         }
     }
 }

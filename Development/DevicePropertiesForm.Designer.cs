@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.Designer.cs $
 //
-// Version:         $Revision: 9048 $,
-//                  $Date: 2016-12-20 16:35:34 +0200 (ti, 20 joulu 2016) $
+// Version:         $Revision: 9247 $,
+//                  $Date: 2017-03-13 14:59:30 +0200 (ma, 13 maalis 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -35,40 +35,68 @@
 
 namespace GXDLMSDirector
 {
-partial class DevicePropertiesForm
-{
-    /// <summary>
-    /// Required designer variable.
-    /// </summary>
-    private System.ComponentModel.IContainer components = null;
-
-    /// <summary>
-    /// Clean up any resources being used.
-    /// </summary>
-    /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-    protected override void Dispose(bool disposing)
+    partial class DevicePropertiesForm
     {
-        if (disposing && (components != null))
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
         {
-            components.Dispose();
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
         }
-        base.Dispose(disposing);
-    }
 
-    #region Windows Form Designer generated code
+        #region Windows Form Designer generated code
 
-    /// <summary>
-    /// Required method for Designer support - do not modify
-    /// the contents of this method with the code editor.
-    /// </summary>
-    private void InitializeComponent()
-    {
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DevicePropertiesForm));
             this.CancelBtn = new System.Windows.Forms.Button();
             this.OKBtn = new System.Windows.Forms.Button();
             this.InitialSettingsBtn = new System.Windows.Forms.Button();
             this.SupportedServicesTab = new System.Windows.Forms.TabPage();
-            this.SupportedServicesGrid = new System.Windows.Forms.PropertyGrid();
+            this.SNSettings = new System.Windows.Forms.GroupBox();
+            this.SNGeneralProtectionCB = new System.Windows.Forms.CheckBox();
+            this.SNGeneralBlockTransferCB = new System.Windows.Forms.CheckBox();
+            this.ReadCB = new System.Windows.Forms.CheckBox();
+            this.WriteCB = new System.Windows.Forms.CheckBox();
+            this.UnconfirmedWriteCB = new System.Windows.Forms.CheckBox();
+            this.ReadBlockTransferCB = new System.Windows.Forms.CheckBox();
+            this.WriteBlockTransferCB = new System.Windows.Forms.CheckBox();
+            this.SNMultipleReferencesCB = new System.Windows.Forms.CheckBox();
+            this.InformationReportCB = new System.Windows.Forms.CheckBox();
+            this.SNDataNotificationCB = new System.Windows.Forms.CheckBox();
+            this.ParameterizedAccessCB = new System.Windows.Forms.CheckBox();
+            this.LNSettings = new System.Windows.Forms.GroupBox();
+            this.GeneralProtectionCB = new System.Windows.Forms.CheckBox();
+            this.GeneralBlockTransferCB = new System.Windows.Forms.CheckBox();
+            this.Attribute0SetReferencingCB = new System.Windows.Forms.CheckBox();
+            this.PriorityManagementCB = new System.Windows.Forms.CheckBox();
+            this.Attribute0GetReferencingCB = new System.Windows.Forms.CheckBox();
+            this.GetBlockTransferCB = new System.Windows.Forms.CheckBox();
+            this.SetBlockTransferCB = new System.Windows.Forms.CheckBox();
+            this.ActionBlockTransferCB = new System.Windows.Forms.CheckBox();
+            this.MultipleReferencesCB = new System.Windows.Forms.CheckBox();
+            this.DataNotificationCB = new System.Windows.Forms.CheckBox();
+            this.AccessCB = new System.Windows.Forms.CheckBox();
+            this.GetCB = new System.Windows.Forms.CheckBox();
+            this.SetCB = new System.Windows.Forms.CheckBox();
+            this.SelectiveAccessCB = new System.Windows.Forms.CheckBox();
+            this.EventNotificationCB = new System.Windows.Forms.CheckBox();
+            this.ActionCB = new System.Windows.Forms.CheckBox();
             this.CipheringTab = new System.Windows.Forms.TabPage();
             this.SecurityCB = new System.Windows.Forms.ComboBox();
             this.AuthenticationKeyTB = new System.Windows.Forms.TextBox();
@@ -81,6 +109,7 @@ partial class DevicePropertiesForm
             this.HexRB = new System.Windows.Forms.RadioButton();
             this.SecurityLbl = new System.Windows.Forms.Label();
             this.DeviceSettingsTab = new System.Windows.Forms.TabPage();
+            this.UseUtcTimeZone = new System.Windows.Forms.CheckBox();
             this.VerboseModeCB = new System.Windows.Forms.CheckBox();
             this.UseLNCB = new System.Windows.Forms.CheckBox();
             this.ServerAddressTypeCB = new System.Windows.Forms.ComboBox();
@@ -126,8 +155,9 @@ partial class DevicePropertiesForm
             this.TerminalPhoneNumberTB = new System.Windows.Forms.TextBox();
             this.TerminalPhoneNumberLbl = new System.Windows.Forms.Label();
             this.DeviceTab = new System.Windows.Forms.TabControl();
-            this.UseUtcTimeZone = new System.Windows.Forms.CheckBox();
             this.SupportedServicesTab.SuspendLayout();
+            this.SNSettings.SuspendLayout();
+            this.LNSettings.SuspendLayout();
             this.CipheringTab.SuspendLayout();
             this.DeviceSettingsTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ClientAddTB)).BeginInit();
@@ -144,7 +174,7 @@ partial class DevicePropertiesForm
             // 
             this.CancelBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelBtn.Location = new System.Drawing.Point(323, 375);
+            this.CancelBtn.Location = new System.Drawing.Point(323, 422);
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.Size = new System.Drawing.Size(75, 23);
             this.CancelBtn.TabIndex = 15;
@@ -156,7 +186,7 @@ partial class DevicePropertiesForm
             // 
             this.OKBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.OKBtn.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.OKBtn.Location = new System.Drawing.Point(242, 375);
+            this.OKBtn.Location = new System.Drawing.Point(242, 422);
             this.OKBtn.Name = "OKBtn";
             this.OKBtn.Size = new System.Drawing.Size(75, 23);
             this.OKBtn.TabIndex = 14;
@@ -167,7 +197,7 @@ partial class DevicePropertiesForm
             // InitialSettingsBtn
             // 
             this.InitialSettingsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.InitialSettingsBtn.Location = new System.Drawing.Point(10, 375);
+            this.InitialSettingsBtn.Location = new System.Drawing.Point(10, 422);
             this.InitialSettingsBtn.Name = "InitialSettingsBtn";
             this.InitialSettingsBtn.Size = new System.Drawing.Size(117, 23);
             this.InitialSettingsBtn.TabIndex = 16;
@@ -177,25 +207,330 @@ partial class DevicePropertiesForm
             // 
             // SupportedServicesTab
             // 
-            this.SupportedServicesTab.Controls.Add(this.SupportedServicesGrid);
+            this.SupportedServicesTab.Controls.Add(this.SNSettings);
+            this.SupportedServicesTab.Controls.Add(this.LNSettings);
             this.SupportedServicesTab.Location = new System.Drawing.Point(4, 22);
             this.SupportedServicesTab.Name = "SupportedServicesTab";
             this.SupportedServicesTab.Padding = new System.Windows.Forms.Padding(3);
-            this.SupportedServicesTab.Size = new System.Drawing.Size(403, 341);
+            this.SupportedServicesTab.Size = new System.Drawing.Size(403, 388);
             this.SupportedServicesTab.TabIndex = 1;
             this.SupportedServicesTab.Text = "Supported Services";
             this.SupportedServicesTab.UseVisualStyleBackColor = true;
             // 
-            // SupportedServicesGrid
+            // SNSettings
             // 
-            this.SupportedServicesGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SupportedServicesGrid.HelpVisible = false;
-            this.SupportedServicesGrid.Location = new System.Drawing.Point(3, 3);
-            this.SupportedServicesGrid.Name = "SupportedServicesGrid";
-            this.SupportedServicesGrid.PropertySort = System.Windows.Forms.PropertySort.NoSort;
-            this.SupportedServicesGrid.Size = new System.Drawing.Size(397, 335);
-            this.SupportedServicesGrid.TabIndex = 0;
-            this.SupportedServicesGrid.ToolbarVisible = false;
+            this.SNSettings.Controls.Add(this.SNGeneralProtectionCB);
+            this.SNSettings.Controls.Add(this.SNGeneralBlockTransferCB);
+            this.SNSettings.Controls.Add(this.ReadCB);
+            this.SNSettings.Controls.Add(this.WriteCB);
+            this.SNSettings.Controls.Add(this.UnconfirmedWriteCB);
+            this.SNSettings.Controls.Add(this.ReadBlockTransferCB);
+            this.SNSettings.Controls.Add(this.WriteBlockTransferCB);
+            this.SNSettings.Controls.Add(this.SNMultipleReferencesCB);
+            this.SNSettings.Controls.Add(this.InformationReportCB);
+            this.SNSettings.Controls.Add(this.SNDataNotificationCB);
+            this.SNSettings.Controls.Add(this.ParameterizedAccessCB);
+            this.SNSettings.Location = new System.Drawing.Point(188, 6);
+            this.SNSettings.Name = "SNSettings";
+            this.SNSettings.Size = new System.Drawing.Size(206, 382);
+            this.SNSettings.TabIndex = 1;
+            this.SNSettings.TabStop = false;
+            this.SNSettings.Text = "SN settings";
+            // 
+            // SNGeneralProtectionCB
+            // 
+            this.SNGeneralProtectionCB.AutoSize = true;
+            this.SNGeneralProtectionCB.Location = new System.Drawing.Point(6, 243);
+            this.SNGeneralProtectionCB.Name = "SNGeneralProtectionCB";
+            this.SNGeneralProtectionCB.Size = new System.Drawing.Size(113, 17);
+            this.SNGeneralProtectionCB.TabIndex = 11;
+            this.SNGeneralProtectionCB.Text = "General protection";
+            this.SNGeneralProtectionCB.UseVisualStyleBackColor = true;
+            // 
+            // SNGeneralBlockTransferCB
+            // 
+            this.SNGeneralBlockTransferCB.AutoSize = true;
+            this.SNGeneralBlockTransferCB.Location = new System.Drawing.Point(6, 220);
+            this.SNGeneralBlockTransferCB.Name = "SNGeneralBlockTransferCB";
+            this.SNGeneralBlockTransferCB.Size = new System.Drawing.Size(130, 17);
+            this.SNGeneralBlockTransferCB.TabIndex = 10;
+            this.SNGeneralBlockTransferCB.Text = "General block transfer";
+            this.SNGeneralBlockTransferCB.UseVisualStyleBackColor = true;
+            // 
+            // ReadCB
+            // 
+            this.ReadCB.AutoSize = true;
+            this.ReadCB.Location = new System.Drawing.Point(6, 197);
+            this.ReadCB.Name = "ReadCB";
+            this.ReadCB.Size = new System.Drawing.Size(52, 17);
+            this.ReadCB.TabIndex = 9;
+            this.ReadCB.Text = "Read";
+            this.ReadCB.UseVisualStyleBackColor = true;
+            // 
+            // WriteCB
+            // 
+            this.WriteCB.AutoSize = true;
+            this.WriteCB.Location = new System.Drawing.Point(6, 174);
+            this.WriteCB.Name = "WriteCB";
+            this.WriteCB.Size = new System.Drawing.Size(51, 17);
+            this.WriteCB.TabIndex = 8;
+            this.WriteCB.Text = "Write";
+            this.WriteCB.UseVisualStyleBackColor = true;
+            // 
+            // UnconfirmedWriteCB
+            // 
+            this.UnconfirmedWriteCB.AutoSize = true;
+            this.UnconfirmedWriteCB.Location = new System.Drawing.Point(6, 151);
+            this.UnconfirmedWriteCB.Name = "UnconfirmedWriteCB";
+            this.UnconfirmedWriteCB.Size = new System.Drawing.Size(111, 17);
+            this.UnconfirmedWriteCB.TabIndex = 7;
+            this.UnconfirmedWriteCB.Text = "Unconfirmed write";
+            this.UnconfirmedWriteCB.UseVisualStyleBackColor = true;
+            // 
+            // ReadBlockTransferCB
+            // 
+            this.ReadBlockTransferCB.AutoSize = true;
+            this.ReadBlockTransferCB.Location = new System.Drawing.Point(6, 128);
+            this.ReadBlockTransferCB.Name = "ReadBlockTransferCB";
+            this.ReadBlockTransferCB.Size = new System.Drawing.Size(119, 17);
+            this.ReadBlockTransferCB.TabIndex = 6;
+            this.ReadBlockTransferCB.Text = "Read block transfer";
+            this.ReadBlockTransferCB.UseVisualStyleBackColor = true;
+            // 
+            // WriteBlockTransferCB
+            // 
+            this.WriteBlockTransferCB.AutoSize = true;
+            this.WriteBlockTransferCB.Location = new System.Drawing.Point(6, 105);
+            this.WriteBlockTransferCB.Name = "WriteBlockTransferCB";
+            this.WriteBlockTransferCB.Size = new System.Drawing.Size(118, 17);
+            this.WriteBlockTransferCB.TabIndex = 5;
+            this.WriteBlockTransferCB.Text = "Write block transfer";
+            this.WriteBlockTransferCB.UseVisualStyleBackColor = true;
+            // 
+            // SNMultipleReferencesCB
+            // 
+            this.SNMultipleReferencesCB.AutoSize = true;
+            this.SNMultipleReferencesCB.Location = new System.Drawing.Point(6, 82);
+            this.SNMultipleReferencesCB.Name = "SNMultipleReferencesCB";
+            this.SNMultipleReferencesCB.Size = new System.Drawing.Size(115, 17);
+            this.SNMultipleReferencesCB.TabIndex = 4;
+            this.SNMultipleReferencesCB.Text = "Multiple references";
+            this.SNMultipleReferencesCB.UseVisualStyleBackColor = true;
+            // 
+            // InformationReportCB
+            // 
+            this.InformationReportCB.AutoSize = true;
+            this.InformationReportCB.Location = new System.Drawing.Point(6, 59);
+            this.InformationReportCB.Name = "InformationReportCB";
+            this.InformationReportCB.Size = new System.Drawing.Size(108, 17);
+            this.InformationReportCB.TabIndex = 3;
+            this.InformationReportCB.Text = "Information report";
+            this.InformationReportCB.UseVisualStyleBackColor = true;
+            // 
+            // SNDataNotificationCB
+            // 
+            this.SNDataNotificationCB.AutoSize = true;
+            this.SNDataNotificationCB.Location = new System.Drawing.Point(6, 36);
+            this.SNDataNotificationCB.Name = "SNDataNotificationCB";
+            this.SNDataNotificationCB.Size = new System.Drawing.Size(103, 17);
+            this.SNDataNotificationCB.TabIndex = 2;
+            this.SNDataNotificationCB.Text = "Data notification";
+            this.SNDataNotificationCB.UseVisualStyleBackColor = true;
+            // 
+            // ParameterizedAccessCB
+            // 
+            this.ParameterizedAccessCB.AutoSize = true;
+            this.ParameterizedAccessCB.Location = new System.Drawing.Point(6, 13);
+            this.ParameterizedAccessCB.Name = "ParameterizedAccessCB";
+            this.ParameterizedAccessCB.Size = new System.Drawing.Size(130, 17);
+            this.ParameterizedAccessCB.TabIndex = 1;
+            this.ParameterizedAccessCB.Text = "Parameterized access";
+            this.ParameterizedAccessCB.UseVisualStyleBackColor = true;
+            // 
+            // LNSettings
+            // 
+            this.LNSettings.Controls.Add(this.GeneralProtectionCB);
+            this.LNSettings.Controls.Add(this.GeneralBlockTransferCB);
+            this.LNSettings.Controls.Add(this.Attribute0SetReferencingCB);
+            this.LNSettings.Controls.Add(this.PriorityManagementCB);
+            this.LNSettings.Controls.Add(this.Attribute0GetReferencingCB);
+            this.LNSettings.Controls.Add(this.GetBlockTransferCB);
+            this.LNSettings.Controls.Add(this.SetBlockTransferCB);
+            this.LNSettings.Controls.Add(this.ActionBlockTransferCB);
+            this.LNSettings.Controls.Add(this.MultipleReferencesCB);
+            this.LNSettings.Controls.Add(this.DataNotificationCB);
+            this.LNSettings.Controls.Add(this.AccessCB);
+            this.LNSettings.Controls.Add(this.GetCB);
+            this.LNSettings.Controls.Add(this.SetCB);
+            this.LNSettings.Controls.Add(this.SelectiveAccessCB);
+            this.LNSettings.Controls.Add(this.EventNotificationCB);
+            this.LNSettings.Controls.Add(this.ActionCB);
+            this.LNSettings.Location = new System.Drawing.Point(8, 0);
+            this.LNSettings.Name = "LNSettings";
+            this.LNSettings.Size = new System.Drawing.Size(172, 382);
+            this.LNSettings.TabIndex = 0;
+            this.LNSettings.TabStop = false;
+            this.LNSettings.Text = "LN settings";
+            // 
+            // GeneralProtectionCB
+            // 
+            this.GeneralProtectionCB.AutoSize = true;
+            this.GeneralProtectionCB.Location = new System.Drawing.Point(6, 365);
+            this.GeneralProtectionCB.Name = "GeneralProtectionCB";
+            this.GeneralProtectionCB.Size = new System.Drawing.Size(113, 17);
+            this.GeneralProtectionCB.TabIndex = 16;
+            this.GeneralProtectionCB.Text = "General protection";
+            this.GeneralProtectionCB.UseVisualStyleBackColor = true;
+            // 
+            // GeneralBlockTransferCB
+            // 
+            this.GeneralBlockTransferCB.AutoSize = true;
+            this.GeneralBlockTransferCB.Location = new System.Drawing.Point(6, 341);
+            this.GeneralBlockTransferCB.Name = "GeneralBlockTransferCB";
+            this.GeneralBlockTransferCB.Size = new System.Drawing.Size(130, 17);
+            this.GeneralBlockTransferCB.TabIndex = 15;
+            this.GeneralBlockTransferCB.Text = "General block transfer";
+            this.GeneralBlockTransferCB.UseVisualStyleBackColor = true;
+            // 
+            // Attribute0SetReferencingCB
+            // 
+            this.Attribute0SetReferencingCB.AutoSize = true;
+            this.Attribute0SetReferencingCB.Location = new System.Drawing.Point(6, 318);
+            this.Attribute0SetReferencingCB.Name = "Attribute0SetReferencingCB";
+            this.Attribute0SetReferencingCB.Size = new System.Drawing.Size(147, 17);
+            this.Attribute0SetReferencingCB.TabIndex = 14;
+            this.Attribute0SetReferencingCB.Text = "Attribute 0 set referencing";
+            this.Attribute0SetReferencingCB.UseVisualStyleBackColor = true;
+            // 
+            // PriorityManagementCB
+            // 
+            this.PriorityManagementCB.AutoSize = true;
+            this.PriorityManagementCB.Location = new System.Drawing.Point(6, 295);
+            this.PriorityManagementCB.Name = "PriorityManagementCB";
+            this.PriorityManagementCB.Size = new System.Drawing.Size(121, 17);
+            this.PriorityManagementCB.TabIndex = 13;
+            this.PriorityManagementCB.Text = "Priority management";
+            this.PriorityManagementCB.UseVisualStyleBackColor = true;
+            // 
+            // Attribute0GetReferencingCB
+            // 
+            this.Attribute0GetReferencingCB.AutoSize = true;
+            this.Attribute0GetReferencingCB.Location = new System.Drawing.Point(5, 272);
+            this.Attribute0GetReferencingCB.Name = "Attribute0GetReferencingCB";
+            this.Attribute0GetReferencingCB.Size = new System.Drawing.Size(148, 17);
+            this.Attribute0GetReferencingCB.TabIndex = 12;
+            this.Attribute0GetReferencingCB.Text = "Attribute 0 get referencing";
+            this.Attribute0GetReferencingCB.UseVisualStyleBackColor = true;
+            // 
+            // GetBlockTransferCB
+            // 
+            this.GetBlockTransferCB.AutoSize = true;
+            this.GetBlockTransferCB.Location = new System.Drawing.Point(6, 249);
+            this.GetBlockTransferCB.Name = "GetBlockTransferCB";
+            this.GetBlockTransferCB.Size = new System.Drawing.Size(110, 17);
+            this.GetBlockTransferCB.TabIndex = 11;
+            this.GetBlockTransferCB.Text = "Get block transfer";
+            this.GetBlockTransferCB.UseVisualStyleBackColor = true;
+            // 
+            // SetBlockTransferCB
+            // 
+            this.SetBlockTransferCB.AutoSize = true;
+            this.SetBlockTransferCB.Location = new System.Drawing.Point(6, 226);
+            this.SetBlockTransferCB.Name = "SetBlockTransferCB";
+            this.SetBlockTransferCB.Size = new System.Drawing.Size(109, 17);
+            this.SetBlockTransferCB.TabIndex = 10;
+            this.SetBlockTransferCB.Text = "Set block transfer";
+            this.SetBlockTransferCB.UseVisualStyleBackColor = true;
+            // 
+            // ActionBlockTransferCB
+            // 
+            this.ActionBlockTransferCB.AutoSize = true;
+            this.ActionBlockTransferCB.Location = new System.Drawing.Point(6, 203);
+            this.ActionBlockTransferCB.Name = "ActionBlockTransferCB";
+            this.ActionBlockTransferCB.Size = new System.Drawing.Size(123, 17);
+            this.ActionBlockTransferCB.TabIndex = 9;
+            this.ActionBlockTransferCB.Text = "Action block transfer";
+            this.ActionBlockTransferCB.UseVisualStyleBackColor = true;
+            // 
+            // MultipleReferencesCB
+            // 
+            this.MultipleReferencesCB.AutoSize = true;
+            this.MultipleReferencesCB.Location = new System.Drawing.Point(6, 180);
+            this.MultipleReferencesCB.Name = "MultipleReferencesCB";
+            this.MultipleReferencesCB.Size = new System.Drawing.Size(120, 17);
+            this.MultipleReferencesCB.TabIndex = 8;
+            this.MultipleReferencesCB.Text = "Multiple References";
+            this.MultipleReferencesCB.UseVisualStyleBackColor = true;
+            // 
+            // DataNotificationCB
+            // 
+            this.DataNotificationCB.AutoSize = true;
+            this.DataNotificationCB.Location = new System.Drawing.Point(6, 157);
+            this.DataNotificationCB.Name = "DataNotificationCB";
+            this.DataNotificationCB.Size = new System.Drawing.Size(105, 17);
+            this.DataNotificationCB.TabIndex = 7;
+            this.DataNotificationCB.Text = "Data Notification";
+            this.DataNotificationCB.UseVisualStyleBackColor = true;
+            // 
+            // AccessCB
+            // 
+            this.AccessCB.AutoSize = true;
+            this.AccessCB.Location = new System.Drawing.Point(6, 134);
+            this.AccessCB.Name = "AccessCB";
+            this.AccessCB.Size = new System.Drawing.Size(61, 17);
+            this.AccessCB.TabIndex = 6;
+            this.AccessCB.Text = "Access";
+            this.AccessCB.UseVisualStyleBackColor = true;
+            // 
+            // GetCB
+            // 
+            this.GetCB.AutoSize = true;
+            this.GetCB.Location = new System.Drawing.Point(6, 111);
+            this.GetCB.Name = "GetCB";
+            this.GetCB.Size = new System.Drawing.Size(43, 17);
+            this.GetCB.TabIndex = 5;
+            this.GetCB.Text = "Get";
+            this.GetCB.UseVisualStyleBackColor = true;
+            // 
+            // SetCB
+            // 
+            this.SetCB.AutoSize = true;
+            this.SetCB.Location = new System.Drawing.Point(6, 88);
+            this.SetCB.Name = "SetCB";
+            this.SetCB.Size = new System.Drawing.Size(42, 17);
+            this.SetCB.TabIndex = 4;
+            this.SetCB.Text = "Set";
+            this.SetCB.UseVisualStyleBackColor = true;
+            // 
+            // SelectiveAccessCB
+            // 
+            this.SelectiveAccessCB.AutoSize = true;
+            this.SelectiveAccessCB.Location = new System.Drawing.Point(6, 65);
+            this.SelectiveAccessCB.Name = "SelectiveAccessCB";
+            this.SelectiveAccessCB.Size = new System.Drawing.Size(108, 17);
+            this.SelectiveAccessCB.TabIndex = 3;
+            this.SelectiveAccessCB.Text = "Selective Access";
+            this.SelectiveAccessCB.UseVisualStyleBackColor = true;
+            // 
+            // EventNotificationCB
+            // 
+            this.EventNotificationCB.AutoSize = true;
+            this.EventNotificationCB.Location = new System.Drawing.Point(6, 42);
+            this.EventNotificationCB.Name = "EventNotificationCB";
+            this.EventNotificationCB.Size = new System.Drawing.Size(110, 17);
+            this.EventNotificationCB.TabIndex = 2;
+            this.EventNotificationCB.Text = "Event Notification";
+            this.EventNotificationCB.UseVisualStyleBackColor = true;
+            // 
+            // ActionCB
+            // 
+            this.ActionCB.AutoSize = true;
+            this.ActionCB.Location = new System.Drawing.Point(6, 19);
+            this.ActionCB.Name = "ActionCB";
+            this.ActionCB.Size = new System.Drawing.Size(56, 17);
+            this.ActionCB.TabIndex = 1;
+            this.ActionCB.Text = "Action";
+            this.ActionCB.UseVisualStyleBackColor = true;
             // 
             // CipheringTab
             // 
@@ -211,7 +546,7 @@ partial class DevicePropertiesForm
             this.CipheringTab.Controls.Add(this.SecurityLbl);
             this.CipheringTab.Location = new System.Drawing.Point(4, 22);
             this.CipheringTab.Name = "CipheringTab";
-            this.CipheringTab.Size = new System.Drawing.Size(403, 341);
+            this.CipheringTab.Size = new System.Drawing.Size(403, 388);
             this.CipheringTab.TabIndex = 2;
             this.CipheringTab.Text = "Ciphering";
             this.CipheringTab.UseVisualStyleBackColor = true;
@@ -347,10 +682,20 @@ partial class DevicePropertiesForm
             this.DeviceSettingsTab.Location = new System.Drawing.Point(4, 22);
             this.DeviceSettingsTab.Name = "DeviceSettingsTab";
             this.DeviceSettingsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.DeviceSettingsTab.Size = new System.Drawing.Size(403, 341);
+            this.DeviceSettingsTab.Size = new System.Drawing.Size(403, 388);
             this.DeviceSettingsTab.TabIndex = 0;
             this.DeviceSettingsTab.Text = "Device Settings";
             this.DeviceSettingsTab.UseVisualStyleBackColor = true;
+            // 
+            // UseUtcTimeZone
+            // 
+            this.UseUtcTimeZone.AutoSize = true;
+            this.UseUtcTimeZone.Location = new System.Drawing.Point(211, 115);
+            this.UseUtcTimeZone.Name = "UseUtcTimeZone";
+            this.UseUtcTimeZone.Size = new System.Drawing.Size(183, 17);
+            this.UseUtcTimeZone.TabIndex = 6;
+            this.UseUtcTimeZone.Text = "Use UTC time zone, not standard";
+            this.UseUtcTimeZone.UseVisualStyleBackColor = true;
             // 
             // VerboseModeCB
             // 
@@ -823,23 +1168,13 @@ partial class DevicePropertiesForm
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.DeviceTab.Controls.Add(this.DeviceSettingsTab);
-            this.DeviceTab.Controls.Add(this.CipheringTab);
             this.DeviceTab.Controls.Add(this.SupportedServicesTab);
+            this.DeviceTab.Controls.Add(this.CipheringTab);
             this.DeviceTab.Location = new System.Drawing.Point(0, 0);
             this.DeviceTab.Name = "DeviceTab";
             this.DeviceTab.SelectedIndex = 0;
-            this.DeviceTab.Size = new System.Drawing.Size(411, 367);
+            this.DeviceTab.Size = new System.Drawing.Size(411, 414);
             this.DeviceTab.TabIndex = 0;
-            // 
-            // UseUtcTimeZone
-            // 
-            this.UseUtcTimeZone.AutoSize = true;
-            this.UseUtcTimeZone.Location = new System.Drawing.Point(211, 115);
-            this.UseUtcTimeZone.Name = "UseUtcTimeZone";
-            this.UseUtcTimeZone.Size = new System.Drawing.Size(183, 17);
-            this.UseUtcTimeZone.TabIndex = 6;
-            this.UseUtcTimeZone.Text = "Use UTC time zone, not standard";
-            this.UseUtcTimeZone.UseVisualStyleBackColor = true;
             // 
             // DevicePropertiesForm
             // 
@@ -847,17 +1182,24 @@ partial class DevicePropertiesForm
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.CancelBtn;
-            this.ClientSize = new System.Drawing.Size(410, 409);
+            this.ClientSize = new System.Drawing.Size(410, 456);
             this.Controls.Add(this.InitialSettingsBtn);
             this.Controls.Add(this.DeviceTab);
             this.Controls.Add(this.OKBtn);
             this.Controls.Add(this.CancelBtn);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "DevicePropertiesForm";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Device Properties";
             this.SupportedServicesTab.ResumeLayout(false);
+            this.SNSettings.ResumeLayout(false);
+            this.SNSettings.PerformLayout();
+            this.LNSettings.ResumeLayout(false);
+            this.LNSettings.PerformLayout();
             this.CipheringTab.ResumeLayout(false);
             this.CipheringTab.PerformLayout();
             this.DeviceSettingsTab.ResumeLayout(false);
@@ -875,72 +1217,100 @@ partial class DevicePropertiesForm
             this.DeviceTab.ResumeLayout(false);
             this.ResumeLayout(false);
 
-    }
+        }
 
-    #endregion
+        #endregion
 
-    private System.Windows.Forms.Button CancelBtn;
-    private System.Windows.Forms.Button OKBtn;
-    private System.Windows.Forms.Button InitialSettingsBtn;
-    private System.Windows.Forms.TabPage SupportedServicesTab;
-    private System.Windows.Forms.PropertyGrid SupportedServicesGrid;
-    private System.Windows.Forms.TabPage CipheringTab;
-    private System.Windows.Forms.ComboBox SecurityCB;
-    private System.Windows.Forms.TextBox AuthenticationKeyTB;
-    private System.Windows.Forms.TextBox BlockCipherKeyTB;
-    private System.Windows.Forms.TextBox SystemTitleTB;
-    private System.Windows.Forms.Label AuthenticationKeyLbl;
-    private System.Windows.Forms.Label BlockCipherKeyLbl;
-    private System.Windows.Forms.Label SystemtitleLbl;
-    private System.Windows.Forms.RadioButton AsciiRB;
-    private System.Windows.Forms.RadioButton HexRB;
-    private System.Windows.Forms.Label SecurityLbl;
-    private System.Windows.Forms.TabPage DeviceSettingsTab;
-    private System.Windows.Forms.CheckBox VerboseModeCB;
-    private System.Windows.Forms.CheckBox UseLNCB;
-    private System.Windows.Forms.ComboBox ServerAddressTypeCB;
-    private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.Label ClientAddLbl;
-    private System.Windows.Forms.NumericUpDown ClientAddTB;
-    private System.Windows.Forms.ComboBox StartProtocolCB;
-    private System.Windows.Forms.Label StartProtocolLbl;
-    private System.Windows.Forms.NumericUpDown LogicalServerAddressTB;
-    private System.Windows.Forms.Label LogicalServerAddressLbl;
-    private System.Windows.Forms.NumericUpDown PhysicalServerAddressTB;
-    private System.Windows.Forms.Label PhysicalServerAddressLbl;
-    private System.Windows.Forms.NumericUpDown WaitTimeTB;
-    private System.Windows.Forms.Label WaitTimeLbl;
-    private System.Windows.Forms.ComboBox ManufacturerCB;
-    private System.Windows.Forms.Label ManufacturerLbl;
-    private System.Windows.Forms.TextBox PasswordTB;
-    private System.Windows.Forms.TextBox NameTB;
-    private System.Windows.Forms.Label PasswordLbl;
-    private System.Windows.Forms.ComboBox AuthenticationCB;
-    private System.Windows.Forms.Label AuthenticationLbl;
-    private System.Windows.Forms.Label NameLbl;
-    private System.Windows.Forms.ComboBox MediasCB;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.GroupBox SerialSettingsGB;
-    private System.Windows.Forms.CheckBox UseMaximumBaudRateCB;
-    private System.Windows.Forms.ComboBox MaximumBaudRateCB;
-    private System.Windows.Forms.Button AdvancedBtn;
-    private System.Windows.Forms.Label SerialPortLbl;
-    private System.Windows.Forms.ComboBox SerialPortCB;
-    private System.Windows.Forms.GroupBox NetworkSettingsGB;
-    private System.Windows.Forms.ComboBox NetProtocolCB;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.CheckBox UseRemoteSerialCB;
-    private System.Windows.Forms.TextBox PortTB;
-    private System.Windows.Forms.Label PortLbl;
-    private System.Windows.Forms.TextBox HostNameTB;
-    private System.Windows.Forms.Label HostLbl;
-    private System.Windows.Forms.GroupBox TerminalSettingsGB;
-    private System.Windows.Forms.Label TerminalPortLbl;
-    private System.Windows.Forms.Button TerminalAdvancedBtn;
-    private System.Windows.Forms.ComboBox TerminalPortCB;
-    private System.Windows.Forms.TextBox TerminalPhoneNumberTB;
-    private System.Windows.Forms.Label TerminalPhoneNumberLbl;
-    private System.Windows.Forms.TabControl DeviceTab;
+        private System.Windows.Forms.Button CancelBtn;
+        private System.Windows.Forms.Button OKBtn;
+        private System.Windows.Forms.Button InitialSettingsBtn;
+        private System.Windows.Forms.TabPage SupportedServicesTab;
+        private System.Windows.Forms.TabPage CipheringTab;
+        private System.Windows.Forms.ComboBox SecurityCB;
+        private System.Windows.Forms.TextBox AuthenticationKeyTB;
+        private System.Windows.Forms.TextBox BlockCipherKeyTB;
+        private System.Windows.Forms.TextBox SystemTitleTB;
+        private System.Windows.Forms.Label AuthenticationKeyLbl;
+        private System.Windows.Forms.Label BlockCipherKeyLbl;
+        private System.Windows.Forms.Label SystemtitleLbl;
+        private System.Windows.Forms.RadioButton AsciiRB;
+        private System.Windows.Forms.RadioButton HexRB;
+        private System.Windows.Forms.Label SecurityLbl;
+        private System.Windows.Forms.TabPage DeviceSettingsTab;
+        private System.Windows.Forms.CheckBox VerboseModeCB;
+        private System.Windows.Forms.CheckBox UseLNCB;
+        private System.Windows.Forms.ComboBox ServerAddressTypeCB;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label ClientAddLbl;
+        private System.Windows.Forms.NumericUpDown ClientAddTB;
+        private System.Windows.Forms.ComboBox StartProtocolCB;
+        private System.Windows.Forms.Label StartProtocolLbl;
+        private System.Windows.Forms.NumericUpDown LogicalServerAddressTB;
+        private System.Windows.Forms.Label LogicalServerAddressLbl;
+        private System.Windows.Forms.NumericUpDown PhysicalServerAddressTB;
+        private System.Windows.Forms.Label PhysicalServerAddressLbl;
+        private System.Windows.Forms.NumericUpDown WaitTimeTB;
+        private System.Windows.Forms.Label WaitTimeLbl;
+        private System.Windows.Forms.ComboBox ManufacturerCB;
+        private System.Windows.Forms.Label ManufacturerLbl;
+        private System.Windows.Forms.TextBox PasswordTB;
+        private System.Windows.Forms.TextBox NameTB;
+        private System.Windows.Forms.Label PasswordLbl;
+        private System.Windows.Forms.ComboBox AuthenticationCB;
+        private System.Windows.Forms.Label AuthenticationLbl;
+        private System.Windows.Forms.Label NameLbl;
+        private System.Windows.Forms.ComboBox MediasCB;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.GroupBox SerialSettingsGB;
+        private System.Windows.Forms.CheckBox UseMaximumBaudRateCB;
+        private System.Windows.Forms.ComboBox MaximumBaudRateCB;
+        private System.Windows.Forms.Button AdvancedBtn;
+        private System.Windows.Forms.Label SerialPortLbl;
+        private System.Windows.Forms.ComboBox SerialPortCB;
+        private System.Windows.Forms.GroupBox NetworkSettingsGB;
+        private System.Windows.Forms.ComboBox NetProtocolCB;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox UseRemoteSerialCB;
+        private System.Windows.Forms.TextBox PortTB;
+        private System.Windows.Forms.Label PortLbl;
+        private System.Windows.Forms.TextBox HostNameTB;
+        private System.Windows.Forms.Label HostLbl;
+        private System.Windows.Forms.GroupBox TerminalSettingsGB;
+        private System.Windows.Forms.Label TerminalPortLbl;
+        private System.Windows.Forms.Button TerminalAdvancedBtn;
+        private System.Windows.Forms.ComboBox TerminalPortCB;
+        private System.Windows.Forms.TextBox TerminalPhoneNumberTB;
+        private System.Windows.Forms.Label TerminalPhoneNumberLbl;
+        private System.Windows.Forms.TabControl DeviceTab;
         private System.Windows.Forms.CheckBox UseUtcTimeZone;
+        private System.Windows.Forms.GroupBox SNSettings;
+        private System.Windows.Forms.GroupBox LNSettings;
+        private System.Windows.Forms.CheckBox ActionCB;
+        private System.Windows.Forms.CheckBox GeneralProtectionCB;
+        private System.Windows.Forms.CheckBox GeneralBlockTransferCB;
+        private System.Windows.Forms.CheckBox Attribute0SetReferencingCB;
+        private System.Windows.Forms.CheckBox PriorityManagementCB;
+        private System.Windows.Forms.CheckBox Attribute0GetReferencingCB;
+        private System.Windows.Forms.CheckBox GetBlockTransferCB;
+        private System.Windows.Forms.CheckBox SetBlockTransferCB;
+        private System.Windows.Forms.CheckBox ActionBlockTransferCB;
+        private System.Windows.Forms.CheckBox MultipleReferencesCB;
+        private System.Windows.Forms.CheckBox DataNotificationCB;
+        private System.Windows.Forms.CheckBox AccessCB;
+        private System.Windows.Forms.CheckBox GetCB;
+        private System.Windows.Forms.CheckBox SetCB;
+        private System.Windows.Forms.CheckBox SelectiveAccessCB;
+        private System.Windows.Forms.CheckBox EventNotificationCB;
+        private System.Windows.Forms.CheckBox SNGeneralProtectionCB;
+        private System.Windows.Forms.CheckBox SNGeneralBlockTransferCB;
+        private System.Windows.Forms.CheckBox ReadCB;
+        private System.Windows.Forms.CheckBox WriteCB;
+        private System.Windows.Forms.CheckBox UnconfirmedWriteCB;
+        private System.Windows.Forms.CheckBox ReadBlockTransferCB;
+        private System.Windows.Forms.CheckBox WriteBlockTransferCB;
+        private System.Windows.Forms.CheckBox SNMultipleReferencesCB;
+        private System.Windows.Forms.CheckBox InformationReportCB;
+        private System.Windows.Forms.CheckBox SNDataNotificationCB;
+        private System.Windows.Forms.CheckBox ParameterizedAccessCB;
     }
 }

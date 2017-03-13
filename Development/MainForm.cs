@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/MainForm.cs $
 //
-// Version:         $Revision: 9204 $,
-//                  $Date: 2017-02-06 12:36:45 +0200 (ma, 06 helmi 2017) $
+// Version:         $Revision: 9247 $,
+//                  $Date: 2017-03-13 14:59:30 +0200 (ma, 13 maalis 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1860,6 +1860,11 @@ namespace GXDLMSDirector
             //Add devices to the device tree and update parser.
             foreach (GXDLMSDevice dev in Devices)
             {
+                //Conformance is new funtionality. Set default value if not set.
+                if (dev.UseLogicalNameReferencing && dev.Conformance == (int)GXDLMSClient.GetInitialConformance(false))
+                {
+                    dev.Conformance = (int)GXDLMSClient.GetInitialConformance(dev.UseLogicalNameReferencing);
+                }
                 dev.Comm.parentForm = this;
                 dev.Manufacturers = this.Manufacturers;
                 GXManufacturer m = Manufacturers.FindByIdentification(dev.Manufacturer);

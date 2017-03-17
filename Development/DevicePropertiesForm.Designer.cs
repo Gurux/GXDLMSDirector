@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.Designer.cs $
 //
-// Version:         $Revision: 9247 $,
-//                  $Date: 2017-03-13 14:59:30 +0200 (ma, 13 maalis 2017) $
+// Version:         $Revision: 9256 $,
+//                  $Date: 2017-03-17 15:59:27 +0200 (pe, 17 maalis 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -98,6 +98,11 @@ namespace GXDLMSDirector
             this.EventNotificationCB = new System.Windows.Forms.CheckBox();
             this.ActionCB = new System.Windows.Forms.CheckBox();
             this.CipheringTab = new System.Windows.Forms.TabPage();
+            this.InvocationCounterTB = new System.Windows.Forms.TextBox();
+            this.InvocationCounterLbl = new System.Windows.Forms.Label();
+            this.BlockCipherKeyAsciiCb = new System.Windows.Forms.CheckBox();
+            this.AuthenticationKeyAsciiCb = new System.Windows.Forms.CheckBox();
+            this.SystemTitleAsciiCb = new System.Windows.Forms.CheckBox();
             this.SecurityCB = new System.Windows.Forms.ComboBox();
             this.AuthenticationKeyTB = new System.Windows.Forms.TextBox();
             this.BlockCipherKeyTB = new System.Windows.Forms.TextBox();
@@ -105,8 +110,6 @@ namespace GXDLMSDirector
             this.AuthenticationKeyLbl = new System.Windows.Forms.Label();
             this.BlockCipherKeyLbl = new System.Windows.Forms.Label();
             this.SystemtitleLbl = new System.Windows.Forms.Label();
-            this.AsciiRB = new System.Windows.Forms.RadioButton();
-            this.HexRB = new System.Windows.Forms.RadioButton();
             this.SecurityLbl = new System.Windows.Forms.Label();
             this.DeviceSettingsTab = new System.Windows.Forms.TabPage();
             this.UseUtcTimeZone = new System.Windows.Forms.CheckBox();
@@ -534,6 +537,11 @@ namespace GXDLMSDirector
             // 
             // CipheringTab
             // 
+            this.CipheringTab.Controls.Add(this.InvocationCounterTB);
+            this.CipheringTab.Controls.Add(this.InvocationCounterLbl);
+            this.CipheringTab.Controls.Add(this.BlockCipherKeyAsciiCb);
+            this.CipheringTab.Controls.Add(this.AuthenticationKeyAsciiCb);
+            this.CipheringTab.Controls.Add(this.SystemTitleAsciiCb);
             this.CipheringTab.Controls.Add(this.SecurityCB);
             this.CipheringTab.Controls.Add(this.AuthenticationKeyTB);
             this.CipheringTab.Controls.Add(this.BlockCipherKeyTB);
@@ -541,8 +549,6 @@ namespace GXDLMSDirector
             this.CipheringTab.Controls.Add(this.AuthenticationKeyLbl);
             this.CipheringTab.Controls.Add(this.BlockCipherKeyLbl);
             this.CipheringTab.Controls.Add(this.SystemtitleLbl);
-            this.CipheringTab.Controls.Add(this.AsciiRB);
-            this.CipheringTab.Controls.Add(this.HexRB);
             this.CipheringTab.Controls.Add(this.SecurityLbl);
             this.CipheringTab.Location = new System.Drawing.Point(4, 22);
             this.CipheringTab.Name = "CipheringTab";
@@ -550,6 +556,57 @@ namespace GXDLMSDirector
             this.CipheringTab.TabIndex = 2;
             this.CipheringTab.Text = "Ciphering";
             this.CipheringTab.UseVisualStyleBackColor = true;
+            // 
+            // InvocationCounterTB
+            // 
+            this.InvocationCounterTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.InvocationCounterTB.Location = new System.Drawing.Point(113, 107);
+            this.InvocationCounterTB.Name = "InvocationCounterTB";
+            this.InvocationCounterTB.Size = new System.Drawing.Size(226, 20);
+            this.InvocationCounterTB.TabIndex = 62;
+            // 
+            // InvocationCounterLbl
+            // 
+            this.InvocationCounterLbl.AutoSize = true;
+            this.InvocationCounterLbl.Location = new System.Drawing.Point(8, 110);
+            this.InvocationCounterLbl.Name = "InvocationCounterLbl";
+            this.InvocationCounterLbl.Size = new System.Drawing.Size(100, 13);
+            this.InvocationCounterLbl.TabIndex = 63;
+            this.InvocationCounterLbl.Text = "Invocation Counter:";
+            // 
+            // BlockCipherKeyAsciiCb
+            // 
+            this.BlockCipherKeyAsciiCb.AutoSize = true;
+            this.BlockCipherKeyAsciiCb.Location = new System.Drawing.Point(345, 57);
+            this.BlockCipherKeyAsciiCb.Name = "BlockCipherKeyAsciiCb";
+            this.BlockCipherKeyAsciiCb.Size = new System.Drawing.Size(53, 17);
+            this.BlockCipherKeyAsciiCb.TabIndex = 61;
+            this.BlockCipherKeyAsciiCb.Text = "ASCII";
+            this.BlockCipherKeyAsciiCb.UseVisualStyleBackColor = true;
+            this.BlockCipherKeyAsciiCb.CheckedChanged += new System.EventHandler(this.BlockCipherKeyAsciiCb_CheckedChanged);
+            // 
+            // AuthenticationKeyAsciiCb
+            // 
+            this.AuthenticationKeyAsciiCb.AutoSize = true;
+            this.AuthenticationKeyAsciiCb.Location = new System.Drawing.Point(345, 83);
+            this.AuthenticationKeyAsciiCb.Name = "AuthenticationKeyAsciiCb";
+            this.AuthenticationKeyAsciiCb.Size = new System.Drawing.Size(53, 17);
+            this.AuthenticationKeyAsciiCb.TabIndex = 60;
+            this.AuthenticationKeyAsciiCb.Text = "ASCII";
+            this.AuthenticationKeyAsciiCb.UseVisualStyleBackColor = true;
+            this.AuthenticationKeyAsciiCb.CheckedChanged += new System.EventHandler(this.AuthenticationKeyAsciiCb_CheckedChanged);
+            // 
+            // SystemTitleAsciiCb
+            // 
+            this.SystemTitleAsciiCb.AutoSize = true;
+            this.SystemTitleAsciiCb.Location = new System.Drawing.Point(347, 30);
+            this.SystemTitleAsciiCb.Name = "SystemTitleAsciiCb";
+            this.SystemTitleAsciiCb.Size = new System.Drawing.Size(53, 17);
+            this.SystemTitleAsciiCb.TabIndex = 59;
+            this.SystemTitleAsciiCb.Text = "ASCII";
+            this.SystemTitleAsciiCb.UseVisualStyleBackColor = true;
+            this.SystemTitleAsciiCb.CheckedChanged += new System.EventHandler(this.SystemTitleAsciiCb_CheckedChanged);
             // 
             // SecurityCB
             // 
@@ -562,33 +619,30 @@ namespace GXDLMSDirector
             // 
             // AuthenticationKeyTB
             // 
-            this.AuthenticationKeyTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.AuthenticationKeyTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.AuthenticationKeyTB.Location = new System.Drawing.Point(113, 81);
             this.AuthenticationKeyTB.Name = "AuthenticationKeyTB";
             this.AuthenticationKeyTB.Size = new System.Drawing.Size(226, 20);
             this.AuthenticationKeyTB.TabIndex = 39;
-            this.AuthenticationKeyTB.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ValidateHex);
             // 
             // BlockCipherKeyTB
             // 
-            this.BlockCipherKeyTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.BlockCipherKeyTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.BlockCipherKeyTB.Location = new System.Drawing.Point(113, 55);
             this.BlockCipherKeyTB.Name = "BlockCipherKeyTB";
             this.BlockCipherKeyTB.Size = new System.Drawing.Size(226, 20);
             this.BlockCipherKeyTB.TabIndex = 38;
-            this.BlockCipherKeyTB.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ValidateHex);
             // 
             // SystemTitleTB
             // 
-            this.SystemTitleTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.SystemTitleTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.SystemTitleTB.Location = new System.Drawing.Point(113, 28);
             this.SystemTitleTB.Name = "SystemTitleTB";
             this.SystemTitleTB.Size = new System.Drawing.Size(226, 20);
             this.SystemTitleTB.TabIndex = 37;
-            this.SystemTitleTB.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ValidateHex);
             // 
             // AuthenticationKeyLbl
             // 
@@ -616,29 +670,6 @@ namespace GXDLMSDirector
             this.SystemtitleLbl.Size = new System.Drawing.Size(63, 13);
             this.SystemtitleLbl.TabIndex = 43;
             this.SystemtitleLbl.Text = "System title:";
-            // 
-            // AsciiRB
-            // 
-            this.AsciiRB.AutoSize = true;
-            this.AsciiRB.Location = new System.Drawing.Point(15, 133);
-            this.AsciiRB.Name = "AsciiRB";
-            this.AsciiRB.Size = new System.Drawing.Size(52, 17);
-            this.AsciiRB.TabIndex = 42;
-            this.AsciiRB.Text = "ASCII";
-            this.AsciiRB.UseVisualStyleBackColor = true;
-            // 
-            // HexRB
-            // 
-            this.HexRB.AutoSize = true;
-            this.HexRB.Checked = true;
-            this.HexRB.Location = new System.Drawing.Point(15, 110);
-            this.HexRB.Name = "HexRB";
-            this.HexRB.Size = new System.Drawing.Size(44, 17);
-            this.HexRB.TabIndex = 41;
-            this.HexRB.TabStop = true;
-            this.HexRB.Text = "Hex";
-            this.HexRB.UseVisualStyleBackColor = true;
-            this.HexRB.CheckedChanged += new System.EventHandler(this.HexRB_CheckedChanged);
             // 
             // SecurityLbl
             // 
@@ -962,7 +993,7 @@ namespace GXDLMSDirector
             // 
             // SerialSettingsGB
             // 
-            this.SerialSettingsGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.SerialSettingsGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.SerialSettingsGB.Controls.Add(this.UseMaximumBaudRateCB);
             this.SerialSettingsGB.Controls.Add(this.MaximumBaudRateCB);
@@ -1026,7 +1057,7 @@ namespace GXDLMSDirector
             // 
             // NetworkSettingsGB
             // 
-            this.NetworkSettingsGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.NetworkSettingsGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.NetworkSettingsGB.Controls.Add(this.NetProtocolCB);
             this.NetworkSettingsGB.Controls.Add(this.label2);
@@ -1104,7 +1135,7 @@ namespace GXDLMSDirector
             // 
             // TerminalSettingsGB
             // 
-            this.TerminalSettingsGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.TerminalSettingsGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.TerminalSettingsGB.Controls.Add(this.TerminalPortLbl);
             this.TerminalSettingsGB.Controls.Add(this.TerminalAdvancedBtn);
@@ -1164,8 +1195,8 @@ namespace GXDLMSDirector
             // 
             // DeviceTab
             // 
-            this.DeviceTab.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.DeviceTab.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.DeviceTab.Controls.Add(this.DeviceSettingsTab);
             this.DeviceTab.Controls.Add(this.SupportedServicesTab);
@@ -1233,8 +1264,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label AuthenticationKeyLbl;
         private System.Windows.Forms.Label BlockCipherKeyLbl;
         private System.Windows.Forms.Label SystemtitleLbl;
-        private System.Windows.Forms.RadioButton AsciiRB;
-        private System.Windows.Forms.RadioButton HexRB;
         private System.Windows.Forms.Label SecurityLbl;
         private System.Windows.Forms.TabPage DeviceSettingsTab;
         private System.Windows.Forms.CheckBox VerboseModeCB;
@@ -1312,5 +1341,10 @@ namespace GXDLMSDirector
         private System.Windows.Forms.CheckBox InformationReportCB;
         private System.Windows.Forms.CheckBox SNDataNotificationCB;
         private System.Windows.Forms.CheckBox ParameterizedAccessCB;
+        private System.Windows.Forms.CheckBox BlockCipherKeyAsciiCb;
+        private System.Windows.Forms.CheckBox AuthenticationKeyAsciiCb;
+        private System.Windows.Forms.CheckBox SystemTitleAsciiCb;
+        private System.Windows.Forms.TextBox InvocationCounterTB;
+        private System.Windows.Forms.Label InvocationCounterLbl;
     }
 }

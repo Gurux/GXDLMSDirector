@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/MainForm.cs $
 //
-// Version:         $Revision: 9247 $,
-//                  $Date: 2017-03-13 14:59:30 +0200 (ma, 13 maalis 2017) $
+// Version:         $Revision: 9256 $,
+//                  $Date: 2017-03-17 15:59:27 +0200 (pe, 17 maalis 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -61,7 +61,7 @@ namespace GXDLMSDirector
         delegate void CheckUpdatesEventHandler(MainForm form);
         GXAsyncWork TransactionWork;
         Dictionary<Type, IGXDLMSView> Views = new Dictionary<Type, IGXDLMSView>();
-        String m_Path;
+        String path;
         GXManufacturerCollection Manufacturers;
         System.Collections.Hashtable ObjectTreeItems = new System.Collections.Hashtable();
         SortedList<int, GXDLMSObject> SelectedListItems = new SortedList<int, GXDLMSObject>();
@@ -82,7 +82,7 @@ namespace GXDLMSDirector
         void OnDirty(bool dirty)
         {
             Dirty = dirty;
-            this.Text = Properties.Resources.GXDLMSDirectorTxt + " " + m_Path;
+            this.Text = Properties.Resources.GXDLMSDirectorTxt + " " + path;
             if (Dirty)
             {
                 this.Text += " *";
@@ -253,6 +253,7 @@ namespace GXDLMSDirector
                     LogicalAddressValueLbl.Text = dev.LogicalAddress.ToString();
                     PhysicalAddressValueLbl.Text = dev.PhysicalAddress.ToString();
                     ManufacturerValueLbl.Text = dev.Manufacturers.FindByIdentification(dev.Manufacturer).Name;
+                    ConformanceTB.Text = dev.Comm.client.NegotiatedConformance.ToString();
                     UpdateDeviceUI(dev, dev.Status);
                 }
                 else if (ObjectValueView.Visible)
@@ -552,7 +553,7 @@ namespace GXDLMSDirector
 
         void Initialize()
         {
-            m_Path = "";
+            path = "";
             ObjectTreeItems.Clear();
             SelectedListItems.Clear();
             ObjectListItems.Clear();
@@ -739,11 +740,11 @@ namespace GXDLMSDirector
 
         private bool Save()
         {
-            if (string.IsNullOrEmpty(m_Path))
+            if (string.IsNullOrEmpty(path))
             {
                 return SaveAs();
             }
-            SaveFile(m_Path);
+            SaveFile(path);
             return true;
         }
 
@@ -752,10 +753,10 @@ namespace GXDLMSDirector
             SaveFileDialog dlg = new SaveFileDialog();
             dlg.Filter = Properties.Resources.FilterTxt;
             dlg.DefaultExt = ".gxc";
-            dlg.InitialDirectory = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
+            dlg.InitialDirectory = Directory.GetCurrentDirectory();
             if (dlg.ShowDialog(this) == DialogResult.OK)
             {
-                this.m_Path = dlg.FileName;
+                this.path = dlg.FileName;
                 SaveFile(dlg.FileName);
                 return true;
             }
@@ -789,6 +790,14 @@ namespace GXDLMSDirector
             {
                 GXDLMS.Common.Error.ShowError(this, Ex);
             }
+        }
+
+        delegate void UpdateConformance(GXDLMSDevice device);
+
+        void OnUpdateConformance(GXDLMSDevice device)
+        {
+            ConformanceTB.Text = device.Comm.client.NegotiatedConformance.ToString();
+
         }
 
         void Connect(System.Windows.Forms.Control sender, object[] parameters)
@@ -827,6 +836,10 @@ namespace GXDLMSDirector
                             ((GXDLMSDevice)obj).OnTrace += new MessageTraceEventHandler(OnTrace);
                             this.OnProgress(null, "Connecting", 0, 1);
                             ((GXDLMSDevice)obj).InitializeConnection();
+                            if (InvokeRequired)
+                            {
+                                BeginInvoke(new UpdateConformance(this.OnUpdateConformance), (GXDLMSDevice)obj);
+                            }
                         }
                         finally
                         {
@@ -1881,7 +1894,7 @@ namespace GXDLMSDirector
                 RefreshDevice(dev, false);
             }
             GroupItems(GroupsMnu.Checked);
-            m_Path = path;
+            this.path = path;
             SetDirty(false);
             m_MruManager.Insert(0, path);
         }
@@ -1898,13 +1911,13 @@ namespace GXDLMSDirector
             {
                 OpenFileDialog dlg = new OpenFileDialog();
                 dlg.Multiselect = false;
-                if (string.IsNullOrEmpty(m_Path))
+                if (string.IsNullOrEmpty(path))
                 {
-                    dlg.InitialDirectory = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
+                    dlg.InitialDirectory = Directory.GetCurrentDirectory();
                 }
                 else
                 {
-                    System.IO.FileInfo fi = new System.IO.FileInfo(m_Path);
+                    System.IO.FileInfo fi = new System.IO.FileInfo(path);
                     dlg.InitialDirectory = fi.DirectoryName;
                     dlg.FileName = fi.Name;
                 }

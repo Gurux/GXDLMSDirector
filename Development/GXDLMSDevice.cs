@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDevice.cs $
 //
-// Version:         $Revision: 9247 $,
-//                  $Date: 2017-03-13 14:59:30 +0200 (ma, 13 maalis 2017) $
+// Version:         $Revision: 9256 $,
+//                  $Date: 2017-03-17 15:59:27 +0200 (pe, 17 maalis 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -216,6 +216,17 @@ namespace GXDLMSDirector
             get;
             set;
         }
+
+        /// <summary>
+        /// Invocation counter.
+        /// </summary>
+        [DefaultValue(0)]
+        public UInt32 InvocationCounter
+        {
+            get;
+            set;
+        }
+
 
 
         /// <summary>

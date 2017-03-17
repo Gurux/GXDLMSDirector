@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.cs $
 //
-// Version:         $Revision: 9247 $,
-//                  $Date: 2017-03-13 14:59:30 +0200 (ma, 13 maalis 2017) $
+// Version:         $Revision: 9256 $,
+//                  $Date: 2017-03-17 15:59:27 +0200 (pe, 17 maalis 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -65,39 +65,6 @@ namespace GXDLMSDirector
             {
                 InitializeComponent();
                 LNSettings.Dock = SNSettings.Dock = DockStyle.Fill;
-
-                /*
-                .Checked = (c & Conformance.GeneralBlockTransfer) != 0;
-                Attribute0SetReferencingCB.Checked = (c & Conformance.Attribute0SupportedWithSet) != 0;
-                PriorityManagementCB.Checked = (c & Conformance.PriorityMgmtSupported) != 0;
-                Attribute0GetReferencingCB.Checked = (c & Conformance.Attribute0SupportedWithGet) != 0;
-                GetBlockTransferCB.Checked = (c & Conformance.BlockTransferWithGetOrRead) != 0;
-                SetBlockTransferCB.Checked = (c & Conformance.BlockTransferWithSetOrWrite) != 0;
-                ActionBlockTransferCB.Checked = (c & Conformance.BlockTransferWithAction) != 0;
-                MultipleReferencesCB.Checked = (c & Conformance.MultipleReferences) != 0;
-                DataNotificationCB.Checked = (c & Conformance.DataNotification) != 0;
-                AccessCB.Checked = (c & Conformance.Access) != 0;
-                GetCB.Checked = (c & Conformance.Get) != 0;
-                SetCB.Checked = (c & Conformance.Set) != 0;
-                SelectiveAccessCB.Checked = (c & Conformance.SelectiveAccess) != 0;
-                EventNotificationCB.Checked = (c & Conformance.EventNotification) != 0;
-                ActionCB.Checked = (c & Conformance.EventNotification) != 0;
-            }
-            else
-            {
-                SNGeneralProtectionCB.Checked = (c & Conformance.GeneralProtection) != 0;
-                SNGeneralBlockTransferCB.Checked = (c & Conformance.GeneralBlockTransfer) != 0;
-                ReadCB.Checked = (c & Conformance.Read) != 0;
-                WriteCB.Checked = (c & Conformance.Write) != 0;
-                UnconfirmedWriteCB.Checked = (c & Conformance.UnconfirmedWrite) != 0;
-                ReadBlockTransferCB.Checked = (c & Conformance.BlockTransferWithGetOrRead) != 0;
-                WriteBlockTransferCB.Checked = (c & Conformance.BlockTransferWithSetOrWrite) != 0;
-                SNMultipleReferencesCB.Checked = (c & Conformance.MultipleReferences) != 0;
-                InformationReportCB.Checked = (c & Conformance.InformationReport) != 0;
-                SNDataNotificationCB.Checked = (c & Conformance.DataNotification) != 0;
-                ParameterizedAccessCB.Checked = (c & Conformance.ParameterizedAccess) != 0;
-                */
-
                 SecurityCB.Items.AddRange(new object[] { Security.None, Security.Authentication,
                                       Security.Encryption, Security.AuthenticationEncryption
                                                    });
@@ -154,19 +121,38 @@ namespace GXDLMSDirector
                     this.ClientAddTB.Value = Convert.ToDecimal(Convert.ToUInt32(Device.ClientAddress));
                     WaitTimeTB.Value = Device.WaitTime;
                     SecurityCB.SelectedItem = dev.Security;
-                    SystemTitleTB.Text = dev.SystemTitle;
-                    BlockCipherKeyTB.Text = dev.BlockCipherKey;
-                    AuthenticationKeyTB.Text = dev.AuthenticationKey;
+                    if (IsAscii(GXCommon.HexToBytes(dev.SystemTitle)))
+                    {
+                        SystemTitleAsciiCb.Checked = true;
+                        SystemTitleTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(dev.SystemTitle));
+                    }
+                    else
+                    {
+                        SystemTitleTB.Text = dev.SystemTitle;
+                    }
+                    if (IsAscii(GXCommon.HexToBytes(dev.BlockCipherKey)))
+                    {
+                        BlockCipherKeyAsciiCb.Checked = true;
+                        BlockCipherKeyTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(dev.BlockCipherKey));
+                    }
+                    else
+                    {
+                        BlockCipherKeyTB.Text = dev.BlockCipherKey;
+                    }
+                    if (IsAscii(GXCommon.HexToBytes(dev.AuthenticationKey)))
+                    {
+                        AuthenticationKeyAsciiCb.Checked = true;
+                        AuthenticationKeyTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(dev.AuthenticationKey));
+                    }
+                    else
+                    {
+                        AuthenticationKeyTB.Text = dev.AuthenticationKey;
+                    }
+
+                    InvocationCounterTB.Text = dev.InvocationCounter.ToString();
                     UseUtcTimeZone.Checked = Device.UtcTimeZone;
                 }
-                if (SelectedMedia != null && SelectedMedia.IsOpen)
-                {
-                    ShowConformance(Device.Comm.client.NegotiatedConformance);
-                }
-                else
-                {
-                    ShowConformance(Device.Comm.client.ProposedConformance);
-                }
+                ShowConformance(Device.Comm.client.ProposedConformance);
                 ManufacturerCB.DrawMode = MediasCB.DrawMode = DrawMode.OwnerDrawFixed;
                 Gurux.Net.GXNet net = new Gurux.Net.GXNet();
                 //Initialize network settings.
@@ -506,6 +492,22 @@ namespace GXDLMSDirector
                 {
                     throw new Exception("Invalid name.");
                 }
+                //Check security settings.
+                if ((Security)SecurityCB.SelectedItem != Security.None)
+                {
+                    if (SystemTitleTB.Text.Trim().Length == 0)
+                    {
+                        throw new ArgumentException("Invalid system title.");
+                    }
+                    if (AuthenticationKeyTB.Text.Trim().Length == 0)
+                    {
+                        throw new ArgumentException("Invalid authentication key.");
+                    }
+                    if (BlockCipherKeyTB.Text.Trim().Length == 0)
+                    {
+                        throw new ArgumentException("Invalid block cipher key.");
+                    }
+                }
                 GXServerAddress server = (GXServerAddress)ServerAddressTypeCB.SelectedItem;
                 if (server.HDLCAddress == HDLCAddressType.SerialNumber && PhysicalServerAddressTB.Value == 0)
                 {
@@ -592,9 +594,10 @@ namespace GXDLMSDirector
                 GXDLMSDirector.Properties.Settings.Default.SelectedManufacturer = man.Name;
 
                 Device.Security = (Security)SecurityCB.SelectedItem;
-                Device.SystemTitle = SystemTitleTB.Text;
-                Device.BlockCipherKey = BlockCipherKeyTB.Text;
-                Device.AuthenticationKey = AuthenticationKeyTB.Text;
+                Device.SystemTitle = GetAsHex(SystemTitleTB.Text, SystemTitleAsciiCb.Checked);
+                Device.BlockCipherKey = GetAsHex(BlockCipherKeyTB.Text, BlockCipherKeyAsciiCb.Checked);
+                Device.AuthenticationKey = GetAsHex(AuthenticationKeyTB.Text, AuthenticationKeyAsciiCb.Checked);
+                Device.InvocationCounter = UInt32.Parse(InvocationCounterTB.Text);
                 UpdateConformance();
             }
             catch (Exception Ex)
@@ -602,6 +605,15 @@ namespace GXDLMSDirector
                 this.DialogResult = DialogResult.None;
                 GXDLMS.Common.Error.ShowError(this, Ex);
             }
+        }
+
+        public static string GetAsHex(string value, bool ascii)
+        {
+            if (ascii)
+            {
+                return GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(value), false);
+            }
+            return GXCommon.ToHex(GXCommon.HexToBytes(value), false);
         }
 
         /// <summary>
@@ -650,7 +662,7 @@ namespace GXDLMSDirector
             try
             {
                 GXAuthentication authentication = (GXAuthentication)AuthenticationCB.SelectedItem;
-                PasswordTB.Enabled = authentication.Type != Authentication.None;
+                PasswordTB.Enabled = authentication.Type != Authentication.None && authentication.Type != Authentication.HighGMAC && authentication.Type != Authentication.HighECDSA;
                 this.ClientAddTB.Value = authentication.ClientAddress;
             }
             catch (Exception Ex)
@@ -808,38 +820,14 @@ namespace GXDLMSDirector
                     }
                 }
                 UpdateStartProtocol();
-
                 SecurityCB.SelectedItem = man.Security;
-                if (man.SystemTitle != null || man.BlockCipherKey != null ||
-                        man.AuthenticationKey != null)
-                {
-                    SystemTitleTB.Text = GXCommon.ToHex(man.SystemTitle, true);
-                    BlockCipherKeyTB.Text = GXCommon.ToHex(man.BlockCipherKey, true);
-                    AuthenticationKeyTB.Text = GXCommon.ToHex(man.AuthenticationKey, true);
-                    if (!DeviceTab.TabPages.Contains(CipheringTab))
-                    {
-                        DeviceTab.TabPages.Add(CipheringTab);
-                        if (DeviceTab.TabPages.Contains(SupportedServicesTab))
-                        {
-                            DeviceTab.TabPages.Remove(SupportedServicesTab);
-                            DeviceTab.TabPages.Add(SupportedServicesTab);
-                        }
-                    }
-                    if (!IsPrintable(man.SystemTitle) ||
-                            !IsPrintable(man.BlockCipherKey) ||
-                            !IsPrintable(man.AuthenticationKey))
-                    {
-                        AsciiRB.Enabled = false;
-                    }
-                    else
-                    {
-                        AsciiRB.Enabled = true;
-                    }
-                }
-                else if (DeviceTab.TabPages.Contains(CipheringTab))
-                {
-                    DeviceTab.TabPages.Remove(CipheringTab);
-                }
+                SystemTitleTB.Text = GXCommon.ToHex(man.SystemTitle, true);
+                BlockCipherKeyTB.Text = GXCommon.ToHex(man.BlockCipherKey, true);
+                AuthenticationKeyTB.Text = GXCommon.ToHex(man.AuthenticationKey, true);
+                SystemTitleAsciiCb.Checked = IsAscii(GXCommon.HexToBytes(SystemTitleTB.Text));
+                BlockCipherKeyAsciiCb.Checked = IsAscii(GXCommon.HexToBytes(BlockCipherKeyTB.Text));
+                AuthenticationKeyAsciiCb.Checked = IsAscii(GXCommon.HexToBytes(AuthenticationKeyTB.Text));
+                InvocationCounterTB.Text = "0";
             }
             catch (Exception Ex)
             {
@@ -998,50 +986,100 @@ namespace GXDLMSDirector
 
         }
 
-        private void HexRB_CheckedChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (HexRB.Checked)
-                {
-                    SystemTitleTB.Text = GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(SystemTitleTB.Text), true);
-                    BlockCipherKeyTB.Text = GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(BlockCipherKeyTB.Text), true);
-                    AuthenticationKeyTB.Text = GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(AuthenticationKeyTB.Text), true);
-                }
-                else
-                {
-                    SystemTitleTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(SystemTitleTB.Text));
-                    BlockCipherKeyTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(BlockCipherKeyTB.Text));
-                    AuthenticationKeyTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(AuthenticationKeyTB.Text));
-                }
-            }
-            catch (Exception Ex)
-            {
-                GXDLMS.Common.Error.ShowError(this, Ex);
-            }
-        }
-
-        private void ValidateHex(object sender, KeyPressEventArgs e)
-        {
-            if (HexRB.Checked)
-            {
-                if (!Char.IsNumber(e.KeyChar) &&
-                        (Char.IsLetter(e.KeyChar) && !(e.KeyChar >= 'a' && e.KeyChar <= 'f' ||
-                                                       e.KeyChar >= 'A' && e.KeyChar <= 'F')))
-                {
-                    e.Handled = true;
-                }
-                if (AsciiRB.Enabled && !Char.IsLetterOrDigit(e.KeyChar))
-                {
-                    AsciiRB.Enabled = false;
-                }
-            }
-        }
-
         private void UseLNCB_CheckedChanged(object sender, EventArgs e)
         {
             Conformance c = GXDLMSClient.GetInitialConformance(UseLNCB.Checked);
             ShowConformance(c);
+        }
+
+        public static bool IsAscii(byte[] value)
+        {
+            foreach (byte it in value)
+            {
+                if (it < 0x21 || it > 0x7E)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private void SystemTitleAsciiCb_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (SystemTitleAsciiCb.Checked)
+                {
+                    if (!IsAscii(GXCommon.HexToBytes(SystemTitleTB.Text)))
+                    {
+                        SystemTitleAsciiCb.CheckedChanged -= SystemTitleAsciiCb_CheckedChanged;
+                        SystemTitleAsciiCb.Checked = !SystemTitleAsciiCb.Checked;
+                        SystemTitleAsciiCb.CheckedChanged += SystemTitleAsciiCb_CheckedChanged;
+                        throw new ArgumentOutOfRangeException(Properties.Resources.InvalidASCII);
+                    }
+                    SystemTitleTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(SystemTitleTB.Text));
+                }
+                else
+                {
+                    SystemTitleTB.Text = GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(SystemTitleTB.Text), true);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message);
+            }
+        }
+
+        private void BlockCipherKeyAsciiCb_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (BlockCipherKeyAsciiCb.Checked)
+                {
+                    if (!IsAscii(GXCommon.HexToBytes(BlockCipherKeyTB.Text)))
+                    {
+                        BlockCipherKeyAsciiCb.CheckedChanged -= BlockCipherKeyAsciiCb_CheckedChanged;
+                        BlockCipherKeyAsciiCb.Checked = !BlockCipherKeyAsciiCb.Checked;
+                        BlockCipherKeyAsciiCb.CheckedChanged += BlockCipherKeyAsciiCb_CheckedChanged;
+                        throw new ArgumentOutOfRangeException(Properties.Resources.InvalidASCII);
+                    }
+                    BlockCipherKeyTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(BlockCipherKeyTB.Text));
+                }
+                else
+                {
+                    BlockCipherKeyTB.Text = GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(BlockCipherKeyTB.Text), true);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message);
+            }
+        }
+
+        private void AuthenticationKeyAsciiCb_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (AuthenticationKeyAsciiCb.Checked)
+                {
+                    if (!IsAscii(GXCommon.HexToBytes(AuthenticationKeyTB.Text)))
+                    {
+                        AuthenticationKeyAsciiCb.CheckedChanged -= AuthenticationKeyAsciiCb_CheckedChanged;
+                        AuthenticationKeyAsciiCb.Checked = !AuthenticationKeyAsciiCb.Checked;
+                        AuthenticationKeyAsciiCb.CheckedChanged += AuthenticationKeyAsciiCb_CheckedChanged;
+                        throw new ArgumentOutOfRangeException(Properties.Resources.InvalidASCII);
+                    }
+                    AuthenticationKeyTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(AuthenticationKeyTB.Text));
+                }
+                else
+                {
+                    AuthenticationKeyTB.Text = GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(AuthenticationKeyTB.Text), true);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message);
+            }
         }
     }
 }

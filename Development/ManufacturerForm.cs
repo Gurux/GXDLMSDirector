@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/ManufacturerForm.cs $
 //
-// Version:         $Revision: 9048 $,
-//                  $Date: 2016-12-20 16:35:34 +0200 (ti, 20 joulu 2016) $
+// Version:         $Revision: 9256 $,
+//                  $Date: 2017-03-17 15:59:27 +0200 (pe, 17 maalis 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -42,6 +42,7 @@ using System.Windows.Forms;
 using GXDLMS.ManufacturerSettings;
 using Gurux.DLMS.ManufacturerSettings;
 using Gurux.DLMS.Enums;
+using Gurux.Common;
 
 namespace GXDLMSDirector
 {
@@ -68,6 +69,9 @@ namespace GXDLMSDirector
         public ManufacturerForm(GXManufacturerCollection manufacturers, GXManufacturer manufacturer)
         {
             InitializeComponent();
+            SecurityCB.Items.AddRange(new object[] { Security.None, Security.Authentication,
+                                      Security.Encryption, Security.AuthenticationEncryption
+                                                   });
             Manufacturers = manufacturers;
             Manufacturer = manufacturer;
             if (manufacturer.Settings.Count == 0)
@@ -85,7 +89,6 @@ namespace GXDLMSDirector
                 AuthenticationCB.Items.Add(it);
             }
             AuthenticationCB.SelectedItem = authentication;
-            AdvancedBtn.Enabled = authentication.Type == Authentication.HighGMAC;
             this.AuthenticationCB.SelectedIndexChanged += new System.EventHandler(this.AuthenticationCB_SelectedIndexChanged);
             if (manufacturer.ServerSettings.Count == 0)
             {
@@ -123,7 +126,6 @@ namespace GXDLMSDirector
             //Manufacturer ID can not change after creation.
             ManufacturerIdTB.Enabled = string.IsNullOrEmpty(manufacturer.Identification);
             KeepAliveIntervalTB.Value = Manufacturer.KeepAliveInterval / 1000;
-            AdvancedBtn.Enabled = SecuredConnectionCB.Checked = manufacturer.SystemTitle != null;
             WebAddressTB.Text = Manufacturer.WebAddress;
             if (!string.IsNullOrEmpty(Manufacturer.Info))
             {
@@ -135,6 +137,34 @@ namespace GXDLMSDirector
                 {
                     InfoTB.Text = "";
                 }
+            }
+            SecurityCB.SelectedItem = manufacturer.Security;
+            if (DevicePropertiesForm.IsAscii(manufacturer.SystemTitle))
+            {
+                SystemTitleAsciiCb.Checked = true;
+                SystemTitleTB.Text = ASCIIEncoding.ASCII.GetString((manufacturer.SystemTitle));
+            }
+            else
+            {
+                SystemTitleTB.Text = GXCommon.ToHex(manufacturer.SystemTitle, true);
+            }
+            if (DevicePropertiesForm.IsAscii(manufacturer.BlockCipherKey))
+            {
+                BlockCipherKeyAsciiCb.Checked = true;
+                BlockCipherKeyTB.Text = ASCIIEncoding.ASCII.GetString(manufacturer.BlockCipherKey);
+            }
+            else
+            {
+                BlockCipherKeyTB.Text = GXCommon.ToHex(manufacturer.BlockCipherKey, true);
+            }
+            if (DevicePropertiesForm.IsAscii(manufacturer.AuthenticationKey))
+            {
+                AuthenticationKeyAsciiCb.Checked = true;
+                AuthenticationKeyTB.Text = ASCIIEncoding.ASCII.GetString(manufacturer.AuthenticationKey);
+            }
+            else
+            {
+                AuthenticationKeyTB.Text = GXCommon.ToHex(manufacturer.AuthenticationKey, true);
             }
         }
 
@@ -179,6 +209,10 @@ namespace GXDLMSDirector
                 {
                     Manufacturer.Info = null;
                 }
+                Manufacturer.Security = (Security)SecurityCB.SelectedItem;
+                Manufacturer.SystemTitle = GXCommon.HexToBytes(DevicePropertiesForm.GetAsHex(SystemTitleTB.Text, SystemTitleAsciiCb.Checked));
+                Manufacturer.BlockCipherKey = GXCommon.HexToBytes(DevicePropertiesForm.GetAsHex(BlockCipherKeyTB.Text, BlockCipherKeyAsciiCb.Checked));
+                Manufacturer.AuthenticationKey = GXCommon.HexToBytes(DevicePropertiesForm.GetAsHex(AuthenticationKeyTB.Text, AuthenticationKeyAsciiCb.Checked));
             }
             catch (Exception Ex)
             {
@@ -264,7 +298,6 @@ namespace GXDLMSDirector
                 //Save old values.
                 authentication.ClientAddress = Convert.ToInt32(this.ClientAddTB.Value);
                 authentication = ((GXAuthentication)AuthenticationCB.SelectedItem);
-                AdvancedBtn.Enabled = authentication.Type == Authentication.HighGMAC;
                 authentication.Selected = true;
                 ClientAddTB.Value = authentication.ClientAddress;
             }
@@ -322,22 +355,6 @@ namespace GXDLMSDirector
             {
                 GXDLMS.Common.Error.ShowError(this, Ex);
             }
-        }
-
-        /// <summary>
-        /// Show advanced authentication settings.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void AdvancedBtn_Click(object sender, EventArgs e)
-        {
-            AuthenticationGmacForm dlg = new AuthenticationGmacForm(Manufacturer);
-            dlg.ShowDialog(this);
-        }
-
-        private void SecuredConnectionCB_CheckedChanged(object sender, EventArgs e)
-        {
-            AdvancedBtn.Enabled = SecuredConnectionCB.Checked;
         }
     }
 }

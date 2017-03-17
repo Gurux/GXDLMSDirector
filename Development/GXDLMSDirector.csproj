@@ -67,7 +67,7 @@
     </ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <GenerateManifests>true</GenerateManifests>
+    <GenerateManifests>false</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>false</SignManifests>
@@ -89,20 +89,18 @@
     <StartupObject>GXDLMSDirector.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup />
-  <PropertyGroup>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-  </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
     <Reference Include="Gurux.Common, Version=8.1.1702.602, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Common.8.1.1702.0602\lib\portable-win+net35\Gurux.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=8.5.1703.1301, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.8.5.1703.1301\lib\portable-win+net35\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=8.5.1703.1701, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.8.5.1703.1701\lib\portable-win+net35\Gurux.DLMS.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=8.5.1703.1301, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.8.5.1703.1301\lib\portable-win+net35\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=8.5.1703.1701, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.8.5.1703.1701\lib\portable-win+net35\Gurux.DLMS.UI.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Gurux.Net, Version=8.1.1702.1001, Culture=neutral, processorArchitecture=MSIL">
@@ -129,12 +127,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuthenticationGmacForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AuthenticationGmacForm.Designer.cs">
-      <DependentUpon>AuthenticationGmacForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Extensions\Actaris.cs" />
     <Compile Include="GXAsyncWork.cs" />
     <Compile Include="CryptHelper.cs" />
@@ -194,9 +186,6 @@
       <DependentUpon>DevicePropertiesForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="AuthenticationGmacForm.resx">
-      <DependentUpon>AuthenticationGmacForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="GXObisValueItemForm.resx">
       <DependentUpon>GXObisValueItemForm.cs</DependentUpon>
       <SubType>Designer</SubType>

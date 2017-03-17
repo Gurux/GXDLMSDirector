@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/MainForm.Designer.cs $
 //
-// Version:         $Revision: 9204 $,
-//                  $Date: 2017-02-06 12:36:45 +0200 (ma, 06 helmi 2017) $
+// Version:         $Revision: 9256 $,
+//                  $Date: 2017-03-17 15:59:27 +0200 (pe, 17 maalis 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -174,6 +174,8 @@ namespace GXDLMSDirector
             this.DeviceList = new System.Windows.Forms.ListView();
             this.DeviceNameCH = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ObjectPanelFrame = new System.Windows.Forms.Panel();
+            this.ConformanceLbl = new System.Windows.Forms.Label();
+            this.ConformanceTB = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -310,59 +312,59 @@ namespace GXDLMSDirector
             // ViewToolbarMnu
             // 
             this.ViewToolbarMnu.Name = "ViewToolbarMnu";
-            this.ViewToolbarMnu.Size = new System.Drawing.Size(136, 22);
+            this.ViewToolbarMnu.Size = new System.Drawing.Size(152, 22);
             this.ViewToolbarMnu.Text = "ToolBar";
             this.ViewToolbarMnu.Click += new System.EventHandler(this.ViewToolbarMnu_Click);
             // 
             // ViewStatusbarMnu
             // 
             this.ViewStatusbarMnu.Name = "ViewStatusbarMnu";
-            this.ViewStatusbarMnu.Size = new System.Drawing.Size(136, 22);
+            this.ViewStatusbarMnu.Size = new System.Drawing.Size(152, 22);
             this.ViewStatusbarMnu.Text = "&Statusbar";
             this.ViewStatusbarMnu.Click += new System.EventHandler(this.ViewStatusbarMnu_Click);
             // 
             // toolStripMenuItem12
             // 
             this.toolStripMenuItem12.Name = "toolStripMenuItem12";
-            this.toolStripMenuItem12.Size = new System.Drawing.Size(133, 6);
+            this.toolStripMenuItem12.Size = new System.Drawing.Size(149, 6);
             // 
             // ObjectTreeMnu
             // 
             this.ObjectTreeMnu.Name = "ObjectTreeMnu";
-            this.ObjectTreeMnu.Size = new System.Drawing.Size(136, 22);
+            this.ObjectTreeMnu.Size = new System.Drawing.Size(152, 22);
             this.ObjectTreeMnu.Text = "Object Tree";
             this.ObjectTreeMnu.Click += new System.EventHandler(this.ObjectTreeMnu_Click);
             // 
             // ObjectListMnu
             // 
             this.ObjectListMnu.Name = "ObjectListMnu";
-            this.ObjectListMnu.Size = new System.Drawing.Size(136, 22);
+            this.ObjectListMnu.Size = new System.Drawing.Size(152, 22);
             this.ObjectListMnu.Text = "Object &List";
             this.ObjectListMnu.Click += new System.EventHandler(this.ObjectListMnu_Click);
             // 
             // GroupsMnu
             // 
             this.GroupsMnu.Name = "GroupsMnu";
-            this.GroupsMnu.Size = new System.Drawing.Size(136, 22);
+            this.GroupsMnu.Size = new System.Drawing.Size(152, 22);
             this.GroupsMnu.Text = "Groups";
             this.GroupsMnu.Click += new System.EventHandler(this.GroupsMnu_Click);
             // 
             // TraceMnu
             // 
             this.TraceMnu.Name = "TraceMnu";
-            this.TraceMnu.Size = new System.Drawing.Size(136, 22);
+            this.TraceMnu.Size = new System.Drawing.Size(152, 22);
             this.TraceMnu.Text = "&Trace";
             this.TraceMnu.Click += new System.EventHandler(this.TraceMenu_Click);
             // 
             // toolStripMenuItem7
             // 
             this.toolStripMenuItem7.Name = "toolStripMenuItem7";
-            this.toolStripMenuItem7.Size = new System.Drawing.Size(133, 6);
+            this.toolStripMenuItem7.Size = new System.Drawing.Size(149, 6);
             // 
             // PropertiesMnu
             // 
             this.PropertiesMnu.Name = "PropertiesMnu";
-            this.PropertiesMnu.Size = new System.Drawing.Size(136, 22);
+            this.PropertiesMnu.Size = new System.Drawing.Size(152, 22);
             this.PropertiesMnu.Text = "&Properties...";
             this.PropertiesMnu.Click += new System.EventHandler(this.PropertiesMnu_Click);
             // 
@@ -959,6 +961,8 @@ namespace GXDLMSDirector
             // 
             // DeviceGb
             // 
+            this.DeviceGb.Controls.Add(this.ConformanceTB);
+            this.DeviceGb.Controls.Add(this.ConformanceLbl);
             this.DeviceGb.Controls.Add(this.ManufacturerLbl);
             this.DeviceGb.Controls.Add(this.StatusValueLbl);
             this.DeviceGb.Controls.Add(this.ManufacturerValueLbl);
@@ -1089,6 +1093,25 @@ namespace GXDLMSDirector
             this.ObjectPanelFrame.Name = "ObjectPanelFrame";
             this.ObjectPanelFrame.Size = new System.Drawing.Size(187, 142);
             this.ObjectPanelFrame.TabIndex = 18;
+            // 
+            // ConformanceLbl
+            // 
+            this.ConformanceLbl.AutoSize = true;
+            this.ConformanceLbl.Location = new System.Drawing.Point(18, 143);
+            this.ConformanceLbl.Name = "ConformanceLbl";
+            this.ConformanceLbl.Size = new System.Drawing.Size(73, 13);
+            this.ConformanceLbl.TabIndex = 12;
+            this.ConformanceLbl.Text = "Conformance:";
+            // 
+            // ConformanceTB
+            // 
+            this.ConformanceTB.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.ConformanceTB.Location = new System.Drawing.Point(117, 143);
+            this.ConformanceTB.Multiline = true;
+            this.ConformanceTB.Name = "ConformanceTB";
+            this.ConformanceTB.ReadOnly = true;
+            this.ConformanceTB.Size = new System.Drawing.Size(236, 117);
+            this.ConformanceTB.TabIndex = 14;
             // 
             // MainForm
             // 
@@ -1243,6 +1266,8 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ListView DeviceList;
         private System.Windows.Forms.ColumnHeader DeviceNameCH;
         private System.Windows.Forms.Panel ObjectPanelFrame;
+        private System.Windows.Forms.Label ConformanceLbl;
+        private System.Windows.Forms.TextBox ConformanceTB;
     }
 }
 

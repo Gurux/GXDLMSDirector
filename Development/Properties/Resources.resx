@@ -212,4 +212,7 @@ All rights reserved.</value>
   <data name="HelpNotAvailable" xml:space="preserve">
     <value>No Help topic is associated with this item.</value>
   </data>
+  <data name="InvalidASCII" xml:space="preserve">
+    <value>Invalid ASCII characters.</value>
+  </data>
 </root>

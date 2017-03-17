@@ -163,6 +163,15 @@ namespace GXDLMSDirector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid ASCII characters..
+        /// </summary>
+        internal static string InvalidASCII {
+            get {
+                return ResourceManager.GetString("InvalidASCII", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap NewMnu {

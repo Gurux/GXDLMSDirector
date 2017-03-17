@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/Program.cs $
 //
-// Version:         $Revision: 8937 $,
-//                  $Date: 2016-11-23 14:03:11 +0200 (ke, 23 marras 2016) $
+// Version:         $Revision: 9256 $,
+//                  $Date: 2017-03-17 15:59:27 +0200 (pe, 17 maalis 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -41,6 +41,8 @@ using System.IO;
 using System.Threading;
 using System.Reflection;
 using Gurux.Common;
+using System.Deployment.Application;
+using Microsoft.Win32;
 
 namespace GXDLMSDirector
 {
@@ -54,9 +56,21 @@ namespace GXDLMSDirector
         {
             try
             {
+                try
+                {
+                    string initDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
+                    if (!Directory.Exists(initDir))
+                    {
+                        Directory.CreateDirectory(initDir);
+                    }
+                    Directory.SetCurrentDirectory(initDir);
+                    SetAddRemoveProgramsIcon();
+                }
+                catch (Exception)
+                {
+                }
                 AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
                 AppDomain.CurrentDomain.TypeResolve += new ResolveEventHandler(CurrentDomain_TypeResolve);
-
                 MainForm.InitMain();
             }
             catch (Exception Ex)
@@ -65,7 +79,36 @@ namespace GXDLMSDirector
             }
         }
 
-
+        /// <summary>
+        /// Set the icon in add/remove programs.
+        /// </summary>
+        private static void SetAddRemoveProgramsIcon()
+        {
+            // only run if clickonce deployed, on first run only
+            if (System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed
+            && ApplicationDeployment.CurrentDeployment.IsFirstRun)
+            {
+                try
+                {
+                    string icon = string.Format("{0},0", System.Reflection.Assembly.GetExecutingAssembly().Location);
+                    RegistryKey myUninstallKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Uninstall");
+                    string[] mySubKeyNames = myUninstallKey.GetSubKeyNames();
+                    for (int i = 0; i < mySubKeyNames.Length; i++)
+                    {
+                        RegistryKey myKey = myUninstallKey.OpenSubKey(mySubKeyNames[i], true);
+                        object myValue = myKey.GetValue("DisplayName");
+                        if (myValue != null && myValue.ToString() == "GXDLMSDirector")
+                        {
+                            myKey.SetValue("DisplayIcon", icon);
+                            break;
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            }
+        }
 
         /// <summary>
         /// Resolve Add-In's assemblies. This must add or Director don't work correctly.

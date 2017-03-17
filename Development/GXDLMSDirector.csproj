@@ -90,6 +90,9 @@
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Gurux.Common, Version=8.1.1702.602, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Common.8.1.1702.0602\lib\portable-win+net35\Gurux.Common.dll</HintPath>

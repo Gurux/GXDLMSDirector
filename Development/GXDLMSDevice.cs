@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDevice.cs $
 //
-// Version:         $Revision: 9256 $,
-//                  $Date: 2017-03-17 15:59:27 +0200 (pe, 17 maalis 2017) $
+// Version:         $Revision: 9277 $,
+//                  $Date: 2017-03-23 21:37:34 +0200 (to, 23 maalis 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -227,7 +227,15 @@ namespace GXDLMSDirector
             set;
         }
 
-
+        /// <summary>
+        /// Static challenge.
+        /// </summary>
+        [DefaultValue("")]
+        public string Challenge
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// Used Physical address.

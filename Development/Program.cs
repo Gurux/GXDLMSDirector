@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/Program.cs $
 //
-// Version:         $Revision: 9256 $,
-//                  $Date: 2017-03-17 15:59:27 +0200 (pe, 17 maalis 2017) $
+// Version:         $Revision: 9270 $,
+//                  $Date: 2017-03-21 21:24:32 +0200 (ti, 21 maalis 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -85,7 +85,7 @@ namespace GXDLMSDirector
         private static void SetAddRemoveProgramsIcon()
         {
             // only run if clickonce deployed, on first run only
-            if (System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed
+            if (!System.Diagnostics.Debugger.IsAttached && System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed
             && ApplicationDeployment.CurrentDeployment.IsFirstRun)
             {
                 try

@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.cs $
 //
-// Version:         $Revision: 9256 $,
-//                  $Date: 2017-03-17 15:59:27 +0200 (pe, 17 maalis 2017) $
+// Version:         $Revision: 9277 $,
+//                  $Date: 2017-03-23 21:37:34 +0200 (to, 23 maalis 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -150,6 +150,7 @@ namespace GXDLMSDirector
                     }
 
                     InvocationCounterTB.Text = dev.InvocationCounter.ToString();
+                    ChallengeTB.Text = GXCommon.ToHex(GXCommon.HexToBytes(dev.Challenge), true);
                     UseUtcTimeZone.Checked = Device.UtcTimeZone;
                 }
                 ShowConformance(Device.Comm.client.ProposedConformance);
@@ -598,6 +599,7 @@ namespace GXDLMSDirector
                 Device.BlockCipherKey = GetAsHex(BlockCipherKeyTB.Text, BlockCipherKeyAsciiCb.Checked);
                 Device.AuthenticationKey = GetAsHex(AuthenticationKeyTB.Text, AuthenticationKeyAsciiCb.Checked);
                 Device.InvocationCounter = UInt32.Parse(InvocationCounterTB.Text);
+                Device.Challenge = GXCommon.ToHex(GXCommon.HexToBytes(ChallengeTB.Text), false);
                 UpdateConformance();
             }
             catch (Exception Ex)
@@ -828,6 +830,7 @@ namespace GXDLMSDirector
                 BlockCipherKeyAsciiCb.Checked = IsAscii(GXCommon.HexToBytes(BlockCipherKeyTB.Text));
                 AuthenticationKeyAsciiCb.Checked = IsAscii(GXCommon.HexToBytes(AuthenticationKeyTB.Text));
                 InvocationCounterTB.Text = "0";
+                ChallengeTB.Text = "";
             }
             catch (Exception Ex)
             {

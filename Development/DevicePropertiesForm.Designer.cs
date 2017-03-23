@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.Designer.cs $
 //
-// Version:         $Revision: 9262 $,
-//                  $Date: 2017-03-17 17:19:16 +0200 (pe, 17 maalis 2017) $
+// Version:         $Revision: 9277 $,
+//                  $Date: 2017-03-23 21:37:34 +0200 (to, 23 maalis 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -158,6 +158,8 @@ namespace GXDLMSDirector
             this.TerminalPhoneNumberTB = new System.Windows.Forms.TextBox();
             this.TerminalPhoneNumberLbl = new System.Windows.Forms.Label();
             this.DeviceTab = new System.Windows.Forms.TabControl();
+            this.ChallengeTB = new System.Windows.Forms.TextBox();
+            this.ChallengeLbl = new System.Windows.Forms.Label();
             this.SupportedServicesTab.SuspendLayout();
             this.SNSettings.SuspendLayout();
             this.LNSettings.SuspendLayout();
@@ -537,6 +539,8 @@ namespace GXDLMSDirector
             // 
             // CipheringTab
             // 
+            this.CipheringTab.Controls.Add(this.ChallengeTB);
+            this.CipheringTab.Controls.Add(this.ChallengeLbl);
             this.CipheringTab.Controls.Add(this.InvocationCounterTB);
             this.CipheringTab.Controls.Add(this.InvocationCounterLbl);
             this.CipheringTab.Controls.Add(this.BlockCipherKeyAsciiCb);
@@ -564,7 +568,7 @@ namespace GXDLMSDirector
             this.InvocationCounterTB.Location = new System.Drawing.Point(113, 107);
             this.InvocationCounterTB.Name = "InvocationCounterTB";
             this.InvocationCounterTB.Size = new System.Drawing.Size(226, 20);
-            this.InvocationCounterTB.TabIndex = 62;
+            this.InvocationCounterTB.TabIndex = 7;
             // 
             // InvocationCounterLbl
             // 
@@ -581,7 +585,7 @@ namespace GXDLMSDirector
             this.BlockCipherKeyAsciiCb.Location = new System.Drawing.Point(345, 57);
             this.BlockCipherKeyAsciiCb.Name = "BlockCipherKeyAsciiCb";
             this.BlockCipherKeyAsciiCb.Size = new System.Drawing.Size(53, 17);
-            this.BlockCipherKeyAsciiCb.TabIndex = 61;
+            this.BlockCipherKeyAsciiCb.TabIndex = 4;
             this.BlockCipherKeyAsciiCb.Text = "ASCII";
             this.BlockCipherKeyAsciiCb.UseVisualStyleBackColor = true;
             this.BlockCipherKeyAsciiCb.CheckedChanged += new System.EventHandler(this.BlockCipherKeyAsciiCb_CheckedChanged);
@@ -592,7 +596,7 @@ namespace GXDLMSDirector
             this.AuthenticationKeyAsciiCb.Location = new System.Drawing.Point(345, 83);
             this.AuthenticationKeyAsciiCb.Name = "AuthenticationKeyAsciiCb";
             this.AuthenticationKeyAsciiCb.Size = new System.Drawing.Size(53, 17);
-            this.AuthenticationKeyAsciiCb.TabIndex = 60;
+            this.AuthenticationKeyAsciiCb.TabIndex = 6;
             this.AuthenticationKeyAsciiCb.Text = "ASCII";
             this.AuthenticationKeyAsciiCb.UseVisualStyleBackColor = true;
             this.AuthenticationKeyAsciiCb.CheckedChanged += new System.EventHandler(this.AuthenticationKeyAsciiCb_CheckedChanged);
@@ -603,7 +607,7 @@ namespace GXDLMSDirector
             this.SystemTitleAsciiCb.Location = new System.Drawing.Point(347, 30);
             this.SystemTitleAsciiCb.Name = "SystemTitleAsciiCb";
             this.SystemTitleAsciiCb.Size = new System.Drawing.Size(53, 17);
-            this.SystemTitleAsciiCb.TabIndex = 59;
+            this.SystemTitleAsciiCb.TabIndex = 2;
             this.SystemTitleAsciiCb.Text = "ASCII";
             this.SystemTitleAsciiCb.UseVisualStyleBackColor = true;
             this.SystemTitleAsciiCb.CheckedChanged += new System.EventHandler(this.SystemTitleAsciiCb_CheckedChanged);
@@ -614,7 +618,7 @@ namespace GXDLMSDirector
             this.SecurityCB.Location = new System.Drawing.Point(113, 3);
             this.SecurityCB.Name = "SecurityCB";
             this.SecurityCB.Size = new System.Drawing.Size(226, 21);
-            this.SecurityCB.TabIndex = 36;
+            this.SecurityCB.TabIndex = 0;
             this.SecurityCB.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.SecurityCB_DrawItem);
             // 
             // AuthenticationKeyTB
@@ -624,7 +628,7 @@ namespace GXDLMSDirector
             this.AuthenticationKeyTB.Location = new System.Drawing.Point(113, 81);
             this.AuthenticationKeyTB.Name = "AuthenticationKeyTB";
             this.AuthenticationKeyTB.Size = new System.Drawing.Size(226, 20);
-            this.AuthenticationKeyTB.TabIndex = 39;
+            this.AuthenticationKeyTB.TabIndex = 5;
             // 
             // BlockCipherKeyTB
             // 
@@ -633,7 +637,7 @@ namespace GXDLMSDirector
             this.BlockCipherKeyTB.Location = new System.Drawing.Point(113, 55);
             this.BlockCipherKeyTB.Name = "BlockCipherKeyTB";
             this.BlockCipherKeyTB.Size = new System.Drawing.Size(226, 20);
-            this.BlockCipherKeyTB.TabIndex = 38;
+            this.BlockCipherKeyTB.TabIndex = 3;
             // 
             // SystemTitleTB
             // 
@@ -642,7 +646,7 @@ namespace GXDLMSDirector
             this.SystemTitleTB.Location = new System.Drawing.Point(113, 28);
             this.SystemTitleTB.Name = "SystemTitleTB";
             this.SystemTitleTB.Size = new System.Drawing.Size(226, 20);
-            this.SystemTitleTB.TabIndex = 37;
+            this.SystemTitleTB.TabIndex = 1;
             // 
             // AuthenticationKeyLbl
             // 
@@ -1207,6 +1211,24 @@ namespace GXDLMSDirector
             this.DeviceTab.Size = new System.Drawing.Size(411, 414);
             this.DeviceTab.TabIndex = 0;
             // 
+            // ChallengeTB
+            // 
+            this.ChallengeTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ChallengeTB.Location = new System.Drawing.Point(113, 133);
+            this.ChallengeTB.Name = "ChallengeTB";
+            this.ChallengeTB.Size = new System.Drawing.Size(226, 20);
+            this.ChallengeTB.TabIndex = 8;
+            // 
+            // ChallengeLbl
+            // 
+            this.ChallengeLbl.AutoSize = true;
+            this.ChallengeLbl.Location = new System.Drawing.Point(8, 136);
+            this.ChallengeLbl.Name = "ChallengeLbl";
+            this.ChallengeLbl.Size = new System.Drawing.Size(57, 13);
+            this.ChallengeLbl.TabIndex = 65;
+            this.ChallengeLbl.Text = "Challenge:";
+            // 
             // DevicePropertiesForm
             // 
             this.AcceptButton = this.OKBtn;
@@ -1346,5 +1368,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.CheckBox SystemTitleAsciiCb;
         private System.Windows.Forms.TextBox InvocationCounterTB;
         private System.Windows.Forms.Label InvocationCounterLbl;
+        private System.Windows.Forms.TextBox ChallengeTB;
+        private System.Windows.Forms.Label ChallengeLbl;
     }
 }

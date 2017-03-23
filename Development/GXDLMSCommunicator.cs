@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 9239 $,
-//                  $Date: 2017-03-07 11:39:07 +0200 (ti, 07 maalis 2017) $
+// Version:         $Revision: 9277 $,
+//                  $Date: 2017-03-23 21:37:34 +0200 (to, 23 maalis 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -581,12 +581,22 @@ namespace GXDLMSDirector
                 client.Ciphering.SystemTitle = GXCommon.HexToBytes(parent.SystemTitle);
                 client.Ciphering.BlockCipherKey = GXCommon.HexToBytes(parent.BlockCipherKey);
                 client.Ciphering.AuthenticationKey = GXCommon.HexToBytes(parent.AuthenticationKey);
+                client.Ciphering.InvocationCounter = parent.InvocationCounter;
             }
             else
             {
                 client.Ciphering.SystemTitle = null;
                 client.Ciphering.BlockCipherKey = null;
                 client.Ciphering.AuthenticationKey = null;
+                client.Ciphering.InvocationCounter = 0;
+            }
+            if (!string.IsNullOrEmpty(parent.Challenge))
+            {
+                client.CtoSChallenge = GXCommon.HexToBytes(parent.Challenge);
+            }
+            else
+            {
+                client.CtoSChallenge = null;
             }
         }
 
@@ -771,6 +781,15 @@ namespace GXDLMSDirector
             }
         }
 
+        internal void ReadDataBlock(byte[][] data, string text, int multiplier, GXReplyData reply)
+        {
+            foreach (byte[] it in data)
+            {
+                reply.Clear();
+                ReadDataBlock(it, text, multiplier, reply);
+            }
+        }
+
         /// <summary>
         /// Read data block from the device.
         /// </summary>
@@ -878,6 +897,7 @@ namespace GXDLMSDirector
                     }
                     try
                     {
+                        byte[][] tmp;
                         CurrentProfileGeneric = obj as GXDLMSProfileGeneric;
                         OnDataReceived += new GXDLMSCommunicator.DataReceivedEventHandler(this.OnProfileGenericDataReceived);
                         if (CurrentProfileGeneric.AccessSelector == AccessRange.Range ||
@@ -893,17 +913,17 @@ namespace GXDLMSDirector
                             {
                                 end = Convert.ToDateTime(CurrentProfileGeneric.To);
                             }
-                            byte[][] tmp = client.ReadRowsByRange(CurrentProfileGeneric, start, end);
-                            ReadDataBlock(tmp[0], "Reading profile generic data", 1, reply);
+                            tmp = client.ReadRowsByRange(CurrentProfileGeneric, start, end);
+                            ReadDataBlock(tmp, "Reading profile generic data", 1, reply);
                         }
                         else if (CurrentProfileGeneric.AccessSelector == AccessRange.Entry)
                         {
-                            byte[][] tmp = client.ReadRowsByEntry(CurrentProfileGeneric, Convert.ToInt32(CurrentProfileGeneric.From), Convert.ToInt32(CurrentProfileGeneric.To));
-                            ReadDataBlock(tmp[0], "Reading profile generic data " + CurrentProfileGeneric.Name, 1, reply);
+                            tmp = client.ReadRowsByEntry(CurrentProfileGeneric, Convert.ToInt32(CurrentProfileGeneric.From), Convert.ToInt32(CurrentProfileGeneric.To));
+                            ReadDataBlock(tmp, "Reading profile generic data " + CurrentProfileGeneric.Name, 1, reply);
                         }
                         else //Read all.
                         {
-                            byte[] tmp = client.Read(CurrentProfileGeneric, 2)[0];
+                            tmp = client.Read(CurrentProfileGeneric, 2);
                             ReadDataBlock(tmp, "Reading profile generic data " + CurrentProfileGeneric.Name, 1, reply);
                         }
                     }

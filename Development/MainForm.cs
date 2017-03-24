@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/MainForm.cs $
 //
-// Version:         $Revision: 9256 $,
-//                  $Date: 2017-03-17 15:59:27 +0200 (pe, 17 maalis 2017) $
+// Version:         $Revision: 9283 $,
+//                  $Date: 2017-03-24 16:36:55 +0200 (pe, 24 maalis 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -441,11 +441,6 @@ namespace GXDLMSDirector
 
         private static bool UpdateProperties(IGXDLMSView view, System.Windows.Forms.Control.ControlCollection controls, GXDLMSObject target, int index, object value)
         {
-            foreach (GXButton it in ActionList)
-            {
-                it.Click -= new EventHandler(OnAction);
-            }
-            ActionList.Clear();
             bool found = false;
             foreach (Control it in controls)
             {
@@ -460,21 +455,46 @@ namespace GXDLMSDirector
                         found = true;
                     }
                 }
-                else if (it is GXButton)
+                else if (it.Controls.Count != 0)
+                {
+                    found = UpdateProperties(view, it.Controls, target, index, value);
+                }
+                if (found)
+                {
+                    break;
+                }
+            }
+            return found;
+        }
+
+        private bool UpdateActions(IGXDLMSView view, System.Windows.Forms.Control.ControlCollection controls, GXDLMSObject target, int index)
+        {
+            bool found = false;
+            foreach (Control it in controls)
+            {
+                if (it is GXButton)
                 {
                     GXButton obj = it as GXButton;
-                    bool enabled = target.GetMethodAccess(obj.Index) != MethodAccessMode.NoAccess;
-                    obj.Enabled = enabled;
-                    if (enabled)
+                    if (obj.Index == index)
                     {
-                        obj.Target = target;
-                        it.Click += new EventHandler(OnAction);
-                        ActionList.Add(obj);
+                        obj.View = view;
+                        bool enabled = WriteBtn.Enabled;
+                        if (ReadBtn.Enabled)
+                        {
+                            enabled = target.GetMethodAccess(obj.Index) != MethodAccessMode.NoAccess;
+                        }
+                        obj.Enabled = enabled;
+                        if (enabled)
+                        {
+                            obj.Target = target;
+                            it.Click += new EventHandler(OnAction);
+                            ActionList.Add(obj);
+                        }
                     }
                 }
                 else if (it.Controls.Count != 0)
                 {
-                    found = UpdateProperties(view, it.Controls, target, index, value);
+                    found = UpdateActions(view, it.Controls, target, index);
                 }
                 if (found)
                 {
@@ -489,9 +509,15 @@ namespace GXDLMSDirector
             GXButton obj = sender as GXButton;
             try
             {
-                GXReplyData reply = new GXReplyData();
-                GXDLMSDevice dev = obj.Target.Parent.Tag as GXDLMSDevice;
-                dev.Comm.MethodRequest(obj.Target, obj.Index, null, reply);
+                ValueEventArgs ve = new ValueEventArgs(obj.Target, obj.Index, 0, null);
+                obj.View.PreAction(ve);
+                if (!ve.Handled)
+                {
+                    GXReplyData reply = new GXReplyData();
+                    GXDLMSDevice dev = obj.Target.Parent.Tag as GXDLMSDevice;
+                    dev.Comm.MethodRequest(obj.Target, obj.Index, ve.Value, reply);
+                    obj.View.PostAction(ve);
+                }
             }
             catch (Exception ex)
             {
@@ -546,6 +572,22 @@ namespace GXDLMSDirector
                         {
                             view.OnValueChanged(it, value, false);
                         }
+                    }
+                }
+            }
+            if (index == 0)
+            {
+                foreach (GXButton it in ActionList)
+                {
+                    it.Click -= new EventHandler(OnAction);
+                }
+                ActionList.Clear();
+                for (int it = 1; it != (obj as IGXDLMSBase).GetMethodCount() + 1; ++it)
+                {
+                    bool bFound = UpdateActions(view, ((Form)view).Controls, view.Target, it);
+                    if (!bFound)
+                    {
+                        view.OnAccessRightsChange(it, view.Target.GetMethodAccess(it));
                     }
                 }
             }
@@ -1590,6 +1632,7 @@ namespace GXDLMSDirector
             }
             finally
             {
+                StatusLbl.Text = "Ready";
                 UpdateTransaction(false);
             }
         }

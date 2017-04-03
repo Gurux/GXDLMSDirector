@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/MainForm.cs $
 //
-// Version:         $Revision: 9283 $,
-//                  $Date: 2017-03-24 16:36:55 +0200 (pe, 24 maalis 2017) $
+// Version:         $Revision: 9332 $,
+//                  $Date: 2017-04-03 14:40:22 +0300 (ma, 03 huhti 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -474,21 +474,32 @@ namespace GXDLMSDirector
             {
                 if (it is GXButton)
                 {
-                    GXButton obj = it as GXButton;
-                    if (obj.Index == index)
+                    GXButton btn = it as GXButton;
+                    if (btn.Index == index)
                     {
-                        obj.View = view;
+                        btn.View = view;
                         bool enabled = WriteBtn.Enabled;
                         if (ReadBtn.Enabled)
                         {
-                            enabled = target.GetMethodAccess(obj.Index) != MethodAccessMode.NoAccess;
+                            enabled = target.GetMethodAccess(btn.Index) != MethodAccessMode.NoAccess;
                         }
-                        obj.Enabled = enabled;
+                        btn.Enabled = enabled;
                         if (enabled)
                         {
-                            obj.Target = target;
-                            it.Click += new EventHandler(OnAction);
-                            ActionList.Add(obj);
+                            btn.Target = target;
+                            if (btn.Action == ActionType.Read)
+                            {
+                                it.Click += new EventHandler(OnRead);
+                            }
+                            else if (btn.Action == ActionType.Write)
+                            {
+                                it.Click += new EventHandler(OnWrite);
+                            }
+                            else
+                            {
+                                it.Click += new EventHandler(OnAction);
+                            }
+                            ActionList.Add(btn);
                         }
                     }
                 }
@@ -504,24 +515,66 @@ namespace GXDLMSDirector
             return found;
         }
 
-        static void OnAction(object sender, EventArgs e)
+        static void OnRead(object sender, EventArgs e)
         {
-            GXButton obj = sender as GXButton;
+            GXButton btn = sender as GXButton;
             try
             {
-                ValueEventArgs ve = new ValueEventArgs(obj.Target, obj.Index, 0, null);
-                obj.View.PreAction(ve);
+                ValueEventArgs ve = new ValueEventArgs(btn.Target, btn.Index, 0, null);
+                btn.View.PreAction(ActionType.Read, ve);
                 if (!ve.Handled)
                 {
                     GXReplyData reply = new GXReplyData();
-                    GXDLMSDevice dev = obj.Target.Parent.Tag as GXDLMSDevice;
-                    dev.Comm.MethodRequest(obj.Target, obj.Index, ve.Value, reply);
-                    obj.View.PostAction(ve);
+                    GXDLMSDevice dev = btn.Target.Parent.Tag as GXDLMSDevice;
+                    dev.Comm.Read(btn.Target, btn.Index);
+                    btn.View.PostAction(ActionType.Read, ve);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(obj, ex.Message);
+                MessageBox.Show(btn, ex.Message);
+            }
+        }
+
+        static void OnWrite(object sender, EventArgs e)
+        {
+            GXButton btn = sender as GXButton;
+            try
+            {
+                ValueEventArgs ve = new ValueEventArgs(btn.Target, btn.Index, 0, null);
+                btn.View.PreAction(ActionType.Write, ve);
+                if (!ve.Handled)
+                {
+                    GXReplyData reply = new GXReplyData();
+                    GXDLMSDevice dev = btn.Target.Parent.Tag as GXDLMSDevice;
+                    dev.Comm.Write(btn.Target, btn.Index, ve.Value);
+                    btn.View.PostAction(ActionType.Write, ve);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(btn, ex.Message);
+            }
+        }
+
+        static void OnAction(object sender, EventArgs e)
+        {
+            GXButton btn = sender as GXButton;
+            try
+            {
+                ValueEventArgs ve = new ValueEventArgs(btn.Target, btn.Index, 0, null);
+                btn.View.PreAction(ActionType.Action, ve);
+                if (!ve.Handled)
+                {
+                    GXReplyData reply = new GXReplyData();
+                    GXDLMSDevice dev = btn.Target.Parent.Tag as GXDLMSDevice;
+                    dev.Comm.MethodRequest(btn.Target, btn.Index, ve.Value, reply);
+                    btn.View.PostAction(ActionType.Action, ve);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(btn, ex.Message);
             }
         }
 
@@ -579,7 +632,18 @@ namespace GXDLMSDirector
             {
                 foreach (GXButton it in ActionList)
                 {
-                    it.Click -= new EventHandler(OnAction);
+                    if (it.Action == ActionType.Read)
+                    {
+                        it.Click -= new EventHandler(OnRead);
+                    }
+                    else if (it.Action == ActionType.Write)
+                    {
+                        it.Click -= new EventHandler(OnWrite);
+                    }
+                    else
+                    {
+                        it.Click -= new EventHandler(OnAction);
+                    }
                 }
                 ActionList.Clear();
                 for (int it = 1; it != (obj as IGXDLMSBase).GetMethodCount() + 1; ++it)
@@ -1611,7 +1675,7 @@ namespace GXDLMSDirector
                         OnProgress(dev, "Writing...", 0, 1);
                         foreach (GXDLMSObject obj in objects)
                         {
-                            dev.Comm.Write(obj, obj, 0, new List<object>());
+                            dev.Comm.Write(obj, 0, null);
                         }
                         dev.KeepAliveStart();
                     }
@@ -1621,7 +1685,7 @@ namespace GXDLMSDirector
                         GXDLMSDevice dev = obj.Parent.Tag as GXDLMSDevice;
                         dev.KeepAliveStop();
                         OnProgress(dev, "Writing...", 0, 1);
-                        dev.Comm.Write(obj, obj, 0, new List<object>());
+                        dev.Comm.Write(obj, 0, null);
                         dev.KeepAliveStart();
                     }
                 }

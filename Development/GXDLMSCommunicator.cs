@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 9277 $,
-//                  $Date: 2017-03-23 21:37:34 +0200 (to, 23 maalis 2017) $
+// Version:         $Revision: 9332 $,
+//                  $Date: 2017-04-03 14:40:22 +0300 (ma, 03 huhti 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -988,14 +988,14 @@ namespace GXDLMSDirector
             }
         }
 
-        public void Write(GXDLMSObject obj, object target, int index, List<object> UpdatedObjects)
+        public void Write(GXDLMSObject obj, int index, object value)
         {
-            object value;
+            object val = value;
             GXReplyData reply = new GXReplyData();
             for (int it = 1; it != (obj as IGXDLMSBase).GetAttributeCount() + 1; ++it)
             {
                 reply.Clear();
-                if (obj.GetDirty(it, out value))
+                if (it == index || (index == 0 && obj.GetDirty(it, out val)))
                 {
                     //Read DLMS data type if not known.
                     DataType type = obj.GetDataType(it);
@@ -1013,7 +1013,7 @@ namespace GXDLMSDirector
                     try
                     {
                         ValueEventArgs e = new ValueEventArgs(obj, it, 0, null);
-                        e.Value = value;
+                        e.Value = val;
                         ((IGXDLMSBase)obj).SetValue(null, e);
                         foreach (byte[] tmp in client.Write(obj, it))
                         {
@@ -1025,12 +1025,12 @@ namespace GXDLMSDirector
                         byte[] data = client.Read(obj, it)[0];
                         ReadDataBlock(data, "Read object " + obj.ObjectType, reply);
 
-                        value = reply.Value;
-                        if (value is byte[] && (type = obj.GetUIDataType(it)) != DataType.None)
+                        val = reply.Value;
+                        if (val is byte[] && (type = obj.GetUIDataType(it)) != DataType.None)
                         {
-                            value = GXDLMSClient.ChangeType((byte[])value, type);
+                            val = GXDLMSClient.ChangeType((byte[])val, type);
                         }
-                        client.UpdateValue(obj, it, value);
+                        client.UpdateValue(obj, it, val);
                     }
                     catch (GXDLMSException ex)
                     {

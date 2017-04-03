@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.cs $
 //
-// Version:         $Revision: 9277 $,
-//                  $Date: 2017-03-23 21:37:34 +0200 (to, 23 maalis 2017) $
+// Version:         $Revision: 9332 $,
+//                  $Date: 2017-04-03 14:40:22 +0300 (ma, 03 huhti 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -997,6 +997,10 @@ namespace GXDLMSDirector
 
         public static bool IsAscii(byte[] value)
         {
+            if (value == null)
+            {
+                return false;
+            }
             foreach (byte it in value)
             {
                 if (it < 0x21 || it > 0x7E)

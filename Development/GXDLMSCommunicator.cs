@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 9332 $,
-//                  $Date: 2017-04-03 14:40:22 +0300 (ma, 03 huhti 2017) $
+// Version:         $Revision: 9348 $,
+//                  $Date: 2017-04-07 17:40:41 +0300 (pe, 07 huhti 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1009,6 +1009,7 @@ namespace GXDLMSDirector
                             throw new Exception("Failed to write value. Data type not set.");
                         }
                         obj.SetDataType(it, type);
+                        reply.Clear();
                     }
                     try
                     {

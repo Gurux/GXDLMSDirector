@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/MainForm.cs $
 //
-// Version:         $Revision: 9332 $,
-//                  $Date: 2017-04-03 14:40:22 +0300 (ma, 03 huhti 2017) $
+// Version:         $Revision: 9351 $,
+//                  $Date: 2017-04-11 10:28:28 +0300 (ti, 11 huhti 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -385,13 +385,16 @@ namespace GXDLMSDirector
                     GXValueField obj = it as GXValueField;
                     if (obj.Index == index)
                     {
-                        if (dirty && index != 0)
+                        if (view.ErrorProvider != null)
                         {
-                            view.ErrorProvider.SetError(it, GXDLMSDirector.Properties.Resources.ValueChangedTxt);
-                        }
-                        else
-                        {
-                            view.ErrorProvider.Clear();
+                            if (dirty && index != 0)
+                            {
+                                view.ErrorProvider.SetError(it, GXDLMSDirector.Properties.Resources.ValueChangedTxt);
+                            }
+                            else
+                            {
+                                view.ErrorProvider.Clear();
+                            }
                         }
                         found = true;
                     }

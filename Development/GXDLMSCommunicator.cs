@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 9348 $,
-//                  $Date: 2017-04-07 17:40:41 +0300 (pe, 07 huhti 2017) $
+// Version:         $Revision: 9353 $,
+//                  $Date: 2017-04-12 10:48:27 +0300 (ke, 12 huhti 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -687,13 +687,8 @@ namespace GXDLMSDirector
                 //Generate AARQ request.
                 //Split requests to multiple packets if needed.
                 //If password is used all data might not fit to one packet.
-                foreach (byte[] it in AARQRequest())
-                {
-                    GXLogWriter.WriteLog("Send AARQ request", it);
-                    reply.Clear();
-                    ReadDLMSPacket(it, reply);
-                }
-                GXLogWriter.WriteLog("Parsing AARE reply\r\n" + reply.Data.ToString());
+                reply.Clear();
+                ReadDataBlock(AARQRequest(), "", reply);
                 try
                 {
                     //Parse reply.
@@ -1013,6 +1008,10 @@ namespace GXDLMSDirector
                     }
                     try
                     {
+                        if (type == DataType.OctetString && val is string)
+                        {
+                            val = GXDLMSTranslator.HexToBytes((string)val);
+                        }
                         ValueEventArgs e = new ValueEventArgs(obj, it, 0, null);
                         e.Value = val;
                         ((IGXDLMSBase)obj).SetValue(null, e);

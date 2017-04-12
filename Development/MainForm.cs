@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/MainForm.cs $
 //
-// Version:         $Revision: 9351 $,
-//                  $Date: 2017-04-11 10:28:28 +0300 (ti, 11 huhti 2017) $
+// Version:         $Revision: 9354 $,
+//                  $Date: 2017-04-12 11:51:38 +0300 (ke, 12 huhti 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1921,6 +1921,28 @@ namespace GXDLMSDirector
                     Type t = Type.GetType(m.Extension);
                     dev.Extension = Activator.CreateInstance(t) as IGXManufacturerExtension;
                 }
+                if (m.ObisCodes != null)
+                {
+                    GXDLMSConverter c = new GXDLMSConverter();
+                    foreach (GXObisCode it in m.ObisCodes)
+                    {
+                        if (it.Append)
+                        {
+                            GXDLMSObject obj = GXDLMSClient.CreateObject(it.ObjectType);
+                            obj.Version = it.Version;
+                            obj.LogicalName = it.LogicalName;
+                            if (string.IsNullOrEmpty(it.Description))
+                            {
+                                obj.Description = c.GetDescription(it.LogicalName, it.ObjectType)[0];
+                            }
+                            else
+                            {
+                                obj.Description = it.Description;
+                            }
+                            dev.Objects.Add(obj);
+                        }
+                    }
+                }
             }
             //Add device to device tree.
             TreeNode node = this.ObjectTree.Nodes[0].Nodes.Add(dev.Name);
@@ -2348,6 +2370,7 @@ namespace GXDLMSDirector
                     dlg.Device.Comm.parentForm = this;
                     AddDevice(dlg.Device, false);
                     Devices.Add(dlg.Device);
+                    GroupItems(GroupsMnu.Checked);
                     SetDirty(true);
                 }
             }

@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 9353 $,
-//                  $Date: 2017-04-12 10:48:27 +0300 (ke, 12 huhti 2017) $
+// Version:         $Revision: 9367 $,
+//                  $Date: 2017-04-19 13:14:37 +0300 (ke, 19 huhti 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1008,13 +1008,6 @@ namespace GXDLMSDirector
                     }
                     try
                     {
-                        if (type == DataType.OctetString && val is string)
-                        {
-                            val = GXDLMSTranslator.HexToBytes((string)val);
-                        }
-                        ValueEventArgs e = new ValueEventArgs(obj, it, 0, null);
-                        e.Value = val;
-                        ((IGXDLMSBase)obj).SetValue(null, e);
                         foreach (byte[] tmp in client.Write(obj, it))
                         {
                             ReadDataBlock(tmp, "Write object", reply);

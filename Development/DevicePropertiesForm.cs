@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.cs $
 //
-// Version:         $Revision: 9332 $,
-//                  $Date: 2017-04-03 14:40:22 +0300 (ma, 03 huhti 2017) $
+// Version:         $Revision: 9367 $,
+//                  $Date: 2017-04-19 13:14:37 +0300 (ke, 19 huhti 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -59,7 +59,7 @@ namespace GXDLMSDirector
         GXManufacturerCollection Manufacturers;
         Gurux.Common.IGXMedia SelectedMedia = null;
         public GXDLMSDevice Device = null;
-        public DevicePropertiesForm(GXManufacturerCollection manufacturers, GXDLMSDevice dev)
+        public DevicePropertiesForm(GXManufacturerCollection manufacturers, GXDLMSDevice dev2)
         {
             try
             {
@@ -79,7 +79,7 @@ namespace GXDLMSDirector
                 {
                     OKBtn.Enabled = false;
                 }
-                Device = dev;
+                Device = dev2;
                 StartProtocolCB.Items.Add(StartProtocolType.IEC);
                 StartProtocolCB.Items.Add(StartProtocolType.DLMS);
                 int pos = 0;
@@ -111,49 +111,48 @@ namespace GXDLMSDirector
                             break;
                         }
                     }
-                    this.VerboseModeCB.Checked = dev.Verbose;
-                    this.NameTB.Text = dev.Name;
-                    SelectedMedia = dev.Media;
+                    this.VerboseModeCB.Checked = Device.Verbose;
+                    this.NameTB.Text = Device.Name;
+                    SelectedMedia = Device.Media;
                     UseRemoteSerialCB.Checked = Device.UseRemoteSerial;
                     StartProtocolCB.SelectedItem = Device.StartProtocol;
                     PhysicalServerAddressTB.Value = Convert.ToDecimal(Device.PhysicalAddress);
                     LogicalServerAddressTB.Value = Convert.ToDecimal(Device.LogicalAddress);
                     this.ClientAddTB.Value = Convert.ToDecimal(Convert.ToUInt32(Device.ClientAddress));
                     WaitTimeTB.Value = Device.WaitTime;
-                    SecurityCB.SelectedItem = dev.Security;
-                    if (IsAscii(GXCommon.HexToBytes(dev.SystemTitle)))
+                    SecurityCB.SelectedItem = Device.Security;
+                    if (IsAscii(GXCommon.HexToBytes(Device.SystemTitle)))
                     {
                         SystemTitleAsciiCb.Checked = true;
-                        SystemTitleTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(dev.SystemTitle));
+                        SystemTitleTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(Device.SystemTitle));
                     }
                     else
                     {
-                        SystemTitleTB.Text = dev.SystemTitle;
+                        SystemTitleTB.Text = Device.SystemTitle;
                     }
-                    if (IsAscii(GXCommon.HexToBytes(dev.BlockCipherKey)))
+                    if (IsAscii(GXCommon.HexToBytes(Device.BlockCipherKey)))
                     {
                         BlockCipherKeyAsciiCb.Checked = true;
-                        BlockCipherKeyTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(dev.BlockCipherKey));
+                        BlockCipherKeyTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(Device.BlockCipherKey));
                     }
                     else
                     {
-                        BlockCipherKeyTB.Text = dev.BlockCipherKey;
+                        BlockCipherKeyTB.Text = Device.BlockCipherKey;
                     }
-                    if (IsAscii(GXCommon.HexToBytes(dev.AuthenticationKey)))
+                    if (IsAscii(GXCommon.HexToBytes(Device.AuthenticationKey)))
                     {
                         AuthenticationKeyAsciiCb.Checked = true;
-                        AuthenticationKeyTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(dev.AuthenticationKey));
+                        AuthenticationKeyTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(Device.AuthenticationKey));
                     }
                     else
                     {
-                        AuthenticationKeyTB.Text = dev.AuthenticationKey;
+                        AuthenticationKeyTB.Text = Device.AuthenticationKey;
                     }
 
-                    InvocationCounterTB.Text = dev.InvocationCounter.ToString();
-                    ChallengeTB.Text = GXCommon.ToHex(GXCommon.HexToBytes(dev.Challenge), true);
+                    InvocationCounterTB.Text = Device.InvocationCounter.ToString();
+                    ChallengeTB.Text = GXCommon.ToHex(GXCommon.HexToBytes(Device.Challenge), true);
                     UseUtcTimeZone.Checked = Device.UtcTimeZone;
                 }
-                ShowConformance(Device.Comm.client.ProposedConformance);
                 ManufacturerCB.DrawMode = MediasCB.DrawMode = DrawMode.OwnerDrawFixed;
                 Gurux.Net.GXNet net = new Gurux.Net.GXNet();
                 //Initialize network settings.
@@ -265,10 +264,8 @@ namespace GXDLMSDirector
                 {
                     this.PasswordTB.Text = ASCIIEncoding.ASCII.GetString(CryptHelper.Decrypt(Device.Password, Password.Key));
                 }
-                if (dev != null)
-                {
-                    this.UseLNCB.Checked = dev.UseLogicalNameReferencing;
-                }
+                this.UseLNCB.Checked = Device.UseLogicalNameReferencing;
+                ShowConformance(Device.Comm.client.ProposedConformance);
                 this.AuthenticationCB.SelectedIndexChanged += new System.EventHandler(this.AuthenticationCB_SelectedIndexChanged);
                 bool bConnected = Device.Media != null && Device.Media.IsOpen;
                 SerialPortCB.Enabled = AdvancedBtn.Enabled = ManufacturerCB.Enabled = MediasCB.Enabled =

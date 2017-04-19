@@ -6,8 +6,8 @@
 //
 // Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/ManufacturerForm.cs $
 //
-// Version:         $Revision: 9256 $,
-//                  $Date: 2017-03-17 15:59:27 +0200 (pe, 17 maalis 2017) $
+// Version:         $Revision: 9367 $,
+//                  $Date: 2017-04-19 13:14:37 +0300 (ke, 19 huhti 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -81,6 +81,9 @@ namespace GXDLMSDirector
                 manufacturer.Settings.Add(new GXAuthentication(Authentication.High, (byte)0x12));
                 manufacturer.Settings.Add(new GXAuthentication(Authentication.HighMD5, (byte)0x13));
                 manufacturer.Settings.Add(new GXAuthentication(Authentication.HighSHA1, (byte)0x14));
+                manufacturer.Settings.Add(new GXAuthentication(Authentication.HighGMAC, (byte)0x14));
+                manufacturer.Settings.Add(new GXAuthentication(Authentication.HighSHA256, (byte)0x14));
+                manufacturer.Settings.Add(new GXAuthentication(Authentication.HighECDSA, (byte)0x14));
                 GXAuthentication gmac = new GXAuthentication(Authentication.HighGMAC, (byte)0x15);
             }
             GXAuthentication authentication = manufacturer.GetActiveAuthentication();

@@ -4,10 +4,10 @@
 //
 //
 //
-// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.Designer.cs $
+// Filename:        $HeadURL: https://146.185.146.169/Projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.Designer.cs $
 //
-// Version:         $Revision: 9277 $,
-//                  $Date: 2017-03-23 21:37:34 +0200 (to, 23 maalis 2017) $
+// Version:         $Revision: 9397 $,
+//                  $Date: 2017-05-15 10:43:42 +0300 (ma, 15 touko 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -98,6 +98,8 @@ namespace GXDLMSDirector
             this.EventNotificationCB = new System.Windows.Forms.CheckBox();
             this.ActionCB = new System.Windows.Forms.CheckBox();
             this.CipheringTab = new System.Windows.Forms.TabPage();
+            this.ChallengeTB = new System.Windows.Forms.TextBox();
+            this.ChallengeLbl = new System.Windows.Forms.Label();
             this.InvocationCounterTB = new System.Windows.Forms.TextBox();
             this.InvocationCounterLbl = new System.Windows.Forms.Label();
             this.BlockCipherKeyAsciiCb = new System.Windows.Forms.CheckBox();
@@ -112,6 +114,7 @@ namespace GXDLMSDirector
             this.SystemtitleLbl = new System.Windows.Forms.Label();
             this.SecurityLbl = new System.Windows.Forms.Label();
             this.DeviceSettingsTab = new System.Windows.Forms.TabPage();
+            this.PasswordAsciiCb = new System.Windows.Forms.CheckBox();
             this.UseUtcTimeZone = new System.Windows.Forms.CheckBox();
             this.VerboseModeCB = new System.Windows.Forms.CheckBox();
             this.UseLNCB = new System.Windows.Forms.CheckBox();
@@ -158,8 +161,6 @@ namespace GXDLMSDirector
             this.TerminalPhoneNumberTB = new System.Windows.Forms.TextBox();
             this.TerminalPhoneNumberLbl = new System.Windows.Forms.Label();
             this.DeviceTab = new System.Windows.Forms.TabControl();
-            this.ChallengeTB = new System.Windows.Forms.TextBox();
-            this.ChallengeLbl = new System.Windows.Forms.Label();
             this.SupportedServicesTab.SuspendLayout();
             this.SNSettings.SuspendLayout();
             this.LNSettings.SuspendLayout();
@@ -561,6 +562,24 @@ namespace GXDLMSDirector
             this.CipheringTab.Text = "Secured Connections";
             this.CipheringTab.UseVisualStyleBackColor = true;
             // 
+            // ChallengeTB
+            // 
+            this.ChallengeTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ChallengeTB.Location = new System.Drawing.Point(113, 133);
+            this.ChallengeTB.Name = "ChallengeTB";
+            this.ChallengeTB.Size = new System.Drawing.Size(226, 20);
+            this.ChallengeTB.TabIndex = 8;
+            // 
+            // ChallengeLbl
+            // 
+            this.ChallengeLbl.AutoSize = true;
+            this.ChallengeLbl.Location = new System.Drawing.Point(8, 136);
+            this.ChallengeLbl.Name = "ChallengeLbl";
+            this.ChallengeLbl.Size = new System.Drawing.Size(57, 13);
+            this.ChallengeLbl.TabIndex = 65;
+            this.ChallengeLbl.Text = "Challenge:";
+            // 
             // InvocationCounterTB
             // 
             this.InvocationCounterTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -686,6 +705,7 @@ namespace GXDLMSDirector
             // 
             // DeviceSettingsTab
             // 
+            this.DeviceSettingsTab.Controls.Add(this.PasswordAsciiCb);
             this.DeviceSettingsTab.Controls.Add(this.UseUtcTimeZone);
             this.DeviceSettingsTab.Controls.Add(this.VerboseModeCB);
             this.DeviceSettingsTab.Controls.Add(this.UseLNCB);
@@ -722,10 +742,23 @@ namespace GXDLMSDirector
             this.DeviceSettingsTab.Text = "Device Settings";
             this.DeviceSettingsTab.UseVisualStyleBackColor = true;
             // 
+            // PasswordAsciiCb
+            // 
+            this.PasswordAsciiCb.AutoSize = true;
+            this.PasswordAsciiCb.Checked = true;
+            this.PasswordAsciiCb.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.PasswordAsciiCb.Location = new System.Drawing.Point(260, 115);
+            this.PasswordAsciiCb.Name = "PasswordAsciiCb";
+            this.PasswordAsciiCb.Size = new System.Drawing.Size(53, 17);
+            this.PasswordAsciiCb.TabIndex = 49;
+            this.PasswordAsciiCb.Text = "ASCII";
+            this.PasswordAsciiCb.UseVisualStyleBackColor = true;
+            this.PasswordAsciiCb.CheckedChanged += new System.EventHandler(this.PasswordAsciiCb_CheckedChanged);
+            // 
             // UseUtcTimeZone
             // 
             this.UseUtcTimeZone.AutoSize = true;
-            this.UseUtcTimeZone.Location = new System.Drawing.Point(211, 115);
+            this.UseUtcTimeZone.Location = new System.Drawing.Point(200, 223);
             this.UseUtcTimeZone.Name = "UseUtcTimeZone";
             this.UseUtcTimeZone.Size = new System.Drawing.Size(183, 17);
             this.UseUtcTimeZone.TabIndex = 6;
@@ -745,7 +778,7 @@ namespace GXDLMSDirector
             // UseLNCB
             // 
             this.UseLNCB.AutoSize = true;
-            this.UseLNCB.Location = new System.Drawing.Point(211, 87);
+            this.UseLNCB.Location = new System.Drawing.Point(231, 31);
             this.UseLNCB.Name = "UseLNCB";
             this.UseLNCB.Size = new System.Drawing.Size(152, 17);
             this.UseLNCB.TabIndex = 5;
@@ -908,7 +941,7 @@ namespace GXDLMSDirector
             this.ManufacturerCB.FormattingEnabled = true;
             this.ManufacturerCB.Location = new System.Drawing.Point(110, 31);
             this.ManufacturerCB.Name = "ManufacturerCB";
-            this.ManufacturerCB.Size = new System.Drawing.Size(273, 21);
+            this.ManufacturerCB.Size = new System.Drawing.Size(115, 21);
             this.ManufacturerCB.TabIndex = 1;
             this.ManufacturerCB.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ManufacturerCB_DrawItem);
             this.ManufacturerCB.SelectedIndexChanged += new System.EventHandler(this.ManufacturerCB_SelectedIndexChanged);
@@ -926,8 +959,7 @@ namespace GXDLMSDirector
             // 
             this.PasswordTB.Location = new System.Drawing.Point(109, 115);
             this.PasswordTB.Name = "PasswordTB";
-            this.PasswordTB.PasswordChar = '*';
-            this.PasswordTB.Size = new System.Drawing.Size(87, 20);
+            this.PasswordTB.Size = new System.Drawing.Size(138, 20);
             this.PasswordTB.TabIndex = 6;
             // 
             // NameTB
@@ -1211,24 +1243,6 @@ namespace GXDLMSDirector
             this.DeviceTab.Size = new System.Drawing.Size(411, 414);
             this.DeviceTab.TabIndex = 0;
             // 
-            // ChallengeTB
-            // 
-            this.ChallengeTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ChallengeTB.Location = new System.Drawing.Point(113, 133);
-            this.ChallengeTB.Name = "ChallengeTB";
-            this.ChallengeTB.Size = new System.Drawing.Size(226, 20);
-            this.ChallengeTB.TabIndex = 8;
-            // 
-            // ChallengeLbl
-            // 
-            this.ChallengeLbl.AutoSize = true;
-            this.ChallengeLbl.Location = new System.Drawing.Point(8, 136);
-            this.ChallengeLbl.Name = "ChallengeLbl";
-            this.ChallengeLbl.Size = new System.Drawing.Size(57, 13);
-            this.ChallengeLbl.TabIndex = 65;
-            this.ChallengeLbl.Text = "Challenge:";
-            // 
             // DevicePropertiesForm
             // 
             this.AcceptButton = this.OKBtn;
@@ -1370,5 +1384,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label InvocationCounterLbl;
         private System.Windows.Forms.TextBox ChallengeTB;
         private System.Windows.Forms.Label ChallengeLbl;
+        private System.Windows.Forms.CheckBox PasswordAsciiCb;
     }
 }

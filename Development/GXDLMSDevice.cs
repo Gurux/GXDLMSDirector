@@ -4,10 +4,10 @@
 //
 //
 //
-// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDevice.cs $
+// Filename:        $HeadURL: https://146.185.146.169/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSDevice.cs $
 //
-// Version:         $Revision: 9277 $,
-//                  $Date: 2017-03-23 21:37:34 +0200 (to, 23 maalis 2017) $
+// Version:         $Revision: 9397 $,
+//                  $Date: 2017-05-15 10:43:42 +0300 (ma, 15 touko 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -172,6 +172,16 @@ namespace GXDLMSDirector
         /// </summary>
         [DefaultValue("")]
         public string Password
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Password is used only if authentication is used.
+        /// </summary>
+        [DefaultValue(null)]
+        public byte[] HexPassword
         {
             get;
             set;
@@ -636,17 +646,24 @@ namespace GXDLMSDirector
                 Comm.parentForm.Invoke(new UpdateColumnsEventHandler(UpdateColumns), item, man);
                 return;
             }
-            item.Buffer.Clear();
-            item.CaptureObjects.Clear();
-            List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> cols = null;
-            List<DataColumn> columns = new List<DataColumn>();
-            if (this.Extension != null)
+            try
             {
-                cols = this.Extension.Refresh(item, this.Comm);
+                item.Buffer.Clear();
+                item.CaptureObjects.Clear();
+                List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> cols = null;
+                List<DataColumn> columns = new List<DataColumn>();
+                if (this.Extension != null)
+                {
+                    cols = this.Extension.Refresh(item, this.Comm);
+                }
+                if (cols == null)
+                {
+                    Comm.GetProfileGenericColumns(item);
+                }
             }
-            if (cols == null)
+            catch (Exception ex)
             {
-                Comm.GetProfileGenericColumns(item);
+                MessageBox.Show(ex.Message);
             }
         }
 

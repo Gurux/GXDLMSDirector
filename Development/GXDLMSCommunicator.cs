@@ -4,10 +4,10 @@
 //
 //
 //
-// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
+// Filename:        $HeadURL: https://146.185.146.169/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSCommunicator.cs $
 //
-// Version:         $Revision: 9367 $,
-//                  $Date: 2017-04-19 13:14:37 +0300 (ke, 19 huhti 2017) $
+// Version:         $Revision: 9397 $,
+//                  $Date: 2017-05-15 10:43:42 +0300 (ma, 15 touko 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -532,6 +532,10 @@ namespace GXDLMSDirector
             {
                 client.Password = CryptHelper.Decrypt(this.parent.Password, Password.Key);
             }
+            else if (this.parent.HexPassword != null)
+            {
+                client.Password = CryptHelper.Decrypt(this.parent.HexPassword, Password.Key);
+            }
             client.UseLogicalNameReferencing = this.parent.UseLogicalNameReferencing;
             client.UtcTimeZone = parent.UtcTimeZone;
             //Show media verbose.
@@ -701,7 +705,7 @@ namespace GXDLMSDirector
                     throw Ex;
                 }
                 //If authentication is required.
-                if (client.IsAuthenticationRequired)
+                if (client.Authentication > Authentication.Low)
                 {
                     foreach (byte[] it in client.GetApplicationAssociationRequest())
                     {
@@ -840,7 +844,6 @@ namespace GXDLMSDirector
             GXLogWriter.WriteLog("--- Collecting objects. ---");
             GXReplyData reply = new GXReplyData()
             {
-                Peek = false
             };
             try
             {
@@ -879,7 +882,6 @@ namespace GXDLMSDirector
         {
             GXReplyData reply = new GXReplyData()
             {
-                Peek = true
             };
             foreach (int it in (obj as IGXDLMSBase).GetAttributeIndexToRead())
             {
@@ -983,9 +985,9 @@ namespace GXDLMSDirector
             }
         }
 
-        public void Write(GXDLMSObject obj, int index, object value)
+        public void Write(GXDLMSObject obj, int index)
         {
-            object val = value;
+            object val;
             GXReplyData reply = new GXReplyData();
             for (int it = 1; it != (obj as IGXDLMSBase).GetAttributeCount() + 1; ++it)
             {
@@ -1017,7 +1019,6 @@ namespace GXDLMSDirector
                         reply.Clear();
                         byte[] data = client.Read(obj, it)[0];
                         ReadDataBlock(data, "Read object " + obj.ObjectType, reply);
-
                         val = reply.Value;
                         if (val is byte[] && (type = obj.GetUIDataType(it)) != DataType.None)
                         {

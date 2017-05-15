@@ -4,10 +4,10 @@
 //
 //
 //
-// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/MainForm.cs $
+// Filename:        $HeadURL: https://146.185.146.169/Projects/GuruxClub/GXDLMSDirector/Development/MainForm.cs $
 //
-// Version:         $Revision: 9354 $,
-//                  $Date: 2017-04-12 11:51:38 +0300 (ke, 12 huhti 2017) $
+// Version:         $Revision: 9397 $,
+//                  $Date: 2017-05-15 10:43:42 +0300 (ma, 15 touko 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -442,9 +442,9 @@ namespace GXDLMSDirector
 
         static List<GXButton> ActionList = new List<GXButton>();
 
-        private static bool UpdateProperties(IGXDLMSView view, System.Windows.Forms.Control.ControlCollection controls, GXDLMSObject target, int index, object value)
+        private static GXValueField UpdateProperties(IGXDLMSView view, System.Windows.Forms.Control.ControlCollection controls, GXDLMSObject target, int index, object value)
         {
-            bool found = false;
+            GXValueField item = null;
             foreach (Control it in controls)
             {
                 if (it is GXValueField)
@@ -455,19 +455,19 @@ namespace GXDLMSDirector
                         obj.Target = target;
                         obj.UpdateValueItems(target, index, value);
                         obj.Value = value;
-                        found = true;
+                        item = obj;
                     }
                 }
                 else if (it.Controls.Count != 0)
                 {
-                    found = UpdateProperties(view, it.Controls, target, index, value);
+                    item = UpdateProperties(view, it.Controls, target, index, value);
                 }
-                if (found)
+                if (item != null)
                 {
                     break;
                 }
             }
-            return found;
+            return item;
         }
 
         private bool UpdateActions(IGXDLMSView view, System.Windows.Forms.Control.ControlCollection controls, GXDLMSObject target, int index)
@@ -550,7 +550,7 @@ namespace GXDLMSDirector
                 {
                     GXReplyData reply = new GXReplyData();
                     GXDLMSDevice dev = btn.Target.Parent.Tag as GXDLMSDevice;
-                    dev.Comm.Write(btn.Target, btn.Index, ve.Value);
+                    dev.Comm.Write(btn.Target, btn.Index);
                     btn.View.PostAction(ActionType.Write, ve);
                 }
             }
@@ -613,12 +613,12 @@ namespace GXDLMSDirector
                     object value = null;
                     bool dirty = view.Target.GetDirty(it, out value);
                     value = view.Target.GetValues()[it - 1];
-                    bool bFound = UpdateProperties(view, ((Form)view).Controls, view.Target, it, value);
-                    if (!bFound)
+                    GXValueField item = UpdateProperties(view, ((Form)view).Controls, view.Target, it, value);
+                    if (item == null || item.NotifyChanges)
                     {
                         view.OnAccessRightsChange(it, view.Target.GetAccess(it));
                     }
-                    if (!bFound)
+                    if (item == null || item.NotifyChanges)
                     {
                         if (InvokeRequired)
                         {
@@ -826,23 +826,25 @@ namespace GXDLMSDirector
 
         private void SaveFile(string path)
         {
-            Stream stream = File.Open(path, FileMode.Create);
-            GXFileSystemSecurity.UpdateFileSecurity(path);
-            List<Type> types = new List<Type>(Gurux.DLMS.GXDLMSClient.GetObjectTypes());
-            types.Add(typeof(GXDLMSAttributeSettings));
-            types.Add(typeof(GXDLMSAttribute));
-            using (TextWriter writer = new StreamWriter(stream))
+            using (Stream stream = File.Open(path, FileMode.Create))
             {
-                XmlAttributeOverrides overrides = new XmlAttributeOverrides();
-                XmlAttributes attribs = new XmlAttributes();
-                attribs.XmlIgnore = true;
-                overrides.Add(typeof(GXDLMSDevice), "ObsoleteObjects", attribs);
-                overrides.Add(typeof(GXDLMSAttributeSettings), attribs);
-                XmlSerializer x = new XmlSerializer(typeof(GXDLMSDeviceCollection), overrides, types.ToArray(), null, "Gurux1");
-                x.Serialize(writer, Devices);
-                writer.Close();
+                GXFileSystemSecurity.UpdateFileSecurity(path);
+                List<Type> types = new List<Type>(Gurux.DLMS.GXDLMSClient.GetObjectTypes());
+                types.Add(typeof(GXDLMSAttributeSettings));
+                types.Add(typeof(GXDLMSAttribute));
+                using (TextWriter writer = new StreamWriter(stream))
+                {
+                    XmlAttributeOverrides overrides = new XmlAttributeOverrides();
+                    XmlAttributes attribs = new XmlAttributes();
+                    attribs.XmlIgnore = true;
+                    overrides.Add(typeof(GXDLMSDevice), "ObsoleteObjects", attribs);
+                    overrides.Add(typeof(GXDLMSAttributeSettings), attribs);
+                    XmlSerializer x = new XmlSerializer(typeof(GXDLMSDeviceCollection), overrides, types.ToArray(), null, "Gurux1");
+                    x.Serialize(writer, Devices);
+                    writer.Close();
+                }
+                stream.Close();
             }
-            stream.Close();
             SetDirty(false);
             m_MruManager.Insert(0, path);
         }
@@ -1678,7 +1680,8 @@ namespace GXDLMSDirector
                         OnProgress(dev, "Writing...", 0, 1);
                         foreach (GXDLMSObject obj in objects)
                         {
-                            dev.Comm.Write(obj, 0, null);
+                            dev.Comm.Write(obj, 0);
+                            UpdateProperties(obj, SelectedView, new List<object>(), 0);
                         }
                         dev.KeepAliveStart();
                     }
@@ -1688,7 +1691,8 @@ namespace GXDLMSDirector
                         GXDLMSDevice dev = obj.Parent.Tag as GXDLMSDevice;
                         dev.KeepAliveStop();
                         OnProgress(dev, "Writing...", 0, 1);
-                        dev.Comm.Write(obj, 0, null);
+                        dev.Comm.Write(obj, 0);
+                        UpdateProperties(obj, SelectedView, new List<object>(), 0);
                         dev.KeepAliveStart();
                     }
                 }
@@ -2021,6 +2025,7 @@ namespace GXDLMSDirector
                 {
                     dev.UseLogicalNameReferencing = m.UseLogicalNameReferencing;
                 }
+                dev.Objects.Tag = dev;
                 dev.ObisCodes = m.ObisCodes;
                 this.AddDevice(dev, false);
                 RefreshDevice(dev, false);

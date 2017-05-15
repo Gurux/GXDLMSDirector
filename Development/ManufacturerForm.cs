@@ -4,7 +4,6 @@
 //
 //
 //
-// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/ManufacturerForm.cs $
 //
 // Version:         $Revision: 9367 $,
 //                  $Date: 2017-04-19 13:14:37 +0300 (ke, 19 huhti 2017) $

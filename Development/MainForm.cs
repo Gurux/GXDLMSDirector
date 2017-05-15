@@ -4,10 +4,9 @@
 //
 //
 //
-// Filename:        $HeadURL: https://146.185.146.169/Projects/GuruxClub/GXDLMSDirector/Development/MainForm.cs $
 //
-// Version:         $Revision: 9397 $,
-//                  $Date: 2017-05-15 10:43:42 +0300 (ma, 15 touko 2017) $
+// Version:         $Revision: 9403 $,
+//                  $Date: 2017-05-15 17:10:26 +0300 (ma, 15 touko 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -2218,6 +2217,7 @@ namespace GXDLMSDirector
                     node.SelectedImageIndex = node.ImageIndex = 11;
                     ObjectTreeItems[(it.Parent.Tag.GetHashCode() << 16) + it.ObjectType] = node;
                     objects = new GXDLMSObjectCollection();
+                    objects.Tag = deviceNode.Tag;
                     node.Tag = objects;
                 }
                 else

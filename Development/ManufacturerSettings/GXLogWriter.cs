@@ -4,7 +4,6 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/ManufacturerSettings/GXLogWriter.cs $
 //
 // Version:         $Revision: 9233 $,
 //                  $Date: 2017-02-20 09:17:34 +0200 (ma, 20 helmi 2017) $

@@ -4,7 +4,6 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://utopia/projects/GXDirector/Development/MRUManager.cs $
 //
 // Version:         $Revision: 871 $,
 //                  $Date: 2009-09-29 17:22:31 +0300 (ti, 29 syys 2009) $
@@ -46,11 +45,11 @@ namespace MRUSample
 {
     delegate void OpenMRUFileEventHandler(string fileName);
 
-	/// <summary>
-	/// MRU manager - manages Most Recently Used Files list.
-	/// </summary>
-	internal class MRUManager
-	{
+    /// <summary>
+    /// MRU manager - manages Most Recently Used Files list.
+    /// </summary>
+    internal class MRUManager
+    {
         /// <summary>
         /// Recent Files menu item
         /// </summary>
@@ -58,21 +57,21 @@ namespace MRUSample
         /// <summary>
         /// Recent Files menu item
         /// </summary>
-        private MenuItem menuItemMRU;               
-		
+        private MenuItem menuItemMRU;
+
         private const int maxNumberOfFiles = 10;    // maximum number of files in MRU list
-		private const int maxDisplayLength = 40;    // maximum length of file name for display
-		private string currentDirectory;            // current directory
-		private List<string> MruItems;               // MRU list (file names)
+        private const int maxDisplayLength = 40;    // maximum length of file name for display
+        private string currentDirectory;            // current directory
+        private List<string> MruItems;               // MRU list (file names)
 
         public event OpenMRUFileEventHandler OnOpenMRUFile;
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         /// <param name="mruItem">Recent Files menu item</param>
         public MRUManager(MenuItem mruItem)
-		{
+        {
             MruItems = new List<string>();
             // keep reference to MRU menu item
             menuItemMRU = mruItem;
@@ -80,14 +79,14 @@ namespace MRUSample
             menuItemParent.Popup += new EventHandler(this.OnMRUShowItems);
             // keep current directory in the time of initialization
             currentDirectory = Directory.GetCurrentDirectory();
-		}		
-		
-		/// <summary>
-		/// Constructor.
-		/// </summary>
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         /// <param name="mruItem">Recent Files menu item</param>
         public MRUManager(ToolStripMenuItem mruItem)
-		{
+        {
             MruItems = new List<string>();
             // keep reference to MRU Tool strip menu item.
             ToolStripMruMenu = mruItem;
@@ -95,19 +94,19 @@ namespace MRUSample
             parent.DropDownOpening += new System.EventHandler(this.OnMRUShowItems);
             // keep current directory in the time of initialization
             currentDirectory = Directory.GetCurrentDirectory();
-		}
-       
-		/// <summary>
-		/// Add file name to MRU list.
-		/// </summary>
+        }
+
+        /// <summary>
+        /// Add file name to MRU list.
+        /// </summary>
         /// <remarks>
         /// If file already exists in the list, it is moved to the first place.
         /// </remarks>
-		/// <param name="file">File Name</param>
-		public void Insert(int index, string file)
-		{
-			Remove(file);
-			// if array has maximum length, remove last element
+        /// <param name="file">File Name</param>
+        public void Insert(int index, string file)
+        {
+            Remove(file);
+            // if array has maximum length, remove last element
             if (MruItems.Count == maxNumberOfFiles)
             {
                 MruItems.RemoveAt(maxNumberOfFiles - 1);
@@ -116,21 +115,21 @@ namespace MRUSample
             {
                 index = MruItems.Count;
             }
-			// add new file name to the start of array
+            // add new file name to the start of array
             MruItems.Insert(index, file);
-		}
+        }
 
-		/// <summary>
-		/// Remove file name from MRU list.
-		/// </summary>
-		/// <param name="file">File Name</param>
-		public void Remove(string file)
-		{
+        /// <summary>
+        /// Remove file name from MRU list.
+        /// </summary>
+        /// <param name="file">File Name</param>
+        public void Remove(string file)
+        {
             if (MruItems.Contains(file))
             {
                 MruItems.Remove(file);
             }
-		}
+        }
 
         /// <summary>
         /// Returs MRU file names collection.
@@ -141,14 +140,14 @@ namespace MRUSample
             return MruItems.ToArray();
         }
 
-		/// <summary>
-		/// Update MRU list when MRU menu item parent is opened
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void OnMRUShowItems(object sender, EventArgs e)
-		{
-			// remove all childs
+        /// <summary>
+        /// Update MRU list when MRU menu item parent is opened
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnMRUShowItems(object sender, EventArgs e)
+        {
+            // remove all childs
             if (ToolStripMruMenu != null)
             {
                 ToolStripMruMenu.DropDownItems.Clear();
@@ -183,17 +182,17 @@ namespace MRUSample
                     }
                 }
             }
-		}
+        }
 
-		/// <summary>
-		/// MRU menu item is clicked - call owner's OpenMRUFile function
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void OnMRUClicked(object sender, EventArgs e)
-		{
-			// cast sender object to MenuItem
-			MenuItem item = sender as MenuItem;
+        /// <summary>
+        /// MRU menu item is clicked - call owner's OpenMRUFile function
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnMRUClicked(object sender, EventArgs e)
+        {
+            // cast sender object to MenuItem
+            MenuItem item = sender as MenuItem;
             ToolStripMenuItem item2 = sender as ToolStripMenuItem;
             if (item != null)
             {
@@ -205,48 +204,48 @@ namespace MRUSample
             else
             {
                 if (OnOpenMRUFile != null)
-                {                        
+                {
                     OnOpenMRUFile(MruItems[ToolStripMruMenu.DropDownItems.IndexOf(item2)]);
                 }
-            }            
-		}
-		
-		/// <summary>
-		/// Get display file name from full name.
-		/// </summary>
-		/// <param name="fullName">Full file name</param>
-		/// <returns>Short display name</returns>
-		private string GetDisplayName(string filePath)
-		{
-			// if file is in current directory, show only file name
-			FileInfo fileInfo = new FileInfo(filePath);
+            }
+        }
+
+        /// <summary>
+        /// Get display file name from full name.
+        /// </summary>
+        /// <param name="fullName">Full file name</param>
+        /// <returns>Short display name</returns>
+        private string GetDisplayName(string filePath)
+        {
+            // if file is in current directory, show only file name
+            FileInfo fileInfo = new FileInfo(filePath);
             if (fileInfo.DirectoryName == currentDirectory)
             {
                 return GetShortDisplayName(fileInfo.Name);
             }
-			return GetShortDisplayName(filePath);
-		}
+            return GetShortDisplayName(filePath);
+        }
 
-		/// <summary>
-		/// Truncate a path to fit within a certain number of characters 
-		/// by replacing path components with ellipses.		
-		/// </summary>
+        /// <summary>
+        /// Truncate a path to fit within a certain number of characters 
+        /// by replacing path components with ellipses.		
+        /// </summary>
         /// <param name="fullPath">Full path to the file.</param>
-		/// <returns>Truncated file name</returns>
-		private string GetShortDisplayName(string filePath)
-		{
-			string name = "";		
-			if (!string.IsNullOrEmpty(filePath))
-			{				
-				string[] dirName = filePath.Split(Path.DirectorySeparatorChar);
-				string fileName = Path.GetFileName(filePath);
+        /// <returns>Truncated file name</returns>
+        private string GetShortDisplayName(string filePath)
+        {
+            string name = "";
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                string[] dirName = filePath.Split(Path.DirectorySeparatorChar);
+                string fileName = Path.GetFileName(filePath);
                 if (fileName.Length > maxDisplayLength)
-				{
-					fileName = fileName.Substring(0, 15) + "..." + fileName.Substring(fileName.Length - 5, 5);
-				}				
-				name = Path.GetPathRoot(filePath) + (dirName.Length > 2 ? dirName[1] + Path.DirectorySeparatorChar + ".." + Path.DirectorySeparatorChar : "") + fileName;
-			}			
-			return name;
-		}
-	}
+                {
+                    fileName = fileName.Substring(0, 15) + "..." + fileName.Substring(fileName.Length - 5, 5);
+                }
+                name = Path.GetPathRoot(filePath) + (dirName.Length > 2 ? dirName[1] + Path.DirectorySeparatorChar + ".." + Path.DirectorySeparatorChar : "") + fileName;
+            }
+            return name;
+        }
+    }
 }

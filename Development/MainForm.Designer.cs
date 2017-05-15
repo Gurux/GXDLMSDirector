@@ -4,7 +4,6 @@
 //
 //
 //
-// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/MainForm.Designer.cs $
 //
 // Version:         $Revision: 9256 $,
 //                  $Date: 2017-03-17 15:59:27 +0200 (pe, 17 maalis 2017) $

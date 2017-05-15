@@ -4,7 +4,6 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSObjectSerializer.cs $
 //
 // Version:         $Revision: 5618 $,
 //                  $Date: 2012-08-24 09:15:04 +0300 (pe, 24 elo 2012) $
@@ -144,7 +143,7 @@ namespace GXDLMS.Common
             this.Data = (AbstractType)t.Deserialize(reader);
             reader.ReadEndElement();
         }
-        
+
         public void WriteXml(System.Xml.XmlWriter writer)
         {
             // Write the Type Name to the XML Element as an Attrib and Serialize 

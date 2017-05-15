@@ -4,8 +4,6 @@
 //
 //
 //
-// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/Program.cs $
-//
 // Version:         $Revision: 9270 $,
 //                  $Date: 2017-03-21 21:24:32 +0200 (ti, 21 maalis 2017) $
 //                  $Author: gurux01 $

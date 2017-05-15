@@ -4,7 +4,6 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/ManufacturerForm.Designer.cs $
 //
 // Version:         $Revision: 9256 $,
 //                  $Date: 2017-03-17 15:59:27 +0200 (pe, 17 maalis 2017) $
@@ -219,7 +218,7 @@ namespace GXDLMSDirector
             // 
             // AddressingGB
             // 
-            this.AddressingGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.AddressingGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.AddressingGB.Controls.Add(this.groupBox2);
             this.AddressingGB.Controls.Add(this.groupBox1);
@@ -582,7 +581,7 @@ namespace GXDLMSDirector
             // 
             // AuthenticationKeyTB
             // 
-            this.AuthenticationKeyTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.AuthenticationKeyTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.AuthenticationKeyTB.Location = new System.Drawing.Point(109, 92);
             this.AuthenticationKeyTB.Name = "AuthenticationKeyTB";
@@ -591,7 +590,7 @@ namespace GXDLMSDirector
             // 
             // BlockCipherKeyTB
             // 
-            this.BlockCipherKeyTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.BlockCipherKeyTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.BlockCipherKeyTB.Location = new System.Drawing.Point(109, 66);
             this.BlockCipherKeyTB.Name = "BlockCipherKeyTB";
@@ -600,7 +599,7 @@ namespace GXDLMSDirector
             // 
             // SystemTitleTB
             // 
-            this.SystemTitleTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.SystemTitleTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.SystemTitleTB.Location = new System.Drawing.Point(109, 39);
             this.SystemTitleTB.Name = "SystemTitleTB";

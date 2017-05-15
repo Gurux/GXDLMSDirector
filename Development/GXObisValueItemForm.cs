@@ -4,7 +4,6 @@
 //
 //
 //
-// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXObisValueItemForm.cs $
 //
 // Version:         $Revision: 8937 $,
 //                  $Date: 2016-11-23 14:03:11 +0200 (ke, 23 marras 2016) $
@@ -44,49 +43,49 @@ using Gurux.DLMS.ManufacturerSettings;
 
 namespace GXDLMSDirector
 {
-public partial class GXObisValueItemForm : Form
-{
-    List<GXObisValueItem> Items;
-    GXObisValueItem Target;
-    public GXObisValueItemForm(List<GXObisValueItem> items, GXObisValueItem item)
+    public partial class GXObisValueItemForm : Form
     {
-        InitializeComponent();
-        Items = items;
-        Target = item;
-        UIValueTB.Text = Target.UIValue;
-        if (Target.Value != null)
+        List<GXObisValueItem> Items;
+        GXObisValueItem Target;
+        public GXObisValueItemForm(List<GXObisValueItem> items, GXObisValueItem item)
         {
-            DeviceValueTB.Text = Target.Value.ToString();
-        }
-    }
-
-    private void OKBtn_Click(object sender, EventArgs e)
-    {
-        try
-        {
-            if (UIValueTB.Text.Trim().Length == 0 ||
-                    DeviceValueTB.Text.Trim().Length == 0)
+            InitializeComponent();
+            Items = items;
+            Target = item;
+            UIValueTB.Text = Target.UIValue;
+            if (Target.Value != null)
             {
-                throw new Exception("Invalid value.");
+                DeviceValueTB.Text = Target.Value.ToString();
             }
-            if (Items != null)
+        }
+
+        private void OKBtn_Click(object sender, EventArgs e)
+        {
+            try
             {
-                foreach (GXObisValueItem it in Items)
+                if (UIValueTB.Text.Trim().Length == 0 ||
+                        DeviceValueTB.Text.Trim().Length == 0)
                 {
-                    if (it != Target && (it.Value.Equals(DeviceValueTB.Text) || it.UIValue == UIValueTB.Text))
+                    throw new Exception("Invalid value.");
+                }
+                if (Items != null)
+                {
+                    foreach (GXObisValueItem it in Items)
                     {
-                        throw new Exception("Invalid value. Value already exists.");
+                        if (it != Target && (it.Value.Equals(DeviceValueTB.Text) || it.UIValue == UIValueTB.Text))
+                        {
+                            throw new Exception("Invalid value. Value already exists.");
+                        }
                     }
                 }
+                Target.UIValue = UIValueTB.Text;
+                Target.Value = DeviceValueTB.Text;
             }
-            Target.UIValue = UIValueTB.Text;
-            Target.Value = DeviceValueTB.Text;
-        }
-        catch (Exception Ex)
-        {
-            GXDLMS.Common.Error.ShowError(this, Ex);
-            this.DialogResult = DialogResult.None;
+            catch (Exception Ex)
+            {
+                GXDLMS.Common.Error.ShowError(this, Ex);
+                this.DialogResult = DialogResult.None;
+            }
         }
     }
-}
 }

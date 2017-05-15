@@ -4,7 +4,6 @@
 //
 //
 //
-// Filename:        $HeadURL: https://146.185.146.169/Projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.Designer.cs $
 //
 // Version:         $Revision: 9397 $,
 //                  $Date: 2017-05-15 10:43:42 +0300 (ma, 15 touko 2017) $
@@ -564,7 +563,7 @@ namespace GXDLMSDirector
             // 
             // ChallengeTB
             // 
-            this.ChallengeTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.ChallengeTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ChallengeTB.Location = new System.Drawing.Point(113, 133);
             this.ChallengeTB.Name = "ChallengeTB";
@@ -582,7 +581,7 @@ namespace GXDLMSDirector
             // 
             // InvocationCounterTB
             // 
-            this.InvocationCounterTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.InvocationCounterTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.InvocationCounterTB.Location = new System.Drawing.Point(113, 107);
             this.InvocationCounterTB.Name = "InvocationCounterTB";
@@ -642,7 +641,7 @@ namespace GXDLMSDirector
             // 
             // AuthenticationKeyTB
             // 
-            this.AuthenticationKeyTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.AuthenticationKeyTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.AuthenticationKeyTB.Location = new System.Drawing.Point(113, 81);
             this.AuthenticationKeyTB.Name = "AuthenticationKeyTB";
@@ -651,7 +650,7 @@ namespace GXDLMSDirector
             // 
             // BlockCipherKeyTB
             // 
-            this.BlockCipherKeyTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.BlockCipherKeyTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.BlockCipherKeyTB.Location = new System.Drawing.Point(113, 55);
             this.BlockCipherKeyTB.Name = "BlockCipherKeyTB";
@@ -660,7 +659,7 @@ namespace GXDLMSDirector
             // 
             // SystemTitleTB
             // 
-            this.SystemTitleTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.SystemTitleTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.SystemTitleTB.Location = new System.Drawing.Point(113, 28);
             this.SystemTitleTB.Name = "SystemTitleTB";
@@ -1029,7 +1028,7 @@ namespace GXDLMSDirector
             // 
             // SerialSettingsGB
             // 
-            this.SerialSettingsGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.SerialSettingsGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.SerialSettingsGB.Controls.Add(this.UseMaximumBaudRateCB);
             this.SerialSettingsGB.Controls.Add(this.MaximumBaudRateCB);
@@ -1093,7 +1092,7 @@ namespace GXDLMSDirector
             // 
             // NetworkSettingsGB
             // 
-            this.NetworkSettingsGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.NetworkSettingsGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.NetworkSettingsGB.Controls.Add(this.NetProtocolCB);
             this.NetworkSettingsGB.Controls.Add(this.label2);
@@ -1171,7 +1170,7 @@ namespace GXDLMSDirector
             // 
             // TerminalSettingsGB
             // 
-            this.TerminalSettingsGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.TerminalSettingsGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.TerminalSettingsGB.Controls.Add(this.TerminalPortLbl);
             this.TerminalSettingsGB.Controls.Add(this.TerminalAdvancedBtn);
@@ -1231,8 +1230,8 @@ namespace GXDLMSDirector
             // 
             // DeviceTab
             // 
-            this.DeviceTab.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.DeviceTab.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.DeviceTab.Controls.Add(this.DeviceSettingsTab);
             this.DeviceTab.Controls.Add(this.SupportedServicesTab);

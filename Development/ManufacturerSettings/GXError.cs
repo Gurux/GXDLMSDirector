@@ -4,7 +4,6 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/ManufacturerSettings/GXError.cs $
 //
 // Version:         $Revision: 5901 $,
 //                  $Date: 2013-01-08 14:52:06 +0200 (ti, 08 tammi 2013) $
@@ -46,13 +45,13 @@ namespace GXDLMS.Common
 
         static public void ShowError(System.Windows.Forms.IWin32Window owner, Exception Ex)
         {
-			try
-			{
-				System.Diagnostics.Debug.WriteLine(Ex.ToString());
-			}
-			catch
-			{
-			}
+            try
+            {
+                System.Diagnostics.Debug.WriteLine(Ex.ToString());
+            }
+            catch
+            {
+            }
             //Save error to the last error log.
             //Vista: C:\ProgramData
             //XP: c:\Program Files\Common Files
@@ -60,8 +59,8 @@ namespace GXDLMS.Common
             //XP = 5.1 & Vista = 6.0
             if (Environment.OSVersion.Platform == PlatformID.Unix)
             {
-                path = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
-				path = System.IO.Path.Combine(path, ".Gurux");
+                path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+                path = System.IO.Path.Combine(path, ".Gurux");
             }
             else
             {
@@ -73,13 +72,13 @@ namespace GXDLMS.Common
                 {
                     path = Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles);
                 }
-				path = System.IO.Path.Combine(path, "Gurux");
-            }            
+                path = System.IO.Path.Combine(path, "Gurux");
+            }
             path = System.IO.Path.Combine(path, "GXDLMSDirector");
-			if (!System.IO.Directory.Exists(path))
-			{
-				System.IO.Directory.CreateDirectory(path);
-			}
+            if (!System.IO.Directory.Exists(path))
+            {
+                System.IO.Directory.CreateDirectory(path);
+            }
             path = System.IO.Path.Combine(path, "LastError.log");
             System.IO.TextWriter tw = System.IO.File.CreateText(path);
             tw.Write(Ex.ToString());

@@ -4,7 +4,6 @@
 //
 //
 //
-// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/ManufacturersForm.Designer.cs $
 //
 // Version:         $Revision: 9048 $,
 //                  $Date: 2016-12-20 16:35:34 +0200 (ti, 20 joulu 2016) $
@@ -34,34 +33,34 @@
 
 namespace GXDLMSDirector
 {
-partial class ManufacturersForm
-{
-    /// <summary>
-    /// Required designer variable.
-    /// </summary>
-    private System.ComponentModel.IContainer components = null;
-
-    /// <summary>
-    /// Clean up any resources being used.
-    /// </summary>
-    /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-    protected override void Dispose(bool disposing)
+    partial class ManufacturersForm
     {
-        if (disposing && (components != null))
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
         {
-            components.Dispose();
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
         }
-        base.Dispose(disposing);
-    }
 
-    #region Windows Form Designer generated code
+        #region Windows Form Designer generated code
 
-    /// <summary>
-    /// Required method for Designer support - do not modify
-    /// the contents of this method with the code editor.
-    /// </summary>
-    private void InitializeComponent()
-    {
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ManufacturersForm));
             this.panel1 = new System.Windows.Forms.Panel();
             this.DownloadLatestBtn = new System.Windows.Forms.Button();
@@ -323,31 +322,31 @@ partial class ManufacturersForm
             this.panel2.PerformLayout();
             this.ResumeLayout(false);
 
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Button OKBtn;
+        private System.Windows.Forms.Button CancelBtn;
+        private System.Windows.Forms.ListView ManufacturersList;
+        private System.Windows.Forms.Splitter splitter1;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Button EditBtn;
+        private System.Windows.Forms.CheckBox UseIEC47CB;
+        private System.Windows.Forms.Button RemoveBtn;
+        private System.Windows.Forms.Button NewBtn;
+        private System.Windows.Forms.CheckBox UseLNCB;
+        private System.Windows.Forms.TextBox ManufacturerIdTB;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox NameTB;
+        private System.Windows.Forms.Label NameLbl;
+        private System.Windows.Forms.ColumnHeader NameCH;
+        private System.Windows.Forms.TextBox StartProtocolTB;
+        private System.Windows.Forms.Label StartProtocolLbl;
+        private System.Windows.Forms.TextBox InactivityModeTB;
+        private System.Windows.Forms.Label InactivityModeLbl;
+        private System.Windows.Forms.Button DownloadLatestBtn;
+
     }
-
-    #endregion
-
-    private System.Windows.Forms.Panel panel1;
-    private System.Windows.Forms.Button OKBtn;
-    private System.Windows.Forms.Button CancelBtn;
-    private System.Windows.Forms.ListView ManufacturersList;
-    private System.Windows.Forms.Splitter splitter1;
-    private System.Windows.Forms.Panel panel2;
-    private System.Windows.Forms.Button EditBtn;
-    private System.Windows.Forms.CheckBox UseIEC47CB;
-    private System.Windows.Forms.Button RemoveBtn;
-    private System.Windows.Forms.Button NewBtn;
-    private System.Windows.Forms.CheckBox UseLNCB;
-    private System.Windows.Forms.TextBox ManufacturerIdTB;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.TextBox NameTB;
-    private System.Windows.Forms.Label NameLbl;
-    private System.Windows.Forms.ColumnHeader NameCH;
-    private System.Windows.Forms.TextBox StartProtocolTB;
-    private System.Windows.Forms.Label StartProtocolLbl;
-    private System.Windows.Forms.TextBox InactivityModeTB;
-    private System.Windows.Forms.Label InactivityModeLbl;
-    private System.Windows.Forms.Button DownloadLatestBtn;
-
-}
 }

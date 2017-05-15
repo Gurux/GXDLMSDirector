@@ -4,7 +4,6 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/DeviceState.cs $
 //
 // Version:         $Revision: 3125 $,
 //                  $Date: 2010-12-14 10:08:50 +0200 (ti, 14 joulu 2010) $

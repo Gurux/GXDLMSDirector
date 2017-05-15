@@ -4,8 +4,6 @@
 //
 //
 //
-// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/Properties/AssemblyInfo.cs $
-//
 // Version:         $Revision: 9152 $,
 //                  $Date: 2017-01-23 10:12:50 +0200 (ma, 23 tammi 2017) $
 //                  $Author: gurux01 $

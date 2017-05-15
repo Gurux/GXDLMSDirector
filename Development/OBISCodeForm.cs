@@ -4,7 +4,6 @@
 //
 //
 //
-// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/OBISCodeForm.cs $
 //
 // Version:         $Revision: 8991 $,
 //                  $Date: 2016-12-02 13:54:21 +0200 (pe, 02 joulu 2016) $

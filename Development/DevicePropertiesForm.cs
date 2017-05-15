@@ -4,7 +4,6 @@
 //
 //
 //
-// Filename:        $HeadURL: https://146.185.146.169/Projects/GuruxClub/GXDLMSDirector/Development/DevicePropertiesForm.cs $
 //
 // Version:         $Revision: 9397 $,
 //                  $Date: 2017-05-15 10:43:42 +0300 (ma, 15 touko 2017) $

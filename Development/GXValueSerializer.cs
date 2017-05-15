@@ -4,7 +4,6 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXValueSerializer.cs $
 //
 // Version:         $Revision: 3125 $,
 //                  $Date: 2010-12-14 10:08:50 +0200 (ti, 14 joulu 2010) $
@@ -97,7 +96,7 @@ namespace GXDLMSDirector
             // Cast the Data back from the Abstract Type. 
             string typeAttrib = reader.GetAttribute("xsi:type");
         }
-        
+
         public void WriteXml(System.Xml.XmlWriter writer)
         {
             // Write the Type Name to the XML Element as an Attrib and Serialize 

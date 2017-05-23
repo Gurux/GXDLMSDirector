@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9403 $,
-//                  $Date: 2017-05-15 17:10:26 +0300 (ma, 15 touko 2017) $
+// Version:         $Revision: 9442 $,
+//                  $Date: 2017-05-23 15:21:03 +0300 (ti, 23 touko 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -661,6 +661,23 @@ namespace GXDLMSDirector
 
         void Initialize()
         {
+            //Save changes?
+            if (this.Dirty)
+            {
+                DialogResult ret = MessageBox.Show(this, Properties.Resources.SaveChangesTxt, Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                if (ret == DialogResult.Cancel)
+                {
+                    return;
+                }
+                if (ret == DialogResult.Yes)
+                {
+                    if (!Save())
+                    {
+                        return;
+                    }
+                }
+            }
+
             path = "";
             ObjectTreeItems.Clear();
             SelectedListItems.Clear();

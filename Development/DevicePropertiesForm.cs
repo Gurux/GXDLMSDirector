@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9397 $,
-//                  $Date: 2017-05-15 10:43:42 +0300 (ma, 15 touko 2017) $
+// Version:         $Revision: 9442 $,
+//                  $Date: 2017-05-23 15:21:03 +0300 (ti, 23 touko 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -788,7 +788,7 @@ namespace GXDLMSDirector
         {
             //If IEC47 is used DLMS is only protocol.
             GXManufacturer man = this.ManufacturerCB.SelectedItem as GXManufacturer;
-            this.UseLNCB.Checked = man.UseLogicalNameReferencing;
+            this.UseLNCB.Checked = Device.UseLogicalNameReferencing = man.UseLogicalNameReferencing;
             if (SelectedMedia is GXNet && man != null)
             {
                 StartProtocolCB.Enabled = !man.UseIEC47;

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9442 $,
-//                  $Date: 2017-05-23 15:21:03 +0300 (ti, 23 touko 2017) $
+// Version:         $Revision: 9512 $,
+//                  $Date: 2017-08-18 13:39:31 +0300 (pe, 18 elo 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -55,6 +55,7 @@ namespace GXDLMSDirector
 {
     partial class DevicePropertiesForm : Form
     {
+        Form MediaPropertiesForm = null;
         GXManufacturerCollection Manufacturers;
         Gurux.Common.IGXMedia SelectedMedia = null;
         public GXDLMSDevice Device = null;
@@ -70,7 +71,7 @@ namespace GXDLMSDirector
                 NetProtocolCB.Items.AddRange(new object[] { NetworkType.Tcp, NetworkType.Udp });
                 this.ServerAddressTypeCB.SelectedIndexChanged += new System.EventHandler(this.ServerAddressTypeCB_SelectedIndexChanged);
                 NetworkSettingsGB.Width = this.Width - NetworkSettingsGB.Left;
-                SerialSettingsGB.Bounds = TerminalSettingsGB.Bounds = NetworkSettingsGB.Bounds;
+                CustomSettings.Bounds = SerialSettingsGB.Bounds = TerminalSettingsGB.Bounds = NetworkSettingsGB.Bounds;
                 ServerAddressTypeCB.DrawMode = AuthenticationCB.DrawMode = DrawMode.OwnerDrawFixed;
                 Manufacturers = manufacturers;
                 //OK button is not enabled if there are no manufacturers.
@@ -238,21 +239,21 @@ namespace GXDLMSDirector
                     }
                     this.MediasCB.Items.Add(serial);
                 }
-                if (SelectedMedia is Gurux.Terminal.GXTerminal)
+                if (SelectedMedia is GXTerminal)
                 {
                     this.MediasCB.Items.Add(SelectedMedia);
                     string[] ports = GXTerminal.GetPortNames();
                     this.TerminalPortCB.Items.AddRange(ports);
                     if (ports.Length != 0)
                     {
-                        this.TerminalPortCB.SelectedItem = ((Gurux.Terminal.GXTerminal)SelectedMedia).PortName;
+                        this.TerminalPortCB.SelectedItem = ((GXTerminal)SelectedMedia).PortName;
                     }
-                    this.TerminalPhoneNumberTB.Text = ((Gurux.Terminal.GXTerminal)SelectedMedia).PhoneNumber;
+                    this.TerminalPhoneNumberTB.Text = ((GXTerminal)SelectedMedia).PhoneNumber;
                 }
                 else
                 {
                     //Initialize terminal settings.
-                    Gurux.Terminal.GXTerminal termial = new Gurux.Terminal.GXTerminal();
+                    GXTerminal termial = new GXTerminal();
                     string[] ports = GXTerminal.GetPortNames();
                     this.TerminalPortCB.Items.AddRange(ports);
                     if (ports.Length != 0)
@@ -267,6 +268,30 @@ namespace GXDLMSDirector
                     //termial.InitializeCommands = "AT+CBST=71,0,1\r\n";
                     this.MediasCB.Items.Add(termial);
                 }
+
+                foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
+                {
+                    if (a != typeof(GXTerminal).Assembly &&
+                            a != typeof(GXSerial).Assembly &&
+                        a != typeof(GXNet).Assembly)
+                    {
+                        foreach (Type type in a.GetTypes())
+                        {
+                            if (!type.IsAbstract && type.IsClass && typeof(IGXMedia).IsAssignableFrom(type))
+                            {
+                                if (SelectedMedia == null || SelectedMedia.GetType() != type)
+                                {
+                                    this.MediasCB.Items.Add(a.CreateInstance(type.ToString()));
+                                }
+                                else
+                                {
+                                    this.MediasCB.Items.Add(SelectedMedia);
+                                }
+                            }
+                        }
+                    }
+                }
+
                 //Select first media if medis is not selected.
                 if (SelectedMedia == null)
                 {
@@ -482,12 +507,40 @@ namespace GXDLMSDirector
             try
             {
                 SelectedMedia = (Gurux.Common.IGXMedia)MediasCB.SelectedItem;
-                this.SerialSettingsGB.Visible = SelectedMedia is GXSerial;
-                this.NetworkSettingsGB.Visible = SelectedMedia is GXNet;
-                this.TerminalSettingsGB.Visible = SelectedMedia is GXTerminal;
-                if (SelectedMedia is GXNet && this.PortTB.Text == "")
+                if (SelectedMedia is GXSerial || SelectedMedia is GXNet || SelectedMedia is GXTerminal)
                 {
-                    this.PortTB.Text = "4059";
+                    MediaPropertiesForm = null;
+                    CustomSettings.Visible = false;
+                    SerialSettingsGB.Visible = SelectedMedia is GXSerial;
+                    NetworkSettingsGB.Visible = SelectedMedia is GXNet;
+                    TerminalSettingsGB.Visible = SelectedMedia is GXTerminal;
+                    if (SelectedMedia is GXNet && this.PortTB.Text == "")
+                    {
+                        this.PortTB.Text = "4059";
+                    }
+                }
+                else
+                {
+                    SerialSettingsGB.Visible = NetworkSettingsGB.Visible = TerminalSettingsGB.Visible = false;
+                    CustomSettings.Visible = true;
+
+                    CustomSettings.Controls.Clear();
+                    MediaPropertiesForm = SelectedMedia.PropertiesForm;
+                    (MediaPropertiesForm as IGXPropertyPage).Initialize();
+                    while (MediaPropertiesForm.Controls.Count != 0)
+                    {
+                        Control ctr = MediaPropertiesForm.Controls[0];
+                        if (ctr is Panel)
+                        {
+                            if (!ctr.Enabled)
+                            {
+                                MediaPropertiesForm.Controls.RemoveAt(0);
+                                continue;
+                            }
+                        }
+                        CustomSettings.Controls.Add(ctr);
+                        ctr.Visible = true;
+                    }
                 }
                 UpdateStartProtocol();
             }
@@ -605,6 +658,13 @@ namespace GXDLMSDirector
                     Device.UseRemoteSerial = false;
                     terminal.PortName = this.TerminalPortCB.Text;
                     terminal.PhoneNumber = this.TerminalPhoneNumberTB.Text;
+                }
+                else
+                {
+                    if ((MediaPropertiesForm as IGXPropertyPage).Dirty)
+                    {
+                        (MediaPropertiesForm as IGXPropertyPage).Apply();
+                    }
                 }
                 GXAuthentication authentication = (GXAuthentication)AuthenticationCB.SelectedItem;
                 Device.HDLCAddressing = ((GXServerAddress)ServerAddressTypeCB.SelectedItem).HDLCAddress;

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9442 $,
-//                  $Date: 2017-05-23 15:21:03 +0300 (ti, 23 touko 2017) $
+// Version:         $Revision: 9512 $,
+//                  $Date: 2017-08-18 13:39:31 +0300 (pe, 18 elo 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -119,6 +119,13 @@ namespace GXDLMSDirector
             ReadDataBlock(client.Method(target, methodIndex, data, DataType.None), "", reply);
         }
 
+        byte[] ReleaseRequest()
+        {
+            byte[] data = client.ReleaseRequest()[0];
+            GXLogWriter.WriteLog("Release request", data);
+            return data;
+        }
+
         byte[] DisconnectRequest()
         {
             byte[] data = client.DisconnectRequest();
@@ -133,6 +140,15 @@ namespace GXDLMSDirector
                 try
                 {
                     GXReplyData reply = new GXReplyData();
+                    try
+                    {
+                        ReadDLMSPacket(ReleaseRequest(), 1, reply);
+                    }
+                    catch (Exception)
+                    {
+                        //All meters don't support release.
+                    }
+                    reply.Clear();
                     ReadDLMSPacket(DisconnectRequest(), 1, reply);
                 }
                 finally
@@ -670,7 +686,7 @@ namespace GXDLMSDirector
             }
             else
             {
-                throw new Exception("Unknown media type.");
+                media.Open();
             }
             try
             {

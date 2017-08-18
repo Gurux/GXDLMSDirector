@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9442 $,
-//                  $Date: 2017-05-23 15:21:03 +0300 (ti, 23 touko 2017) $
+// Version:         $Revision: 9512 $,
+//                  $Date: 2017-08-18 13:39:31 +0300 (pe, 18 elo 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -46,6 +46,7 @@ using GXDLMS.Common;
 using Gurux.DLMS.ManufacturerSettings;
 using Gurux.DLMS.Objects;
 using Gurux.DLMS.Enums;
+using Gurux.Common;
 
 namespace GXDLMSDirector
 {
@@ -530,7 +531,7 @@ namespace GXDLMSDirector
                 }
                 else
                 {
-                    throw new Exception("Invalid media type " + value);
+                    communicator.media = (IGXMedia)Activator.CreateInstance(Type.GetType(value));
                 }
             }
         }

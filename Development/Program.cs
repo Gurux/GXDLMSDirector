@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9442 $,
-//                  $Date: 2017-05-23 15:21:03 +0300 (ti, 23 touko 2017) $
+// Version:         $Revision: 9512 $,
+//                  $Date: 2017-08-18 13:39:31 +0300 (pe, 18 elo 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -61,8 +61,35 @@ namespace GXDLMSDirector
                     {
                         Directory.CreateDirectory(initDir);
                     }
-                    Directory.SetCurrentDirectory(initDir);
                     SetAddRemoveProgramsIcon();
+                    DirectoryInfo di = new DirectoryInfo("Medias");
+                    if (di.Exists)
+                    {
+                        foreach (FileInfo file in di.GetFiles("*.dll"))
+                        {
+                            try
+                            {
+                                if (string.Compare(file.Name, "Gurux.Common.dll", true) == 0)
+                                {
+                                    continue;
+                                }
+                                Assembly assembly = Assembly.LoadFile(file.FullName);
+                                foreach (Type type in assembly.GetTypes())
+                                {
+                                    if (!type.IsAbstract && type.IsClass && typeof(IGXMedia).IsAssignableFrom(type))
+                                    {
+                                        IGXMedia m = assembly.CreateInstance(type.ToString()) as IGXMedia;
+                                    }
+                                    break;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine(ex.Message);
+                            }
+                        }
+                    }
+                    Directory.SetCurrentDirectory(initDir);
                 }
                 catch (Exception)
                 {

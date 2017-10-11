@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9442 $,
-//                  $Date: 2017-05-23 15:21:03 +0300 (ti, 23 touko 2017) $
+// Version:         $Revision: 9587 $,
+//                  $Date: 2017-10-11 14:53:32 +0300 (ke, 11 loka 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -85,6 +85,7 @@ namespace GXDLMSDirector
             this.ObjectListMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.GroupsMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.TraceMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.ForceReadMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripSeparator();
             this.PropertiesMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -135,6 +136,7 @@ namespace GXDLMSDirector
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.OptionsBtn = new System.Windows.Forms.ToolStripButton();
             this.DeleteBtn = new System.Windows.Forms.ToolStripButton();
+            this.ForceRefreshBtn = new System.Windows.Forms.ToolStripButton();
             this.NewListTBtn = new System.Windows.Forms.ToolBarButton();
             this.OpenTBtn = new System.Windows.Forms.ToolBarButton();
             this.SaveTBtn = new System.Windows.Forms.ToolBarButton();
@@ -160,6 +162,8 @@ namespace GXDLMSDirector
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.DeviceInfoView = new System.Windows.Forms.Panel();
             this.DeviceGb = new System.Windows.Forms.GroupBox();
+            this.ConformanceTB = new System.Windows.Forms.TextBox();
+            this.ConformanceLbl = new System.Windows.Forms.Label();
             this.ManufacturerLbl = new System.Windows.Forms.Label();
             this.StatusValueLbl = new System.Windows.Forms.Label();
             this.ManufacturerValueLbl = new System.Windows.Forms.Label();
@@ -173,8 +177,6 @@ namespace GXDLMSDirector
             this.DeviceList = new System.Windows.Forms.ListView();
             this.DeviceNameCH = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ObjectPanelFrame = new System.Windows.Forms.Panel();
-            this.ConformanceLbl = new System.Windows.Forms.Label();
-            this.ConformanceTB = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -302,6 +304,7 @@ namespace GXDLMSDirector
             this.ObjectListMnu,
             this.GroupsMnu,
             this.TraceMnu,
+            this.ForceReadMnu,
             this.toolStripMenuItem7,
             this.PropertiesMnu});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
@@ -354,6 +357,13 @@ namespace GXDLMSDirector
             this.TraceMnu.Size = new System.Drawing.Size(152, 22);
             this.TraceMnu.Text = "&Trace";
             this.TraceMnu.Click += new System.EventHandler(this.TraceMenu_Click);
+            // 
+            // ForceReadMnu
+            // 
+            this.ForceReadMnu.Name = "ForceReadMnu";
+            this.ForceReadMnu.Size = new System.Drawing.Size(152, 22);
+            this.ForceReadMnu.Text = "Force Read";
+            this.ForceReadMnu.Click += new System.EventHandler(this.ForceReadMnu_Click);
             // 
             // toolStripMenuItem7
             // 
@@ -662,7 +672,8 @@ namespace GXDLMSDirector
             this.WriteBtn,
             this.toolStripSeparator3,
             this.OptionsBtn,
-            this.DeleteBtn});
+            this.DeleteBtn,
+            this.ForceRefreshBtn});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(725, 25);
@@ -769,6 +780,16 @@ namespace GXDLMSDirector
             this.DeleteBtn.Text = "toolStripButton6";
             this.DeleteBtn.ToolTipText = "Delete";
             this.DeleteBtn.Click += new System.EventHandler(this.DeleteMnu_Click);
+            // 
+            // ForceRefreshBtn
+            // 
+            this.ForceRefreshBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ForceRefreshBtn.Image = ((System.Drawing.Image)(resources.GetObject("ForceRefreshBtn.Image")));
+            this.ForceRefreshBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ForceRefreshBtn.Name = "ForceRefreshBtn";
+            this.ForceRefreshBtn.Size = new System.Drawing.Size(23, 22);
+            this.ForceRefreshBtn.ToolTipText = "Force read";
+            this.ForceRefreshBtn.Click += new System.EventHandler(this.ForceReadMnu_Click);
             // 
             // NewListTBtn
             // 
@@ -979,6 +1000,25 @@ namespace GXDLMSDirector
             this.DeviceGb.TabIndex = 12;
             this.DeviceGb.TabStop = false;
             // 
+            // ConformanceTB
+            // 
+            this.ConformanceTB.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.ConformanceTB.Location = new System.Drawing.Point(117, 143);
+            this.ConformanceTB.Multiline = true;
+            this.ConformanceTB.Name = "ConformanceTB";
+            this.ConformanceTB.ReadOnly = true;
+            this.ConformanceTB.Size = new System.Drawing.Size(236, 117);
+            this.ConformanceTB.TabIndex = 14;
+            // 
+            // ConformanceLbl
+            // 
+            this.ConformanceLbl.AutoSize = true;
+            this.ConformanceLbl.Location = new System.Drawing.Point(18, 143);
+            this.ConformanceLbl.Name = "ConformanceLbl";
+            this.ConformanceLbl.Size = new System.Drawing.Size(73, 13);
+            this.ConformanceLbl.TabIndex = 12;
+            this.ConformanceLbl.Text = "Conformance:";
+            // 
             // ManufacturerLbl
             // 
             this.ManufacturerLbl.AutoSize = true;
@@ -1092,25 +1132,6 @@ namespace GXDLMSDirector
             this.ObjectPanelFrame.Name = "ObjectPanelFrame";
             this.ObjectPanelFrame.Size = new System.Drawing.Size(187, 142);
             this.ObjectPanelFrame.TabIndex = 18;
-            // 
-            // ConformanceLbl
-            // 
-            this.ConformanceLbl.AutoSize = true;
-            this.ConformanceLbl.Location = new System.Drawing.Point(18, 143);
-            this.ConformanceLbl.Name = "ConformanceLbl";
-            this.ConformanceLbl.Size = new System.Drawing.Size(73, 13);
-            this.ConformanceLbl.TabIndex = 12;
-            this.ConformanceLbl.Text = "Conformance:";
-            // 
-            // ConformanceTB
-            // 
-            this.ConformanceTB.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.ConformanceTB.Location = new System.Drawing.Point(117, 143);
-            this.ConformanceTB.Multiline = true;
-            this.ConformanceTB.Name = "ConformanceTB";
-            this.ConformanceTB.ReadOnly = true;
-            this.ConformanceTB.Size = new System.Drawing.Size(236, 117);
-            this.ConformanceTB.TabIndex = 14;
             // 
             // MainForm
             // 
@@ -1267,6 +1288,8 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Panel ObjectPanelFrame;
         private System.Windows.Forms.Label ConformanceLbl;
         private System.Windows.Forms.TextBox ConformanceTB;
+        private System.Windows.Forms.ToolStripMenuItem ForceReadMnu;
+        private System.Windows.Forms.ToolStripButton ForceRefreshBtn;
     }
 }
 

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9512 $,
-//                  $Date: 2017-08-18 13:39:31 +0300 (pe, 18 elo 2017) $
+// Version:         $Revision: 9587 $,
+//                  $Date: 2017-10-11 14:53:32 +0300 (ke, 11 loka 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -116,7 +116,7 @@ namespace GXDLMSDirector
 
         public void MethodRequest(GXDLMSObject target, int methodIndex, object data, GXReplyData reply)
         {
-            ReadDataBlock(client.Method(target, methodIndex, data, DataType.None), "", reply);
+            ReadDataBlock(client.Method(target, methodIndex, data, GXDLMSConverter.GetDLMSDataType(data)), "", reply);
         }
 
         byte[] ReleaseRequest()
@@ -142,7 +142,7 @@ namespace GXDLMSDirector
                     GXReplyData reply = new GXReplyData();
                     try
                     {
-                        ReadDLMSPacket(ReleaseRequest(), 1, reply);
+                   //     ReadDLMSPacket(ReleaseRequest(), 1, reply);
                     }
                     catch (Exception)
                     {
@@ -891,12 +891,15 @@ namespace GXDLMSDirector
         /// </summary>
         /// <param name="InitialValues"></param>
         /// <param name="obj"></param>
-        /// <param name="attribute"></param>
-        public void Read(object sender, GXDLMSObject obj, int attribute)
+        /// <param name="attribute">Attribute index to read.</param>
+        /// <param name="forceRead">Force all attributes read.</param>
+        public void Read(object sender, GXDLMSObject obj, int attribute, bool forceRead)
         {
-            GXReplyData reply = new GXReplyData()
+            GXReplyData reply = new GXReplyData();
+            if (forceRead)
             {
-            };
+                obj.ClearReadTime();
+            }
             foreach (int it in (obj as IGXDLMSBase).GetAttributeIndexToRead())
             {
                 reply.Clear();

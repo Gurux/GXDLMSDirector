@@ -106,5 +106,17 @@ namespace GXDLMSDirector.Properties {
                 this["ViewTrace"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ForceRead {
+            get {
+                return ((bool)(this["ForceRead"]));
+            }
+            set {
+                this["ForceRead"] = value;
+            }
+        }
     }
 }

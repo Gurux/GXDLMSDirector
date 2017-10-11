@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9442 $,
-//                  $Date: 2017-05-23 15:21:03 +0300 (ti, 23 touko 2017) $
+// Version:         $Revision: 9587 $,
+//                  $Date: 2017-10-11 14:53:32 +0300 (ke, 11 loka 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -610,8 +610,17 @@ namespace GXDLMSDirector
                 if (index == 0 || index == it)
                 {
                     object value = null;
-                    bool dirty = view.Target.GetDirty(it, out value);
-                    value = view.Target.GetValues()[it - 1];
+                    bool dirty;
+                    if (index == 0)
+                    {
+                        dirty = true;
+                        value = view.Target.GetValues()[it - 1];
+                    }
+                    else
+                    {
+                        dirty = view.Target.GetDirty(it, out value);
+                        value = view.Target.GetValues()[it - 1];
+                    }
                     GXValueField item = UpdateProperties(view, ((Form)view).Controls, view.Target, it, value);
                     if (item == null || item.NotifyChanges)
                     {
@@ -1236,6 +1245,7 @@ namespace GXDLMSDirector
                 GXDLMSDirector.Properties.Settings.Default.ViewList = ObjectListMnu.Checked;
                 GXDLMSDirector.Properties.Settings.Default.ViewGroups = GroupsMnu.Checked;
                 GXDLMSDirector.Properties.Settings.Default.ViewTrace = TraceMnu.Checked;
+                GXDLMSDirector.Properties.Settings.Default.ForceRead = ForceReadMnu.Checked;
                 GXDLMSDirector.Properties.Settings.Default.Save();
 
                 string path = UserDataPath;
@@ -1308,7 +1318,8 @@ namespace GXDLMSDirector
                 GroupsMnu_Click(null, null);
                 TraceMnu.Checked = !GXDLMSDirector.Properties.Settings.Default.ViewTrace;
                 TraceMenu_Click(null, null);
-
+                ForceReadMnu.Checked = !GXDLMSDirector.Properties.Settings.Default.ForceRead;
+                ForceReadMnu_Click(null, null);
                 string path = UserDataPath;
                 if (System.Environment.OSVersion.Platform == PlatformID.Unix)
                 {
@@ -1409,7 +1420,7 @@ namespace GXDLMSDirector
                 foreach (GXDLMSObject it in dev.Objects)
                 {
                     OnProgress(dev, "Reading " + it.LogicalName + "...", ++pos, cnt);
-                    dev.Comm.Read(this, it, 0);
+                    dev.Comm.Read(this, it, 0, ForceRefreshBtn.Checked);
                     DLMSItemOnChange(it, false, 0, null);
                 }
             }
@@ -1559,7 +1570,7 @@ namespace GXDLMSDirector
                             dev.Comm.OnBeforeRead += new ReadEventHandler(OnBeforeRead);
                             dev.Comm.OnAfterRead += new ReadEventHandler(OnAfterRead);
                             dev.OnTrace += new MessageTraceEventHandler(OnTrace);
-                            dev.Comm.Read(this, obj, 0);
+                            dev.Comm.Read(this, obj, 0, ForceRefreshBtn.Checked);
                         }
                         finally
                         {
@@ -1589,7 +1600,7 @@ namespace GXDLMSDirector
                                 dev.Comm.OnBeforeRead += new ReadEventHandler(OnBeforeRead);
                                 dev.Comm.OnAfterRead += new ReadEventHandler(OnAfterRead);
                                 dev.OnTrace += new MessageTraceEventHandler(OnTrace);
-                                dev.Comm.Read(this, obj, 0);
+                                dev.Comm.Read(this, obj, 0, ForceRefreshBtn.Checked);
                             }
                             finally
                             {
@@ -2933,6 +2944,16 @@ namespace GXDLMSDirector
         {
             TraceMnu.Checked = !TraceMnu.Checked;
             TraceView.Visible = TraceMnu.Checked;
+        }
+
+        /// <summary>
+        /// Force read.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ForceReadMnu_Click(object sender, EventArgs e)
+        {
+            ForceRefreshBtn.Checked = ForceReadMnu.Checked = !ForceReadMnu.Checked;
         }
     }
 

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9512 $,
-//                  $Date: 2017-08-18 13:39:31 +0300 (pe, 18 elo 2017) $
+// Version:         $Revision: 9607 $,
+//                  $Date: 2017-10-13 14:51:16 +0300 (pe, 13 loka 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -110,7 +110,7 @@ namespace GXDLMSDirector
         private static void SetAddRemoveProgramsIcon()
         {
             // only run if clickonce deployed, on first run only
-            if (!System.Diagnostics.Debugger.IsAttached && System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed
+            if (!System.Diagnostics.Debugger.IsAttached && ApplicationDeployment.IsNetworkDeployed
             && ApplicationDeployment.CurrentDeployment.IsFirstRun)
             {
                 try

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9607 $,
-//                  $Date: 2017-10-13 14:51:16 +0300 (pe, 13 loka 2017) $
+// Version:         $Revision: 9629 $,
+//                  $Date: 2017-10-25 16:11:45 +0300 (ke, 25 loka 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -47,6 +47,39 @@ namespace GXDLMSDirector
     static class Program
     {
         /// <summary>
+        /// Load medias from the directory.
+        /// </summary>
+        /// <param name="di">Directory info.</param>
+        static void LoadMedias(DirectoryInfo di)
+        {
+            if (di.Exists)
+            {
+                foreach (FileInfo file in di.GetFiles("*.dll"))
+                {
+                    try
+                    {
+                        if (string.Compare(file.Name, "Gurux.Common.dll", true) == 0)
+                        {
+                            continue;
+                        }
+                        Assembly assembly = Assembly.LoadFile(file.FullName);
+                        foreach (Type type in assembly.GetTypes())
+                        {
+                            if (!type.IsAbstract && type.IsClass && typeof(IGXMedia).IsAssignableFrom(type))
+                            {
+                                IGXMedia m = assembly.CreateInstance(type.ToString()) as IGXMedia;
+                            }
+                            break;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
+        /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
@@ -62,33 +95,10 @@ namespace GXDLMSDirector
                         Directory.CreateDirectory(initDir);
                     }
                     SetAddRemoveProgramsIcon();
-                    DirectoryInfo di = new DirectoryInfo("Medias");
-                    if (di.Exists)
-                    {
-                        foreach (FileInfo file in di.GetFiles("*.dll"))
-                        {
-                            try
-                            {
-                                if (string.Compare(file.Name, "Gurux.Common.dll", true) == 0)
-                                {
-                                    continue;
-                                }
-                                Assembly assembly = Assembly.LoadFile(file.FullName);
-                                foreach (Type type in assembly.GetTypes())
-                                {
-                                    if (!type.IsAbstract && type.IsClass && typeof(IGXMedia).IsAssignableFrom(type))
-                                    {
-                                        IGXMedia m = assembly.CreateInstance(type.ToString()) as IGXMedia;
-                                    }
-                                    break;
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                System.Diagnostics.Debug.WriteLine(ex.Message);
-                            }
-                        }
-                    }
+
+                    LoadMedias(new DirectoryInfo(Path.Combine(initDir, "Medias")));
+                    LoadMedias(new DirectoryInfo("Medias"));
+
                     Directory.SetCurrentDirectory(initDir);
                 }
                 catch (Exception)

@@ -94,28 +94,28 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Gurux.Common, Version=8.1.1709.2601, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Common.8.1.1709.2601\lib\portable-win+net35\Gurux.Common.dll</HintPath>
+    <Reference Include="Gurux.Common, Version=8.1.1710.2401, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Common.8.1.1710.2401\lib\portable-win+net35\Gurux.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=8.5.1710.1302, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.8.5.1710.1302\lib\portable-win+net35\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=8.5.1710.2301, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.8.5.1710.2301\lib\portable-win+net35\Gurux.DLMS.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=8.5.1710.1303, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.8.5.1710.1303\lib\portable-win+net35\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=8.5.1710.2301, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.8.5.1710.2301\lib\portable-win+net35\Gurux.DLMS.UI.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Gurux.Net, Version=8.1.1710.1001, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Net.8.1.1710.1001\lib\portable-win+net35\Gurux.Net.dll</HintPath>
+    <Reference Include="Gurux.Net, Version=8.1.1710.2401, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Net.8.1.1710.2401\lib\portable-win+net35\Gurux.Net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Gurux.Serial, Version=8.1.1710.1001, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Serial.8.1.1710.1001\lib\portable-win+net35\Gurux.Serial.dll</HintPath>
+    <Reference Include="Gurux.Serial, Version=8.1.1710.2401, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Serial.8.1.1710.2401\lib\portable-win+net35\Gurux.Serial.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Gurux.Terminal, Version=8.1.1710.1001, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Terminal.8.1.1710.1001\lib\portable-win+net35\Gurux.Terminal.dll</HintPath>
+    <Reference Include="Gurux.Terminal, Version=8.1.1710.2401, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Terminal.8.1.1710.2401\lib\portable-win+net35\Gurux.Terminal.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -134,6 +134,12 @@
     <Compile Include="GXAsyncWork.cs" />
     <Compile Include="CryptHelper.cs" />
     <Compile Include="DeviceState.cs" />
+    <Compile Include="GXNotificationDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GXNotificationDlg.Designer.cs">
+      <DependentUpon>GXNotificationDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="IGXManufacturerExtension.cs" />
     <Compile Include="ManufacturerSettings\GXHelpers.cs" />
     <Compile Include="GXObisValueItemForm.cs">
@@ -189,6 +195,9 @@
       <DependentUpon>DevicePropertiesForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="GXNotificationDlg.resx">
+      <DependentUpon>GXNotificationDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GXObisValueItemForm.resx">
       <DependentUpon>GXObisValueItemForm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -268,6 +277,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="GXDLMSDirector.ico" />
+    <None Include="Resources\NotifyMnu.bmp" />
     <Content Include="Resources\warning.ico" />
   </ItemGroup>
   <ItemGroup>

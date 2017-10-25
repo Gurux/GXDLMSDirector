@@ -118,5 +118,65 @@ namespace GXDLMSDirector.Properties {
                 this["ForceRead"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ViewEvents {
+            get {
+                return ((bool)(this["ViewEvents"]));
+            }
+            set {
+                this["ViewEvents"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string EventsSettings {
+            get {
+                return ((string)(this["EventsSettings"]));
+            }
+            set {
+                this["EventsSettings"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool NotificationAsHex {
+            get {
+                return ((bool)(this["NotificationAsHex"]));
+            }
+            set {
+                this["NotificationAsHex"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool NotificationPduOnly {
+            get {
+                return ((bool)(this["NotificationPduOnly"]));
+            }
+            set {
+                this["NotificationPduOnly"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool NotificationAutoReset {
+            get {
+                return ((bool)(this["NotificationAutoReset"]));
+            }
+            set {
+                this["NotificationAutoReset"] = value;
+            }
+        }
     }
 }

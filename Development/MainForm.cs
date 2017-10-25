@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9587 $,
-//                  $Date: 2017-10-11 14:53:32 +0300 (ke, 11 loka 2017) $
+// Version:         $Revision: 9629 $,
+//                  $Date: 2017-10-25 16:11:45 +0300 (ke, 25 loka 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -52,11 +52,15 @@ using Gurux.DLMS;
 using System.Linq;
 using Gurux.DLMS.Enums;
 using Gurux.DLMS.UI;
+using Gurux.Net;
+using System.Text;
 
 namespace GXDLMSDirector
 {
     public partial class MainForm : Form
     {
+        GXNet events;
+
         delegate void CheckUpdatesEventHandler(MainForm form);
         GXAsyncWork TransactionWork;
         Dictionary<Type, IGXDLMSView> Views = new Dictionary<Type, IGXDLMSView>();
@@ -1176,6 +1180,7 @@ namespace GXDLMSDirector
         {
             try
             {
+                events.Close();
                 //Save changes?
                 if (this.Dirty)
                 {
@@ -1233,20 +1238,25 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// Saves window positioning to a xml-file
+        /// Save window position to a xml-file
         /// </summary>
         private void SaveXmlPositioning()
         {
             try
             {
-                GXDLMSDirector.Properties.Settings.Default.ViewToolbar = ViewToolbarMnu.Checked;
-                GXDLMSDirector.Properties.Settings.Default.ViewStatusbar = ViewStatusbarMnu.Checked;
-                GXDLMSDirector.Properties.Settings.Default.ViewTree = ObjectTreeMnu.Checked;
-                GXDLMSDirector.Properties.Settings.Default.ViewList = ObjectListMnu.Checked;
-                GXDLMSDirector.Properties.Settings.Default.ViewGroups = GroupsMnu.Checked;
-                GXDLMSDirector.Properties.Settings.Default.ViewTrace = TraceMnu.Checked;
-                GXDLMSDirector.Properties.Settings.Default.ForceRead = ForceReadMnu.Checked;
-                GXDLMSDirector.Properties.Settings.Default.Save();
+                Properties.Settings.Default.ViewToolbar = ViewToolbarMnu.Checked;
+                Properties.Settings.Default.ViewStatusbar = ViewStatusbarMnu.Checked;
+                Properties.Settings.Default.ViewTree = ObjectTreeMnu.Checked;
+                Properties.Settings.Default.ViewList = ObjectListMnu.Checked;
+                Properties.Settings.Default.ViewGroups = GroupsMnu.Checked;
+                Properties.Settings.Default.ViewTrace = TraceMnu.Checked;
+                Properties.Settings.Default.ForceRead = ForceReadMnu.Checked;
+                Properties.Settings.Default.ViewEvents = EventsMnu.Checked;
+                Properties.Settings.Default.NotificationPduOnly = PduOnly.Checked;
+                Properties.Settings.Default.NotificationAsHex = ShowNotificationAsHex.Checked;
+                Properties.Settings.Default.NotificationAutoReset = AutoReset.Checked;
+
+                Properties.Settings.Default.Save();
 
                 string path = UserDataPath;
                 if (System.Environment.OSVersion.Platform == PlatformID.Unix)
@@ -1306,20 +1316,28 @@ namespace GXDLMSDirector
         {
             try
             {
-                ViewToolbarMnu.Checked = !GXDLMSDirector.Properties.Settings.Default.ViewToolbar;
+                ViewToolbarMnu.Checked = !Properties.Settings.Default.ViewToolbar;
                 ViewToolbarMnu_Click(null, null);
-                ViewStatusbarMnu.Checked = !GXDLMSDirector.Properties.Settings.Default.ViewStatusbar;
+                ViewStatusbarMnu.Checked = !Properties.Settings.Default.ViewStatusbar;
                 ViewStatusbarMnu_Click(null, null);
-                ObjectTreeMnu.Checked = !GXDLMSDirector.Properties.Settings.Default.ViewTree;
+                ObjectTreeMnu.Checked = !Properties.Settings.Default.ViewTree;
                 ObjectTreeMnu_Click(null, null);
-                ObjectListMnu.Checked = !GXDLMSDirector.Properties.Settings.Default.ViewList;
+                ObjectListMnu.Checked = !Properties.Settings.Default.ViewList;
                 ObjectListMnu_Click(null, null);
-                GroupsMnu.Checked = !GXDLMSDirector.Properties.Settings.Default.ViewGroups;
+                GroupsMnu.Checked = !Properties.Settings.Default.ViewGroups;
                 GroupsMnu_Click(null, null);
-                TraceMnu.Checked = !GXDLMSDirector.Properties.Settings.Default.ViewTrace;
+                TraceMnu.Checked = !Properties.Settings.Default.ViewTrace;
                 TraceMenu_Click(null, null);
-                ForceReadMnu.Checked = !GXDLMSDirector.Properties.Settings.Default.ForceRead;
+                ForceReadMnu.Checked = !Properties.Settings.Default.ForceRead;
                 ForceReadMnu_Click(null, null);
+                EventsMnu.Checked = !Properties.Settings.Default.ViewEvents;
+                viewToolStripMenuItem1_Click(null, null);
+                PduOnly.Checked = !Properties.Settings.Default.NotificationPduOnly;
+                NotificationAsPdu_Click(null, null);
+                ShowNotificationAsHex.Checked = !Properties.Settings.Default.NotificationAsHex;
+                ShowNotificationAsHex_Click(null, null);
+                AutoReset.Checked = !Properties.Settings.Default.NotificationAutoReset;
+                AutoReset_Click(null, null);
                 string path = UserDataPath;
                 if (System.Environment.OSVersion.Platform == PlatformID.Unix)
                 {
@@ -2576,6 +2594,13 @@ namespace GXDLMSDirector
         {
             try
             {
+                events = new GXNet(NetworkType.Tcp, 4059);
+                events.ConfigurableSettings = (AvailableMediaSettings.Port | AvailableMediaSettings.Protocol);
+                events.Settings = Properties.Settings.Default.EventsSettings;
+                events.OnMediaStateChange += Events_OnMediaStateChange;
+                events.OnReceived += Events_OnReceived;
+                events.OnClientConnected += Events_OnClientConnected;
+                events.OnClientDisconnected += Events_OnClientDisconnected;
                 Application.EnableVisualStyles();
                 ObjectValueView.Columns.Clear();
                 ObjectValueView.Columns.Add("Name");
@@ -2613,6 +2638,142 @@ namespace GXDLMSDirector
             catch (Exception Ex)
             {
                 GXDLMS.Common.Error.ShowError(this, Ex);
+            }
+        }
+
+        delegate void AddNotificationEventHanded(string data);
+
+        /// <summary>
+        /// Add new notification string.
+        /// </summary>
+        /// <param name="data">Data to add.</param>
+        void OnAddNotification(string data)
+        {
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke(new AddNotificationEventHanded(OnAddNotification), data);
+            }
+            else
+            {
+                try
+                {
+                    Events.AppendText(data);
+                    Events.AppendText(Environment.NewLine);
+                }
+                catch (Exception ex)
+                {
+                    Events.AppendText(ex.Message);
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Client disconnects from sending events.
+        /// </summary>
+        private void Events_OnClientDisconnected(object sender, ConnectionEventArgs e)
+        {
+            OnAddNotification("Client disconnected: " + e.Info);
+        }
+
+        /// <summary>
+        /// New client connects to send events.
+        /// </summary>
+        private void Events_OnClientConnected(object sender, ConnectionEventArgs e)
+        {
+            OnAddNotification("Client connected: " + e.Info);
+        }
+
+        private void ConverToString(StringBuilder sb, object value)
+        {
+            if (value is byte[])
+            {
+                sb.AppendLine(GXCommon.ToHex((byte[])value, true));
+            }
+            else if (value is object[])
+            {
+                sb.AppendLine("{");
+                foreach (object it in (object[])value)
+                {
+                    ConverToString(sb, it);
+                    if (sb.Length != 0)
+                    {
+                        sb.Length -= 2;
+                    }
+                    sb.Append(", ");
+                }
+                if (sb.Length != 0)
+                {
+                    sb.Length -= 2;
+                }
+                sb.AppendLine("}");
+            }
+            else
+            {
+                sb.AppendLine(Convert.ToString(value));
+            }
+        }
+
+        /// <summary>
+        /// Meter sends event notification.
+        /// </summary>
+        private void Events_OnReceived(object sender, ReceiveEventArgs e)
+        {
+            if (this.InvokeRequired)
+            {
+                BeginInvoke(new ReceivedEventHandler(Events_OnReceived), sender, e);
+            }
+            else
+            {
+                if (ShowNotificationAsHex.Checked)
+                {
+                    OnAddNotification(DateTime.Now.ToString() + " " + GXCommon.ToHex((byte[])e.Data, true));
+                }
+                else //Show as hex.
+                {
+                    //Show as PDU.
+                    GXDLMSTranslator translator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
+                    translator.PduOnly = PduOnly.Checked;
+                    GXByteBuffer bb = new GXByteBuffer((byte[])e.Data);
+                    GXByteBuffer pdu = new GXByteBuffer();
+                    InterfaceType type = GXDLMSTranslator.GetDlmsFraming(bb);
+                    StringBuilder sb = new StringBuilder();
+                    while (translator.FindNextFrame(bb, pdu, type))
+                    {
+                        sb.Append(translator.MessageToXml(bb));
+                        pdu.Clear();
+                    }
+                    if (AutoReset.Checked)
+                    {
+                        Events.ResetText();
+                    }
+                    OnAddNotification(DateTime.Now.ToString() + " " + sb.ToString());
+                }
+            }
+        }
+
+        private void Events_OnMediaStateChange(object sender, MediaStateEventArgs e)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new MediaStateChangeEventHandler(Events_OnMediaStateChange), e);
+            }
+            else
+            {
+                if (e.State == MediaState.Open)
+                {
+                    OnAddNotification("Notifications listen stated.");
+                    StartNotifications.Visible = false;
+                    StopNotifications.Visible = true;
+                    NotificationsBtn.Checked = true;
+                }
+                else if (e.State == MediaState.Closed)
+                {
+                    OnAddNotification("Notifications listen closed.");
+                    StartNotifications.Visible = true;
+                    StopNotifications.Visible = false;
+                    NotificationsBtn.Checked = false;
+                }
             }
         }
 
@@ -2955,6 +3116,110 @@ namespace GXDLMSDirector
         {
             ForceRefreshBtn.Checked = ForceReadMnu.Checked = !ForceReadMnu.Checked;
         }
-    }
 
+        /// <summary>
+        /// Show notifications settings.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void EventsSettingsMnu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                GXNotificationDlg dlg = new GXDLMSDirector.GXNotificationDlg(events);
+                if (dlg.ShowDialog(this) == DialogResult.OK)
+                {
+                    Properties.Settings.Default.EventsSettings = events.Settings;
+                    //Show events if hidden.
+                    if (!EventsMnu.Checked)
+                    {
+                        viewToolStripMenuItem1_Click(null, null);
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                GXCommon.ShowError(Ex);
+            }
+        }
+
+        /// <summary>
+        /// Show or hide notification view.
+        /// </summary>
+        private void viewToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            EventsMnu.Checked = !EventsMnu.Checked;
+            Events.Visible = EventsMnu.Checked;
+        }
+
+
+        /// <summary>
+        /// Start listen notifications.
+        /// </summary>
+        private void StartNotifications_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                events.Open();
+            }
+            catch (Exception Ex)
+            {
+                GXCommon.ShowError(Ex);
+            }
+        }
+
+        /// <summary>
+        /// Stop listen notifications.
+        /// </summary>
+        private void StopNotifications_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                events.Close();
+            }
+            catch (Exception Ex)
+            {
+                GXCommon.ShowError(Ex);
+            }
+        }
+
+        private void NotificationsBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (events.IsOpen)
+                {
+                    events.Close();
+                }
+                else
+                {
+                    events.Open();
+                }
+            }
+            catch (Exception Ex)
+            {
+                GXCommon.ShowError(Ex);
+            }
+        }
+
+        private void ClearNotifications_Click(object sender, EventArgs e)
+        {
+            Events.ResetText();
+        }
+
+        private void NotificationAsPdu_Click(object sender, EventArgs e)
+        {
+            PduOnly.Checked = !PduOnly.Checked;
+        }
+
+        private void ShowNotificationAsHex_Click(object sender, EventArgs e)
+        {
+            ShowNotificationAsHex.Checked = !ShowNotificationAsHex.Checked;
+        }
+
+        private void AutoReset_Click(object sender, EventArgs e)
+        {
+            AutoReset.Checked = !AutoReset.Checked;
+        }
+    }
 }

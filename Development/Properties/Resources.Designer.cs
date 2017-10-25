@@ -184,6 +184,16 @@ namespace GXDLMSDirector.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap NotifyMnu {
+            get {
+                object obj = ResourceManager.GetObject("NotifyMnu", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap OpenMnu {
             get {
                 object obj = ResourceManager.GetObject("OpenMnu", resourceCulture);

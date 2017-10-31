@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9629 $,
-//                  $Date: 2017-10-25 16:11:45 +0300 (ke, 25 loka 2017) $
+// Version:         $Revision: 9641 $,
+//                  $Date: 2017-10-31 13:43:26 +0200 (ti, 31 loka 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -484,7 +484,7 @@ namespace GXDLMSDirector
                     if (btn.Index == index)
                     {
                         btn.View = view;
-                        bool enabled = WriteBtn.Enabled;
+                        bool enabled = false;
                         if (ReadBtn.Enabled)
                         {
                             enabled = target.GetMethodAccess(btn.Index) != MethodAccessMode.NoAccess;
@@ -2657,12 +2657,12 @@ namespace GXDLMSDirector
             {
                 try
                 {
-                    Events.AppendText(data);
-                    Events.AppendText(Environment.NewLine);
+                    EventsView.AppendText(data);
+                    EventsView.AppendText(Environment.NewLine);
                 }
                 catch (Exception ex)
                 {
-                    Events.AppendText(ex.Message);
+                    EventsView.AppendText(ex.Message);
                 }
             }
         }
@@ -2745,7 +2745,7 @@ namespace GXDLMSDirector
                     }
                     if (AutoReset.Checked)
                     {
-                        Events.ResetText();
+                        EventsView.ResetText();
                     }
                     OnAddNotification(DateTime.Now.ToString() + " " + sb.ToString());
                 }
@@ -3149,7 +3149,7 @@ namespace GXDLMSDirector
         private void viewToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             EventsMnu.Checked = !EventsMnu.Checked;
-            Events.Visible = EventsMnu.Checked;
+            EventsView.Visible = EventsMnu.Checked;
         }
 
 
@@ -3204,7 +3204,7 @@ namespace GXDLMSDirector
 
         private void ClearNotifications_Click(object sender, EventArgs e)
         {
-            Events.ResetText();
+            EventsView.ResetText();
         }
 
         private void NotificationAsPdu_Click(object sender, EventArgs e)

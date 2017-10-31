@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9629 $,
-//                  $Date: 2017-10-25 16:11:45 +0300 (ke, 25 loka 2017) $
+// Version:         $Revision: 9641 $,
+//                  $Date: 2017-10-31 13:43:26 +0200 (ti, 31 loka 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -107,10 +107,15 @@ namespace GXDLMSDirector
             this.EventsSettingsMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.notificationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.EventsMnu = new System.Windows.Forms.ToolStripMenuItem();
-            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.PduOnly = new System.Windows.Forms.ToolStripMenuItem();
+            this.ShowNotificationAsHex = new System.Windows.Forms.ToolStripMenuItem();
+            this.AutoReset = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem13 = new System.Windows.Forms.ToolStripSeparator();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.StartNotifications = new System.Windows.Forms.ToolStripMenuItem();
             this.StopNotifications = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem14 = new System.Windows.Forms.ToolStripSeparator();
+            this.ClearNotifications = new System.Windows.Forms.ToolStripMenuItem();
             this.updateManufactureSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ContentsMnu = new System.Windows.Forms.ToolStripMenuItem();
@@ -141,11 +146,13 @@ namespace GXDLMSDirector
             this.ReadBtn = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.WriteBtn = new System.Windows.Forms.ToolStripButton();
+            this.NotificationsBtn = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.OptionsBtn = new System.Windows.Forms.ToolStripButton();
-            this.DeleteBtn = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.ForceRefreshBtn = new System.Windows.Forms.ToolStripButton();
-            this.NotificationsBtn = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.DeleteBtn = new System.Windows.Forms.ToolStripButton();
             this.NewListTBtn = new System.Windows.Forms.ToolBarButton();
             this.OpenTBtn = new System.Windows.Forms.ToolBarButton();
             this.SaveTBtn = new System.Windows.Forms.ToolBarButton();
@@ -186,15 +193,8 @@ namespace GXDLMSDirector
             this.DeviceList = new System.Windows.Forms.ListView();
             this.DeviceNameCH = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ObjectPanelFrame = new System.Windows.Forms.Panel();
-            this.Events = new System.Windows.Forms.TextBox();
+            this.EventsView = new System.Windows.Forms.TextBox();
             this.splitter3 = new System.Windows.Forms.Splitter();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuItem14 = new System.Windows.Forms.ToolStripSeparator();
-            this.ClearNotifications = new System.Windows.Forms.ToolStripMenuItem();
-            this.PduOnly = new System.Windows.Forms.ToolStripMenuItem();
-            this.ShowNotificationAsHex = new System.Windows.Forms.ToolStripMenuItem();
-            this.AutoReset = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -545,27 +545,51 @@ namespace GXDLMSDirector
             // EventsMnu
             // 
             this.EventsMnu.Name = "EventsMnu";
-            this.EventsMnu.Size = new System.Drawing.Size(152, 22);
+            this.EventsMnu.Size = new System.Drawing.Size(131, 22);
             this.EventsMnu.Text = "View";
             this.EventsMnu.ToolTipText = "Show notifications view.";
             this.EventsMnu.Click += new System.EventHandler(this.viewToolStripMenuItem1_Click);
             // 
-            // settingsToolStripMenuItem
+            // PduOnly
             // 
-            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.settingsToolStripMenuItem.Text = "Settings...";
-            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.EventsSettingsMnu_Click);
+            this.PduOnly.Name = "PduOnly";
+            this.PduOnly.Size = new System.Drawing.Size(131, 22);
+            this.PduOnly.Text = "PDU only";
+            this.PduOnly.ToolTipText = "Only PDU is shown.";
+            this.PduOnly.Click += new System.EventHandler(this.NotificationAsPdu_Click);
+            // 
+            // ShowNotificationAsHex
+            // 
+            this.ShowNotificationAsHex.Name = "ShowNotificationAsHex";
+            this.ShowNotificationAsHex.Size = new System.Drawing.Size(131, 22);
+            this.ShowNotificationAsHex.Text = "Hex";
+            this.ShowNotificationAsHex.ToolTipText = "Show received notification as hex.";
+            this.ShowNotificationAsHex.Click += new System.EventHandler(this.ShowNotificationAsHex_Click);
+            // 
+            // AutoReset
+            // 
+            this.AutoReset.Name = "AutoReset";
+            this.AutoReset.Size = new System.Drawing.Size(131, 22);
+            this.AutoReset.Text = "Auto Reset";
+            this.AutoReset.ToolTipText = "Clear notifications view after new message is received.";
+            this.AutoReset.Click += new System.EventHandler(this.AutoReset_Click);
             // 
             // toolStripMenuItem13
             // 
             this.toolStripMenuItem13.Name = "toolStripMenuItem13";
-            this.toolStripMenuItem13.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem13.Size = new System.Drawing.Size(128, 6);
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
+            this.settingsToolStripMenuItem.Text = "Settings...";
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.EventsSettingsMnu_Click);
             // 
             // StartNotifications
             // 
             this.StartNotifications.Name = "StartNotifications";
-            this.StartNotifications.Size = new System.Drawing.Size(152, 22);
+            this.StartNotifications.Size = new System.Drawing.Size(131, 22);
             this.StartNotifications.Text = "Start";
             this.StartNotifications.ToolTipText = "Start receiving notifications";
             this.StartNotifications.Click += new System.EventHandler(this.StartNotifications_Click);
@@ -573,11 +597,24 @@ namespace GXDLMSDirector
             // StopNotifications
             // 
             this.StopNotifications.Name = "StopNotifications";
-            this.StopNotifications.Size = new System.Drawing.Size(152, 22);
+            this.StopNotifications.Size = new System.Drawing.Size(131, 22);
             this.StopNotifications.Text = "Stop";
             this.StopNotifications.ToolTipText = "Stop receiving notifications.";
             this.StopNotifications.Visible = false;
             this.StopNotifications.Click += new System.EventHandler(this.StopNotifications_Click);
+            // 
+            // toolStripMenuItem14
+            // 
+            this.toolStripMenuItem14.Name = "toolStripMenuItem14";
+            this.toolStripMenuItem14.Size = new System.Drawing.Size(128, 6);
+            // 
+            // ClearNotifications
+            // 
+            this.ClearNotifications.Name = "ClearNotifications";
+            this.ClearNotifications.Size = new System.Drawing.Size(131, 22);
+            this.ClearNotifications.Text = "Clear";
+            this.ClearNotifications.ToolTipText = "Clear received notification.";
+            this.ClearNotifications.Click += new System.EventHandler(this.ClearNotifications_Click);
             // 
             // updateManufactureSettingsToolStripMenuItem
             // 
@@ -844,6 +881,16 @@ namespace GXDLMSDirector
             this.WriteBtn.Text = "Write";
             this.WriteBtn.Click += new System.EventHandler(this.WriteMnu_Click);
             // 
+            // NotificationsBtn
+            // 
+            this.NotificationsBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.NotificationsBtn.Image = global::GXDLMSDirector.Properties.Resources.NotifyMnu;
+            this.NotificationsBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.NotificationsBtn.Name = "NotificationsBtn";
+            this.NotificationsBtn.Size = new System.Drawing.Size(23, 22);
+            this.NotificationsBtn.Text = "Notifications";
+            this.NotificationsBtn.Click += new System.EventHandler(this.NotificationsBtn_Click);
+            // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
@@ -860,16 +907,10 @@ namespace GXDLMSDirector
             this.OptionsBtn.ToolTipText = "Properties";
             this.OptionsBtn.Click += new System.EventHandler(this.PropertiesMnu_Click);
             // 
-            // DeleteBtn
+            // toolStripSeparator5
             // 
-            this.DeleteBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.DeleteBtn.Image = global::GXDLMSDirector.Properties.Resources.DeleteMnu;
-            this.DeleteBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.DeleteBtn.Name = "DeleteBtn";
-            this.DeleteBtn.Size = new System.Drawing.Size(23, 22);
-            this.DeleteBtn.Text = "toolStripButton6";
-            this.DeleteBtn.ToolTipText = "Delete";
-            this.DeleteBtn.Click += new System.EventHandler(this.DeleteMnu_Click);
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
             // 
             // ForceRefreshBtn
             // 
@@ -881,15 +922,21 @@ namespace GXDLMSDirector
             this.ForceRefreshBtn.ToolTipText = "Force read";
             this.ForceRefreshBtn.Click += new System.EventHandler(this.ForceReadMnu_Click);
             // 
-            // NotificationsBtn
+            // toolStripSeparator6
             // 
-            this.NotificationsBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.NotificationsBtn.Image = global::GXDLMSDirector.Properties.Resources.NotifyMnu;
-            this.NotificationsBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.NotificationsBtn.Name = "NotificationsBtn";
-            this.NotificationsBtn.Size = new System.Drawing.Size(23, 22);
-            this.NotificationsBtn.Text = "Notifications";
-            this.NotificationsBtn.Click += new System.EventHandler(this.NotificationsBtn_Click);
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
+            // 
+            // DeleteBtn
+            // 
+            this.DeleteBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.DeleteBtn.Image = global::GXDLMSDirector.Properties.Resources.DeleteMnu;
+            this.DeleteBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.DeleteBtn.Name = "DeleteBtn";
+            this.DeleteBtn.Size = new System.Drawing.Size(23, 22);
+            this.DeleteBtn.Text = "toolStripButton6";
+            this.DeleteBtn.ToolTipText = "Delete";
+            this.DeleteBtn.Click += new System.EventHandler(this.DeleteMnu_Click);
             // 
             // NewListTBtn
             // 
@@ -1233,16 +1280,16 @@ namespace GXDLMSDirector
             this.ObjectPanelFrame.Size = new System.Drawing.Size(187, 142);
             this.ObjectPanelFrame.TabIndex = 18;
             // 
-            // Events
+            // EventsView
             // 
-            this.Events.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.Events.Location = new System.Drawing.Point(201, 413);
-            this.Events.Multiline = true;
-            this.Events.Name = "Events";
-            this.Events.ReadOnly = true;
-            this.Events.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.Events.Size = new System.Drawing.Size(524, 49);
-            this.Events.TabIndex = 22;
+            this.EventsView.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.EventsView.Location = new System.Drawing.Point(201, 413);
+            this.EventsView.Multiline = true;
+            this.EventsView.Name = "EventsView";
+            this.EventsView.ReadOnly = true;
+            this.EventsView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.EventsView.Size = new System.Drawing.Size(524, 49);
+            this.EventsView.TabIndex = 22;
             // 
             // splitter3
             // 
@@ -1253,60 +1300,13 @@ namespace GXDLMSDirector
             this.splitter3.TabIndex = 23;
             this.splitter3.TabStop = false;
             // 
-            // toolStripSeparator5
-            // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
-            // 
-            // toolStripSeparator6
-            // 
-            this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
-            // 
-            // toolStripMenuItem14
-            // 
-            this.toolStripMenuItem14.Name = "toolStripMenuItem14";
-            this.toolStripMenuItem14.Size = new System.Drawing.Size(149, 6);
-            // 
-            // ClearNotifications
-            // 
-            this.ClearNotifications.Name = "ClearNotifications";
-            this.ClearNotifications.Size = new System.Drawing.Size(152, 22);
-            this.ClearNotifications.Text = "Clear";
-            this.ClearNotifications.ToolTipText = "Clear received notification.";
-            this.ClearNotifications.Click += new System.EventHandler(this.ClearNotifications_Click);
-            // 
-            // PduOnly
-            // 
-            this.PduOnly.Name = "PduOnly";
-            this.PduOnly.Size = new System.Drawing.Size(152, 22);
-            this.PduOnly.Text = "PDU only";
-            this.PduOnly.ToolTipText = "Only PDU is shown.";
-            this.PduOnly.Click += new System.EventHandler(this.NotificationAsPdu_Click);
-            // 
-            // ShowNotificationAsHex
-            // 
-            this.ShowNotificationAsHex.Name = "ShowNotificationAsHex";
-            this.ShowNotificationAsHex.Size = new System.Drawing.Size(152, 22);
-            this.ShowNotificationAsHex.Text = "Hex";
-            this.ShowNotificationAsHex.ToolTipText = "Show received notification as hex.";
-            this.ShowNotificationAsHex.Click += new System.EventHandler(this.ShowNotificationAsHex_Click);
-            // 
-            // AutoReset
-            // 
-            this.AutoReset.Name = "AutoReset";
-            this.AutoReset.Size = new System.Drawing.Size(152, 22);
-            this.AutoReset.Text = "Auto Reset";
-            this.AutoReset.ToolTipText = "Clear notifications view after new message is received.";
-            this.AutoReset.Click += new System.EventHandler(this.AutoReset_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(725, 536);
             this.Controls.Add(this.splitter3);
-            this.Controls.Add(this.Events);
+            this.Controls.Add(this.EventsView);
             this.Controls.Add(this.ObjectValueView);
             this.Controls.Add(this.DeviceInfoView);
             this.Controls.Add(this.DeviceList);
@@ -1459,7 +1459,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.TextBox ConformanceTB;
         private System.Windows.Forms.ToolStripMenuItem ForceReadMnu;
         private System.Windows.Forms.ToolStripButton ForceRefreshBtn;
-        private System.Windows.Forms.TextBox Events;
+        private System.Windows.Forms.TextBox EventsView;
         private System.Windows.Forms.Splitter splitter3;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripMenuItem EventsSettingsMnu;

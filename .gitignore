@@ -218,3 +218,5 @@ pip-log.txt
 .mr.developer.cfg
 *.XML
 Development/.vs/config/applicationhost.config
+*.lock
+*.ide

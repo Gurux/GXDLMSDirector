@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9512 $,
-//                  $Date: 2017-08-18 13:39:31 +0300 (pe, 18 elo 2017) $
+// Version:         $Revision: 9686 $,
+//                  $Date: 2017-11-16 10:18:39 +0200 (to, 16 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -47,6 +47,7 @@ using Gurux.DLMS.ManufacturerSettings;
 using Gurux.DLMS.Objects;
 using Gurux.DLMS.Enums;
 using Gurux.Common;
+using System.Reflection;
 
 namespace GXDLMSDirector
 {
@@ -531,7 +532,27 @@ namespace GXDLMSDirector
                 }
                 else
                 {
-                    communicator.media = (IGXMedia)Activator.CreateInstance(Type.GetType(value));
+                    Type type = Type.GetType(value);
+                    if (type == null)
+                    {
+                        string ns = "";
+                        int pos = value.LastIndexOf('.');
+                        if (pos != -1)
+                        {
+                            ns = value.Substring(0, pos);
+                        }
+                            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+                        {
+                            if (assembly.GetName().Name == ns)
+                            {
+                                if (assembly.GetType(value, false, true) != null)
+                                {
+                                    type = assembly.GetType(value);
+                                }
+                            }
+                        }
+                    }
+                    communicator.media = (IGXMedia)Activator.CreateInstance(type);
                 }
             }
         }

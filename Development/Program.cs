@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9629 $,
-//                  $Date: 2017-10-25 16:11:45 +0300 (ke, 25 loka 2017) $
+// Version:         $Revision: 9686 $,
+//                  $Date: 2017-11-16 10:18:39 +0200 (to, 16 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -104,8 +104,6 @@ namespace GXDLMSDirector
                 catch (Exception)
                 {
                 }
-                AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
-                AppDomain.CurrentDomain.TypeResolve += new ResolveEventHandler(CurrentDomain_TypeResolve);
                 MainForm.InitMain();
             }
             catch (Exception Ex)
@@ -143,84 +141,6 @@ namespace GXDLMSDirector
                 {
                 }
             }
-        }
-
-        /// <summary>
-        /// Resolve Add-In's assemblies. This must add or Director don't work correctly.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            string[] typeinfo = args.Name.Split(',');
-            foreach (Assembly it in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                if (it.GetName().Name.Equals(typeinfo[0]) ||
-                        it.GetName().FullName.Equals(typeinfo[0]))
-                {
-                    return it;
-                }
-            }
-            string[] tmp = args.Name.Split(',');
-            string path = "";
-            if (Environment.OSVersion.Platform == PlatformID.Unix)
-            {
-                path = Path.Combine("/usr", "lib");
-                path = Path.Combine(path, tmp[0].ToLower().Replace(".", "-"));
-                if (Directory.Exists(path))
-                {
-                    DirectoryInfo di = new DirectoryInfo(path);
-                    foreach (FileInfo fi in di.GetFiles(tmp[0] + ".dll"))
-                    {
-                        System.Diagnostics.Trace.WriteLine("CurrentDomain_AssemblyResolve: Returning assembly from(3):" + fi.FullName);
-                        Assembly assembly = Assembly.LoadFile(fi.FullName);
-                        return assembly;
-                    }
-                }
-            }
-            return null;
-        }
-
-        private static Assembly CurrentDomain_TypeResolve(object sender, ResolveEventArgs args)
-        {
-            string ns = "";
-            int pos = args.Name.LastIndexOf('.');
-            if (pos != -1)
-            {
-                ns = args.Name.Substring(0, pos);
-                foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-                {
-                    if (assembly.GetName().Name == ns)
-                    {
-                        if (assembly.GetType(args.Name, false, true) != null)
-                        {
-                            return assembly;
-                        }
-                    }
-                }
-            }
-            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                foreach (Type type in assembly.GetTypes())
-                {
-                    if (type.Name == args.Name ||
-                            type.FullName == args.Name)
-                    {
-                        return assembly;
-                    }
-                }
-            }
-            try
-            {
-                Assembly asm = Assembly.LoadFrom(ns + ".dll");
-                return asm;
-            }
-            catch
-            {
-                //Ignore error.
-            }
-            return null;
-        }
+        }       
     }
 }

@@ -98,18 +98,6 @@ namespace GXDLMSDirector.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ViewTrace {
-            get {
-                return ((bool)(this["ViewTrace"]));
-            }
-            set {
-                this["ViewTrace"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool ForceRead {
             get {
                 return ((bool)(this["ForceRead"]));
@@ -176,6 +164,42 @@ namespace GXDLMSDirector.Properties {
             }
             set {
                 this["NotificationAutoReset"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public byte TraceType {
+            get {
+                return ((byte)(this["TraceType"]));
+            }
+            set {
+                this["TraceType"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int TraceViewHeight {
+            get {
+                return ((int)(this["TraceViewHeight"]));
+            }
+            set {
+                this["TraceViewHeight"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int EventsViewHeight {
+            get {
+                return ((int)(this["EventsViewHeight"]));
+            }
+            set {
+                this["EventsViewHeight"] = value;
             }
         }
     }

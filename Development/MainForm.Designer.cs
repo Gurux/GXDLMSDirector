@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9641 $,
-//                  $Date: 2017-10-31 13:43:26 +0200 (ti, 31 loka 2017) $
+// Version:         $Revision: 9686 $,
+//                  $Date: 2017-11-16 10:18:39 +0200 (to, 16 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -86,6 +86,9 @@ namespace GXDLMSDirector
             this.GroupsMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripSeparator();
             this.TraceMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pDUToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.ForceReadMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.PropertiesMnu = new System.Windows.Forms.ToolStripMenuItem();
@@ -195,6 +198,7 @@ namespace GXDLMSDirector
             this.ObjectPanelFrame = new System.Windows.Forms.Panel();
             this.EventsView = new System.Windows.Forms.TextBox();
             this.splitter3 = new System.Windows.Forms.Splitter();
+            this.xmlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -334,71 +338,96 @@ namespace GXDLMSDirector
             // ViewToolbarMnu
             // 
             this.ViewToolbarMnu.Name = "ViewToolbarMnu";
-            this.ViewToolbarMnu.Size = new System.Drawing.Size(136, 22);
+            this.ViewToolbarMnu.Size = new System.Drawing.Size(152, 22);
             this.ViewToolbarMnu.Text = "ToolBar";
             this.ViewToolbarMnu.Click += new System.EventHandler(this.ViewToolbarMnu_Click);
             // 
             // ViewStatusbarMnu
             // 
             this.ViewStatusbarMnu.Name = "ViewStatusbarMnu";
-            this.ViewStatusbarMnu.Size = new System.Drawing.Size(136, 22);
+            this.ViewStatusbarMnu.Size = new System.Drawing.Size(152, 22);
             this.ViewStatusbarMnu.Text = "&Statusbar";
             this.ViewStatusbarMnu.Click += new System.EventHandler(this.ViewStatusbarMnu_Click);
             // 
             // toolStripMenuItem12
             // 
             this.toolStripMenuItem12.Name = "toolStripMenuItem12";
-            this.toolStripMenuItem12.Size = new System.Drawing.Size(133, 6);
+            this.toolStripMenuItem12.Size = new System.Drawing.Size(149, 6);
             // 
             // ObjectTreeMnu
             // 
             this.ObjectTreeMnu.Name = "ObjectTreeMnu";
-            this.ObjectTreeMnu.Size = new System.Drawing.Size(136, 22);
+            this.ObjectTreeMnu.Size = new System.Drawing.Size(152, 22);
             this.ObjectTreeMnu.Text = "Object Tree";
             this.ObjectTreeMnu.Click += new System.EventHandler(this.ObjectTreeMnu_Click);
             // 
             // ObjectListMnu
             // 
             this.ObjectListMnu.Name = "ObjectListMnu";
-            this.ObjectListMnu.Size = new System.Drawing.Size(136, 22);
+            this.ObjectListMnu.Size = new System.Drawing.Size(152, 22);
             this.ObjectListMnu.Text = "Object &List";
             this.ObjectListMnu.Click += new System.EventHandler(this.ObjectListMnu_Click);
             // 
             // GroupsMnu
             // 
             this.GroupsMnu.Name = "GroupsMnu";
-            this.GroupsMnu.Size = new System.Drawing.Size(136, 22);
+            this.GroupsMnu.Size = new System.Drawing.Size(152, 22);
             this.GroupsMnu.Text = "Groups";
             this.GroupsMnu.Click += new System.EventHandler(this.GroupsMnu_Click);
             // 
             // toolStripMenuItem7
             // 
             this.toolStripMenuItem7.Name = "toolStripMenuItem7";
-            this.toolStripMenuItem7.Size = new System.Drawing.Size(133, 6);
+            this.toolStripMenuItem7.Size = new System.Drawing.Size(149, 6);
             // 
             // TraceMnu
             // 
+            this.TraceMnu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.noneToolStripMenuItem,
+            this.hexToolStripMenuItem,
+            this.xmlToolStripMenuItem,
+            this.pDUToolStripMenuItem});
             this.TraceMnu.Name = "TraceMnu";
-            this.TraceMnu.Size = new System.Drawing.Size(136, 22);
+            this.TraceMnu.Size = new System.Drawing.Size(152, 22);
             this.TraceMnu.Text = "&Trace";
-            this.TraceMnu.Click += new System.EventHandler(this.TraceMenu_Click);
+            // 
+            // noneToolStripMenuItem
+            // 
+            this.noneToolStripMenuItem.Name = "noneToolStripMenuItem";
+            this.noneToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.noneToolStripMenuItem.Text = "&None";
+            this.noneToolStripMenuItem.Click += new System.EventHandler(this.noneToolStripMenuItem_Click);
+            // 
+            // hexToolStripMenuItem
+            // 
+            this.hexToolStripMenuItem.Name = "hexToolStripMenuItem";
+            this.hexToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.hexToolStripMenuItem.Text = "&Hex";
+            this.hexToolStripMenuItem.Click += new System.EventHandler(this.hexToolStripMenuItem_Click);
+            // 
+            // pDUToolStripMenuItem
+            // 
+            this.pDUToolStripMenuItem.Name = "pDUToolStripMenuItem";
+            this.pDUToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.pDUToolStripMenuItem.Text = "&Pdu";
+            this.pDUToolStripMenuItem.Click += new System.EventHandler(this.pDUToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(133, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(149, 6);
             // 
             // ForceReadMnu
             // 
             this.ForceReadMnu.Name = "ForceReadMnu";
-            this.ForceReadMnu.Size = new System.Drawing.Size(136, 22);
+            this.ForceReadMnu.Size = new System.Drawing.Size(152, 22);
             this.ForceReadMnu.Text = "Force Read";
             this.ForceReadMnu.Click += new System.EventHandler(this.ForceReadMnu_Click);
             // 
             // PropertiesMnu
             // 
             this.PropertiesMnu.Name = "PropertiesMnu";
-            this.PropertiesMnu.Size = new System.Drawing.Size(136, 22);
+            this.PropertiesMnu.Size = new System.Drawing.Size(152, 22);
             this.PropertiesMnu.Text = "&Properties...";
             this.PropertiesMnu.Click += new System.EventHandler(this.PropertiesMnu_Click);
             // 
@@ -1300,6 +1329,13 @@ namespace GXDLMSDirector
             this.splitter3.TabIndex = 23;
             this.splitter3.TabStop = false;
             // 
+            // xmlToolStripMenuItem
+            // 
+            this.xmlToolStripMenuItem.Name = "xmlToolStripMenuItem";
+            this.xmlToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.xmlToolStripMenuItem.Text = "Xml";
+            this.xmlToolStripMenuItem.Click += new System.EventHandler(this.xmlToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1477,6 +1513,10 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ToolStripMenuItem PduOnly;
         private System.Windows.Forms.ToolStripMenuItem ShowNotificationAsHex;
         private System.Windows.Forms.ToolStripMenuItem AutoReset;
+        private System.Windows.Forms.ToolStripMenuItem noneToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hexToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pDUToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem xmlToolStripMenuItem;
     }
 }
 

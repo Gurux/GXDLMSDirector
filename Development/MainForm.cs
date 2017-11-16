@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9641 $,
-//                  $Date: 2017-10-31 13:43:26 +0200 (ti, 31 loka 2017) $
+// Version:         $Revision: 9686 $,
+//                  $Date: 2017-11-16 10:18:39 +0200 (to, 16 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -75,7 +75,15 @@ namespace GXDLMSDirector
         IGXDLMSView SelectedView = null;
         bool Dirty = false;
         delegate void DirtyEventHandler(bool dirty);
-        private MRUManager m_MruManager = null;
+        private MRUManager mruManager = null;
+        /// <summary>
+        /// Used trace level.
+        /// </summary>
+        private byte traceLevel = 0;
+
+        GXDLMSTranslator translator;
+        GXByteBuffer bb = new GXByteBuffer();
+
 
         GXDLMSDevice GetDevice(GXDLMSObject item)
         {
@@ -140,15 +148,16 @@ namespace GXDLMSDirector
         {
             InitializeComponent();
             CancelBtn.Enabled = false;
+            translator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
 
             Devices = new GXDLMSDeviceCollection();
             ObjectValueView.Visible = DeviceInfoView.Visible = DeviceList.Visible = false;
             ObjectValueView.Dock = ObjectPanelFrame.Dock = DeviceList.Dock = DeviceInfoView.Dock = DockStyle.Fill;
             ProgressBar.Visible = false;
             UpdateDeviceUI(null, DeviceState.None);
-            Initialize();
-            m_MruManager = new MRUManager(RecentFilesMnu);
-            m_MruManager.OnOpenMRUFile += new OpenMRUFileEventHandler(this.OnOpenMRUFile);
+            NewMnu_Click(null, null);
+            mruManager = new MRUManager(RecentFilesMnu);
+            mruManager.OnOpenMRUFile += new OpenMRUFileEventHandler(this.OnOpenMRUFile);
         }
 
         public void OnProgress(object sender, string description, int current, int maximium)
@@ -672,58 +681,51 @@ namespace GXDLMSDirector
             }
         }
 
-        void Initialize()
-        {
-            //Save changes?
-            if (this.Dirty)
-            {
-                DialogResult ret = MessageBox.Show(this, Properties.Resources.SaveChangesTxt, Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-                if (ret == DialogResult.Cancel)
-                {
-                    return;
-                }
-                if (ret == DialogResult.Yes)
-                {
-                    if (!Save())
-                    {
-                        return;
-                    }
-                }
-            }
-
-            path = "";
-            ObjectTreeItems.Clear();
-            SelectedListItems.Clear();
-            ObjectListItems.Clear();
-            ObjectValueItems.Clear();
-            foreach (GXDLMSDevice it in Devices)
-            {
-                it.Disconnect();
-            }
-            Devices.Clear();
-            ObjectTree.Nodes.Clear();
-            DeviceListViewItems.Clear();
-            DeviceList.Items.Clear();
-            ObjectList.Items.Clear();
-            ObjectList.Groups.Clear();
-            ObjectValueView.Items.Clear();
-            TreeNode node = ObjectTree.Nodes.Add("Devices");
-            node.Tag = Devices;
-            node.SelectedImageIndex = node.ImageIndex = 0;
-            ObjectTree.SelectedNode = node;
-            SetDirty(false);
-        }
-
         /// <summary>
         /// Create new device list.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void NewMnu_Click(object sender, EventArgs e)
         {
             try
             {
-                Initialize();
+                //Save changes?
+                if (this.Dirty)
+                {
+                    DialogResult ret = MessageBox.Show(this, Properties.Resources.SaveChangesTxt, Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                    if (ret == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    if (ret == DialogResult.Yes)
+                    {
+                        if (!Save())
+                        {
+                            return;
+                        }
+                    }
+                }
+
+                path = "";
+                ObjectTreeItems.Clear();
+                SelectedListItems.Clear();
+                ObjectListItems.Clear();
+                ObjectValueItems.Clear();
+                foreach (GXDLMSDevice it in Devices)
+                {
+                    it.Disconnect();
+                }
+                Devices.Clear();
+                ObjectTree.Nodes.Clear();
+                DeviceListViewItems.Clear();
+                DeviceList.Items.Clear();
+                ObjectList.Items.Clear();
+                ObjectList.Groups.Clear();
+                ObjectValueView.Items.Clear();
+                TreeNode node = ObjectTree.Nodes.Add("Devices");
+                node.Tag = Devices;
+                node.SelectedImageIndex = node.ImageIndex = 0;
+                ObjectTree.SelectedNode = node;
+                SetDirty(false);
             }
             catch (Exception Ex)
             {
@@ -875,7 +877,7 @@ namespace GXDLMSDirector
                 stream.Close();
             }
             SetDirty(false);
-            m_MruManager.Insert(0, path);
+            mruManager.Insert(0, path);
         }
 
         private bool Save()
@@ -1249,13 +1251,20 @@ namespace GXDLMSDirector
                 Properties.Settings.Default.ViewTree = ObjectTreeMnu.Checked;
                 Properties.Settings.Default.ViewList = ObjectListMnu.Checked;
                 Properties.Settings.Default.ViewGroups = GroupsMnu.Checked;
-                Properties.Settings.Default.ViewTrace = TraceMnu.Checked;
+                Properties.Settings.Default.TraceType = traceLevel;
                 Properties.Settings.Default.ForceRead = ForceReadMnu.Checked;
                 Properties.Settings.Default.ViewEvents = EventsMnu.Checked;
                 Properties.Settings.Default.NotificationPduOnly = PduOnly.Checked;
                 Properties.Settings.Default.NotificationAsHex = ShowNotificationAsHex.Checked;
                 Properties.Settings.Default.NotificationAutoReset = AutoReset.Checked;
-
+                if (EventsView.Height > 50)
+                {
+                    Properties.Settings.Default.EventsViewHeight = EventsView.Height;
+                }
+                if (TraceView.Height > 50)
+                {
+                    Properties.Settings.Default.TraceViewHeight = TraceView.Height;
+                }
                 Properties.Settings.Default.Save();
 
                 string path = UserDataPath;
@@ -1277,7 +1286,7 @@ namespace GXDLMSDirector
                     xtw.WriteStartDocument();
                     xtw.WriteStartElement("GXDLMSDirector");
                     xtw.WriteStartElement("MRU");
-                    foreach (string it in m_MruManager.GetNames())
+                    foreach (string it in mruManager.GetNames())
                     {
                         xtw.WriteElementString("item", it);
                     }
@@ -1326,8 +1335,25 @@ namespace GXDLMSDirector
                 ObjectListMnu_Click(null, null);
                 GroupsMnu.Checked = !Properties.Settings.Default.ViewGroups;
                 GroupsMnu_Click(null, null);
-                TraceMnu.Checked = !Properties.Settings.Default.ViewTrace;
-                TraceMenu_Click(null, null);
+                if (Properties.Settings.Default.TraceType == 0)
+                {
+                    noneToolStripMenuItem_Click(null, null);
+                }
+                else if (Properties.Settings.Default.TraceType == 1)
+                {
+                    hexToolStripMenuItem_Click(null, null);
+                }
+                else if (Properties.Settings.Default.TraceType == 2)
+                {
+                    xmlToolStripMenuItem_Click(null, null);
+                }
+                else if (Properties.Settings.Default.TraceType == 3)
+                {
+                    pDUToolStripMenuItem_Click(null, null);
+                }
+                TraceView.Height = Properties.Settings.Default.TraceViewHeight;
+                EventsView.Height = Properties.Settings.Default.EventsViewHeight;
+
                 ForceReadMnu.Checked = !Properties.Settings.Default.ForceRead;
                 ForceReadMnu_Click(null, null);
                 EventsMnu.Checked = !Properties.Settings.Default.ViewEvents;
@@ -1364,7 +1390,7 @@ namespace GXDLMSDirector
                             xtr.Read();
                             while (xtr.Name != "MRU" && xtr.NodeType != XmlNodeType.EndElement)
                             {
-                                m_MruManager.Insert(-1, xtr.ReadElementString());
+                                mruManager.Insert(-1, xtr.ReadElementString());
                             }
                         }
                         else if (xtr.Name == "MainWindow")
@@ -1457,15 +1483,41 @@ namespace GXDLMSDirector
 
         delegate void UpdateTransactionEventHandler(bool start);
 
-        void OnTrace(GXDLMSDevice sender, string trace)
+        void OnTrace(GXDLMSDevice sender, string trace, byte[] data)
         {
             if (InvokeRequired)
             {
-                BeginInvoke(new MessageTraceEventHandler(this.OnTrace), sender, trace);
+                BeginInvoke(new MessageTraceEventHandler(this.OnTrace), sender, trace, data);
             }
             else
             {
-                TraceView.AppendText(trace + Environment.NewLine);
+                //Show data as hex.
+                if (traceLevel == 1)
+                {
+                    TraceView.AppendText(trace + " " + GXCommon.ToHex(data, true) + Environment.NewLine);
+                }
+                else if (traceLevel == 2 || traceLevel == 3)
+                {
+                    //Show data as xml or pdu.
+                    bb.Set(data);
+                    try
+                    {
+                        GXByteBuffer pdu = new GXByteBuffer();
+                        InterfaceType type = GXDLMSTranslator.GetDlmsFraming(bb);
+                        if (translator.FindNextFrame(bb, pdu, type))
+                        {
+                            TraceView.AppendText(translator.MessageToXml(bb));
+                            bb.Clear();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        bb.Clear();
+                        TraceView.ResetText();
+                        TraceView.AppendText(ex.Message + Environment.NewLine);
+                        TraceView.AppendText(trace + " " + GXCommon.ToHex(data, true) + Environment.NewLine);
+                    }
+                }
             }
         }
 
@@ -2029,10 +2081,12 @@ namespace GXDLMSDirector
                         return;
                     }
                 }
+                //Don't show save changes again.
+                this.Dirty = false;
             }
             //Clear log every time when new device list is loaded.
             GXLogWriter.ClearLog();
-            Initialize();
+            NewMnu_Click(null, null);
             int version = 1;
             using (XmlReader reader = XmlReader.Create(path))
             {
@@ -2078,7 +2132,7 @@ namespace GXDLMSDirector
             GroupItems(GroupsMnu.Checked);
             this.path = path;
             SetDirty(false);
-            m_MruManager.Insert(0, path);
+            mruManager.Insert(0, path);
         }
 
         /// <summary>
@@ -2119,7 +2173,7 @@ namespace GXDLMSDirector
             {
                 if (file != null)
                 {
-                    m_MruManager.Remove(file);
+                    mruManager.Remove(file);
                 }
                 GXLogWriter.WriteLog(Ex.ToString());
                 GXDLMS.Common.Error.ShowError(this, Ex);
@@ -2881,7 +2935,7 @@ namespace GXDLMSDirector
             }
             catch (Exception Ex)
             {
-                m_MruManager.Remove(fileName);
+                mruManager.Remove(fileName);
                 GXDLMS.Common.Error.ShowError(this, Ex);
             }
         }
@@ -3099,15 +3153,6 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// Show or hide trace.
-        /// </summary>
-        private void TraceMenu_Click(object sender, EventArgs e)
-        {
-            TraceMnu.Checked = !TraceMnu.Checked;
-            TraceView.Visible = TraceMnu.Checked;
-        }
-
-        /// <summary>
         /// Force read.
         /// </summary>
         /// <param name="sender"></param>
@@ -3220,6 +3265,50 @@ namespace GXDLMSDirector
         private void AutoReset_Click(object sender, EventArgs e)
         {
             AutoReset.Checked = !AutoReset.Checked;
+        }
+
+        private void UpdateTrace(byte level)
+        {
+            traceLevel = level;
+            TraceView.Visible = level != 0;
+            noneToolStripMenuItem.Checked = level == 0;
+            hexToolStripMenuItem.Checked = level == 1;
+            xmlToolStripMenuItem.Checked = level == 2;
+            pDUToolStripMenuItem.Checked = level == 3;
+            //Show data as pdu.
+            translator.PduOnly = level == 3;
+        }
+
+        /// <summary>
+        /// Hide trace.
+        /// </summary>
+        private void noneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdateTrace(0);
+        }
+
+        /// <summary>
+        /// Show trace in Hex Mode.
+        /// </summary>
+        private void hexToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdateTrace(1);
+        }
+
+        /// <summary>
+        /// Show trace in PDU Mode.
+        /// </summary>
+        private void pDUToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdateTrace(3);
+        }
+
+        /// <summary>
+        /// Show trace in Xml Mode.
+        /// </summary>
+        private void xmlToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdateTrace(2);
         }
     }
 }

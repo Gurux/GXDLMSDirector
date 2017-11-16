@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9587 $,
-//                  $Date: 2017-10-11 14:53:32 +0300 (ke, 11 loka 2017) $
+// Version:         $Revision: 9686 $,
+//                  $Date: 2017-11-16 10:18:39 +0200 (to, 16 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -64,7 +64,7 @@ namespace GXDLMSDirector
     public delegate void ProgressEventHandler(object sender, string description, int current, int maximium);
     public delegate void StatusEventHandler(object sender, DeviceState status);
     public delegate void ReadEventHandler(GXDLMSObject sender, int index);
-    public delegate void MessageTraceEventHandler(GXDLMSDevice sender, string trace);
+    public delegate void MessageTraceEventHandler(GXDLMSDevice sender, string trace, byte[] data);
 
     public class GXDLMSCommunicator
     {
@@ -193,7 +193,7 @@ namespace GXDLMSDirector
             }
             if (parent.OnTrace != null)
             {
-                parent.OnTrace(parent, "<- " + DateTime.Now.ToLongTimeString() + " " + GXCommon.ToHex(data, true));
+                parent.OnTrace(parent, "<- " + DateTime.Now.ToLongTimeString(), data);
             }
             int pos = 0;
             bool succeeded = false;
@@ -264,7 +264,7 @@ namespace GXDLMSDirector
             }
             if (parent.OnTrace != null)
             {
-                parent.OnTrace(parent, "-> " + DateTime.Now.ToLongTimeString() + " " + GXCommon.ToHex(p.Reply, true));
+                parent.OnTrace(parent, "-> " + DateTime.Now.ToLongTimeString(), p.Reply);
             }
             GXLogWriter.WriteLog("Received data", p.Reply);
             if (reply.Error != 0)

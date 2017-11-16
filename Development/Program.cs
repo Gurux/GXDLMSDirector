@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9686 $,
-//                  $Date: 2017-11-16 10:18:39 +0200 (to, 16 marras 2017) $
+// Version:         $Revision: 9689 $,
+//                  $Date: 2017-11-16 11:51:42 +0200 (to, 16 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -67,9 +67,8 @@ namespace GXDLMSDirector
                         {
                             if (!type.IsAbstract && type.IsClass && typeof(IGXMedia).IsAssignableFrom(type))
                             {
-                                IGXMedia m = assembly.CreateInstance(type.ToString()) as IGXMedia;
+                                assembly.CreateInstance(type.ToString());
                             }
-                            break;
                         }
                     }
                     catch (Exception ex)
@@ -87,19 +86,17 @@ namespace GXDLMSDirector
         {
             try
             {
+                string initDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
                 try
                 {
-                    string initDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
                     if (!Directory.Exists(initDir))
                     {
                         Directory.CreateDirectory(initDir);
                     }
                     SetAddRemoveProgramsIcon();
-
+                    Directory.SetCurrentDirectory(initDir);
                     LoadMedias(new DirectoryInfo(Path.Combine(initDir, "Medias")));
                     LoadMedias(new DirectoryInfo("Medias"));
-
-                    Directory.SetCurrentDirectory(initDir);
                 }
                 catch (Exception)
                 {
@@ -141,6 +138,6 @@ namespace GXDLMSDirector
                 {
                 }
             }
-        }       
+        }
     }
 }

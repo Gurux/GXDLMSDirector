@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9686 $,
-//                  $Date: 2017-11-16 10:18:39 +0200 (to, 16 marras 2017) $
+// Version:         $Revision: 9689 $,
+//                  $Date: 2017-11-16 11:51:42 +0200 (to, 16 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -541,7 +541,7 @@ namespace GXDLMSDirector
                         {
                             ns = value.Substring(0, pos);
                         }
-                            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+                        foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
                         {
                             if (assembly.GetName().Name == ns)
                             {

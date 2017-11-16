@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9512 $,
-//                  $Date: 2017-08-18 13:39:31 +0300 (pe, 18 elo 2017) $
+// Version:         $Revision: 9689 $,
+//                  $Date: 2017-11-16 11:51:42 +0200 (to, 16 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -275,19 +275,26 @@ namespace GXDLMSDirector
                             a != typeof(GXSerial).Assembly &&
                         a != typeof(GXNet).Assembly)
                     {
-                        foreach (Type type in a.GetTypes())
+                        try
                         {
-                            if (!type.IsAbstract && type.IsClass && typeof(IGXMedia).IsAssignableFrom(type))
+                            foreach (Type type in a.GetTypes())
                             {
-                                if (SelectedMedia == null || SelectedMedia.GetType() != type)
+                                if (!type.IsAbstract && type.IsClass && typeof(IGXMedia).IsAssignableFrom(type))
                                 {
-                                    this.MediasCB.Items.Add(a.CreateInstance(type.ToString()));
-                                }
-                                else
-                                {
-                                    this.MediasCB.Items.Add(SelectedMedia);
+                                    if (SelectedMedia == null || SelectedMedia.GetType() != type)
+                                    {
+                                        this.MediasCB.Items.Add(a.CreateInstance(type.ToString()));
+                                    }
+                                    else
+                                    {
+                                        this.MediasCB.Items.Add(SelectedMedia);
+                                    }
                                 }
                             }
+                        }
+                        catch (Exception)
+                        {
+                            //It's OK if this fails.
                         }
                     }
                 }

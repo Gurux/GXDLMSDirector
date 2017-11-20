@@ -133,7 +133,7 @@
       <HintPath>packages\Gurux.Common.8.1.1711.2001\lib\portable-win+net40\Gurux.Common.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.DLMS, Version=8.5.1711.1701, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Contract\Xyleminc\Gurux.RestMedia\packages\Gurux.DLMS.8.5.1711.1701\lib\portable-win+net35\Gurux.DLMS.dll</HintPath>
+      <HintPath>packages\Gurux.DLMS.8.5.1711.1701\lib\portable-win+net35\Gurux.DLMS.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.DLMS.UI, Version=8.5.1711.1501, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.DLMS.UI.8.5.1711.1501\lib\portable-win+net35\Gurux.DLMS.UI.dll</HintPath>

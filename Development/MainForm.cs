@@ -114,6 +114,13 @@ namespace GXDLMSDirector
 
         public static void InitMain()
         {
+            //Update previous installed settings.
+            if (Properties.Settings.Default.UpdateSettings)
+            {
+                Properties.Settings.Default.Upgrade();
+                Properties.Settings.Default.UpdateSettings = false;
+                Properties.Settings.Default.Save();
+            }
             //Debug traces are written only log file.
             if (!System.Diagnostics.Debugger.IsAttached)
             {

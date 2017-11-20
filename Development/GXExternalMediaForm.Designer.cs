@@ -74,14 +74,17 @@
             // 
             // FileNameTb
             // 
+            this.FileNameTb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.FileNameTb.Location = new System.Drawing.Point(12, 55);
             this.FileNameTb.Name = "FileNameTb";
-            this.FileNameTb.Size = new System.Drawing.Size(260, 20);
+            this.FileNameTb.Size = new System.Drawing.Size(315, 20);
             this.FileNameTb.TabIndex = 0;
             // 
             // BrowseBtn
             // 
-            this.BrowseBtn.Location = new System.Drawing.Point(197, 81);
+            this.BrowseBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.BrowseBtn.Location = new System.Drawing.Point(252, 81);
             this.BrowseBtn.Name = "BrowseBtn";
             this.BrowseBtn.Size = new System.Drawing.Size(75, 23);
             this.BrowseBtn.TabIndex = 1;

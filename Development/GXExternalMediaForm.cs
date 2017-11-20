@@ -100,8 +100,7 @@ namespace GXDLMSDirector
                 dlg.ValidateNames = true;
                 if (dlg.ShowDialog(this) == DialogResult.OK)
                 {
-                    string file = dlg.FileName;
-                    FileNameTb.Text = "file://" + file;
+                    FileNameTb.Text = dlg.FileName;
                 }
             }
             catch (Exception Ex)

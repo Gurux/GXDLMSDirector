@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9689 $,
-//                  $Date: 2017-11-16 11:51:42 +0200 (to, 16 marras 2017) $
+// Version:         $Revision: 9711 $,
+//                  $Date: 2017-11-20 18:52:14 +0200 (ma, 20 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -334,6 +334,92 @@ namespace GXDLMSDirector
             set;
         }
 
+        /// <summary>
+        /// Is wrapper used.
+        /// </summary>
+        [Browsable(false)]
+        [DefaultValue(false)]
+        public bool UseWrapper
+        {
+            get;
+            set;
+        }
+
+
+        /// <summary>
+        /// The maximum information field length in transmit.
+        /// </summary>
+        /// <remarks>
+        /// DefaultValue is 128. Minimum value is 32 and max value is 128.
+        /// </remarks>
+        public UInt16 MaxInfoTX
+        {
+            get
+            {
+                return communicator.client.Limits.MaxInfoTX;
+            }
+            set
+            {
+                communicator.client.Limits.MaxInfoTX = value;
+            }
+        }
+
+        /// <summary>
+        /// The maximum information field length in receive.
+        /// </summary>
+        /// <remarks>
+        /// DefaultValue is 128. Minimum value is 32 and max value is 128.
+        /// </remarks>
+        public UInt16 MaxInfoRX
+        {
+            get
+            {
+                return communicator.client.Limits.MaxInfoRX;
+            }
+            set
+            {
+                communicator.client.Limits.MaxInfoRX = value;
+            }
+        }
+
+        /// <summary>
+        /// The window size in transmit.
+        /// </summary>
+        /// <remarks>
+        /// DefaultValue is 1.
+        /// </remarks>
+        public byte WindowSizeTX
+        {
+            get
+            {
+                return communicator.client.Limits.WindowSizeTX;
+            }
+            set
+            {
+                communicator.client.Limits.WindowSizeTX = value;
+            }
+
+        }
+
+        /// <summary>
+        /// The window size in receive.
+        /// </summary>
+        /// <remarks>
+        /// DefaultValue is 1.
+        /// </remarks>
+        public byte WindowSizeRX
+        {
+            get
+            {
+                return communicator.client.Limits.WindowSizeRX;
+            }
+            set
+            {
+                communicator.client.Limits.WindowSizeRX = value;
+            }
+
+        }
+
         void NotifyProgress(object sender, string description, int current, int maximium)
         {
             if (OnProgress != null)
@@ -470,7 +556,7 @@ namespace GXDLMSDirector
 
 
         /// <summary>
-        /// Save name of the manufacturer.
+        /// Is wrapper used.
         /// </summary>
         [Browsable(false)]
         public bool UseIEC47

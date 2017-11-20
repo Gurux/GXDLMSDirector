@@ -202,5 +202,17 @@ namespace GXDLMSDirector.Properties {
                 this["EventsViewHeight"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ExternalMedias {
+            get {
+                return ((string)(this["ExternalMedias"]));
+            }
+            set {
+                this["ExternalMedias"] = value;
+            }
+        }
     }
 }

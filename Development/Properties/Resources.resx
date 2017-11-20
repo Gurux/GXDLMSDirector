@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="TemporaryFailureTxt" xml:space="preserve">
     <value>Access Error : Device reports a temporary failure.</value>
@@ -215,8 +215,16 @@ All rights reserved.</value>
   <data name="UnknownErrorTxt" xml:space="preserve">
     <value>Unknown Error.</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="NotifyMnu" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\NotifyMnu.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ExecutableFilesTxt" xml:space="preserve">
+    <value>Executable files (*.dll)|*.dll|All files (*.*)|*.*</value>
+  </data>
+  <data name="ExternalMediaRemove" xml:space="preserve">
+    <value>Are you sure that you want to remove selected external media?</value>
+  </data>
+  <data name="ExternalMediaNoUpdates" xml:space="preserve">
+    <value>No updates available.</value>
   </data>
 </root>

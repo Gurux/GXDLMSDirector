@@ -100,6 +100,33 @@ namespace GXDLMSDirector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Executable files (*.dll)|*.dll|All files (*.*)|*.*.
+        /// </summary>
+        internal static string ExecutableFilesTxt {
+            get {
+                return ResourceManager.GetString("ExecutableFilesTxt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No updates available..
+        /// </summary>
+        internal static string ExternalMediaNoUpdates {
+            get {
+                return ResourceManager.GetString("ExternalMediaNoUpdates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure that you want to remove selected external media?.
+        /// </summary>
+        internal static string ExternalMediaRemove {
+            get {
+                return ResourceManager.GetString("ExternalMediaRemove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Gurux GXDLMSDirector files (*.gxc)|*.gxc|All files (*.*)|*.*.
         /// </summary>
         internal static string FilterTxt {

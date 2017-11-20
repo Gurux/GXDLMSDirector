@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9689 $,
-//                  $Date: 2017-11-16 11:51:42 +0200 (to, 16 marras 2017) $
+// Version:         $Revision: 9711 $,
+//                  $Date: 2017-11-20 18:52:14 +0200 (ma, 20 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -33,16 +33,11 @@
 
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.Collections;
 using Gurux.Serial;
 using Gurux.DLMS;
-using GXDLMS.ManufacturerSettings;
 using Gurux.Net;
 using System.Reflection;
 using System.IO.Ports;
@@ -325,6 +320,12 @@ namespace GXDLMSDirector
                                            AuthenticationCB.Enabled = UseRemoteSerialCB.Enabled = OKBtn.Enabled = !bConnected;
                 HostNameTB.ReadOnly = PortTB.ReadOnly = PasswordTB.ReadOnly = WaitTimeTB.ReadOnly = PhysicalServerAddressTB.ReadOnly = NameTB.ReadOnly = bConnected;
                 this.UseLNCB.CheckedChanged += new System.EventHandler(this.UseLNCB_CheckedChanged);
+
+                UseWrapperCb.Checked = Device.UseWrapper;
+                MaxInfoTXTb.Text = Device.MaxInfoTX.ToString();
+                MaxInfoRXTb.Text = Device.MaxInfoRX.ToString();
+                WindowSizeTXTb.Text = Device.WindowSizeTX.ToString();
+                WindowSizeRXTb.Text = Device.WindowSizeRX.ToString();
             }
             catch (Exception Ex)
             {
@@ -612,6 +613,12 @@ namespace GXDLMSDirector
                 {
                     Device.Password = "";
                 }
+                Device.UseWrapper = UseWrapperCb.Checked;
+                Device.MaxInfoTX = UInt16.Parse(MaxInfoTXTb.Text);
+                Device.MaxInfoRX = UInt16.Parse(MaxInfoRXTb.Text);
+                Device.WindowSizeTX = byte.Parse(WindowSizeTXTb.Text);
+                Device.WindowSizeRX = byte.Parse(WindowSizeRXTb.Text);
+
                 Device.Name = name;
                 Device.Media = SelectedMedia;
                 Device.Manufacturer = man.Identification;
@@ -855,7 +862,8 @@ namespace GXDLMSDirector
         {
             //If IEC47 is used DLMS is only protocol.
             GXManufacturer man = this.ManufacturerCB.SelectedItem as GXManufacturer;
-            this.UseLNCB.Checked = Device.UseLogicalNameReferencing = man.UseLogicalNameReferencing;
+            UseWrapperCb.Checked = man.UseIEC47;
+            UseLNCB.Checked = Device.UseLogicalNameReferencing = man.UseLogicalNameReferencing;
             if (SelectedMedia is GXNet && man != null)
             {
                 StartProtocolCB.Enabled = !man.UseIEC47;

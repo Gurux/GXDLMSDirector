@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9686 $,
-//                  $Date: 2017-11-16 10:18:39 +0200 (to, 16 marras 2017) $
+// Version:         $Revision: 9711 $,
+//                  $Date: 2017-11-20 18:52:14 +0200 (ma, 20 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -942,7 +942,12 @@ namespace GXDLMSDirector
 
         }
 
-        void Connect(System.Windows.Forms.Control sender, object[] parameters)
+        void OnError(object sender, Exception ex)
+        {
+            MessageBox.Show(ex.Message);
+        }
+
+        void Connect(object sender, GXAsyncWork work, object[] parameters)
         {
             try
             {
@@ -1001,7 +1006,7 @@ namespace GXDLMSDirector
                             devices.Add(dev);
                         }
                     }
-                    Connect(sender, new object[] { devices });
+                    Connect(sender, work, new object[] { devices });
                 }
                 else
                 {
@@ -1028,7 +1033,7 @@ namespace GXDLMSDirector
             }
             catch (Exception Ex)
             {
-                GXDLMS.Common.Error.ShowError(sender, Ex);
+                GXDLMS.Common.Error.ShowError(sender as Form, Ex);
             }
             finally
             {
@@ -1046,16 +1051,16 @@ namespace GXDLMSDirector
             ClearTrace();
             if (tabControl1.SelectedIndex == 0)
             {
-                TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Connect, new object[] { ObjectTree.SelectedNode.Tag });
+                TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Connect, OnError, null, new object[] { ObjectTree.SelectedNode.Tag });
             }
             else
             {
-                TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Connect, new object[] { GetDevices() });
+                TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Connect, OnError, null, new object[] { GetDevices() });
             }
             TransactionWork.Start();
         }
 
-        void Disconnect(System.Windows.Forms.Control sender, object[] parameters)
+        void Disconnect(object sender, GXAsyncWork work, object[] parameters)
         {
             try
             {
@@ -1068,7 +1073,7 @@ namespace GXDLMSDirector
                     cnt = ((GXDLMSDeviceCollection)obj).Count;
                     foreach (GXDLMSDevice it in (GXDLMSDeviceCollection)obj)
                     {
-                        sender.BeginInvoke(new ProgressEventHandler(this.OnProgress), null, "Disconnecting", ++pos, cnt);
+                        (sender as Form).BeginInvoke(new ProgressEventHandler(this.OnProgress), null, "Disconnecting", ++pos, cnt);
                         try
                         {
                             it.OnTrace += new MessageTraceEventHandler(OnTrace);
@@ -1082,7 +1087,7 @@ namespace GXDLMSDirector
                 }
                 else if (obj is GXDLMSDevice)
                 {
-                    sender.BeginInvoke(new ProgressEventHandler(this.OnProgress), null, "Disconnecting", 0, 1);
+                    (sender as Form).BeginInvoke(new ProgressEventHandler(this.OnProgress), null, "Disconnecting", 0, 1);
                     try
                     {
                         ((GXDLMSDevice)obj).OnTrace += new MessageTraceEventHandler(OnTrace);
@@ -1105,11 +1110,11 @@ namespace GXDLMSDirector
                             devices.Add(dev);
                         }
                     }
-                    Disconnect(sender, new object[] { devices });
+                    Disconnect(sender, work, new object[] { devices });
                 }
                 else
                 {
-                    sender.BeginInvoke(new ProgressEventHandler(this.OnProgress), null, "Disconnecting", 0, 1);
+                    (sender as Form).BeginInvoke(new ProgressEventHandler(OnProgress), sender, "Disconnecting", 0, 1);
                     GXDLMSObject tmp = obj as GXDLMSObject;
                     GXDLMSDevice dev = tmp.Parent.Tag as GXDLMSDevice;
                     try
@@ -1129,11 +1134,11 @@ namespace GXDLMSDirector
             }
             catch (Exception Ex)
             {
-                GXDLMS.Common.Error.ShowError(sender, Ex);
+                GXDLMS.Common.Error.ShowError((sender as Form), Ex);
             }
             finally
             {
-                sender.BeginInvoke(new ProgressEventHandler(this.OnProgress), null, "", 1, 1);
+                (sender as Form).BeginInvoke(new ProgressEventHandler(this.OnProgress), sender, "", 1, 1);
             }
         }
 
@@ -1169,11 +1174,11 @@ namespace GXDLMSDirector
         {
             if (tabControl1.SelectedIndex == 0)
             {
-                TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Disconnect, new object[] { ObjectTree.SelectedNode.Tag });
+                TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Disconnect, OnError, null, new object[] { ObjectTree.SelectedNode.Tag });
             }
             else
             {
-                TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Disconnect, new object[] { GetDevices() });
+                TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Disconnect, OnError, null, new object[] { GetDevices() });
             }
             TransactionWork.Start();
         }
@@ -1607,7 +1612,7 @@ namespace GXDLMSDirector
             }
         }
 
-        void Read(System.Windows.Forms.Control sender, object[] parameters)
+        void Read(object sender, GXAsyncWork work, object[] parameters)
         {
             GXDLMSDevice dev = null;
             try
@@ -1696,11 +1701,11 @@ namespace GXDLMSDirector
                         //Actaris returns access violation error.
                         ex.ErrorCode == (int)ErrorCode.AccessViolated)
                 {
-                    GXDLMS.Common.Error.ShowError(sender, ex);
+                    GXDLMS.Common.Error.ShowError(sender as Form, ex);
                 }
                 else
                 {
-                    GXDLMS.Common.Error.ShowError(sender, ex);
+                    GXDLMS.Common.Error.ShowError(sender as Form, ex);
                     if (dev != null)
                     {
                         dev.Disconnect();
@@ -1709,7 +1714,7 @@ namespace GXDLMSDirector
             }
             catch (Exception Ex)
             {
-                GXDLMS.Common.Error.ShowError(sender, Ex);
+                GXDLMS.Common.Error.ShowError(sender as Form, Ex);
                 if (dev != null)
                 {
                     dev.Disconnect();
@@ -1734,7 +1739,7 @@ namespace GXDLMSDirector
                 this.ObjectTree.Focus();
                 if (this.ObjectTree.SelectedNode != null)
                 {
-                    TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Read, new object[] { this.ObjectTree.SelectedNode.Tag, SelectedView });
+                    TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Read, OnError, null, new object[] { this.ObjectTree.SelectedNode.Tag, SelectedView });
                     TransactionWork.Start();
                 }
             }
@@ -1747,7 +1752,7 @@ namespace GXDLMSDirector
                     {
                         items.Add(it.Tag as GXDLMSObject);
                     }
-                    TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Read, new object[] { items, SelectedView });
+                    TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Read, OnError, null, new object[] { items, SelectedView });
                     TransactionWork.Start();
                 }
             }
@@ -2350,7 +2355,7 @@ namespace GXDLMSDirector
 
         delegate void RefreshEventHandler(System.Windows.Forms.Control sender, object[] parameters);
 
-        void Refresh(System.Windows.Forms.Control sender, object[] parameters)
+        void Refresh(object sender, GXAsyncWork work, object[] parameters)
         {
             try
             {
@@ -2403,7 +2408,7 @@ namespace GXDLMSDirector
                     else if (items.Count != 0)//If other than profile generics are selected read meter.
                     {
                         GXDLMSDevice dev = items[0].Parent.Tag as GXDLMSDevice;
-                        Refresh(sender, new object[] { dev });
+                        Refresh(sender, work, new object[] { dev });
                     }
                 }
                 else if (parameters[0] is GXDLMSProfileGeneric)
@@ -2436,7 +2441,7 @@ namespace GXDLMSDirector
             }
             catch (Exception Ex)
             {
-                GXDLMS.Common.Error.ShowError(sender, Ex);
+                GXDLMS.Common.Error.ShowError(sender as Form, Ex);
             }
         }
 
@@ -2449,7 +2454,7 @@ namespace GXDLMSDirector
         {
             if (tabControl1.SelectedIndex == 0)
             {
-                TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Refresh, new object[] { ObjectTree.SelectedNode.Tag });
+                TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Refresh, OnError, null, new object[] { ObjectTree.SelectedNode.Tag });
             }
             else
             {
@@ -2458,7 +2463,7 @@ namespace GXDLMSDirector
                 {
                     items.Add(it.Tag as GXDLMSObject);
                 }
-                TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Refresh, new object[] { items });
+                TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Refresh, OnError, null, new object[] { items });
             }
 
             TransactionWork.Start();
@@ -2893,11 +2898,11 @@ namespace GXDLMSDirector
             }
         }
 
-        void OnAsyncStateChange(System.Windows.Forms.Control sender, AsyncState state)
+        void OnAsyncStateChange(object sender, GXAsyncWork work, object[] parameters, AsyncState state, string text)
         {
             if (InvokeRequired)
             {
-                BeginInvoke(new AsyncStateChangeEventHandler(this.OnAsyncStateChange), sender, state);
+                BeginInvoke(new AsyncStateChangeEventHandler(OnAsyncStateChange), sender, work, parameters, state, text);
             }
             else
             {
@@ -3163,32 +3168,6 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// Show notifications settings.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void EventsSettingsMnu_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                GXNotificationDlg dlg = new GXDLMSDirector.GXNotificationDlg(events);
-                if (dlg.ShowDialog(this) == DialogResult.OK)
-                {
-                    Properties.Settings.Default.EventsSettings = events.Settings;
-                    //Show events if hidden.
-                    if (!EventsMnu.Checked)
-                    {
-                        viewToolStripMenuItem1_Click(null, null);
-                    }
-                }
-            }
-            catch (Exception Ex)
-            {
-                GXCommon.ShowError(Ex);
-            }
-        }
-
-        /// <summary>
         /// Show or hide notification view.
         /// </summary>
         private void viewToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -3309,6 +3288,31 @@ namespace GXDLMSDirector
         private void xmlToolStripMenuItem_Click(object sender, EventArgs e)
         {
             UpdateTrace(2);
+        }
+
+        /// <summary>
+        /// SHow settings.
+        /// </summary>
+        private void settingsToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                GXSettingsDlg dlg = new GXSettingsDlg(events);
+                if (dlg.ShowDialog(this) == DialogResult.OK)
+                {
+                    Properties.Settings.Default.EventsSettings = events.Settings;
+                    //Show events if hidden.
+                    if (!EventsMnu.Checked)
+                    {
+                        viewToolStripMenuItem1_Click(null, null);
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                GXCommon.ShowError(Ex);
+            }
+
         }
     }
 }

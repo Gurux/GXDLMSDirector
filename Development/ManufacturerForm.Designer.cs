@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9442 $,
-//                  $Date: 2017-05-23 15:21:03 +0300 (ti, 23 touko 2017) $
+// Version:         $Revision: 9711 $,
+//                  $Date: 2017-11-20 18:52:14 +0200 (ma, 20 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -96,8 +96,6 @@ namespace GXDLMSDirector
             this.WebAddressLbl = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.InfoTB = new System.Windows.Forms.TextBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.BlockCipherKeyAsciiCb = new System.Windows.Forms.CheckBox();
             this.AuthenticationKeyAsciiCb = new System.Windows.Forms.CheckBox();
@@ -110,6 +108,8 @@ namespace GXDLMSDirector
             this.BlockCipherKeyLbl = new System.Windows.Forms.Label();
             this.SystemtitleLbl = new System.Windows.Forms.Label();
             this.SecurityLbl = new System.Windows.Forms.Label();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.InfoTB = new System.Windows.Forms.TextBox();
             this.AddressingGB.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ClientAddTB)).BeginInit();
@@ -119,8 +119,8 @@ namespace GXDLMSDirector
             ((System.ComponentModel.ISupportInitialize)(this.KeepAliveIntervalTB)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // OKBtn
@@ -151,9 +151,9 @@ namespace GXDLMSDirector
             this.UseIEC47CB.AutoSize = true;
             this.UseIEC47CB.Location = new System.Drawing.Point(196, 54);
             this.UseIEC47CB.Name = "UseIEC47CB";
-            this.UseIEC47CB.Size = new System.Drawing.Size(113, 17);
+            this.UseIEC47CB.Size = new System.Drawing.Size(103, 17);
             this.UseIEC47CB.TabIndex = 3;
-            this.UseIEC47CB.Text = "Use IEC 62056-47";
+            this.UseIEC47CB.Text = "Use WRAPPER";
             this.UseIEC47CB.UseVisualStyleBackColor = true;
             // 
             // UseLNCB
@@ -218,7 +218,7 @@ namespace GXDLMSDirector
             // 
             // AddressingGB
             // 
-            this.AddressingGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.AddressingGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.AddressingGB.Controls.Add(this.groupBox2);
             this.AddressingGB.Controls.Add(this.groupBox1);
@@ -496,28 +496,6 @@ namespace GXDLMSDirector
             this.tabPage1.Text = "General";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.InfoTB);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(404, 372);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Info";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // InfoTB
-            // 
-            this.InfoTB.AcceptsReturn = true;
-            this.InfoTB.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.InfoTB.Location = new System.Drawing.Point(3, 3);
-            this.InfoTB.Multiline = true;
-            this.InfoTB.Name = "InfoTB";
-            this.InfoTB.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.InfoTB.Size = new System.Drawing.Size(398, 366);
-            this.InfoTB.TabIndex = 1;
-            // 
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.BlockCipherKeyAsciiCb);
@@ -581,7 +559,7 @@ namespace GXDLMSDirector
             // 
             // AuthenticationKeyTB
             // 
-            this.AuthenticationKeyTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.AuthenticationKeyTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.AuthenticationKeyTB.Location = new System.Drawing.Point(109, 92);
             this.AuthenticationKeyTB.Name = "AuthenticationKeyTB";
@@ -590,7 +568,7 @@ namespace GXDLMSDirector
             // 
             // BlockCipherKeyTB
             // 
-            this.BlockCipherKeyTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.BlockCipherKeyTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.BlockCipherKeyTB.Location = new System.Drawing.Point(109, 66);
             this.BlockCipherKeyTB.Name = "BlockCipherKeyTB";
@@ -599,7 +577,7 @@ namespace GXDLMSDirector
             // 
             // SystemTitleTB
             // 
-            this.SystemTitleTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.SystemTitleTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.SystemTitleTB.Location = new System.Drawing.Point(109, 39);
             this.SystemTitleTB.Name = "SystemTitleTB";
@@ -642,6 +620,28 @@ namespace GXDLMSDirector
             this.SecurityLbl.TabIndex = 68;
             this.SecurityLbl.Text = "Security:";
             // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.InfoTB);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(404, 372);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Info";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // InfoTB
+            // 
+            this.InfoTB.AcceptsReturn = true;
+            this.InfoTB.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.InfoTB.Location = new System.Drawing.Point(3, 3);
+            this.InfoTB.Multiline = true;
+            this.InfoTB.Name = "InfoTB";
+            this.InfoTB.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.InfoTB.Size = new System.Drawing.Size(398, 366);
+            this.InfoTB.TabIndex = 1;
+            // 
             // ManufacturerForm
             // 
             this.AcceptButton = this.OKBtn;
@@ -670,10 +670,10 @@ namespace GXDLMSDirector
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
             this.ResumeLayout(false);
 
         }

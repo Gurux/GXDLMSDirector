@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9718 $,
-//                  $Date: 2017-11-21 10:23:05 +0200 (ti, 21 marras 2017) $
+// Version:         $Revision: 9719 $,
+//                  $Date: 2017-11-21 14:15:51 +0200 (ti, 21 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -142,14 +142,14 @@ namespace GXDLMSDirector
                     GXReplyData reply = new GXReplyData();
                     try
                     {
-                   //     ReadDLMSPacket(ReleaseRequest(), 1, reply);
+                        //     ReadDataBlock(ReleaseRequest(), "Release request", reply);
                     }
                     catch (Exception)
                     {
                         //All meters don't support release.
                     }
                     reply.Clear();
-                    ReadDLMSPacket(DisconnectRequest(), 1, reply);
+                    ReadDataBlock(DisconnectRequest(), "Disconnect request", reply);
                 }
                 finally
                 {
@@ -258,11 +258,11 @@ namespace GXDLMSDirector
                     throw ex;
                 }
             }
+            GXLogWriter.WriteLog(null, p.Reply);
             if (parent.OnTrace != null)
             {
                 parent.OnTrace(parent, "-> " + DateTime.Now.ToLongTimeString(), p.Reply);
             }
-            GXLogWriter.WriteLog("Received data", p.Reply);
             if (reply.Error != 0)
             {
                 if (reply.Error == (int)ErrorCode.Rejected)
@@ -691,8 +691,7 @@ namespace GXDLMSDirector
                 data = SNRMRequest();
                 if (data != null)
                 {
-                    GXLogWriter.WriteLog("Send SNRM request.", data);
-                    ReadDLMSPacket(data, 1, reply);
+                    ReadDataBlock(data, "Send SNRM request.", reply);
                     GXLogWriter.WriteLog("Parsing UA reply succeeded.");
                     //Has server accepted client.
                     ParseUAResponse(reply.Data);
@@ -808,7 +807,12 @@ namespace GXDLMSDirector
         internal void ReadDataBlock(byte[] data, string text, int multiplier, GXReplyData reply)
         {
             GXLogWriter.WriteLog(text, data);
+            if (parent.OnTrace != null)
+            {
+                parent.OnTrace(parent, text + "\r\n<- " + DateTime.Now.ToLongTimeString(), data);
+            }
             ReadDLMSPacket(data, reply);
+
             if (OnDataReceived != null)
             {
                 OnDataReceived(this, reply);
@@ -830,6 +834,11 @@ namespace GXDLMSDirector
                     {
                         GXLogWriter.WriteLog("Get Next Data block.");
                     }
+                    if (parent.OnTrace != null)
+                    {
+                        parent.OnTrace(parent, "<- " + DateTime.Now.ToLongTimeString(), data);
+                    }
+                    GXLogWriter.WriteLog(text, data);
                     ReadDLMSPacket(data, reply);
                     if (OnDataReceived != null)
                     {
@@ -1071,8 +1080,7 @@ namespace GXDLMSDirector
         {
             GXReplyData reply = new GXReplyData();
             byte[] data = client.GetKeepAlive();
-            GXLogWriter.WriteLog("Send Keep Alive", data);
-            ReadDLMSPacket(data, reply);
+            ReadDataBlock(data, "Send Keep Alive", reply);
         }
     }
 }

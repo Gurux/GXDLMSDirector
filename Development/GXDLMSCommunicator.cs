@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9716 $,
-//                  $Date: 2017-11-21 09:19:16 +0200 (ti, 21 marras 2017) $
+// Version:         $Revision: 9718 $,
+//                  $Date: 2017-11-21 10:23:05 +0200 (ti, 21 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -190,11 +190,7 @@ namespace GXDLMSDirector
             if (client.InterfaceType == InterfaceType.WRAPPER && media is GXNet && !parent.UseRemoteSerial)
             {
                 eop = null;
-            }
-            if (parent.OnTrace != null)
-            {
-                parent.OnTrace(parent, "<- " + DateTime.Now.ToLongTimeString(), data);
-            }
+            }           
             int pos = 0;
             bool succeeded = false;
             ReceiveParameters<byte[]> p = new ReceiveParameters<byte[]>()
@@ -258,7 +254,7 @@ namespace GXDLMSDirector
                 }
                 catch (Exception ex)
                 {
-                    GXLogWriter.WriteLog("Received data", p.Reply);
+                    GXLogWriter.WriteLog("Received data:", p.Reply);
                     throw ex;
                 }
             }
@@ -266,6 +262,7 @@ namespace GXDLMSDirector
             {
                 parent.OnTrace(parent, "-> " + DateTime.Now.ToLongTimeString(), p.Reply);
             }
+            GXLogWriter.WriteLog("Received data", p.Reply);
             if (reply.Error != 0)
             {
                 if (reply.Error == (int)ErrorCode.Rejected)
@@ -694,7 +691,7 @@ namespace GXDLMSDirector
                 data = SNRMRequest();
                 if (data != null)
                 {
-                    GXLogWriter.WriteLog("Send SNRM request.");
+                    GXLogWriter.WriteLog("Send SNRM request.", data);
                     ReadDLMSPacket(data, 1, reply);
                     GXLogWriter.WriteLog("Parsing UA reply succeeded.");
                     //Has server accepted client.
@@ -704,8 +701,7 @@ namespace GXDLMSDirector
                 //Split requests to multiple packets if needed.
                 //If password is used all data might not fit to one packet.
                 reply.Clear();
-                GXLogWriter.WriteLog("Send AARQ request.");
-                ReadDataBlock(AARQRequest(), "", reply);
+                ReadDataBlock(AARQRequest(), "Send AARQ request.", reply);
                 try
                 {
                     //Parse reply.
@@ -811,6 +807,7 @@ namespace GXDLMSDirector
         /// <returns>Received data.</returns>
         internal void ReadDataBlock(byte[] data, string text, int multiplier, GXReplyData reply)
         {
+            GXLogWriter.WriteLog(text, data);
             ReadDLMSPacket(data, reply);
             if (OnDataReceived != null)
             {

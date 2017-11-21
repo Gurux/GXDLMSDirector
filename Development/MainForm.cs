@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9716 $,
-//                  $Date: 2017-11-21 09:19:16 +0200 (ti, 21 marras 2017) $
+// Version:         $Revision: 9717 $,
+//                  $Date: 2017-11-21 09:55:01 +0200 (ti, 21 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -2228,9 +2228,9 @@ namespace GXDLMSDirector
                     foreach (GXDLMSHdlcSetup it in dev.Objects.GetObjects(ObjectType.IecHdlcSetup))
                     {
                         dev.Comm.ReadValue(it, 8);
-                        if (dev.InactivityTimeout > it.InactivityTimeout)
+                        if (dev.InactivityTimeout > it.InactivityTimeout && it.InactivityTimeout > 10)
                         {
-                            dev.InactivityTimeout = it.InactivityTimeout;
+                            dev.InactivityTimeout = it.InactivityTimeout - 5;
                         }
                     }
                     this.OnProgress(dev, "Reading scalers and units.", cnt, cnt);

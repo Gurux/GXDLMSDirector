@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9711 $,
-//                  $Date: 2017-11-20 18:52:14 +0200 (ma, 20 marras 2017) $
+// Version:         $Revision: 9716 $,
+//                  $Date: 2017-11-21 09:19:16 +0200 (ti, 21 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -87,11 +87,6 @@ namespace GXDLMSDirector
             this.LogicalServerAddLbl = new System.Windows.Forms.Label();
             this.AuthenticationCB = new System.Windows.Forms.ComboBox();
             this.AuthenticationLbl = new System.Windows.Forms.Label();
-            this.InactivityModeCB = new System.Windows.Forms.ComboBox();
-            this.InactivityModeLbl = new System.Windows.Forms.Label();
-            this.KeepAliveLbl = new System.Windows.Forms.Label();
-            this.KeepAliveIntervalTB = new System.Windows.Forms.NumericUpDown();
-            this.ForceKeepAliveCB = new System.Windows.Forms.CheckBox();
             this.WebAddressTB = new System.Windows.Forms.TextBox();
             this.WebAddressLbl = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -116,7 +111,6 @@ namespace GXDLMSDirector
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PhysicalServerAddTB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LogicalServerAddTB)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.KeepAliveIntervalTB)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage3.SuspendLayout();
@@ -201,7 +195,7 @@ namespace GXDLMSDirector
             // StartProtocolLbl
             // 
             this.StartProtocolLbl.AutoSize = true;
-            this.StartProtocolLbl.Location = new System.Drawing.Point(10, 137);
+            this.StartProtocolLbl.Location = new System.Drawing.Point(10, 79);
             this.StartProtocolLbl.Name = "StartProtocolLbl";
             this.StartProtocolLbl.Size = new System.Drawing.Size(74, 13);
             this.StartProtocolLbl.TabIndex = 20;
@@ -211,10 +205,10 @@ namespace GXDLMSDirector
             // 
             this.StartProtocolCB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.StartProtocolCB.FormattingEnabled = true;
-            this.StartProtocolCB.Location = new System.Drawing.Point(119, 134);
+            this.StartProtocolCB.Location = new System.Drawing.Point(119, 76);
             this.StartProtocolCB.Name = "StartProtocolCB";
             this.StartProtocolCB.Size = new System.Drawing.Size(194, 21);
-            this.StartProtocolCB.TabIndex = 9;
+            this.StartProtocolCB.TabIndex = 4;
             // 
             // AddressingGB
             // 
@@ -224,10 +218,10 @@ namespace GXDLMSDirector
             this.AddressingGB.Controls.Add(this.groupBox1);
             this.AddressingGB.Controls.Add(this.AuthenticationCB);
             this.AddressingGB.Controls.Add(this.AuthenticationLbl);
-            this.AddressingGB.Location = new System.Drawing.Point(3, 161);
+            this.AddressingGB.Location = new System.Drawing.Point(3, 103);
             this.AddressingGB.Name = "AddressingGB";
             this.AddressingGB.Size = new System.Drawing.Size(395, 188);
-            this.AddressingGB.TabIndex = 7;
+            this.AddressingGB.TabIndex = 5;
             this.AddressingGB.TabStop = false;
             this.AddressingGB.Text = "Addressing";
             // 
@@ -262,7 +256,7 @@ namespace GXDLMSDirector
             0});
             this.ClientAddTB.Name = "ClientAddTB";
             this.ClientAddTB.Size = new System.Drawing.Size(85, 20);
-            this.ClientAddTB.TabIndex = 11;
+            this.ClientAddTB.TabIndex = 6;
             this.ClientAddTB.Value = new decimal(new int[] {
             16,
             0,
@@ -293,7 +287,7 @@ namespace GXDLMSDirector
             this.ServerAddressTypeCB.Location = new System.Drawing.Point(97, 19);
             this.ServerAddressTypeCB.Name = "ServerAddressTypeCB";
             this.ServerAddressTypeCB.Size = new System.Drawing.Size(214, 21);
-            this.ServerAddressTypeCB.TabIndex = 12;
+            this.ServerAddressTypeCB.TabIndex = 7;
             this.ServerAddressTypeCB.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ServerAddressTypeCB_DrawItem);
             // 
             // label3
@@ -310,7 +304,7 @@ namespace GXDLMSDirector
             this.SerialNumberFormulaTB.Location = new System.Drawing.Point(143, 48);
             this.SerialNumberFormulaTB.Name = "SerialNumberFormulaTB";
             this.SerialNumberFormulaTB.Size = new System.Drawing.Size(173, 20);
-            this.SerialNumberFormulaTB.TabIndex = 13;
+            this.SerialNumberFormulaTB.TabIndex = 8;
             // 
             // SerialNumberFormulaLbl
             // 
@@ -341,7 +335,7 @@ namespace GXDLMSDirector
             0});
             this.PhysicalServerAddTB.Name = "PhysicalServerAddTB";
             this.PhysicalServerAddTB.Size = new System.Drawing.Size(85, 20);
-            this.PhysicalServerAddTB.TabIndex = 14;
+            this.PhysicalServerAddTB.TabIndex = 9;
             this.PhysicalServerAddTB.Value = new decimal(new int[] {
             1,
             0,
@@ -359,7 +353,7 @@ namespace GXDLMSDirector
             0});
             this.LogicalServerAddTB.Name = "LogicalServerAddTB";
             this.LogicalServerAddTB.Size = new System.Drawing.Size(85, 20);
-            this.LogicalServerAddTB.TabIndex = 15;
+            this.LogicalServerAddTB.TabIndex = 10;
             // 
             // LogicalServerAddLbl
             // 
@@ -377,7 +371,7 @@ namespace GXDLMSDirector
             this.AuthenticationCB.Location = new System.Drawing.Point(102, 19);
             this.AuthenticationCB.Name = "AuthenticationCB";
             this.AuthenticationCB.Size = new System.Drawing.Size(85, 21);
-            this.AuthenticationCB.TabIndex = 10;
+            this.AuthenticationCB.TabIndex = 5;
             this.AuthenticationCB.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.AuthenticationCB_DrawItem);
             // 
             // AuthenticationLbl
@@ -388,60 +382,6 @@ namespace GXDLMSDirector
             this.AuthenticationLbl.Size = new System.Drawing.Size(78, 13);
             this.AuthenticationLbl.TabIndex = 37;
             this.AuthenticationLbl.Text = "Authentication:";
-            // 
-            // InactivityModeCB
-            // 
-            this.InactivityModeCB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.InactivityModeCB.FormattingEnabled = true;
-            this.InactivityModeCB.Location = new System.Drawing.Point(119, 76);
-            this.InactivityModeCB.Name = "InactivityModeCB";
-            this.InactivityModeCB.Size = new System.Drawing.Size(194, 21);
-            this.InactivityModeCB.TabIndex = 6;
-            // 
-            // InactivityModeLbl
-            // 
-            this.InactivityModeLbl.AutoSize = true;
-            this.InactivityModeLbl.Location = new System.Drawing.Point(10, 79);
-            this.InactivityModeLbl.Name = "InactivityModeLbl";
-            this.InactivityModeLbl.Size = new System.Drawing.Size(82, 13);
-            this.InactivityModeLbl.TabIndex = 34;
-            this.InactivityModeLbl.Text = "Inactivity Mode:";
-            // 
-            // KeepAliveLbl
-            // 
-            this.KeepAliveLbl.AutoSize = true;
-            this.KeepAliveLbl.Location = new System.Drawing.Point(10, 106);
-            this.KeepAliveLbl.Name = "KeepAliveLbl";
-            this.KeepAliveLbl.Size = new System.Drawing.Size(95, 13);
-            this.KeepAliveLbl.TabIndex = 36;
-            this.KeepAliveLbl.Text = "Keepalive Interval:";
-            // 
-            // KeepAliveIntervalTB
-            // 
-            this.KeepAliveIntervalTB.Location = new System.Drawing.Point(119, 106);
-            this.KeepAliveIntervalTB.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.KeepAliveIntervalTB.Name = "KeepAliveIntervalTB";
-            this.KeepAliveIntervalTB.Size = new System.Drawing.Size(68, 20);
-            this.KeepAliveIntervalTB.TabIndex = 7;
-            this.KeepAliveIntervalTB.Value = new decimal(new int[] {
-            40,
-            0,
-            0,
-            0});
-            // 
-            // ForceKeepAliveCB
-            // 
-            this.ForceKeepAliveCB.AutoSize = true;
-            this.ForceKeepAliveCB.Location = new System.Drawing.Point(229, 106);
-            this.ForceKeepAliveCB.Name = "ForceKeepAliveCB";
-            this.ForceKeepAliveCB.Size = new System.Drawing.Size(53, 17);
-            this.ForceKeepAliveCB.TabIndex = 8;
-            this.ForceKeepAliveCB.Text = "Force";
-            this.ForceKeepAliveCB.UseVisualStyleBackColor = true;
             // 
             // WebAddressTB
             // 
@@ -475,15 +415,10 @@ namespace GXDLMSDirector
             this.tabPage1.Controls.Add(this.AddressingGB);
             this.tabPage1.Controls.Add(this.WebAddressTB);
             this.tabPage1.Controls.Add(this.WebAddressLbl);
-            this.tabPage1.Controls.Add(this.ForceKeepAliveCB);
             this.tabPage1.Controls.Add(this.NameLbl);
-            this.tabPage1.Controls.Add(this.KeepAliveIntervalTB);
             this.tabPage1.Controls.Add(this.NameTB);
-            this.tabPage1.Controls.Add(this.KeepAliveLbl);
             this.tabPage1.Controls.Add(this.label1);
-            this.tabPage1.Controls.Add(this.InactivityModeLbl);
             this.tabPage1.Controls.Add(this.ManufacturerIdTB);
-            this.tabPage1.Controls.Add(this.InactivityModeCB);
             this.tabPage1.Controls.Add(this.UseLNCB);
             this.tabPage1.Controls.Add(this.UseIEC47CB);
             this.tabPage1.Controls.Add(this.StartProtocolCB);
@@ -666,7 +601,6 @@ namespace GXDLMSDirector
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PhysicalServerAddTB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.LogicalServerAddTB)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.KeepAliveIntervalTB)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
@@ -691,12 +625,8 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label StartProtocolLbl;
         private System.Windows.Forms.ComboBox StartProtocolCB;
         private System.Windows.Forms.GroupBox AddressingGB;
-        private System.Windows.Forms.ComboBox InactivityModeCB;
-        private System.Windows.Forms.Label InactivityModeLbl;
         private System.Windows.Forms.ComboBox AuthenticationCB;
         private System.Windows.Forms.Label AuthenticationLbl;
-        private System.Windows.Forms.Label KeepAliveLbl;
-        private System.Windows.Forms.NumericUpDown KeepAliveIntervalTB;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label PhysicalServerAddLbl;
         private System.Windows.Forms.NumericUpDown PhysicalServerAddTB;
@@ -709,7 +639,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label SerialNumberFormulaLbl;
         private System.Windows.Forms.ComboBox ServerAddressTypeCB;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.CheckBox ForceKeepAliveCB;
         private System.Windows.Forms.TextBox WebAddressTB;
         private System.Windows.Forms.Label WebAddressLbl;
         private System.Windows.Forms.TabControl tabControl1;

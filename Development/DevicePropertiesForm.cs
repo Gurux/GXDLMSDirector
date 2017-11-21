@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9711 $,
-//                  $Date: 2017-11-20 18:52:14 +0200 (ma, 20 marras 2017) $
+// Version:         $Revision: 9716 $,
+//                  $Date: 2017-11-21 09:19:16 +0200 (ti, 21 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -326,6 +326,7 @@ namespace GXDLMSDirector
                 MaxInfoRXTb.Text = Device.MaxInfoRX.ToString();
                 WindowSizeTXTb.Text = Device.WindowSizeTX.ToString();
                 WindowSizeRXTb.Text = Device.WindowSizeRX.ToString();
+                InactivityTimeoutTb.Text = Device.InactivityTimeout.ToString();
             }
             catch (Exception Ex)
             {
@@ -618,7 +619,7 @@ namespace GXDLMSDirector
                 Device.MaxInfoRX = UInt16.Parse(MaxInfoRXTb.Text);
                 Device.WindowSizeTX = byte.Parse(WindowSizeTXTb.Text);
                 Device.WindowSizeRX = byte.Parse(WindowSizeRXTb.Text);
-
+                Device.InactivityTimeout = int.Parse(InactivityTimeoutTb.Text);
                 Device.Name = name;
                 Device.Media = SelectedMedia;
                 Device.Manufacturer = man.Identification;

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9442 $,
-//                  $Date: 2017-05-23 15:21:03 +0300 (ti, 23 touko 2017) $
+// Version:         $Revision: 9716 $,
+//                  $Date: 2017-11-21 09:19:16 +0200 (ti, 21 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -111,23 +111,15 @@ namespace GXDLMSDirector
             ServerAddressTypeCB.DrawMode = AuthenticationCB.DrawMode = DrawMode.OwnerDrawFixed;
             ClientAddTB.Value = authentication.ClientAddress;
 
-            InactivityModeCB.Items.Add(InactivityMode.None);
-            InactivityModeCB.Items.Add(InactivityMode.KeepAlive);
-            InactivityModeCB.Items.Add(InactivityMode.Reopen);
-            InactivityModeCB.Items.Add(InactivityMode.ReopenActive);
-            InactivityModeCB.Items.Add(InactivityMode.Disconnect);
             StartProtocolCB.Items.Add(StartProtocolType.IEC);
             StartProtocolCB.Items.Add(StartProtocolType.DLMS);
             NameTB.Text = manufacturer.Name;
             ManufacturerIdTB.Text = manufacturer.Identification;
-            ForceKeepAliveCB.Checked = manufacturer.ForceInactivity;
             UseLNCB.Checked = manufacturer.UseLogicalNameReferencing;
             UseIEC47CB.Checked = manufacturer.UseIEC47;
             StartProtocolCB.SelectedItem = manufacturer.StartProtocol;
-            InactivityModeCB.SelectedItem = Manufacturer.InactivityMode;
             //Manufacturer ID can not change after creation.
             ManufacturerIdTB.Enabled = string.IsNullOrEmpty(manufacturer.Identification);
-            KeepAliveIntervalTB.Value = Manufacturer.KeepAliveInterval / 1000;
             WebAddressTB.Text = Manufacturer.WebAddress;
             if (!string.IsNullOrEmpty(Manufacturer.Info))
             {
@@ -195,10 +187,7 @@ namespace GXDLMSDirector
                 Manufacturer.UseLogicalNameReferencing = UseLNCB.Checked;
                 Manufacturer.UseIEC47 = UseIEC47CB.Checked;
                 Manufacturer.StartProtocol = (StartProtocolType)StartProtocolCB.SelectedItem;
-                Manufacturer.InactivityMode = (InactivityMode)InactivityModeCB.SelectedItem;
-                Manufacturer.ForceInactivity = ForceKeepAliveCB.Checked;
                 GXAuthentication authentication = Manufacturer.GetActiveAuthentication();
-                Manufacturer.KeepAliveInterval = Convert.ToInt32(KeepAliveIntervalTB.Value) * 1000;
                 authentication.ClientAddress = Convert.ToInt32(this.ClientAddTB.Value);
                 //Save server values.
                 UpdateServer((GXServerAddress)ServerAddressTypeCB.SelectedItem);

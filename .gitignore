@@ -220,3 +220,5 @@ pip-log.txt
 Development/.vs/config/applicationhost.config
 *.lock
 *.ide
+*.ide-shm
+*.ide-wal

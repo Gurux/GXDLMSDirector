@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9711 $,
-//                  $Date: 2017-11-20 18:52:14 +0200 (ma, 20 marras 2017) $
+// Version:         $Revision: 9716 $,
+//                  $Date: 2017-11-21 09:19:16 +0200 (ti, 21 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -82,15 +82,6 @@ namespace GXDLMSDirector
         }
 
         [System.Xml.Serialization.XmlIgnore()]
-        public InactivityMode InactivityMode
-        {
-            get
-            {
-                return Manufacturers.FindByIdentification(Manufacturer).InactivityMode;
-            }
-        }
-
-        [System.Xml.Serialization.XmlIgnore()]
         public bool ForceInactivity
         {
             get
@@ -125,11 +116,8 @@ namespace GXDLMSDirector
 
         public void KeepAliveStart()
         {
-            if (InactivityMode != InactivityMode.None)
-            {
-                KeepAlive.Interval = Manufacturers.FindByIdentification(this.Manufacturer).KeepAliveInterval;
-                KeepAlive.Start();
-            }
+            KeepAlive.Interval = InactivityTimeout * 1000;
+            KeepAlive.Start();
         }
 
         public void KeepAliveStop()
@@ -417,8 +405,22 @@ namespace GXDLMSDirector
             {
                 communicator.client.Limits.WindowSizeRX = value;
             }
-
         }
+
+
+        /// <summary>
+        ///Inactivity timeout.
+        /// </summary>
+        /// <remarks>
+        /// DefaultValue is 120 second.
+        /// </remarks>
+        public int InactivityTimeout
+        {
+            get;
+            set;
+        }
+
+
 
         void NotifyProgress(object sender, string description, int current, int maximium)
         {
@@ -586,6 +588,7 @@ namespace GXDLMSDirector
             this.KeepAlive.Elapsed += new System.Timers.ElapsedEventHandler(KeepAlive_Elapsed);
             m_Status = DeviceState.Initialized;
             WaitTime = 5;
+            InactivityTimeout = 120;
         }
 
         /// <summary>
@@ -859,15 +862,14 @@ namespace GXDLMSDirector
                     }
                 }
                 GXLogWriter.WriteLog("--- Reading scalers and units end. ---");
-                /* TODO:
-                if (!m.UseLogicalNameReferencing)
+                if (!UseLogicalNameReferencing)
                 {
                     GXLogWriter.WriteLog("--- Reading Access rights. ---");
                     try
                     {
-                        foreach (GXDLMSAssociationShortName sn in dev.Objects.GetObjects(ObjectType.AssociationShortName))
+                        foreach (GXDLMSAssociationShortName sn in Objects.GetObjects(ObjectType.AssociationShortName))
                         {
-                            dev.Comm.Read(sn, 3);
+                            Comm.ReadValue(sn, 3);
                         }
                     }
                     catch (Exception ex)
@@ -876,7 +878,6 @@ namespace GXDLMSDirector
                     }
                     GXLogWriter.WriteLog("--- Reading Access rights end. ---");
                 }
-                 * */
                 this.OnProgress(this, "Reading profile generic columns.", cnt, cnt);
                 foreach (Gurux.DLMS.Objects.GXDLMSProfileGeneric it in objs.GetObjects(ObjectType.ProfileGeneric))
                 {
@@ -913,25 +914,8 @@ namespace GXDLMSDirector
         {
             try
             {
-                if (this.InactivityMode == InactivityMode.Disconnect)
-                {
-                    this.Disconnect();
-                }
-                else if (this.InactivityMode == InactivityMode.KeepAlive)
-                {
-                    NotifyProgress(this, "Keep Alive", 0, 1);
-                    communicator.KeepAlive();
-                }
-                else if (this.InactivityMode == InactivityMode.Reopen ||
-                         this.InactivityMode == InactivityMode.ReopenActive)
-                {
-                    if (DateTime.Now.Subtract(communicator.connectionStartTime).TotalSeconds > 40)
-                    {
-                        Disconnect();
-                        InitializeConnection();
-                        communicator.connectionStartTime = DateTime.Now;
-                    }
-                }
+                NotifyProgress(this, "Keep Alive", 0, 1);              
+                communicator.KeepAlive();
             }
             catch (Exception Ex)
             {

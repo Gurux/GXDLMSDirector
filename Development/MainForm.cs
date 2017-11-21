@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9711 $,
-//                  $Date: 2017-11-20 18:52:14 +0200 (ma, 20 marras 2017) $
+// Version:         $Revision: 9716 $,
+//                  $Date: 2017-11-21 09:19:16 +0200 (ti, 21 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -82,7 +82,10 @@ namespace GXDLMSDirector
         private byte traceLevel = 0;
 
         GXDLMSTranslator translator;
-        GXByteBuffer bb = new GXByteBuffer();
+        /// <summary>
+        /// Received trace data.
+        /// </summary>
+        GXByteBuffer receivedTraceData = new GXByteBuffer();
 
 
         GXDLMSDevice GetDevice(GXDLMSObject item)
@@ -224,8 +227,22 @@ namespace GXDLMSDirector
             }
         }
 
+        GXDLMSDevice selectedDevice;
+
         void UpdateDeviceUI(GXDLMSDevice device, DeviceState state)
         {
+            if (selectedDevice != null && selectedDevice != device)
+            {
+                receivedTraceData.Clear();
+                TraceView.ResetText();
+                selectedDevice.OnTrace = null;
+                selectedDevice = null;
+            }
+            if (device != null)
+            {
+                selectedDevice = device;
+                device.OnTrace = OnTrace;
+            }
             ConnectCMnu.Enabled = ConnectBtn.Enabled = ConnectMnu.Enabled = (state & DeviceState.Initialized) != 0;
             ReadCMnu.Enabled = ReadBtn.Enabled = RefreshMnu.Enabled = ReadMnu.Enabled = (state & DeviceState.Connected) == DeviceState.Connected;
             DisconnectCMnu.Enabled = DisconnectMnu.Enabled = ConnectBtn.Checked = (state & DeviceState.Connected) == DeviceState.Connected;
@@ -265,7 +282,7 @@ namespace GXDLMSDirector
                 }
                 else if (DeviceInfoView.Visible)
                 {
-                    GXDLMSDevice dev = (GXDLMSDevice)obj;
+                    GXDLMSDevice dev = (GXDLMSDevice)obj;                    
                     DeviceGb.Text = dev.Name;
                     StatusValueLbl.Text = dev.Status.ToString();
                     ClientAddressValueLbl.Text = dev.ClientAddress.ToString();
@@ -968,16 +985,8 @@ namespace GXDLMSDirector
                     {
                         if (!it.Media.IsOpen)
                         {
-                            try
-                            {
-                                it.OnTrace += new MessageTraceEventHandler(OnTrace);
-                                this.OnProgress(null, "Connecting", ++pos, cnt);
-                                it.InitializeConnection();
-                            }
-                            finally
-                            {
-                                it.OnTrace -= new MessageTraceEventHandler(OnTrace);
-                            }
+                            this.OnProgress(null, "Connecting", ++pos, cnt);
+                            it.InitializeConnection();
                         }
                     }
                 }
@@ -985,19 +994,11 @@ namespace GXDLMSDirector
                 {
                     if (!((GXDLMSDevice)obj).Media.IsOpen)
                     {
-                        try
+                        this.OnProgress(null, "Connecting", 0, 1);
+                        ((GXDLMSDevice)obj).InitializeConnection();
+                        if (InvokeRequired)
                         {
-                            ((GXDLMSDevice)obj).OnTrace += new MessageTraceEventHandler(OnTrace);
-                            this.OnProgress(null, "Connecting", 0, 1);
-                            ((GXDLMSDevice)obj).InitializeConnection();
-                            if (InvokeRequired)
-                            {
-                                BeginInvoke(new UpdateConformance(this.OnUpdateConformance), (GXDLMSDevice)obj);
-                            }
-                        }
-                        finally
-                        {
-                            ((GXDLMSDevice)obj).OnTrace -= new MessageTraceEventHandler(OnTrace);
+                            BeginInvoke(new UpdateConformance(this.OnUpdateConformance), (GXDLMSDevice)obj);
                         }
                     }
                 }
@@ -1022,15 +1023,7 @@ namespace GXDLMSDirector
                     GXDLMSDevice dev = tmp.Parent.Tag as GXDLMSDevice;
                     if (!dev.Media.IsOpen)
                     {
-                        try
-                        {
-                            dev.OnTrace += new MessageTraceEventHandler(OnTrace);
-                            dev.InitializeConnection();
-                        }
-                        finally
-                        {
-                            dev.OnTrace -= new MessageTraceEventHandler(OnTrace);
-                        }
+                        dev.InitializeConnection();
                     }
                 }
             }
@@ -1081,29 +1074,13 @@ namespace GXDLMSDirector
                     foreach (GXDLMSDevice it in (GXDLMSDeviceCollection)obj)
                     {
                         (sender as Form).BeginInvoke(new ProgressEventHandler(this.OnProgress), null, "Disconnecting", ++pos, cnt);
-                        try
-                        {
-                            it.OnTrace += new MessageTraceEventHandler(OnTrace);
-                            it.Disconnect();
-                        }
-                        finally
-                        {
-                            it.OnTrace -= new MessageTraceEventHandler(OnTrace);
-                        }
+                        it.Disconnect();
                     }
                 }
                 else if (obj is GXDLMSDevice)
                 {
                     (sender as Form).BeginInvoke(new ProgressEventHandler(this.OnProgress), null, "Disconnecting", 0, 1);
-                    try
-                    {
-                        ((GXDLMSDevice)obj).OnTrace += new MessageTraceEventHandler(OnTrace);
-                        ((GXDLMSDevice)obj).Disconnect();
-                    }
-                    finally
-                    {
-                        ((GXDLMSDevice)obj).OnTrace -= new MessageTraceEventHandler(OnTrace);
-                    }
+                    ((GXDLMSDevice)obj).Disconnect();
                 }
                 else if (obj is GXDLMSObjectCollection)
                 {
@@ -1124,15 +1101,7 @@ namespace GXDLMSDirector
                     (sender as Form).BeginInvoke(new ProgressEventHandler(OnProgress), sender, "Disconnecting", 0, 1);
                     GXDLMSObject tmp = obj as GXDLMSObject;
                     GXDLMSDevice dev = tmp.Parent.Tag as GXDLMSDevice;
-                    try
-                    {
-                        dev.OnTrace += new MessageTraceEventHandler(OnTrace);
-                        dev.Disconnect();
-                    }
-                    finally
-                    {
-                        dev.OnTrace -= new MessageTraceEventHandler(OnTrace);
-                    }
+                    dev.Disconnect();
                 }
             }
             catch (ThreadAbortException)
@@ -1463,7 +1432,6 @@ namespace GXDLMSDirector
             {
                 dev.Comm.OnBeforeRead += new ReadEventHandler(OnBeforeRead);
                 dev.Comm.OnAfterRead += new ReadEventHandler(OnAfterRead);
-                dev.OnTrace += new MessageTraceEventHandler(OnTrace);
                 dev.KeepAliveStop();
                 int cnt = dev.Objects.Count;
                 if (cnt == 0)
@@ -1488,7 +1456,6 @@ namespace GXDLMSDirector
             {
                 dev.Comm.OnBeforeRead -= new ReadEventHandler(OnBeforeRead);
                 dev.Comm.OnAfterRead -= new ReadEventHandler(OnAfterRead);
-                dev.OnTrace -= new MessageTraceEventHandler(OnTrace);
                 dev.KeepAliveStart();
             }
         }
@@ -1511,20 +1478,20 @@ namespace GXDLMSDirector
                 else if (traceLevel == 2 || traceLevel == 3)
                 {
                     //Show data as xml or pdu.
-                    bb.Set(data);
+                    receivedTraceData.Set(data);
                     try
                     {
                         GXByteBuffer pdu = new GXByteBuffer();
-                        InterfaceType type = GXDLMSTranslator.GetDlmsFraming(bb);
-                        if (translator.FindNextFrame(bb, pdu, type))
+                        InterfaceType type = GXDLMSTranslator.GetDlmsFraming(receivedTraceData);
+                        if (translator.FindNextFrame(receivedTraceData, pdu, type))
                         {
-                            TraceView.AppendText(translator.MessageToXml(bb));
-                            bb.Clear();
+                            TraceView.AppendText(translator.MessageToXml(receivedTraceData));
+                            receivedTraceData.Clear();
                         }
                     }
                     catch (Exception ex)
                     {
-                        bb.Clear();
+                        receivedTraceData.Clear();
                         TraceView.ResetText();
                         TraceView.AppendText(ex.Message + Environment.NewLine);
                         TraceView.AppendText(trace + " " + GXCommon.ToHex(data, true) + Environment.NewLine);
@@ -1651,14 +1618,12 @@ namespace GXDLMSDirector
                         {
                             dev.Comm.OnBeforeRead += new ReadEventHandler(OnBeforeRead);
                             dev.Comm.OnAfterRead += new ReadEventHandler(OnAfterRead);
-                            dev.OnTrace += new MessageTraceEventHandler(OnTrace);
                             dev.Comm.Read(this, obj, 0, ForceRefreshBtn.Checked);
                         }
                         finally
                         {
                             dev.Comm.OnBeforeRead -= new ReadEventHandler(OnBeforeRead);
                             dev.Comm.OnAfterRead -= new ReadEventHandler(OnAfterRead);
-                            dev.OnTrace -= new MessageTraceEventHandler(OnTrace);
                         }
                         DLMSItemOnChange(obj, false, 0, null);
                         dev.KeepAliveStart();
@@ -1681,14 +1646,12 @@ namespace GXDLMSDirector
                             {
                                 dev.Comm.OnBeforeRead += new ReadEventHandler(OnBeforeRead);
                                 dev.Comm.OnAfterRead += new ReadEventHandler(OnAfterRead);
-                                dev.OnTrace += new MessageTraceEventHandler(OnTrace);
                                 dev.Comm.Read(this, obj, 0, ForceRefreshBtn.Checked);
                             }
                             finally
                             {
                                 dev.Comm.OnBeforeRead -= new ReadEventHandler(OnBeforeRead);
                                 dev.Comm.OnAfterRead -= new ReadEventHandler(OnAfterRead);
-                                dev.OnTrace -= new MessageTraceEventHandler(OnTrace);
                             }
                             DLMSItemOnChange(obj, false, 0, null);
                         }
@@ -2233,63 +2196,45 @@ namespace GXDLMSDirector
                 TreeNode deviceNode = (TreeNode)ObjectTreeItems[dev];
                 if (bRefresh)
                 {
-                    try
+                    OnProgress(dev, "Refresh device", 0, 1);
+                    UpdateTransaction(true);
+                    RemoveObject(dev);
+                    while (dev.Objects.Count != 0)
                     {
-                        dev.OnTrace += new MessageTraceEventHandler(OnTrace);
-                        OnProgress(dev, "Refresh device", 0, 1);
-                        UpdateTransaction(true);
-                        RemoveObject(dev);
-                        while (dev.Objects.Count != 0)
-                        {
-                            RemoveObject(dev.Objects[0]);
-                        }
-                        GXManufacturer m = Manufacturers.FindByIdentification(dev.Manufacturer);
-                        dev.ObisCodes = m.ObisCodes;
-                        //Walk through object tree.
-                        dev.UpdateObjects();
-                        GroupItems(GroupsMnu.Checked);
-                        //Read registers units and scalers.
-                        int cnt = dev.Objects.Count;
-                        GXLogWriter.WriteLog("--- Reading scalers and units. ---");
-                        for (int pos = 0; pos != cnt; ++pos)
-                        {
-                            GXDLMSObject it = dev.Objects[pos];
-                            GXObisCode obj = m.ObisCodes.FindByLN(it.ObjectType, it.LogicalName, null);
-                            if (obj != null)
-                            {
-                                UpdateFromObisCode(it, obj);
-                            }
-                            else
-                            {
-                                continue;
-                            }
-                        }
-                        GXLogWriter.WriteLog("--- Reading scalers and units end. ---");
-                        /* TODO:
-                        if (!m.UseLogicalNameReferencing)
-                        {
-                            GXLogWriter.WriteLog("--- Reading Access rights. ---");
-                            try
-                            {
-                                foreach (GXDLMSAssociationShortName sn in dev.Objects.GetObjects(ObjectType.AssociationShortName))
-                                {
-                                    dev.Comm.Read(sn, 3);
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                GXLogWriter.WriteLog(ex.Message);
-                            }
-                            GXLogWriter.WriteLog("--- Reading Access rights end. ---");
-                        }
-                         * */
-                        this.OnProgress(dev, "Reading scalers and units.", cnt, cnt);
-                        GroupItems(GroupsMnu.Checked);
+                        RemoveObject(dev.Objects[0]);
                     }
-                    finally
+                    GXManufacturer m = Manufacturers.FindByIdentification(dev.Manufacturer);
+                    dev.ObisCodes = m.ObisCodes;
+                    //Walk through object tree.
+                    dev.UpdateObjects();
+                    GroupItems(GroupsMnu.Checked);
+                    //Read registers units and scalers.
+                    int cnt = dev.Objects.Count;
+                    for (int pos = 0; pos != cnt; ++pos)
                     {
-                        dev.OnTrace -= new MessageTraceEventHandler(OnTrace);
+                        GXDLMSObject it = dev.Objects[pos];
+                        GXObisCode obj = m.ObisCodes.FindByLN(it.ObjectType, it.LogicalName, null);
+                        if (obj != null)
+                        {
+                            UpdateFromObisCode(it, obj);
+                        }
+                        else
+                        {
+                            continue;
+                        }
                     }
+                    //Read inactivity timeout.
+                    dev.InactivityTimeout = 120;
+                    foreach (GXDLMSHdlcSetup it in dev.Objects.GetObjects(ObjectType.IecHdlcSetup))
+                    {
+                        dev.Comm.ReadValue(it, 8);
+                        if (dev.InactivityTimeout > it.InactivityTimeout)
+                        {
+                            dev.InactivityTimeout = it.InactivityTimeout;
+                        }
+                    }
+                    this.OnProgress(dev, "Reading scalers and units.", cnt, cnt);
+                    GroupItems(GroupsMnu.Checked);
                 }
             }
             catch (ThreadAbortException)
@@ -2423,16 +2368,8 @@ namespace GXDLMSDirector
                     ClearTrace();
                     GXDLMSProfileGeneric pg = (GXDLMSProfileGeneric)parameters[0];
                     GXDLMSDevice dev = pg.Parent.Tag as GXDLMSDevice;
-                    dev.OnTrace += new MessageTraceEventHandler(OnTrace);
-                    try
-                    {
-                        dev.UpdateColumns(pg, dev.Manufacturers.FindByIdentification(dev.Manufacturer));
-                        ((GXDLMSProfileGenericView)SelectedView).Target = parameters[0] as GXDLMSProfileGeneric;
-                    }
-                    finally
-                    {
-                        dev.OnTrace -= new MessageTraceEventHandler(OnTrace);
-                    }
+                    dev.UpdateColumns(pg, dev.Manufacturers.FindByIdentification(dev.Manufacturer));
+                    ((GXDLMSProfileGenericView)SelectedView).Target = parameters[0] as GXDLMSProfileGeneric;
                 }
                 else
                 {
@@ -3320,6 +3257,11 @@ namespace GXDLMSDirector
                 GXCommon.ShowError(Ex);
             }
 
+        }
+
+        private void ObjectTree_BeforeSelect(object sender, TreeViewCancelEventArgs e)
+        {
+            
         }
     }
 }

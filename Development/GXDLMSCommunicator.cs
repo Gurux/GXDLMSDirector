@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9686 $,
-//                  $Date: 2017-11-16 10:18:39 +0200 (to, 16 marras 2017) $
+// Version:         $Revision: 9716 $,
+//                  $Date: 2017-11-21 09:19:16 +0200 (ti, 21 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -129,7 +129,7 @@ namespace GXDLMSDirector
         byte[] DisconnectRequest()
         {
             byte[] data = client.DisconnectRequest();
-            GXLogWriter.WriteLog("Disconnect request", data);
+            GXLogWriter.WriteLog("Disconnect request");
             return data;
         }
 
@@ -266,7 +266,6 @@ namespace GXDLMSDirector
             {
                 parent.OnTrace(parent, "-> " + DateTime.Now.ToLongTimeString(), p.Reply);
             }
-            GXLogWriter.WriteLog("Received data", p.Reply);
             if (reply.Error != 0)
             {
                 if (reply.Error == (int)ErrorCode.Rejected)
@@ -695,22 +694,23 @@ namespace GXDLMSDirector
                 data = SNRMRequest();
                 if (data != null)
                 {
-                    GXLogWriter.WriteLog("Send SNRM request.", data);
+                    GXLogWriter.WriteLog("Send SNRM request.");
                     ReadDLMSPacket(data, 1, reply);
-                    GXLogWriter.WriteLog("Parsing UA reply.\r\n" + reply.Data.ToString());
+                    GXLogWriter.WriteLog("Parsing UA reply succeeded.");
                     //Has server accepted client.
                     ParseUAResponse(reply.Data);
-                    GXLogWriter.WriteLog("Parsing UA reply succeeded.");
                 }
                 //Generate AARQ request.
                 //Split requests to multiple packets if needed.
                 //If password is used all data might not fit to one packet.
                 reply.Clear();
+                GXLogWriter.WriteLog("Send AARQ request.");
                 ReadDataBlock(AARQRequest(), "", reply);
                 try
                 {
                     //Parse reply.
                     ParseAAREResponse(reply.Data);
+                    GXLogWriter.WriteLog("Parsing AARE reply succeeded.");
                 }
                 catch (Exception Ex)
                 {
@@ -748,7 +748,6 @@ namespace GXDLMSDirector
                 }
                 throw ex;
             }
-            GXLogWriter.WriteLog("Parsing AARE reply succeeded.");
             parent.KeepAliveStart();
         }
 
@@ -812,12 +811,6 @@ namespace GXDLMSDirector
         /// <returns>Received data.</returns>
         internal void ReadDataBlock(byte[] data, string text, int multiplier, GXReplyData reply)
         {
-            if (parent.InactivityMode == InactivityMode.ReopenActive && media is GXSerial && DateTime.Now.Subtract(connectionStartTime).TotalSeconds > 40)
-            {
-                parent.Disconnect();
-                parent.InitializeConnection();
-            }
-            GXLogWriter.WriteLog(text, data);
             ReadDLMSPacket(data, reply);
             if (OnDataReceived != null)
             {
@@ -834,11 +827,11 @@ namespace GXDLMSDirector
                     data = client.ReceiverReady(reply.MoreData);
                     if ((reply.MoreData & RequestTypes.Frame) != 0)
                     {
-                        GXLogWriter.WriteLog("Get next frame: ", data);
+                        GXLogWriter.WriteLog("Get next frame.");
                     }
                     else
                     {
-                        GXLogWriter.WriteLog("Get Next Data block: ", data);
+                        GXLogWriter.WriteLog("Get Next Data block.");
                     }
                     ReadDLMSPacket(data, reply);
                     if (OnDataReceived != null)

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9711 $,
-//                  $Date: 2017-11-20 18:52:14 +0200 (ma, 20 marras 2017) $
+// Version:         $Revision: 9716 $,
+//                  $Date: 2017-11-21 09:19:16 +0200 (ti, 21 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -580,7 +580,7 @@ namespace GXDLMSDirector
             // EventsMnu
             // 
             this.EventsMnu.Name = "EventsMnu";
-            this.EventsMnu.Size = new System.Drawing.Size(152, 22);
+            this.EventsMnu.Size = new System.Drawing.Size(131, 22);
             this.EventsMnu.Text = "View";
             this.EventsMnu.ToolTipText = "Show notifications view.";
             this.EventsMnu.Click += new System.EventHandler(this.viewToolStripMenuItem1_Click);
@@ -588,7 +588,7 @@ namespace GXDLMSDirector
             // PduOnly
             // 
             this.PduOnly.Name = "PduOnly";
-            this.PduOnly.Size = new System.Drawing.Size(152, 22);
+            this.PduOnly.Size = new System.Drawing.Size(131, 22);
             this.PduOnly.Text = "PDU only";
             this.PduOnly.ToolTipText = "Only PDU is shown.";
             this.PduOnly.Click += new System.EventHandler(this.NotificationAsPdu_Click);
@@ -596,7 +596,7 @@ namespace GXDLMSDirector
             // ShowNotificationAsHex
             // 
             this.ShowNotificationAsHex.Name = "ShowNotificationAsHex";
-            this.ShowNotificationAsHex.Size = new System.Drawing.Size(152, 22);
+            this.ShowNotificationAsHex.Size = new System.Drawing.Size(131, 22);
             this.ShowNotificationAsHex.Text = "Hex";
             this.ShowNotificationAsHex.ToolTipText = "Show received notification as hex.";
             this.ShowNotificationAsHex.Click += new System.EventHandler(this.ShowNotificationAsHex_Click);
@@ -604,7 +604,7 @@ namespace GXDLMSDirector
             // AutoReset
             // 
             this.AutoReset.Name = "AutoReset";
-            this.AutoReset.Size = new System.Drawing.Size(152, 22);
+            this.AutoReset.Size = new System.Drawing.Size(131, 22);
             this.AutoReset.Text = "Auto Reset";
             this.AutoReset.ToolTipText = "Clear notifications view after new message is received.";
             this.AutoReset.Click += new System.EventHandler(this.AutoReset_Click);
@@ -612,12 +612,12 @@ namespace GXDLMSDirector
             // toolStripMenuItem13
             // 
             this.toolStripMenuItem13.Name = "toolStripMenuItem13";
-            this.toolStripMenuItem13.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem13.Size = new System.Drawing.Size(128, 6);
             // 
             // StartNotifications
             // 
             this.StartNotifications.Name = "StartNotifications";
-            this.StartNotifications.Size = new System.Drawing.Size(152, 22);
+            this.StartNotifications.Size = new System.Drawing.Size(131, 22);
             this.StartNotifications.Text = "Start";
             this.StartNotifications.ToolTipText = "Start receiving notifications";
             this.StartNotifications.Click += new System.EventHandler(this.StartNotifications_Click);
@@ -625,7 +625,7 @@ namespace GXDLMSDirector
             // StopNotifications
             // 
             this.StopNotifications.Name = "StopNotifications";
-            this.StopNotifications.Size = new System.Drawing.Size(152, 22);
+            this.StopNotifications.Size = new System.Drawing.Size(131, 22);
             this.StopNotifications.Text = "Stop";
             this.StopNotifications.ToolTipText = "Stop receiving notifications.";
             this.StopNotifications.Visible = false;
@@ -634,12 +634,12 @@ namespace GXDLMSDirector
             // toolStripMenuItem14
             // 
             this.toolStripMenuItem14.Name = "toolStripMenuItem14";
-            this.toolStripMenuItem14.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem14.Size = new System.Drawing.Size(128, 6);
             // 
             // ClearNotifications
             // 
             this.ClearNotifications.Name = "ClearNotifications";
-            this.ClearNotifications.Size = new System.Drawing.Size(152, 22);
+            this.ClearNotifications.Size = new System.Drawing.Size(131, 22);
             this.ClearNotifications.Text = "Clear";
             this.ClearNotifications.ToolTipText = "Clear received notification.";
             this.ClearNotifications.Click += new System.EventHandler(this.ClearNotifications_Click);
@@ -1083,6 +1083,7 @@ namespace GXDLMSDirector
             this.ObjectTree.SelectedImageIndex = 0;
             this.ObjectTree.Size = new System.Drawing.Size(186, 433);
             this.ObjectTree.TabIndex = 3;
+            this.ObjectTree.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.ObjectTree_BeforeSelect);
             this.ObjectTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.ObjectTree_AfterSelect);
             this.ObjectTree.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ObjectTree_MouseUp);
             // 

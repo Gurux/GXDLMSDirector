@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9711 $,
-//                  $Date: 2017-11-20 18:52:14 +0200 (ma, 20 marras 2017) $
+// Version:         $Revision: 9716 $,
+//                  $Date: 2017-11-21 09:19:16 +0200 (ti, 21 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -163,6 +163,8 @@ namespace GXDLMSDirector
             this.AdvancedTab = new System.Windows.Forms.TabPage();
             this.UseWrapperCb = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.InactivityTimeoutTb = new System.Windows.Forms.TextBox();
+            this.InactivityTimeoutLbl = new System.Windows.Forms.Label();
             this.WindowSizeRXTb = new System.Windows.Forms.TextBox();
             this.WindowSizeRXLbl = new System.Windows.Forms.Label();
             this.WindowSizeTXTb = new System.Windows.Forms.TextBox();
@@ -198,7 +200,7 @@ namespace GXDLMSDirector
             this.CancelBtn.Location = new System.Drawing.Point(323, 422);
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.Size = new System.Drawing.Size(75, 23);
-            this.CancelBtn.TabIndex = 15;
+            this.CancelBtn.TabIndex = 9;
             this.CancelBtn.Text = "&Cancel";
             this.CancelBtn.UseVisualStyleBackColor = true;
             this.CancelBtn.Click += new System.EventHandler(this.CancelBtn_Click);
@@ -210,7 +212,7 @@ namespace GXDLMSDirector
             this.OKBtn.Location = new System.Drawing.Point(242, 422);
             this.OKBtn.Name = "OKBtn";
             this.OKBtn.Size = new System.Drawing.Size(75, 23);
-            this.OKBtn.TabIndex = 14;
+            this.OKBtn.TabIndex = 8;
             this.OKBtn.Text = "&OK";
             this.OKBtn.UseVisualStyleBackColor = true;
             this.OKBtn.Click += new System.EventHandler(this.OKBtn_Click);
@@ -221,7 +223,7 @@ namespace GXDLMSDirector
             this.InitialSettingsBtn.Location = new System.Drawing.Point(10, 422);
             this.InitialSettingsBtn.Name = "InitialSettingsBtn";
             this.InitialSettingsBtn.Size = new System.Drawing.Size(117, 23);
-            this.InitialSettingsBtn.TabIndex = 16;
+            this.InitialSettingsBtn.TabIndex = 7;
             this.InitialSettingsBtn.Text = "Initial settings...";
             this.InitialSettingsBtn.UseVisualStyleBackColor = true;
             this.InitialSettingsBtn.Click += new System.EventHandler(this.InitialSettingsBtn_Click);
@@ -1403,16 +1405,18 @@ namespace GXDLMSDirector
             this.UseWrapperCb.AutoSize = true;
             this.helpProvider1.SetHelpKeyword(this.UseWrapperCb, "UseWrapper");
             this.helpProvider1.SetHelpNavigator(this.UseWrapperCb, System.Windows.Forms.HelpNavigator.Topic);
-            this.UseWrapperCb.Location = new System.Drawing.Point(8, 142);
+            this.UseWrapperCb.Location = new System.Drawing.Point(20, 172);
             this.UseWrapperCb.Name = "UseWrapperCb";
             this.helpProvider1.SetShowHelp(this.UseWrapperCb, true);
             this.UseWrapperCb.Size = new System.Drawing.Size(103, 17);
-            this.UseWrapperCb.TabIndex = 4;
+            this.UseWrapperCb.TabIndex = 5;
             this.UseWrapperCb.Text = "Use WRAPPER";
             this.UseWrapperCb.UseVisualStyleBackColor = true;
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.InactivityTimeoutTb);
+            this.groupBox1.Controls.Add(this.InactivityTimeoutLbl);
             this.groupBox1.Controls.Add(this.WindowSizeRXTb);
             this.groupBox1.Controls.Add(this.WindowSizeRXLbl);
             this.groupBox1.Controls.Add(this.WindowSizeTXTb);
@@ -1426,10 +1430,29 @@ namespace GXDLMSDirector
             this.groupBox1.Location = new System.Drawing.Point(6, 6);
             this.groupBox1.Name = "groupBox1";
             this.helpProvider1.SetShowHelp(this.groupBox1, true);
-            this.groupBox1.Size = new System.Drawing.Size(375, 130);
+            this.groupBox1.Size = new System.Drawing.Size(375, 160);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "HDLC settings";
+            // 
+            // InactivityTimeoutTb
+            // 
+            this.helpProvider1.SetHelpKeyword(this.InactivityTimeoutTb, "InactivityTimeout");
+            this.helpProvider1.SetHelpNavigator(this.InactivityTimeoutTb, System.Windows.Forms.HelpNavigator.Topic);
+            this.InactivityTimeoutTb.Location = new System.Drawing.Point(140, 123);
+            this.InactivityTimeoutTb.Name = "InactivityTimeoutTb";
+            this.helpProvider1.SetShowHelp(this.InactivityTimeoutTb, true);
+            this.InactivityTimeoutTb.Size = new System.Drawing.Size(77, 20);
+            this.InactivityTimeoutTb.TabIndex = 4;
+            // 
+            // InactivityTimeoutLbl
+            // 
+            this.InactivityTimeoutLbl.AutoSize = true;
+            this.InactivityTimeoutLbl.Location = new System.Drawing.Point(10, 127);
+            this.InactivityTimeoutLbl.Name = "InactivityTimeoutLbl";
+            this.InactivityTimeoutLbl.Size = new System.Drawing.Size(86, 13);
+            this.InactivityTimeoutLbl.TabIndex = 46;
+            this.InactivityTimeoutLbl.Text = "Inactivity timeout";
             // 
             // WindowSizeRXTb
             // 
@@ -1512,11 +1535,11 @@ namespace GXDLMSDirector
             this.UseUtcTimeZone.AutoSize = true;
             this.helpProvider1.SetHelpKeyword(this.UseUtcTimeZone, "UseUTC");
             this.helpProvider1.SetHelpNavigator(this.UseUtcTimeZone, System.Windows.Forms.HelpNavigator.Topic);
-            this.UseUtcTimeZone.Location = new System.Drawing.Point(8, 165);
+            this.UseUtcTimeZone.Location = new System.Drawing.Point(20, 195);
             this.UseUtcTimeZone.Name = "UseUtcTimeZone";
             this.helpProvider1.SetShowHelp(this.UseUtcTimeZone, true);
             this.UseUtcTimeZone.Size = new System.Drawing.Size(183, 17);
-            this.UseUtcTimeZone.TabIndex = 5;
+            this.UseUtcTimeZone.TabIndex = 6;
             this.UseUtcTimeZone.Text = "Use UTC time zone, not standard";
             this.UseUtcTimeZone.UseVisualStyleBackColor = true;
             // 
@@ -1689,5 +1712,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.CheckBox UseWrapperCb;
         private System.Windows.Forms.HelpProvider helpProvider1;
         private System.Windows.Forms.HelpProvider conformanceHelpProvider;
+        private System.Windows.Forms.TextBox InactivityTimeoutTb;
+        private System.Windows.Forms.Label InactivityTimeoutLbl;
     }
 }

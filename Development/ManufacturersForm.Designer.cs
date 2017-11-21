@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9442 $,
-//                  $Date: 2017-05-23 15:21:03 +0300 (ti, 23 touko 2017) $
+// Version:         $Revision: 9716 $,
+//                  $Date: 2017-11-21 09:19:16 +0200 (ti, 21 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -70,8 +70,6 @@ namespace GXDLMSDirector
             this.NameCH = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.InactivityModeTB = new System.Windows.Forms.TextBox();
-            this.InactivityModeLbl = new System.Windows.Forms.Label();
             this.StartProtocolTB = new System.Windows.Forms.TextBox();
             this.StartProtocolLbl = new System.Windows.Forms.Label();
             this.EditBtn = new System.Windows.Forms.Button();
@@ -165,8 +163,6 @@ namespace GXDLMSDirector
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.InactivityModeTB);
-            this.panel2.Controls.Add(this.InactivityModeLbl);
             this.panel2.Controls.Add(this.StartProtocolTB);
             this.panel2.Controls.Add(this.StartProtocolLbl);
             this.panel2.Controls.Add(this.EditBtn);
@@ -184,25 +180,9 @@ namespace GXDLMSDirector
             this.panel2.Size = new System.Drawing.Size(257, 316);
             this.panel2.TabIndex = 14;
             // 
-            // InactivityModeTB
-            // 
-            this.InactivityModeTB.Location = new System.Drawing.Point(116, 117);
-            this.InactivityModeTB.Name = "InactivityModeTB";
-            this.InactivityModeTB.Size = new System.Drawing.Size(129, 20);
-            this.InactivityModeTB.TabIndex = 25;
-            // 
-            // InactivityModeLbl
-            // 
-            this.InactivityModeLbl.AutoSize = true;
-            this.InactivityModeLbl.Location = new System.Drawing.Point(10, 121);
-            this.InactivityModeLbl.Name = "InactivityModeLbl";
-            this.InactivityModeLbl.Size = new System.Drawing.Size(82, 13);
-            this.InactivityModeLbl.TabIndex = 24;
-            this.InactivityModeLbl.Text = "Inactivity Mode:";
-            // 
             // StartProtocolTB
             // 
-            this.StartProtocolTB.Location = new System.Drawing.Point(116, 143);
+            this.StartProtocolTB.Location = new System.Drawing.Point(116, 121);
             this.StartProtocolTB.Name = "StartProtocolTB";
             this.StartProtocolTB.Size = new System.Drawing.Size(129, 20);
             this.StartProtocolTB.TabIndex = 22;
@@ -210,7 +190,7 @@ namespace GXDLMSDirector
             // StartProtocolLbl
             // 
             this.StartProtocolLbl.AutoSize = true;
-            this.StartProtocolLbl.Location = new System.Drawing.Point(10, 147);
+            this.StartProtocolLbl.Location = new System.Drawing.Point(10, 125);
             this.StartProtocolLbl.Name = "StartProtocolLbl";
             this.StartProtocolLbl.Size = new System.Drawing.Size(74, 13);
             this.StartProtocolLbl.TabIndex = 21;
@@ -344,8 +324,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ColumnHeader NameCH;
         private System.Windows.Forms.TextBox StartProtocolTB;
         private System.Windows.Forms.Label StartProtocolLbl;
-        private System.Windows.Forms.TextBox InactivityModeTB;
-        private System.Windows.Forms.Label InactivityModeLbl;
         private System.Windows.Forms.Button DownloadLatestBtn;
 
     }

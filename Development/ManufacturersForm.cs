@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9442 $,
-//                  $Date: 2017-05-23 15:21:03 +0300 (ti, 23 touko 2017) $
+// Version:         $Revision: 9716 $,
+//                  $Date: 2017-11-21 09:19:16 +0200 (ti, 21 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -55,7 +55,7 @@ namespace GXDLMSDirector
             InitializeComponent();
             NameCH.Width = -2;
             UpdateValues();
-            InactivityModeTB.Enabled = StartProtocolTB.Enabled = NameTB.Enabled = ManufacturerIdTB.Enabled = UseLNCB.Enabled = UseIEC47CB.Enabled = false;
+            StartProtocolTB.Enabled = NameTB.Enabled = ManufacturerIdTB.Enabled = UseLNCB.Enabled = UseIEC47CB.Enabled = false;
             ManufacturersOriginal = manufacturers;
 
             //Create clone from original items.
@@ -191,11 +191,10 @@ namespace GXDLMSDirector
                 UseLNCB.Checked = m.UseLogicalNameReferencing;
                 UseIEC47CB.Checked = m.UseIEC47;
                 StartProtocolTB.Text = m.StartProtocol.ToString();
-                InactivityModeTB.Text = m.InactivityMode.ToString();
             }
             else
             {
-                InactivityModeTB.Text = StartProtocolTB.Text = NameTB.Text = ManufacturerIdTB.Text = "";
+                StartProtocolTB.Text = NameTB.Text = ManufacturerIdTB.Text = "";
                 UseLNCB.Checked = UseIEC47CB.Checked = false;
             }
         }

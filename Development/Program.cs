@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9711 $,
-//                  $Date: 2017-11-20 18:52:14 +0200 (ma, 20 marras 2017) $
+// Version:         $Revision: 9722 $,
+//                  $Date: 2017-11-22 11:16:59 +0200 (ke, 22 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -112,7 +112,7 @@ namespace GXDLMSDirector
         /// <param name="ex"></param>
         static private void OnError(object sender, Exception ex)
         {
-            MessageBox.Show(ex.Message, "GXDLMSDirector", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error);
+            MessageBox.Show(ex.Message, Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error);
         }
 
         /// <summary>

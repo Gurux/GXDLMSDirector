@@ -196,7 +196,7 @@ namespace GXDLMSDirector
                     {
                         if (GXExternalMediaForm.DownLoadMedia(dlg.FileName))
                         {
-                            if (MessageBox.Show(this, "You need to restart application. Do you want to do it now?", "GXDLMSDirector", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)
+                            if (MessageBox.Show(this, "You need to restart application. Do you want to do it now?", Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)
                             {
                                 AddMedia(dlg.FileName);
                                 OKBtn_Click(null, null);
@@ -224,11 +224,11 @@ namespace GXDLMSDirector
             if (!GXExternalMediaForm.CheckUpdates(updater, asm))
             {
                 // There's nothing to update
-                MessageBox.Show(Properties.Resources.ExternalMediaNoUpdates, "GXDLMSDirector", MessageBoxButtons.OK);
+                MessageBox.Show(Properties.Resources.ExternalMediaNoUpdates, Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.OK);
             }
             else
             {
-                if (MessageBox.Show("You need to restart application. Do you want to do it now?", "GXDLMSDirector", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (MessageBox.Show("You need to restart application. Do you want to do it now?", Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     Application.Restart();
                 }

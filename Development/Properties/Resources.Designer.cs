@@ -248,6 +248,15 @@ namespace GXDLMSDirector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You need to read Association view to see all objects what the meter can offer. Do you want to do it now?.
+        /// </summary>
+        internal static string ReadAssociationView {
+            get {
+                return ResourceManager.GetString("ReadAssociationView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap ReadMnu {

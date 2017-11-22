@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9717 $,
-//                  $Date: 2017-11-21 09:55:01 +0200 (ti, 21 marras 2017) $
+// Version:         $Revision: 9722 $,
+//                  $Date: 2017-11-22 11:16:59 +0200 (ke, 22 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -282,7 +282,7 @@ namespace GXDLMSDirector
                 }
                 else if (DeviceInfoView.Visible)
                 {
-                    GXDLMSDevice dev = (GXDLMSDevice)obj;                    
+                    GXDLMSDevice dev = (GXDLMSDevice)obj;
                     DeviceGb.Text = dev.Name;
                     StatusValueLbl.Text = dev.Status.ToString();
                     ClientAddressValueLbl.Text = dev.ClientAddress.ToString();
@@ -971,6 +971,32 @@ namespace GXDLMSDirector
             MessageBox.Show(ex.Message);
         }
 
+        /// <summary>
+        /// Ask is association view read when connecting first time.
+        /// </summary>
+        /// <param name="device"></param>
+        delegate void FirstConnectionEventHandler(GXDLMSDevice device);
+
+        /// <summary>
+        /// Ask is association view read when connecting first time.
+        /// </summary>
+        /// <param name="device">Connected meter.</param>
+        private void OnFirstConnection(GXDLMSDevice device)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new FirstConnectionEventHandler(OnFirstConnection), device);
+            }
+            else
+            {
+                if (MessageBox.Show(this, Properties.Resources.ReadAssociationView, Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Refresh, OnError, null, new object[] { device });
+                }
+                TransactionWork.Start();
+            }            
+        }
+
         void Connect(object sender, GXAsyncWork work, object[] parameters)
         {
             try
@@ -994,11 +1020,16 @@ namespace GXDLMSDirector
                 {
                     if (!((GXDLMSDevice)obj).Media.IsOpen)
                     {
+                        GXDLMSDevice dev = (GXDLMSDevice)obj;
                         this.OnProgress(null, "Connecting", 0, 1);
-                        ((GXDLMSDevice)obj).InitializeConnection();
+                        dev.InitializeConnection();
                         if (InvokeRequired)
                         {
                             BeginInvoke(new UpdateConformance(this.OnUpdateConformance), (GXDLMSDevice)obj);
+                        }
+                        if (dev.Objects.Count == 0)
+                        {
+                            OnFirstConnection(dev);
                         }
                     }
                 }
@@ -2224,13 +2255,13 @@ namespace GXDLMSDirector
                         }
                     }
                     //Read inactivity timeout.
-                    dev.InactivityTimeout = 120;
+                    dev.InactivityTimeout = 120 - 10;
                     foreach (GXDLMSHdlcSetup it in dev.Objects.GetObjects(ObjectType.IecHdlcSetup))
                     {
                         dev.Comm.ReadValue(it, 8);
                         if (dev.InactivityTimeout > it.InactivityTimeout && it.InactivityTimeout > 10)
                         {
-                            dev.InactivityTimeout = it.InactivityTimeout - 5;
+                            dev.InactivityTimeout = it.InactivityTimeout - 10;
                         }
                     }
                     this.OnProgress(dev, "Reading scalers and units.", cnt, cnt);
@@ -3261,7 +3292,7 @@ namespace GXDLMSDirector
 
         private void ObjectTree_BeforeSelect(object sender, TreeViewCancelEventArgs e)
         {
-            
+
         }
     }
 }

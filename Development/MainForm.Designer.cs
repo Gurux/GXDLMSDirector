@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9716 $,
-//                  $Date: 2017-11-21 09:19:16 +0200 (ti, 21 marras 2017) $
+// Version:         $Revision: 9730 $,
+//                  $Date: 2017-11-24 12:14:34 +0200 (pe, 24 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1335,15 +1335,15 @@ namespace GXDLMSDirector
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(725, 536);
-            this.Controls.Add(this.splitter3);
-            this.Controls.Add(this.EventsView);
             this.Controls.Add(this.ObjectValueView);
             this.Controls.Add(this.DeviceInfoView);
             this.Controls.Add(this.DeviceList);
             this.Controls.Add(this.ObjectPanelFrame);
             this.Controls.Add(this.splitter2);
-            this.Controls.Add(this.TraceView);
+            this.Controls.Add(this.splitter3);
+            this.Controls.Add(this.EventsView);
             this.Controls.Add(this.splitter1);
+            this.Controls.Add(this.TraceView);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.toolStrip1);

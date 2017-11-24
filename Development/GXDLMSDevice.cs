@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9716 $,
-//                  $Date: 2017-11-21 09:19:16 +0200 (ti, 21 marras 2017) $
+// Version:         $Revision: 9730 $,
+//                  $Date: 2017-11-24 12:14:34 +0200 (pe, 24 marras 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -78,15 +78,6 @@ namespace GXDLMSDirector
             get
             {
                 return m_Status;
-            }
-        }
-
-        [System.Xml.Serialization.XmlIgnore()]
-        public bool ForceInactivity
-        {
-            get
-            {
-                return Manufacturers.FindByIdentification(Manufacturer).ForceInactivity;
             }
         }
 

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9722 $,
-//                  $Date: 2017-11-22 11:16:59 +0200 (ke, 22 marras 2017) $
+// Version:         $Revision: 9754 $,
+//                  $Date: 2017-12-05 12:48:42 +0200 (ti, 05 joulu 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -89,7 +89,7 @@ namespace GXDLMSDirector
         static void DownloadMedias(object sender, GXAsyncWork work, object[] parameters)
         {
             string[] list = (string[])parameters[0];
-            foreach(string it in list)
+            foreach (string it in list)
             {
                 GXExternalMediaForm.DownLoadMedia(it);
             }
@@ -122,7 +122,7 @@ namespace GXDLMSDirector
         static void Main()
         {
             try
-            {               
+            {
                 Assembly asm = Assembly.GetExecutingAssembly();
                 string updates = Path.Combine(Path.GetDirectoryName(asm.Location), "Updates");
                 string medias = Path.Combine(Path.GetDirectoryName(asm.Location), "Medias");
@@ -174,7 +174,7 @@ namespace GXDLMSDirector
                                 downloadedMedias.Add(it);
                             }
                         }
-                        else
+                        else if (File.Exists(it))
                         {
                             Assembly assembly = Assembly.LoadFile(it);
                         }

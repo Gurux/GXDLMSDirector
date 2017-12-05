@@ -135,11 +135,14 @@ namespace GXDLMSDirector
                 li.Tag = asm;
                 return;
             }
-            asm = Assembly.LoadFile(it);
-            li = MediaList.Items.Add(asm.GetName().Name);
-            li.SubItems.Add(asm.GetName().Version.ToString());
-            li.SubItems.Add(asm.Location.ToString());
-            li.Tag = asm;
+            if (File.Exists(it))
+            {
+                asm = Assembly.LoadFile(it);
+                li = MediaList.Items.Add(asm.GetName().Name);
+                li.SubItems.Add(asm.GetName().Version.ToString());
+                li.SubItems.Add(asm.Location.ToString());
+                li.Tag = asm;
+            }
         }
 
         /// <summary>

@@ -4,9 +4,9 @@
 //
 //
 //
-// Version:         $Revision: 9745 $,
-//                  $Date: 2017-12-04 13:42:46 +0200 (ma, 04 joulu 2017) $
-//                  $Author: kurumi $
+// Version:         $Revision: 9754 $,
+//                  $Date: 2017-12-05 12:48:42 +0200 (ti, 05 joulu 2017) $
+//                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -400,6 +400,26 @@ namespace GXDLMSDirector
             set;
         }
 
+        /// <summary>
+        /// Used ServiceClass.
+        /// </summary>
+        [DefaultValue(ServiceClass.Confirmed)]
+        public ServiceClass ServiceClass
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Used priority.
+        /// </summary>
+        [DefaultValue(Priority.High)]
+        public Priority Priority
+        {
+            get;
+            set;
+        }
+
 
 
         void NotifyProgress(object sender, string description, int current, int maximium)
@@ -559,6 +579,8 @@ namespace GXDLMSDirector
             WindowSizeRX = WindowSizeTX = 1;
             MaxInfoRX = MaxInfoTX = 128;
             PduSize = 0xFFFF;
+            ServiceClass = ServiceClass.Confirmed;
+            Priority = Priority.High;
         }
 
         /// <summary>

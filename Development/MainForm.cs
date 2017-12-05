@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9749 $,
-//                  $Date: 2017-12-05 10:01:35 +0200 (ti, 05 joulu 2017) $
+// Version:         $Revision: 9754 $,
+//                  $Date: 2017-12-05 12:48:42 +0200 (ti, 05 joulu 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -500,7 +500,14 @@ namespace GXDLMSDirector
                 }
                 else if (it.Controls.Count != 0)
                 {
-                    item = UpdateProperties(view, it.Controls, target, index, value);
+                    if (item == null)
+                    {
+                        item = UpdateProperties(view, it.Controls, target, index, value);
+                    }
+                    else
+                    {
+                        UpdateProperties(view, it.Controls, target, index, value);
+                    }
                 }
                 if (it is GXButton)
                 {

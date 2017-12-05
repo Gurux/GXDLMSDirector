@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9716 $,
-//                  $Date: 2017-11-21 09:19:16 +0200 (ti, 21 marras 2017) $
+// Version:         $Revision: 9754 $,
+//                  $Date: 2017-12-05 12:48:42 +0200 (ti, 05 joulu 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -105,6 +105,8 @@ namespace GXDLMSDirector
             this.SecurityLbl = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.InfoTB = new System.Windows.Forms.TextBox();
+            this.SizeCb = new System.Windows.Forms.ComboBox();
+            this.SizeLbl = new System.Windows.Forms.Label();
             this.AddressingGB.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ClientAddTB)).BeginInit();
@@ -220,7 +222,7 @@ namespace GXDLMSDirector
             this.AddressingGB.Controls.Add(this.AuthenticationLbl);
             this.AddressingGB.Location = new System.Drawing.Point(3, 103);
             this.AddressingGB.Name = "AddressingGB";
-            this.AddressingGB.Size = new System.Drawing.Size(395, 188);
+            this.AddressingGB.Size = new System.Drawing.Size(395, 263);
             this.AddressingGB.TabIndex = 5;
             this.AddressingGB.TabStop = false;
             this.AddressingGB.Text = "Addressing";
@@ -265,6 +267,8 @@ namespace GXDLMSDirector
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.SizeCb);
+            this.groupBox1.Controls.Add(this.SizeLbl);
             this.groupBox1.Controls.Add(this.ServerAddressTypeCB);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.SerialNumberFormulaTB);
@@ -275,7 +279,7 @@ namespace GXDLMSDirector
             this.groupBox1.Controls.Add(this.LogicalServerAddLbl);
             this.groupBox1.Location = new System.Drawing.Point(2, 81);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(331, 105);
+            this.groupBox1.Size = new System.Drawing.Size(331, 158);
             this.groupBox1.TabIndex = 13;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Server Address:";
@@ -577,6 +581,24 @@ namespace GXDLMSDirector
             this.InfoTB.Size = new System.Drawing.Size(398, 366);
             this.InfoTB.TabIndex = 1;
             // 
+            // SizeCb
+            // 
+            this.SizeCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SizeCb.FormattingEnabled = true;
+            this.SizeCb.Location = new System.Drawing.Point(63, 100);
+            this.SizeCb.Name = "SizeCb";
+            this.SizeCb.Size = new System.Drawing.Size(85, 21);
+            this.SizeCb.TabIndex = 11;
+            // 
+            // SizeLbl
+            // 
+            this.SizeLbl.AutoSize = true;
+            this.SizeLbl.Location = new System.Drawing.Point(9, 104);
+            this.SizeLbl.Name = "SizeLbl";
+            this.SizeLbl.Size = new System.Drawing.Size(30, 13);
+            this.SizeLbl.TabIndex = 49;
+            this.SizeLbl.Text = "Size:";
+            // 
             // ManufacturerForm
             // 
             this.AcceptButton = this.OKBtn;
@@ -657,5 +679,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label BlockCipherKeyLbl;
         private System.Windows.Forms.Label SystemtitleLbl;
         private System.Windows.Forms.Label SecurityLbl;
+        private System.Windows.Forms.ComboBox SizeCb;
+        private System.Windows.Forms.Label SizeLbl;
     }
 }

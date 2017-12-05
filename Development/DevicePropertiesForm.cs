@@ -5,9 +5,9 @@
 //
 //
 //
-// Version:         $Revision: 9745 $,
-//                  $Date: 2017-12-04 13:42:46 +0200 (ma, 04 joulu 2017) $
-//                  $Author: kurumi $
+// Version:         $Revision: 9754 $,
+//                  $Date: 2017-12-05 12:48:42 +0200 (ti, 05 joulu 2017) $
+//                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -59,6 +59,10 @@ namespace GXDLMSDirector
             try
             {
                 InitializeComponent();
+                PriorityCb.Items.Add(Priority.Normal);
+                PriorityCb.Items.Add(Priority.High);
+                ServiceClassCb.Items.Add(ServiceClass.UnConfirmed);
+                ServiceClassCb.Items.Add(ServiceClass.Confirmed);
                 LNSettings.Dock = SNSettings.Dock = DockStyle.Fill;
                 SecurityCB.Items.AddRange(new object[] { Security.None, Security.Authentication,
                                       Security.Encryption, Security.AuthenticationEncryption
@@ -328,6 +332,9 @@ namespace GXDLMSDirector
                 WindowSizeRXTb.Text = Device.WindowSizeRX.ToString();
                 InactivityTimeoutTb.Text = Device.InactivityTimeout.ToString();
                 MaxPduTb.Text = Device.PduSize.ToString();
+
+                PriorityCb.SelectedItem = Device.Priority;
+                ServiceClassCb.SelectedItem = Device.ServiceClass;
             }
             catch (Exception Ex)
             {
@@ -622,6 +629,8 @@ namespace GXDLMSDirector
                 Device.WindowSizeRX = byte.Parse(WindowSizeRXTb.Text);
                 Device.InactivityTimeout = int.Parse(InactivityTimeoutTb.Text);
                 Device.PduSize = UInt16.Parse(MaxPduTb.Text);
+                Device.Priority = (Priority) PriorityCb.SelectedItem;
+                Device.ServiceClass = (ServiceClass) ServiceClassCb.SelectedItem;
 
                 Device.Name = name;
                 Device.Media = SelectedMedia;
@@ -1253,6 +1262,11 @@ namespace GXDLMSDirector
             {
                 MessageBox.Show(this, ex.Message);
             }
+        }
+
+        private void InactivityTimeoutTb_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

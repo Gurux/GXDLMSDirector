@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9716 $,
-//                  $Date: 2017-11-21 09:19:16 +0200 (ti, 21 marras 2017) $
+// Version:         $Revision: 9754 $,
+//                  $Date: 2017-12-05 12:48:42 +0200 (ti, 05 joulu 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -32,13 +32,9 @@
 //---------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using GXDLMS.ManufacturerSettings;
 using Gurux.DLMS.ManufacturerSettings;
 using Gurux.DLMS.Enums;
 using Gurux.Common;
@@ -56,6 +52,11 @@ namespace GXDLMSDirector
             PhysicalServerAddTB.Value = Convert.ToDecimal(server.PhysicalAddress);
             LogicalServerAddTB.Value = server.LogicalAddress;
             PhysicalServerAddTB.Hexadecimal = SerialNumberFormulaTB.ReadOnly = server.HDLCAddress != HDLCAddressType.SerialNumber;
+            SizeCb.Items.Add(0);
+            SizeCb.Items.Add(1);
+            SizeCb.Items.Add(2);
+            SizeCb.Items.Add(4);
+            SizeCb.SelectedItem = server.Size;
         }
 
         void UpdateServer(GXServerAddress server)
@@ -63,6 +64,7 @@ namespace GXDLMSDirector
             server.Formula = SerialNumberFormulaTB.Text;
             server.PhysicalAddress = Convert.ToInt32(PhysicalServerAddTB.Value);
             server.LogicalAddress = Convert.ToInt32(LogicalServerAddTB.Value);
+            server.Size = Convert.ToInt32(SizeCb.Text);
         }
 
         public ManufacturerForm(GXManufacturerCollection manufacturers, GXManufacturer manufacturer)

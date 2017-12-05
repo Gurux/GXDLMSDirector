@@ -4,9 +4,9 @@
 //
 //
 //
-// Version:         $Revision: 9745 $,
-//                  $Date: 2017-12-04 13:42:46 +0200 (ma, 04 joulu 2017) $
-//                  $Author: kurumi $
+// Version:         $Revision: 9754 $,
+//                  $Date: 2017-12-05 12:48:42 +0200 (ti, 05 joulu 2017) $
+//                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -30,24 +30,16 @@
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
-
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Gurux.DLMS;
 using Gurux.Serial;
 using Gurux.Net;
-using System.Data;
 using GXDLMS.ManufacturerSettings;
-using System.IO;
-using System.ComponentModel;
 using System.IO.Ports;
 using Gurux.Common;
 using Gurux.DLMS.ManufacturerSettings;
 using Gurux.DLMS.Objects;
-using System.Xml.Serialization;
 using System.Reflection;
-using System.Linq;
 using System.Windows.Forms;
 using Gurux.DLMS.Enums;
 using Gurux.DLMS.Objects.Enums;
@@ -72,7 +64,7 @@ namespace GXDLMSDirector
         internal DateTime connectionStartTime;
         internal GXDLMSDevice parent;
         public Control parentForm;
-        public Gurux.Common.IGXMedia media = null;
+        public IGXMedia media = null;
         internal GXDLMSSecureClient client;
 
         public GXDLMSCommunicator(GXDLMSDevice parent, Gurux.Common.IGXMedia media)
@@ -142,7 +134,12 @@ namespace GXDLMSDirector
                     GXReplyData reply = new GXReplyData();
                     try
                     {
-                        //     ReadDataBlock(ReleaseRequest(), "Release request", reply);
+                        //Release is call only for secured connections.
+                        //Add meters are not supporting Release and it's causing problems.
+                        if (client.Ciphering.Security != Security.None)
+                        {
+                            ReadDataBlock(ReleaseRequest(), "Release request", reply);
+                        }
                     }
                     catch (Exception)
                     {
@@ -587,6 +584,11 @@ namespace GXDLMSDirector
                 else
                 {
                     client.ServerAddress = GXDLMSClient.GetServerAddress(parent.LogicalAddress, Convert.ToInt32(parent.PhysicalAddress));
+                    GXServerAddress server = manufacturer.GetServer(parent.HDLCAddressing);
+                    if (server != null)
+                    {
+                        client.ServerAddressSize = (byte) server.Size;
+                    }                    
                 }
             }
             client.Ciphering.Security = parent.Security;
@@ -604,6 +606,7 @@ namespace GXDLMSDirector
                 client.Ciphering.AuthenticationKey = null;
                 client.Ciphering.InvocationCounter = 0;
             }
+            
             if (!string.IsNullOrEmpty(parent.Challenge))
             {
                 client.CtoSChallenge = GXCommon.HexToBytes(parent.Challenge);

@@ -5,9 +5,9 @@
 //
 //
 //
-// Version:         $Revision: 9716 $,
-//                  $Date: 2017-11-21 09:19:16 +0200 (ti, 21 marras 2017) $
-//                  $Author: gurux01 $
+// Version:         $Revision: 9745 $,
+//                  $Date: 2017-12-04 13:42:46 +0200 (ma, 04 joulu 2017) $
+//                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -278,11 +278,11 @@ namespace GXDLMSDirector
                                 {
                                     if (SelectedMedia == null || SelectedMedia.GetType() != type)
                                     {
-                                        this.MediasCB.Items.Add(a.CreateInstance(type.ToString()));
+                                        MediasCB.Items.Add(a.CreateInstance(type.ToString()));
                                     }
                                     else
                                     {
-                                        this.MediasCB.Items.Add(SelectedMedia);
+                                        MediasCB.Items.Add(SelectedMedia);
                                     }
                                 }
                             }
@@ -327,6 +327,7 @@ namespace GXDLMSDirector
                 WindowSizeTXTb.Text = Device.WindowSizeTX.ToString();
                 WindowSizeRXTb.Text = Device.WindowSizeRX.ToString();
                 InactivityTimeoutTb.Text = Device.InactivityTimeout.ToString();
+                MaxPduTb.Text = Device.PduSize.ToString();
             }
             catch (Exception Ex)
             {
@@ -620,6 +621,8 @@ namespace GXDLMSDirector
                 Device.WindowSizeTX = byte.Parse(WindowSizeTXTb.Text);
                 Device.WindowSizeRX = byte.Parse(WindowSizeRXTb.Text);
                 Device.InactivityTimeout = int.Parse(InactivityTimeoutTb.Text);
+                Device.PduSize = UInt16.Parse(MaxPduTb.Text);
+
                 Device.Name = name;
                 Device.Media = SelectedMedia;
                 Device.Manufacturer = man.Identification;
@@ -916,6 +919,7 @@ namespace GXDLMSDirector
                 if (Device.Name == null)
                 {
                     type = man.GetActiveServer().HDLCAddress;
+                    Device.UseWrapper = man.UseIEC47;
                 }
                 foreach (GXServerAddress it in ((GXManufacturer)ManufacturerCB.SelectedItem).ServerSettings)
                 {

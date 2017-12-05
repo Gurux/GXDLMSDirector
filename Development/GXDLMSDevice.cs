@@ -4,9 +4,9 @@
 //
 //
 //
-// Version:         $Revision: 9730 $,
-//                  $Date: 2017-11-24 12:14:34 +0200 (pe, 24 marras 2017) $
-//                  $Author: gurux01 $
+// Version:         $Revision: 9745 $,
+//                  $Date: 2017-12-04 13:42:46 +0200 (ma, 04 joulu 2017) $
+//                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -33,7 +33,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Gurux.Serial;
 using System.Windows.Forms;
 using Gurux.DLMS;
@@ -72,7 +71,7 @@ namespace GXDLMSDirector
         }
 
         [Browsable(false)]
-        [System.Xml.Serialization.XmlIgnore()]
+        [XmlIgnore()]
         public DeviceState Status
         {
             get
@@ -82,27 +81,27 @@ namespace GXDLMSDirector
         }
 
         [Browsable(false)]
-        [System.Xml.Serialization.XmlIgnore()]
+        [XmlIgnore()]
         GXDLMSObjectCollection m_Objects;
 
         [Browsable(false)]
-        [System.Xml.Serialization.XmlIgnore()]
+        [XmlIgnore()]
         public ProgressEventHandler OnProgress;
 
         [Browsable(false)]
-        [System.Xml.Serialization.XmlIgnore()]
+        [XmlIgnore()]
         public StatusEventHandler OnStatusChanged;
 
         [Browsable(false)]
-        [System.Xml.Serialization.XmlIgnore()]
+        [XmlIgnore()]
         public MessageTraceEventHandler OnTrace;
 
         [Browsable(false)]
-        [System.Xml.Serialization.XmlIgnore()]
+        [XmlIgnore()]
         System.Timers.Timer KeepAlive;
 
         [Browsable(false)]
-        [System.Xml.Serialization.XmlIgnore()]
+        [XmlIgnore()]
         GXDLMSCommunicator communicator;
 
         public void KeepAliveStart()
@@ -331,16 +330,11 @@ namespace GXDLMSDirector
         /// <remarks>
         /// DefaultValue is 128. Minimum value is 32 and max value is 128.
         /// </remarks>
+        [DefaultValue(128)]
         public UInt16 MaxInfoTX
         {
-            get
-            {
-                return communicator.client.Limits.MaxInfoTX;
-            }
-            set
-            {
-                communicator.client.Limits.MaxInfoTX = value;
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -349,16 +343,11 @@ namespace GXDLMSDirector
         /// <remarks>
         /// DefaultValue is 128. Minimum value is 32 and max value is 128.
         /// </remarks>
+        [DefaultValue(128)]
         public UInt16 MaxInfoRX
         {
-            get
-            {
-                return communicator.client.Limits.MaxInfoRX;
-            }
-            set
-            {
-                communicator.client.Limits.MaxInfoRX = value;
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -369,15 +358,8 @@ namespace GXDLMSDirector
         /// </remarks>
         public byte WindowSizeTX
         {
-            get
-            {
-                return communicator.client.Limits.WindowSizeTX;
-            }
-            set
-            {
-                communicator.client.Limits.WindowSizeTX = value;
-            }
-
+            get;
+            set;
         }
 
         /// <summary>
@@ -388,14 +370,21 @@ namespace GXDLMSDirector
         /// </remarks>
         public byte WindowSizeRX
         {
-            get
-            {
-                return communicator.client.Limits.WindowSizeRX;
-            }
-            set
-            {
-                communicator.client.Limits.WindowSizeRX = value;
-            }
+            get;
+            set;
+        }
+
+
+        /// <summary>
+        /// Proposed maximum size of PDU.
+        /// </summary>
+        /// <remarks>
+        /// DefaultValue is 1.
+        [DefaultValue(0xFFFF)]
+        public UInt16 PduSize
+        {
+            get;
+            set;
         }
 
 
@@ -483,7 +472,7 @@ namespace GXDLMSDirector
         }
 
         [Browsable(false)]
-        [System.Xml.Serialization.XmlIgnore()]
+        [XmlIgnore()]
         public Gurux.DLMS.ManufacturerSettings.GXObisCodeCollection ObisCodes
         {
             get
@@ -498,7 +487,7 @@ namespace GXDLMSDirector
 
 
         [Browsable(false)]
-        [System.Xml.Serialization.XmlIgnore()]
+        [XmlIgnore()]
         public IGXManufacturerExtension Extension
         {
             get;
@@ -506,7 +495,7 @@ namespace GXDLMSDirector
         }
 
         [Browsable(false)]
-        [System.Xml.Serialization.XmlIgnore()]
+        [XmlIgnore()]
         public Gurux.Common.IGXMedia Media
         {
             get
@@ -520,7 +509,7 @@ namespace GXDLMSDirector
         }
 
         [Browsable(false)]
-        [System.Xml.Serialization.XmlIgnore()]
+        [XmlIgnore()]
         public GXManufacturerCollection Manufacturers
         {
             get;
@@ -547,19 +536,6 @@ namespace GXDLMSDirector
             set;
         }
 
-
-        /// <summary>
-        /// Is wrapper used.
-        /// </summary>
-        [Browsable(false)]
-        public bool UseIEC47
-        {
-            get
-            {
-                return Manufacturers.FindByIdentification(this.Manufacturer).UseIEC47;
-            }
-        }
-
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -580,6 +556,9 @@ namespace GXDLMSDirector
             m_Status = DeviceState.Initialized;
             WaitTime = 5;
             InactivityTimeout = 120;
+            WindowSizeRX = WindowSizeTX = 1;
+            MaxInfoRX = MaxInfoTX = 128;
+            PduSize = 0xFFFF;
         }
 
         /// <summary>
@@ -905,7 +884,7 @@ namespace GXDLMSDirector
         {
             try
             {
-                NotifyProgress(this, "Keep Alive", 0, 1);              
+                NotifyProgress(this, "Keep Alive", 0, 1);
                 communicator.KeepAlive();
             }
             catch (Exception Ex)

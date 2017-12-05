@@ -109,18 +109,6 @@ namespace GXDLMSDirector.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ViewEvents {
-            get {
-                return ((bool)(this["ViewEvents"]));
-            }
-            set {
-                this["ViewEvents"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string EventsSettings {
             get {
@@ -128,30 +116,6 @@ namespace GXDLMSDirector.Properties {
             }
             set {
                 this["EventsSettings"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool NotificationAsHex {
-            get {
-                return ((bool)(this["NotificationAsHex"]));
-            }
-            set {
-                this["NotificationAsHex"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool NotificationPduOnly {
-            get {
-                return ((bool)(this["NotificationPduOnly"]));
-            }
-            set {
-                this["NotificationPduOnly"] = value;
             }
         }
         
@@ -224,6 +188,18 @@ namespace GXDLMSDirector.Properties {
             }
             set {
                 this["UpdateSettings"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int NotificationType {
+            get {
+                return ((int)(this["NotificationType"]));
+            }
+            set {
+                this["NotificationType"] = value;
             }
         }
     }

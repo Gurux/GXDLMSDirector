@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9722 $,
-//                  $Date: 2017-11-22 11:16:59 +0200 (ke, 22 marras 2017) $
+// Version:         $Revision: 9749 $,
+//                  $Date: 2017-12-05 10:01:35 +0200 (ti, 05 joulu 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -80,6 +80,10 @@ namespace GXDLMSDirector
         /// Used trace level.
         /// </summary>
         private byte traceLevel = 0;
+        /// <summary>
+        /// Used notification level.
+        /// </summary>
+        private byte notificationLevel = 0;
 
         GXDLMSTranslator translator;
         /// <summary>
@@ -498,9 +502,27 @@ namespace GXDLMSDirector
                 {
                     item = UpdateProperties(view, it.Controls, target, index, value);
                 }
-                if (item != null)
+                if (it is GXButton)
                 {
-                    break;
+                    GXButton btn = it as GXButton;
+                    if ((btn.Action == ActionType.Read || btn.Action == ActionType.Write) && btn.Index == index)
+                    {
+                        btn.View = view;
+                        btn.Enabled = (target.GetAccess(index) & AccessMode.Write) != 0;
+                        if (btn.Enabled)
+                        {
+                            btn.Target = target;
+                            if (btn.Action == ActionType.Read)
+                            {
+                                btn.Click += new EventHandler(OnRead);
+                            }
+                            else if (btn.Action == ActionType.Write)
+                            {
+                                btn.Click += new EventHandler(OnWrite);
+                            }
+                            ActionList.Add(btn);
+                        }
+                    }
                 }
             }
             return item;
@@ -514,13 +536,20 @@ namespace GXDLMSDirector
                 if (it is GXButton)
                 {
                     GXButton btn = it as GXButton;
-                    if (btn.Index == index)
+                    if (btn.Action == ActionType.Action && (btn.Index == index || (btn.Index < 1 && !ActionList.Contains(btn))))
                     {
                         btn.View = view;
                         bool enabled = false;
-                        if (ReadBtn.Enabled)
+                        if (btn.Index < 1)
                         {
-                            enabled = target.GetMethodAccess(btn.Index) != MethodAccessMode.NoAccess;
+                            enabled = true;
+                        }
+                        else
+                        {
+                            if (ReadBtn.Enabled)
+                            {
+                                enabled = target.GetMethodAccess(btn.Index) != MethodAccessMode.NoAccess;
+                            }
                         }
                         btn.Enabled = enabled;
                         if (enabled)
@@ -641,6 +670,25 @@ namespace GXDLMSDirector
                     UpdateDirty(view, ((Form)view).Controls, tmp, it, true);
                 }
             }
+            if (index == 0)
+            {
+                foreach (GXButton it in ActionList)
+                {
+                    if (it.Action == ActionType.Read)
+                    {
+                        it.Click -= new EventHandler(OnRead);
+                    }
+                    else if (it.Action == ActionType.Write)
+                    {
+                        it.Click -= new EventHandler(OnWrite);
+                    }
+                    else
+                    {
+                        it.Click -= new EventHandler(OnAction);
+                    }
+                }
+                ActionList.Clear();
+            }
             bool InvokeRequired = ((Form)view).InvokeRequired;
             for (int it = 1; it != (obj as IGXDLMSBase).GetAttributeCount() + 1; ++it)
             {
@@ -677,23 +725,7 @@ namespace GXDLMSDirector
                 }
             }
             if (index == 0)
-            {
-                foreach (GXButton it in ActionList)
-                {
-                    if (it.Action == ActionType.Read)
-                    {
-                        it.Click -= new EventHandler(OnRead);
-                    }
-                    else if (it.Action == ActionType.Write)
-                    {
-                        it.Click -= new EventHandler(OnWrite);
-                    }
-                    else
-                    {
-                        it.Click -= new EventHandler(OnAction);
-                    }
-                }
-                ActionList.Clear();
+            {               
                 for (int it = 1; it != (obj as IGXDLMSBase).GetMethodCount() + 1; ++it)
                 {
                     bool bFound = UpdateActions(view, ((Form)view).Controls, view.Target, it);
@@ -994,7 +1026,7 @@ namespace GXDLMSDirector
                     TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Refresh, OnError, null, new object[] { device });
                 }
                 TransactionWork.Start();
-            }            
+            }
         }
 
         void Connect(object sender, GXAsyncWork work, object[] parameters)
@@ -1264,10 +1296,8 @@ namespace GXDLMSDirector
                 Properties.Settings.Default.ViewList = ObjectListMnu.Checked;
                 Properties.Settings.Default.ViewGroups = GroupsMnu.Checked;
                 Properties.Settings.Default.TraceType = traceLevel;
+                Properties.Settings.Default.NotificationType = notificationLevel;
                 Properties.Settings.Default.ForceRead = ForceReadMnu.Checked;
-                Properties.Settings.Default.ViewEvents = EventsMnu.Checked;
-                Properties.Settings.Default.NotificationPduOnly = PduOnly.Checked;
-                Properties.Settings.Default.NotificationAsHex = ShowNotificationAsHex.Checked;
                 Properties.Settings.Default.NotificationAutoReset = AutoReset.Checked;
                 if (EventsView.Height > 50)
                 {
@@ -1363,17 +1393,29 @@ namespace GXDLMSDirector
                 {
                     pDUToolStripMenuItem_Click(null, null);
                 }
+
+                if (Properties.Settings.Default.NotificationType == 0)
+                {
+                    NotificationNone_Click(null, null);
+                }
+                else if (Properties.Settings.Default.NotificationType == 1)
+                {
+                    NotificationHex_Click(null, null);
+                }
+                else if (Properties.Settings.Default.NotificationType == 2)
+                {
+                    NotificationXml_Click(null, null);
+                }
+                else if (Properties.Settings.Default.NotificationType == 3)
+                {
+                    NotificationPdu_Click(null, null);
+                }
+
                 TraceView.Height = Properties.Settings.Default.TraceViewHeight;
                 EventsView.Height = Properties.Settings.Default.EventsViewHeight;
 
                 ForceReadMnu.Checked = !Properties.Settings.Default.ForceRead;
                 ForceReadMnu_Click(null, null);
-                EventsMnu.Checked = !Properties.Settings.Default.ViewEvents;
-                viewToolStripMenuItem1_Click(null, null);
-                PduOnly.Checked = !Properties.Settings.Default.NotificationPduOnly;
-                NotificationAsPdu_Click(null, null);
-                ShowNotificationAsHex.Checked = !Properties.Settings.Default.NotificationAsHex;
-                ShowNotificationAsHex_Click(null, null);
                 AutoReset.Checked = !Properties.Settings.Default.NotificationAutoReset;
                 AutoReset_Click(null, null);
                 string path = UserDataPath;
@@ -2020,6 +2062,7 @@ namespace GXDLMSDirector
         {
             if (!refresh)
             {
+                dev.Media.OnReceived += new ReceivedEventHandler(Events_OnReceived);
                 dev.OnProgress += new ProgressEventHandler(this.OnProgress);
                 dev.OnStatusChanged += new StatusEventHandler(this.OnStatusChanged);
                 GXManufacturer m = Manufacturers.FindByIdentification(dev.Manufacturer);
@@ -2759,15 +2802,20 @@ namespace GXDLMSDirector
             }
             else
             {
-                if (ShowNotificationAsHex.Checked)
+                if (e.Data is string)
                 {
+                    OnAddNotification(DateTime.Now.ToString() + Environment.NewLine + e.Data);
+                }
+                else if (NotificationHex.Checked)
+                {
+                    //Show as hex.
                     OnAddNotification(DateTime.Now.ToString() + " " + GXCommon.ToHex((byte[])e.Data, true));
                 }
-                else //Show as hex.
+                else
                 {
                     //Show as PDU.
                     GXDLMSTranslator translator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
-                    translator.PduOnly = PduOnly.Checked;
+                    translator.PduOnly = NotificationPdu.Checked;
                     GXByteBuffer bb = new GXByteBuffer((byte[])e.Data);
                     GXByteBuffer pdu = new GXByteBuffer();
                     InterfaceType type = GXDLMSTranslator.GetDlmsFraming(bb);
@@ -3143,16 +3191,6 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// Show or hide notification view.
-        /// </summary>
-        private void viewToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            EventsMnu.Checked = !EventsMnu.Checked;
-            EventsView.Visible = EventsMnu.Checked;
-        }
-
-
-        /// <summary>
         /// Start listen notifications.
         /// </summary>
         private void StartNotifications_Click(object sender, EventArgs e)
@@ -3206,16 +3244,6 @@ namespace GXDLMSDirector
             EventsView.ResetText();
         }
 
-        private void NotificationAsPdu_Click(object sender, EventArgs e)
-        {
-            PduOnly.Checked = !PduOnly.Checked;
-        }
-
-        private void ShowNotificationAsHex_Click(object sender, EventArgs e)
-        {
-            ShowNotificationAsHex.Checked = !ShowNotificationAsHex.Checked;
-        }
-
         private void AutoReset_Click(object sender, EventArgs e)
         {
             AutoReset.Checked = !AutoReset.Checked;
@@ -3224,6 +3252,7 @@ namespace GXDLMSDirector
         private void UpdateTrace(byte level)
         {
             traceLevel = level;
+            panel1.Visible = level != 0 || EventsView.Visible;
             TraceView.Visible = level != 0;
             noneToolStripMenuItem.Checked = level == 0;
             hexToolStripMenuItem.Checked = level == 1;
@@ -3266,7 +3295,7 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// SHow settings.
+        /// Show settings.
         /// </summary>
         private void settingsToolStripMenuItem1_Click(object sender, EventArgs e)
         {
@@ -3276,11 +3305,6 @@ namespace GXDLMSDirector
                 if (dlg.ShowDialog(this) == DialogResult.OK)
                 {
                     Properties.Settings.Default.EventsSettings = events.Settings;
-                    //Show events if hidden.
-                    if (!EventsMnu.Checked)
-                    {
-                        viewToolStripMenuItem1_Click(null, null);
-                    }
                 }
             }
             catch (Exception Ex)
@@ -3293,6 +3317,49 @@ namespace GXDLMSDirector
         private void ObjectTree_BeforeSelect(object sender, TreeViewCancelEventArgs e)
         {
 
+        }
+
+        private void UpdateNotification(byte level)
+        {
+            notificationLevel = level;
+            panel1.Visible = level != 0 || TraceView.Visible;
+            EventsView.Visible = level != 0;
+            NotificationNone.Checked = level == 0;
+            NotificationHex.Checked = level == 1;
+            NotificationXml.Checked = level == 2;
+            NotificationPdu.Checked = level == 3;
+            //Show data as pdu.
+            translator.PduOnly = level == 3;
+            if (level == 0)
+            {
+                TraceView.Dock = DockStyle.Fill;
+            }
+            else
+            {
+                TraceView.Dock = DockStyle.Left;
+            }
+        }
+
+
+        private void NotificationNone_Click(object sender, EventArgs e)
+        {
+            UpdateNotification(0);
+        }
+
+        private void NotificationHex_Click(object sender, EventArgs e)
+        {
+            UpdateNotification(1);
+        }
+
+        private void NotificationXml_Click(object sender, EventArgs e)
+        {
+            UpdateNotification(2);
+
+        }
+
+        private void NotificationPdu_Click(object sender, EventArgs e)
+        {
+            UpdateNotification(3);
         }
     }
 }

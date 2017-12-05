@@ -4,9 +4,9 @@
 //
 //
 //
-// Version:         $Revision: 9719 $,
-//                  $Date: 2017-11-21 14:15:51 +0200 (ti, 21 marras 2017) $
-//                  $Author: gurux01 $
+// Version:         $Revision: 9745 $,
+//                  $Date: 2017-12-04 13:42:46 +0200 (ma, 04 joulu 2017) $
+//                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -561,7 +561,7 @@ namespace GXDLMSDirector
             }
 
             //If network media is used check is manufacturer supporting IEC 62056-47
-            if (!parent.UseRemoteSerial && this.media is GXNet && manufacturer.UseIEC47)
+            if (parent.UseWrapper && !parent.UseRemoteSerial && this.media is GXNet)
             {
                 client.InterfaceType = InterfaceType.WRAPPER;
             }
@@ -688,6 +688,12 @@ namespace GXDLMSDirector
             {
                 GXReplyData reply = new GXReplyData();
                 byte[] data;
+                client.Limits.WindowSizeRX = parent.WindowSizeRX;
+                client.Limits.WindowSizeTX = parent.WindowSizeTX;
+                client.Limits.MaxInfoRX = parent.MaxInfoRX;
+                client.Limits.MaxInfoTX = parent.MaxInfoTX;
+                client.MaxReceivePDUSize = parent.PduSize;
+
                 data = SNRMRequest();
                 if (data != null)
                 {

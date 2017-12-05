@@ -5,9 +5,9 @@
 //
 //
 //
-// Version:         $Revision: 9716 $,
-//                  $Date: 2017-11-21 09:19:16 +0200 (ti, 21 marras 2017) $
-//                  $Author: gurux01 $
+// Version:         $Revision: 9745 $,
+//                  $Date: 2017-12-04 13:42:46 +0200 (ma, 04 joulu 2017) $
+//                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -176,6 +176,8 @@ namespace GXDLMSDirector
             this.UseUtcTimeZone = new System.Windows.Forms.CheckBox();
             this.helpProvider1 = new System.Windows.Forms.HelpProvider();
             this.conformanceHelpProvider = new System.Windows.Forms.HelpProvider();
+            this.MaxPduTb = new System.Windows.Forms.TextBox();
+            this.MaxPduLbl = new System.Windows.Forms.Label();
             this.SupportedServicesTab.SuspendLayout();
             this.SNSettings.SuspendLayout();
             this.LNSettings.SuspendLayout();
@@ -1178,7 +1180,7 @@ namespace GXDLMSDirector
             this.NetworkSettingsGB.Controls.Add(this.PortLbl);
             this.NetworkSettingsGB.Controls.Add(this.HostNameTB);
             this.NetworkSettingsGB.Controls.Add(this.HostLbl);
-            this.NetworkSettingsGB.Location = new System.Drawing.Point(6, 238);
+            this.NetworkSettingsGB.Location = new System.Drawing.Point(6, 243);
             this.NetworkSettingsGB.Name = "NetworkSettingsGB";
             this.NetworkSettingsGB.Size = new System.Drawing.Size(388, 99);
             this.NetworkSettingsGB.TabIndex = 34;
@@ -1386,6 +1388,8 @@ namespace GXDLMSDirector
             // 
             // AdvancedTab
             // 
+            this.AdvancedTab.Controls.Add(this.MaxPduTb);
+            this.AdvancedTab.Controls.Add(this.MaxPduLbl);
             this.AdvancedTab.Controls.Add(this.UseWrapperCb);
             this.AdvancedTab.Controls.Add(this.groupBox1);
             this.AdvancedTab.Controls.Add(this.UseUtcTimeZone);
@@ -1551,6 +1555,25 @@ namespace GXDLMSDirector
             // 
             this.conformanceHelpProvider.HelpNamespace = "https://www.gurux.fi/Gurux.DLMS.Conformance";
             // 
+            // MaxPduTb
+            // 
+            this.helpProvider1.SetHelpKeyword(this.MaxPduTb, "InactivityTimeout");
+            this.helpProvider1.SetHelpNavigator(this.MaxPduTb, System.Windows.Forms.HelpNavigator.Topic);
+            this.MaxPduTb.Location = new System.Drawing.Point(146, 218);
+            this.MaxPduTb.Name = "MaxPduTb";
+            this.helpProvider1.SetShowHelp(this.MaxPduTb, true);
+            this.MaxPduTb.Size = new System.Drawing.Size(77, 20);
+            this.MaxPduTb.TabIndex = 47;
+            // 
+            // MaxPduLbl
+            // 
+            this.MaxPduLbl.AutoSize = true;
+            this.MaxPduLbl.Location = new System.Drawing.Point(16, 222);
+            this.MaxPduLbl.Name = "MaxPduLbl";
+            this.MaxPduLbl.Size = new System.Drawing.Size(77, 13);
+            this.MaxPduLbl.TabIndex = 48;
+            this.MaxPduLbl.Text = "Max PDU size:";
+            // 
             // DevicePropertiesForm
             // 
             this.AcceptButton = this.OKBtn;
@@ -1714,5 +1737,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.HelpProvider conformanceHelpProvider;
         private System.Windows.Forms.TextBox InactivityTimeoutTb;
         private System.Windows.Forms.Label InactivityTimeoutLbl;
+        private System.Windows.Forms.TextBox MaxPduTb;
+        private System.Windows.Forms.Label MaxPduLbl;
     }
 }

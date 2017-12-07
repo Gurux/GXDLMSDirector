@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9754 $,
-//                  $Date: 2017-12-05 12:48:42 +0200 (ti, 05 joulu 2017) $
+// Version:         $Revision: 9759 $,
+//                  $Date: 2017-12-07 12:48:53 +0200 (to, 07 joulu 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -614,7 +614,7 @@ namespace GXDLMSDirector
             else
             {
                 client.CtoSChallenge = null;
-            }
+            }          
         }
 
         /// <summary>
@@ -696,6 +696,8 @@ namespace GXDLMSDirector
                 client.Limits.MaxInfoRX = parent.MaxInfoRX;
                 client.Limits.MaxInfoTX = parent.MaxInfoTX;
                 client.MaxReceivePDUSize = parent.PduSize;
+                client.Priority = parent.Priority;
+                client.ServiceClass = parent.ServiceClass;
 
                 data = SNRMRequest();
                 if (data != null)

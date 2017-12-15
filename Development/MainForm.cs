@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9754 $,
-//                  $Date: 2017-12-05 12:48:42 +0200 (ti, 05 joulu 2017) $
+// Version:         $Revision: 9775 $,
+//                  $Date: 2017-12-15 11:07:39 +0200 (pe, 15 joulu 2017) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -480,7 +480,7 @@ namespace GXDLMSDirector
             }
         }
 
-        static List<GXButton> ActionList = new List<GXButton>();
+        static Dictionary<GXButton, ActionType> ActionList = new Dictionary<GXButton, ActionType>();
 
         private static GXValueField UpdateProperties(IGXDLMSView view, System.Windows.Forms.Control.ControlCollection controls, GXDLMSObject target, int index, object value)
         {
@@ -509,7 +509,7 @@ namespace GXDLMSDirector
                         UpdateProperties(view, it.Controls, target, index, value);
                     }
                 }
-                if (it is GXButton)
+                if (it is GXButton && !ActionList.ContainsKey(it as GXButton))
                 {
                     GXButton btn = it as GXButton;
                     if ((btn.Action == ActionType.Read || btn.Action == ActionType.Write) && btn.Index == index)
@@ -527,7 +527,7 @@ namespace GXDLMSDirector
                             {
                                 btn.Click += new EventHandler(OnWrite);
                             }
-                            ActionList.Add(btn);
+                            ActionList.Add(btn, btn.Action);
                         }
                     }
                 }
@@ -543,7 +543,7 @@ namespace GXDLMSDirector
                 if (it is GXButton)
                 {
                     GXButton btn = it as GXButton;
-                    if (btn.Action == ActionType.Action && (btn.Index == index || (btn.Index < 1 && !ActionList.Contains(btn))))
+                    if (btn.Action == ActionType.Action && (btn.Index == index || (btn.Index < 1 && !ActionList.ContainsKey(btn))))
                     {
                         btn.View = view;
                         bool enabled = false;
@@ -574,7 +574,7 @@ namespace GXDLMSDirector
                             {
                                 it.Click += new EventHandler(OnAction);
                             }
-                            ActionList.Add(btn);
+                            ActionList.Add(btn, btn.Action);
                         }
                     }
                 }
@@ -679,19 +679,19 @@ namespace GXDLMSDirector
             }
             if (index == 0)
             {
-                foreach (GXButton it in ActionList)
+                foreach (var it in ActionList)
                 {
-                    if (it.Action == ActionType.Read)
+                    if (it.Value == ActionType.Read)
                     {
-                        it.Click -= new EventHandler(OnRead);
+                        it.Key.Click -= new EventHandler(OnRead);
                     }
-                    else if (it.Action == ActionType.Write)
+                    else if (it.Value == ActionType.Write)
                     {
-                        it.Click -= new EventHandler(OnWrite);
+                        it.Key.Click -= new EventHandler(OnWrite);
                     }
                     else
                     {
-                        it.Click -= new EventHandler(OnAction);
+                        it.Key.Click -= new EventHandler(OnAction);
                     }
                 }
                 ActionList.Clear();

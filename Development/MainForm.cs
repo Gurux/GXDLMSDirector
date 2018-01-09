@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9775 $,
-//                  $Date: 2017-12-15 11:07:39 +0200 (pe, 15 joulu 2017) $
+// Version:         $Revision: 9796 $,
+//                  $Date: 2018-01-09 12:23:45 +0200 (ti, 09 tammi 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -521,11 +521,11 @@ namespace GXDLMSDirector
                             btn.Target = target;
                             if (btn.Action == ActionType.Read)
                             {
-                                btn.Click += new EventHandler(OnRead);
+                                btn.Click += new EventHandler(OnHandleAction);
                             }
                             else if (btn.Action == ActionType.Write)
                             {
-                                btn.Click += new EventHandler(OnWrite);
+                                btn.Click += new EventHandler(OnHandleAction);
                             }
                             ActionList.Add(btn, btn.Action);
                         }
@@ -559,20 +559,20 @@ namespace GXDLMSDirector
                             }
                         }
                         btn.Enabled = enabled;
-                        if (enabled)
+                        if (enabled && !ActionList.ContainsKey(btn))
                         {
                             btn.Target = target;
                             if (btn.Action == ActionType.Read)
                             {
-                                it.Click += new EventHandler(OnRead);
+                                it.Click += new EventHandler(OnHandleAction);
                             }
                             else if (btn.Action == ActionType.Write)
                             {
-                                it.Click += new EventHandler(OnWrite);
+                                it.Click += new EventHandler(OnHandleAction);
                             }
                             else
                             {
-                                it.Click += new EventHandler(OnAction);
+                                it.Click += new EventHandler(OnHandleAction);
                             }
                             ActionList.Add(btn, btn.Action);
                         }
@@ -590,62 +590,44 @@ namespace GXDLMSDirector
             return found;
         }
 
-        static void OnRead(object sender, EventArgs e)
+        static void OnHandleAction(object sender, EventArgs e)
         {
             GXButton btn = sender as GXButton;
             try
             {
+                ActionType act = btn.Action;
+                GXDLMSDevice dev = btn.Target.Parent.Tag as GXDLMSDevice;
                 ValueEventArgs ve = new ValueEventArgs(btn.Target, btn.Index, 0, null);
-                btn.View.PreAction(ActionType.Read, ve);
-                if (!ve.Handled)
+                do
                 {
-                    GXReplyData reply = new GXReplyData();
-                    GXDLMSDevice dev = btn.Target.Parent.Tag as GXDLMSDevice;
-                    dev.Comm.Read(btn.Target, btn.Index);
-                    btn.View.PostAction(ActionType.Read, ve);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(btn, ex.Message);
-            }
-        }
-
-        static void OnWrite(object sender, EventArgs e)
-        {
-            GXButton btn = sender as GXButton;
-            try
-            {
-                ValueEventArgs ve = new ValueEventArgs(btn.Target, btn.Index, 0, null);
-                btn.View.PreAction(ActionType.Write, ve);
-                if (!ve.Handled)
-                {
-                    GXReplyData reply = new GXReplyData();
-                    GXDLMSDevice dev = btn.Target.Parent.Tag as GXDLMSDevice;
-                    dev.Comm.Write(btn.Target, btn.Index);
-                    btn.View.PostAction(ActionType.Write, ve);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(btn, ex.Message);
-            }
-        }
-
-        static void OnAction(object sender, EventArgs e)
-        {
-            GXButton btn = sender as GXButton;
-            try
-            {
-                ValueEventArgs ve = new ValueEventArgs(btn.Target, btn.Index, 0, null);
-                btn.View.PreAction(ActionType.Action, ve);
-                if (!ve.Handled)
-                {
-                    GXReplyData reply = new GXReplyData();
-                    GXDLMSDevice dev = btn.Target.Parent.Tag as GXDLMSDevice;
-                    dev.Comm.MethodRequest(btn.Target, btn.Index, ve.Value, reply);
-                    btn.View.PostAction(ActionType.Action, ve);
-                }
+                    act = btn.View.PreAction(dev.Comm.client, act, ve);
+                    if (ve.Handled)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        GXReplyData reply = new GXReplyData();
+                        if (ve.Value is byte[][])
+                        {
+                            dev.Comm.ReadDataBlock((byte[][])ve.Value, "", 1, reply);
+                        }
+                        else if (act == ActionType.Read)
+                        {
+                            dev.Comm.ReadValue(ve.Target, ve.Index);
+                        }
+                        else if (act == ActionType.Write)
+                        {
+                            dev.Comm.Write(ve.Target, ve.Index);
+                        }
+                        else if (act == ActionType.Action)
+                        {
+                            dev.Comm.MethodRequest(ve.Target, ve.Index, ve.Value, reply);
+                        }
+                        act = btn.View.PostAction(act, ve);
+                        ve.Value = null;
+                    }
+                } while (act != ActionType.None);
             }
             catch (Exception ex)
             {
@@ -683,15 +665,15 @@ namespace GXDLMSDirector
                 {
                     if (it.Value == ActionType.Read)
                     {
-                        it.Key.Click -= new EventHandler(OnRead);
+                        it.Key.Click -= new EventHandler(OnHandleAction);
                     }
                     else if (it.Value == ActionType.Write)
                     {
-                        it.Key.Click -= new EventHandler(OnWrite);
+                        it.Key.Click -= new EventHandler(OnHandleAction);
                     }
                     else
                     {
-                        it.Key.Click -= new EventHandler(OnAction);
+                        it.Key.Click -= new EventHandler(OnHandleAction);
                     }
                 }
                 ActionList.Clear();
@@ -732,7 +714,7 @@ namespace GXDLMSDirector
                 }
             }
             if (index == 0)
-            {               
+            {
                 for (int it = 1; it != (obj as IGXDLMSBase).GetMethodCount() + 1; ++it)
                 {
                     bool bFound = UpdateActions(view, ((Form)view).Controls, view.Target, it);

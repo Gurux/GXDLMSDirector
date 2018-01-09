@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9754 $,
-//                  $Date: 2017-12-05 12:48:42 +0200 (ti, 05 joulu 2017) $
+// Version:         $Revision: 9796 $,
+//                  $Date: 2018-01-09 12:23:45 +0200 (ti, 09 tammi 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -52,10 +52,14 @@ namespace GXDLMSDirector
     {
         Form MediaPropertiesForm = null;
         GXManufacturerCollection Manufacturers;
-        Gurux.Common.IGXMedia SelectedMedia = null;
+        IGXMedia SelectedMedia = null;
         public GXDLMSDevice Device = null;
         public DevicePropertiesForm(GXManufacturerCollection manufacturers, GXDLMSDevice dev2)
         {
+            if (manufacturers.Count == 0)
+            {                
+                throw new Exception(Properties.Resources.ManufacturerSettingsMissing);
+            }
             try
             {
                 InitializeComponent();
@@ -222,7 +226,7 @@ namespace GXDLMSDirector
                     {
                         serial.PortName = ports[0];
                     }
-                    if (((GXManufacturer)ManufacturerCB.SelectedItem).StartProtocol == StartProtocolType.DLMS)
+                    if (ManufacturerCB.SelectedItem != null && ((GXManufacturer)ManufacturerCB.SelectedItem).StartProtocol == StartProtocolType.DLMS)
                     {
                         serial.BaudRate = 9600;
                         serial.DataBits = 8;
@@ -629,8 +633,8 @@ namespace GXDLMSDirector
                 Device.WindowSizeRX = byte.Parse(WindowSizeRXTb.Text);
                 Device.InactivityTimeout = int.Parse(InactivityTimeoutTb.Text);
                 Device.PduSize = UInt16.Parse(MaxPduTb.Text);
-                Device.Priority = (Priority) PriorityCb.SelectedItem;
-                Device.ServiceClass = (ServiceClass) ServiceClassCb.SelectedItem;
+                Device.Priority = (Priority)PriorityCb.SelectedItem;
+                Device.ServiceClass = (ServiceClass)ServiceClassCb.SelectedItem;
 
                 Device.Name = name;
                 Device.Media = SelectedMedia;
@@ -875,19 +879,22 @@ namespace GXDLMSDirector
         {
             //If IEC47 is used DLMS is only protocol.
             GXManufacturer man = this.ManufacturerCB.SelectedItem as GXManufacturer;
-            UseWrapperCb.Checked = man.UseIEC47;
-            UseLNCB.Checked = Device.UseLogicalNameReferencing = man.UseLogicalNameReferencing;
-            if (SelectedMedia is GXNet && man != null)
+            if (man != null)
             {
-                StartProtocolCB.Enabled = !man.UseIEC47;
-            }
-            else
-            {
-                StartProtocolCB.Enabled = true;
-            }
-            if (!StartProtocolCB.Enabled)
-            {
-                StartProtocolCB.SelectedItem = StartProtocolType.DLMS;
+                UseWrapperCb.Checked = man.UseIEC47;
+                UseLNCB.Checked = Device.UseLogicalNameReferencing = man.UseLogicalNameReferencing;
+                if (SelectedMedia is GXNet)
+                {
+                    StartProtocolCB.Enabled = !man.UseIEC47;
+                }
+                else
+                {
+                    StartProtocolCB.Enabled = true;
+                }
+                if (!StartProtocolCB.Enabled)
+                {
+                    StartProtocolCB.SelectedItem = StartProtocolType.DLMS;
+                }
             }
         }
 

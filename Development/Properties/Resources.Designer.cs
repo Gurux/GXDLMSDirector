@@ -80,7 +80,7 @@ namespace GXDLMSDirector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Copyright© 1998-2017 Gurux Ltd.
+        ///   Looks up a localized string similar to Copyright© 1998-2018 Gurux Ltd.
         ///All rights reserved..
         /// </summary>
         internal static string CopyrightTxt {
@@ -195,6 +195,15 @@ namespace GXDLMSDirector.Properties {
         internal static string InvalidASCII {
             get {
                 return ResourceManager.GetString("InvalidASCII", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Install Manufacturer Settings first..
+        /// </summary>
+        internal static string ManufacturerSettingsMissing {
+            get {
+                return ResourceManager.GetString("ManufacturerSettingsMissing", resourceCulture);
             }
         }
         

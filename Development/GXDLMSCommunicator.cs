@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9759 $,
-//                  $Date: 2017-12-07 12:48:53 +0200 (to, 07 joulu 2017) $
+// Version:         $Revision: 9796 $,
+//                  $Date: 2018-01-09 12:23:45 +0200 (ti, 09 tammi 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -108,7 +108,17 @@ namespace GXDLMSDirector
 
         public void MethodRequest(GXDLMSObject target, int methodIndex, object data, GXReplyData reply)
         {
-            ReadDataBlock(client.Method(target, methodIndex, data, GXDLMSConverter.GetDLMSDataType(data)), "", reply);
+            lastTransaction = DateTime.Now;
+            byte[][] tmp;
+            if (data is byte[])
+            {
+                tmp = client.Method(target, methodIndex, data, DataType.Array);
+            }
+            else
+            {
+                tmp = client.Method(target, methodIndex, data, GXDLMSConverter.GetDLMSDataType(data));
+            }
+            ReadDataBlock(tmp, "", reply);
         }
 
         byte[] ReleaseRequest()

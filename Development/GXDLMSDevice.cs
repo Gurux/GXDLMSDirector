@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9754 $,
-//                  $Date: 2017-12-05 12:48:42 +0200 (ti, 05 joulu 2017) $
+// Version:         $Revision: 9806 $,
+//                  $Date: 2018-01-12 11:44:00 +0200 (pe, 12 tammi 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -106,8 +106,11 @@ namespace GXDLMSDirector
 
         public void KeepAliveStart()
         {
-            KeepAlive.Interval = InactivityTimeout * 1000;
-            KeepAlive.Start();
+            if (InactivityTimeout != 0)
+            {
+                KeepAlive.Interval = InactivityTimeout * 1000;
+                KeepAlive.Start();
+            }
         }
 
         public void KeepAliveStop()

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9442 $,
-//                  $Date: 2017-05-23 15:21:03 +0300 (ti, 23 touko 2017) $
+// Version:         $Revision: 9806 $,
+//                  $Date: 2018-01-12 11:44:00 +0200 (pe, 12 tammi 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -33,8 +33,6 @@
 
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace Gurux
@@ -53,6 +51,9 @@ namespace Gurux
 
         [DllImport("wininet.dll", CharSet = CharSet.Auto)]
         public extern static bool InternetGetConnectedState(ref InternetConnectionState lpdwFlags, int dwReserved);
+
+        [DllImport("User32.dll")]
+        public static extern Int32 SetForegroundWindow(IntPtr hWnd);
 
         [Flags]
         public enum InternetConnectionState : int

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9754 $,
-//                  $Date: 2017-12-05 12:48:42 +0200 (ti, 05 joulu 2017) $
+// Version:         $Revision: 9806 $,
+//                  $Date: 2018-01-12 11:44:00 +0200 (pe, 12 tammi 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -41,6 +41,8 @@ using System.Reflection;
 using Gurux.Common;
 using System.Deployment.Application;
 using Microsoft.Win32;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace GXDLMSDirector
 {
@@ -115,91 +117,114 @@ namespace GXDLMSDirector
             MessageBox.Show(ex.Message, Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error);
         }
 
+        static Mutex mutex = new Mutex(true, "{e78762b5-4e85-45c8-a9fa-e95786f77684}");
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main()
         {
+            //Allow only one instance.
+            bool first;
             try
             {
-                Assembly asm = Assembly.GetExecutingAssembly();
-                string updates = Path.Combine(Path.GetDirectoryName(asm.Location), "Updates");
-                string medias = Path.Combine(Path.GetDirectoryName(asm.Location), "Medias");
-                if (Directory.Exists(updates))
-                {
-                    if (!Directory.Exists(medias))
-                    {
-                        Directory.CreateDirectory(medias);
-                    }
-                    DirectoryInfo di = new DirectoryInfo(updates);
-                    foreach (FileInfo it in di.GetFiles("*.dll"))
-                    {
-                        try
-                        {
-                            File.Copy(it.FullName, Path.Combine(medias, it.Name), true);
-                            File.Delete(it.FullName);
-                        }
-                        catch (Exception ex)
-                        {
-                            System.Diagnostics.Debug.WriteLine(ex.Message);
-                        }
-                    }
-                }
-
-                string initDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
+                first = mutex.WaitOne(TimeSpan.Zero, true);
+            }
+            catch (AbandonedMutexException)
+            {
+                first = true;
+            }
+            if (first)
+            {
                 try
                 {
-                    if (!Directory.Exists(initDir))
+                    Assembly asm = Assembly.GetExecutingAssembly();
+                    string updates = Path.Combine(Path.GetDirectoryName(asm.Location), "Updates");
+                    string medias = Path.Combine(Path.GetDirectoryName(asm.Location), "Medias");
+                    if (Directory.Exists(updates))
                     {
-                        Directory.CreateDirectory(initDir);
-                    }
-                    SetAddRemoveProgramsIcon();
-                    Directory.SetCurrentDirectory(initDir);
-                    LoadMedias(new DirectoryInfo(medias));
-                    //Load external medias.
-                    List<string> missingMedias = new List<string>();
-                    List<string> downloadedMedias = new List<string>();
-                    foreach (string it in Properties.Settings.Default.ExternalMedias.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
-                    {
-                        if (GXExternalMediaForm.IsDownloaded(it))
+                        if (!Directory.Exists(medias))
                         {
-                            FileInfo fi = new FileInfo(Path.Combine(medias, Path.GetFileName(it)));
-                            if (!fi.Exists)
+                            Directory.CreateDirectory(medias);
+                        }
+                        DirectoryInfo di = new DirectoryInfo(updates);
+                        foreach (FileInfo it in di.GetFiles("*.dll"))
+                        {
+                            try
                             {
-                                missingMedias.Add(it);
+                                File.Copy(it.FullName, Path.Combine(medias, it.Name), true);
+                                File.Delete(it.FullName);
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                downloadedMedias.Add(it);
+                                System.Diagnostics.Debug.WriteLine(ex.Message);
                             }
                         }
-                        else if (File.Exists(it))
+                    }
+
+                    string initDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
+                    try
+                    {
+                        if (!Directory.Exists(initDir))
                         {
-                            Assembly assembly = Assembly.LoadFile(it);
+                            Directory.CreateDirectory(initDir);
+                        }
+                        SetAddRemoveProgramsIcon();
+                        Directory.SetCurrentDirectory(initDir);
+                        LoadMedias(new DirectoryInfo(medias));
+                        //Load external medias.
+                        List<string> missingMedias = new List<string>();
+                        List<string> downloadedMedias = new List<string>();
+                        foreach (string it in Properties.Settings.Default.ExternalMedias.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            if (GXExternalMediaForm.IsDownloaded(it))
+                            {
+                                FileInfo fi = new FileInfo(Path.Combine(medias, Path.GetFileName(it)));
+                                if (!fi.Exists)
+                                {
+                                    missingMedias.Add(it);
+                                }
+                                else
+                                {
+                                    downloadedMedias.Add(it);
+                                }
+                            }
+                            else if (File.Exists(it))
+                            {
+                                Assembly assembly = Assembly.LoadFile(it);
+                            }
+                        }
+                        if (missingMedias.Count != 0)
+                        {
+                            //Download media again if not found.
+                            GXAsyncWork checkUpdates = new GXAsyncWork(null, OnAsyncStateChange, DownloadMedias, OnError, null, new object[] { missingMedias.ToArray() });
+                            checkUpdates.Start();
+                        }
+                        if (downloadedMedias.Count != 0)
+                        {
+                            //Download media again if not found.
+                            GXAsyncWork checkUpdates = new GXAsyncWork(null, OnAsyncStateChange, DownloadMedias, OnError, null, new object[] { missingMedias.ToArray() });
+                            checkUpdates.Start();
                         }
                     }
-                    if (missingMedias.Count != 0)
+                    catch (Exception)
                     {
-                        //Download media again if not found.
-                        GXAsyncWork checkUpdates = new GXAsyncWork(null, OnAsyncStateChange, DownloadMedias, OnError, null, new object[] { missingMedias.ToArray() });
-                        checkUpdates.Start();
                     }
-                    if (downloadedMedias.Count != 0)
-                    {
-                        //Download media again if not found.
-                        GXAsyncWork checkUpdates = new GXAsyncWork(null, OnAsyncStateChange, DownloadMedias, OnError, null, new object[] { missingMedias.ToArray() });
-                        checkUpdates.Start();
-                    }
+                    MainForm.InitMain();
                 }
-                catch (Exception)
+                catch (Exception Ex)
                 {
+                    GXDLMS.Common.Error.ShowError(null, Ex);
                 }
-                MainForm.InitMain();
+                mutex.ReleaseMutex();
             }
-            catch (Exception Ex)
+            else
             {
-                GXDLMS.Common.Error.ShowError(null, Ex);
+                foreach(Process p in Process.GetProcessesByName("GXDLMSDirector"))
+                {
+                    Gurux.Win32.SetForegroundWindow(p.MainWindowHandle);
+                }
             }
         }
 

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9442 $,
-//                  $Date: 2017-05-23 15:21:03 +0300 (ti, 23 touko 2017) $
+// Version:         $Revision: 9818 $,
+//                  $Date: 2018-01-22 09:05:42 +0200 (ma, 22 tammi 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -41,11 +41,25 @@ using System.Security.AccessControl;
 using System.Diagnostics;
 using System.Windows.Forms;
 using Gurux.Common;
+using Gurux.DLMS;
+using Gurux.DLMS.Enums;
 
 namespace GXDLMS.ManufacturerSettings
 {
     class GXLogWriter
     {
+        /// <summary>
+        /// Received trace data.
+        /// </summary>
+        private static GXByteBuffer receivedTraceData = new GXByteBuffer();
+        private static GXDLMSTranslator translator;
+
+        static GXLogWriter()
+        {
+            translator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
+            receivedTraceData = new GXByteBuffer();
+        }
+
         static public string LogPath
         {
             get
@@ -77,6 +91,12 @@ namespace GXDLMS.ManufacturerSettings
             }
         }
 
+        static public int LogLevel
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// Append data to log file.
         /// </summary>
@@ -92,11 +112,34 @@ namespace GXDLMS.ManufacturerSettings
         static public void WriteLog(string text, byte[] value)
         {
             string str = DateTime.Now.ToLongTimeString() + " " + text;
-            if (value != null)
+            //Show data as hex.
+            if ((LogLevel & 1) != 0)
             {
-                str += "\r\n" + GXCommon.ToHex(value, true);
+                if (value != null)
+                {
+                    str += "\r\n" + GXCommon.ToHex(value, true);
+                }
+                System.Diagnostics.Trace.WriteLine(str);
             }
-            System.Diagnostics.Trace.WriteLine(str);
+            //Show data as xml.
+            if ((LogLevel & 2) != 0)
+            {
+                receivedTraceData.Set(value);
+                try
+                {
+                    GXByteBuffer pdu = new GXByteBuffer();
+                    InterfaceType type = GXDLMSTranslator.GetDlmsFraming(receivedTraceData);
+                    if (translator.FindNextFrame(receivedTraceData, pdu, type))
+                    {
+                        System.Diagnostics.Trace.WriteLine(translator.MessageToXml(receivedTraceData));
+                        receivedTraceData.Clear();
+                    }
+                }
+                catch (Exception)
+                {
+                    receivedTraceData.Clear();
+                }
+            }
         }
 
         /// <summary>

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9806 $,
-//                  $Date: 2018-01-12 11:44:00 +0200 (pe, 12 tammi 2018) $
+// Version:         $Revision: 9818 $,
+//                  $Date: 2018-01-22 09:05:42 +0200 (ma, 22 tammi 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -139,6 +139,14 @@ namespace GXDLMSDirector
             {
                 try
                 {
+                    //Update previous installed settings.
+                    if (Properties.Settings.Default.UpdateSettings)
+                    {
+                        Properties.Settings.Default.Upgrade();
+                        Properties.Settings.Default.UpdateSettings = false;
+                        Properties.Settings.Default.Save();
+                    }
+
                     Assembly asm = Assembly.GetExecutingAssembly();
                     string updates = Path.Combine(Path.GetDirectoryName(asm.Location), "Updates");
                     string medias = Path.Combine(Path.GetDirectoryName(asm.Location), "Medias");

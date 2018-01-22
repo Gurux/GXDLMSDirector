@@ -135,8 +135,8 @@
     <Reference Include="Gurux.DLMS, Version=8.5.1801.1202, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.DLMS.8.5.1801.1202\lib\portable-win+net35\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=8.5.1801.1201, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.8.5.1801.1201\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=8.5.1801.2201, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.8.5.1801.2201\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.Net, Version=8.1.1801.1201, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Net.8.1.1801.1201\lib\portable-win+net40\Gurux.Net.dll</HintPath>
@@ -167,6 +167,12 @@
     </Compile>
     <Compile Include="GXExternalMediaForm.Designer.cs">
       <DependentUpon>GXExternalMediaForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GXFindDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GXFindDlg.Designer.cs">
+      <DependentUpon>GXFindDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="GXSettingsDlg.cs">
       <SubType>Form</SubType>
@@ -231,6 +237,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="GXExternalMediaForm.resx">
       <DependentUpon>GXExternalMediaForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GXFindDlg.resx">
+      <DependentUpon>GXFindDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GXObisValueItemForm.resx">
       <DependentUpon>GXObisValueItemForm.cs</DependentUpon>

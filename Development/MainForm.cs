@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9796 $,
-//                  $Date: 2018-01-09 12:23:45 +0200 (ti, 09 tammi 2018) $
+// Version:         $Revision: 9821 $,
+//                  $Date: 2018-01-22 14:36:35 +0200 (ma, 22 tammi 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -54,6 +54,7 @@ using Gurux.DLMS.Enums;
 using Gurux.DLMS.UI;
 using Gurux.Net;
 using System.Text;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace GXDLMSDirector
 {
@@ -121,17 +122,10 @@ namespace GXDLMSDirector
 
         public static void InitMain()
         {
-            //Update previous installed settings.
-            if (Properties.Settings.Default.UpdateSettings)
-            {
-                Properties.Settings.Default.Upgrade();
-                Properties.Settings.Default.UpdateSettings = false;
-                Properties.Settings.Default.Save();
-            }
             //Debug traces are written only log file.
-            if (!System.Diagnostics.Debugger.IsAttached)
+            if (!Debugger.IsAttached)
             {
-                System.Diagnostics.Trace.Listeners.Clear();
+                Trace.Listeners.Clear();
             }
             DirectoryInfo di = new System.IO.DirectoryInfo(System.IO.Path.GetDirectoryName((GXLogWriter.LogPath)));
             if (!di.Exists)
@@ -139,9 +133,9 @@ namespace GXDLMSDirector
                 di.Create();
             }
             GXLogWriter.ClearLog();
-            System.Diagnostics.Trace.Listeners.Add(new System.Diagnostics.TextWriterTraceListener(GXLogWriter.LogPath));
-            System.Diagnostics.Trace.AutoFlush = true;
-            System.Diagnostics.Trace.IndentSize = 4;
+            Trace.Listeners.Add(new TextWriterTraceListener(GXLogWriter.LogPath));
+            Trace.AutoFlush = true;
+            Trace.IndentSize = 4;
             if (Environment.OSVersion.Platform != PlatformID.Unix)
             {
                 Application.EnableVisualStyles();
@@ -373,7 +367,7 @@ namespace GXDLMSDirector
                     ObjectPanelFrame.Controls.Clear();
                     SelectedView.Target = (GXDLMSObject)obj;
                     SelectedView.Target.OnChange += new ObjectChangeEventHandler(DLMSItemOnChange);
-                    UpdateProperties(obj, SelectedView, new List<object>(), 0);
+                    UpdateProperties(obj, SelectedView, new List<object>(), 0, true);
                     ObjectPanelFrame.Controls.Add((Form)SelectedView);
                     ((Form)SelectedView).Show();
                     UpdateDeviceUI(GetDevice(SelectedView.Target), GetDevice((GXDLMSObject)obj).Status);
@@ -484,6 +478,7 @@ namespace GXDLMSDirector
 
         private static GXValueField UpdateProperties(IGXDLMSView view, System.Windows.Forms.Control.ControlCollection controls, GXDLMSObject target, int index, object value)
         {
+            GXDLMSDevice dev = (GXDLMSDevice)view.Target.Parent.Tag;
             GXValueField item = null;
             foreach (Control it in controls)
             {
@@ -493,7 +488,7 @@ namespace GXDLMSDirector
                     if (obj.Index == index)
                     {
                         obj.Target = target;
-                        obj.UpdateValueItems(target, index, value);
+                        obj.UpdateValueItems(target, index, value, (dev.Status & DeviceState.Connected) != 0);
                         obj.Value = value;
                         item = obj;
                     }
@@ -515,7 +510,7 @@ namespace GXDLMSDirector
                     if ((btn.Action == ActionType.Read || btn.Action == ActionType.Write) && btn.Index == index)
                     {
                         btn.View = view;
-                        btn.Enabled = (target.GetAccess(index) & AccessMode.Write) != 0;
+                        btn.Enabled = (dev.Status & DeviceState.Connected) != 0 && (target.GetAccess(index) & AccessMode.Write) != 0;
                         if (btn.Enabled)
                         {
                             btn.Target = target;
@@ -635,14 +630,14 @@ namespace GXDLMSDirector
             }
         }
 
-        delegate void ValueChangedEventHandler(IGXDLMSView view, int index, object value, bool changeByUser);
+        delegate void ValueChangedEventHandler(IGXDLMSView view, int index, object value, bool changeByUser, bool connected);
 
-        static void OnValueChanged(IGXDLMSView view, int index, object value, bool changeByUser)
+        static void OnValueChanged(IGXDLMSView view, int index, object value, bool changeByUser, bool connected)
         {
-            view.OnValueChanged(index, value, changeByUser);
+            view.OnValueChanged(index, value, changeByUser, connected);
         }
 
-        private void UpdateProperties(object obj, IGXDLMSView view, List<object> UpdatedObjects, int index)
+        private void UpdateProperties(object obj, IGXDLMSView view, List<object> UpdatedObjects, int index, bool updateAccessLevels)
         {
             if (obj == null)
             {
@@ -650,6 +645,7 @@ namespace GXDLMSDirector
             }
             UpdateWriteEnabled();
             GXDLMSObject tmp = view.Target;
+            GXDLMSDevice dev = (GXDLMSDevice)tmp.Parent.Tag;
             view.Description = tmp.Description;
             if (view.ErrorProvider != null)
             {
@@ -698,29 +694,35 @@ namespace GXDLMSDirector
                     GXValueField item = UpdateProperties(view, ((Form)view).Controls, view.Target, it, value);
                     if (item == null || item.NotifyChanges)
                     {
-                        view.OnAccessRightsChange(it, view.Target.GetAccess(it));
-                    }
-                    if (item == null || item.NotifyChanges)
-                    {
                         if (InvokeRequired)
                         {
-                            ((Form)view).Invoke(new ValueChangedEventHandler(OnValueChanged), new object[] { view, it, value, dirty });
+                            ((Form)view).Invoke(new ValueChangedEventHandler(OnValueChanged), new object[] { view, it, value, dirty, (dev.Status & DeviceState.Connected) != 0 });
                         }
                         else
                         {
-                            view.OnValueChanged(it, value, false);
+                            view.OnValueChanged(it, value, false, (dev.Status & DeviceState.Connected) != 0);
+                        }
+                        if (updateAccessLevels)
+                        {
+                            bool connected = (dev.Status & DeviceState.Connected) != 0;
+                            view.OnAccessRightsChange(it, tmp.GetAccess(it), connected);
                         }
                     }
                 }
             }
             if (index == 0)
             {
+                MethodAccessMode ma = MethodAccessMode.NoAccess;
                 for (int it = 1; it != (obj as IGXDLMSBase).GetMethodCount() + 1; ++it)
                 {
                     bool bFound = UpdateActions(view, ((Form)view).Controls, view.Target, it);
                     if (!bFound)
                     {
-                        view.OnAccessRightsChange(it, view.Target.GetMethodAccess(it));
+                        if ((dev.Status & DeviceState.Connected) != 0)
+                        {
+                            ma = view.Target.GetMethodAccess(it);
+                        }
+                        view.OnAccessRightsChange(it, ma, (dev.Status & DeviceState.Connected) != 0);
                     }
                 }
             }
@@ -803,6 +805,31 @@ namespace GXDLMSDirector
             return null;
         }
 
+        private DialogResult ShowProperties(GXDLMSDevice dev, bool newDevice)
+        {
+            string man = dev.Manufacturer;
+            DevicePropertiesForm dlg = new DevicePropertiesForm(this.Manufacturers, dev);
+            DialogResult res = dlg.ShowDialog(this);
+            if (res == DialogResult.OK)
+            {
+                if (!newDevice)
+                {
+                    //If user has change meter manufacturer.
+                    if (man != dev.Manufacturer)
+                    {
+                        while (dev.Objects.Count != 0)
+                        {
+                            RemoveObject(dev.Objects[0]);
+                        }
+                        SelectItem(dev);
+                    }
+                    ((TreeNode)ObjectTreeItems[dev]).Text = dev.Name;
+                    SetDirty(true);
+                }
+            }
+            return res;
+        }
+
         /// <summary>
         /// Show properties of the selected media.
         /// </summary>
@@ -815,22 +842,7 @@ namespace GXDLMSDirector
                 GXDLMSDevice dev = GetSelectedDevice();
                 if (dev != null)
                 {
-                    string man = dev.Manufacturer;
-                    DevicePropertiesForm dlg = new DevicePropertiesForm(this.Manufacturers, dev);
-                    if (dlg.ShowDialog(this) == DialogResult.OK)
-                    {
-                        //If user has change meter manufacturer.
-                        if (man != dev.Manufacturer)
-                        {
-                            while (dev.Objects.Count != 0)
-                            {
-                                RemoveObject(dev.Objects[0]);
-                            }
-                            SelectItem(dev);
-                        }
-                        ((TreeNode)ObjectTreeItems[dev]).Text = dev.Name;
-                        SetDirty(true);
-                    }
+                    ShowProperties(dev, false);
                 }
             }
             catch (Exception Ex)
@@ -891,7 +903,7 @@ namespace GXDLMSDirector
                 lic.CopyrightText = GXDLMSDirector.Properties.Resources.CopyrightTxt;
                 //Get version info
                 System.Reflection.Assembly asm = System.Reflection.Assembly.GetExecutingAssembly();
-                System.Diagnostics.FileVersionInfo info = System.Diagnostics.FileVersionInfo.GetVersionInfo(asm.Location);
+                FileVersionInfo info = FileVersionInfo.GetVersionInfo(asm.Location);
                 lic.ShowAbout(this, info.FileVersion);
             }
             catch (Exception Ex)
@@ -1018,6 +1030,21 @@ namespace GXDLMSDirector
             }
         }
 
+        /// <summary>
+        /// Ask is association view read when connecting first time.
+        /// </summary>
+        /// <param name="obj">Selected object.</param>
+        delegate void UpdateAccessRightsEventHandler(GXDLMSObject obj);
+
+        /// <summary>
+        /// Ask is association view read when connecting first time.
+        /// </summary>
+        /// <param name="obj">Selected object.</param>
+        private void UpdateAccessRights(GXDLMSObject obj)
+        {
+            UpdateProperties(obj, SelectedView, new List<object>(), 0, true);
+        }
+
         void Connect(object sender, GXAsyncWork work, object[] parameters)
         {
             try
@@ -1067,6 +1094,17 @@ namespace GXDLMSDirector
                         }
                     }
                     Connect(sender, work, new object[] { devices });
+                    if (tmp.Count == 1)
+                    {
+                        if (InvokeRequired)
+                        {
+                            BeginInvoke(new UpdateAccessRightsEventHandler(UpdateAccessRights), tmp[0]);
+                        }
+                        else
+                        {
+                            UpdateAccessRights(tmp[0]);
+                        }
+                    }
                 }
                 else
                 {
@@ -1076,6 +1114,14 @@ namespace GXDLMSDirector
                     if (!dev.Media.IsOpen)
                     {
                         dev.InitializeConnection();
+                    }
+                    if (InvokeRequired)
+                    {
+                        BeginInvoke(new UpdateAccessRightsEventHandler(UpdateAccessRights), tmp);
+                    }
+                    else
+                    {
+                        UpdateAccessRights(tmp);
                     }
                 }
             }
@@ -1147,6 +1193,17 @@ namespace GXDLMSDirector
                         }
                     }
                     Disconnect(sender, work, new object[] { devices });
+                    if (tmp.Count == 1)
+                    {
+                        if (InvokeRequired)
+                        {
+                            BeginInvoke(new UpdateAccessRightsEventHandler(UpdateAccessRights), tmp[0]);
+                        }
+                        else
+                        {
+                            UpdateAccessRights(tmp[0]);
+                        }
+                    }
                 }
                 else
                 {
@@ -1154,6 +1211,14 @@ namespace GXDLMSDirector
                     GXDLMSObject tmp = obj as GXDLMSObject;
                     GXDLMSDevice dev = tmp.Parent.Tag as GXDLMSDevice;
                     dev.Disconnect();
+                    if (InvokeRequired)
+                    {
+                        BeginInvoke(new UpdateAccessRightsEventHandler(UpdateAccessRights), tmp);
+                    }
+                    else
+                    {
+                        UpdateAccessRights(tmp);
+                    }
                 }
             }
             catch (ThreadAbortException)
@@ -1407,6 +1472,11 @@ namespace GXDLMSDirector
                 ForceReadMnu_Click(null, null);
                 AutoReset.Checked = !Properties.Settings.Default.NotificationAutoReset;
                 AutoReset_Click(null, null);
+
+                LogHexBtn.Checked = (Properties.Settings.Default.Log & 1) != 0;
+                LogXmlBtn.Checked = (Properties.Settings.Default.Log & 2) != 0;
+                GXLogWriter.LogLevel = Properties.Settings.Default.Log;
+
                 string path = UserDataPath;
                 if (System.Environment.OSVersion.Platform == PlatformID.Unix)
                 {
@@ -1634,7 +1704,7 @@ namespace GXDLMSDirector
                 }
                 if (SelectedView != null && SelectedView.Target == sender)
                 {
-                    UpdateProperties(sender, SelectedView, new List<object>(), index);
+                    UpdateProperties(sender, SelectedView, new List<object>(), index, false);
                 }
                 ListViewItem lv = ObjectValueItems[sender] as ListViewItem;
                 if (lv != null)
@@ -1815,7 +1885,7 @@ namespace GXDLMSDirector
                         foreach (GXDLMSObject obj in objects)
                         {
                             dev.Comm.Write(obj, 0);
-                            UpdateProperties(obj, SelectedView, new List<object>(), 0);
+                            UpdateProperties(obj, SelectedView, new List<object>(), 0, false);
                         }
                         dev.KeepAliveStart();
                     }
@@ -1826,7 +1896,7 @@ namespace GXDLMSDirector
                         dev.KeepAliveStop();
                         OnProgress(dev, "Writing...", 0, 1);
                         dev.Comm.Write(obj, 0);
-                        UpdateProperties(obj, SelectedView, new List<object>(), 0);
+                        UpdateProperties(obj, SelectedView, new List<object>(), 0, false);
                         dev.KeepAliveStart();
                     }
                 }
@@ -2476,20 +2546,25 @@ namespace GXDLMSDirector
             TransactionWork.Start();
         }
 
+        private void AddDevice(GXDLMSDevice dev)
+        {
+            DevicePropertiesForm dlg = new DevicePropertiesForm(this.Manufacturers, dev);
+            if (dlg.ShowDialog(this) == DialogResult.OK)
+            {
+                dlg.Device.Manufacturers = this.Manufacturers;
+                dlg.Device.Comm.parentForm = this;
+                AddDevice(dlg.Device, false);
+                Devices.Add(dlg.Device);
+                GroupItems(GroupsMnu.Checked);
+                SetDirty(true);
+            }
+        }
+
         private void AddDeviceMnu_Click(object sender, EventArgs e)
         {
             try
             {
-                DevicePropertiesForm dlg = new DevicePropertiesForm(this.Manufacturers, null);
-                if (dlg.ShowDialog(this) == DialogResult.OK)
-                {
-                    dlg.Device.Manufacturers = this.Manufacturers;
-                    dlg.Device.Comm.parentForm = this;
-                    AddDevice(dlg.Device, false);
-                    Devices.Add(dlg.Device);
-                    GroupItems(GroupsMnu.Checked);
-                    SetDirty(true);
-                }
+                AddDevice(null);
             }
             catch (Exception Ex)
             {
@@ -2501,7 +2576,7 @@ namespace GXDLMSDirector
         {
             try
             {
-                System.Diagnostics.Process.Start("http://www.gurux.fi/index.php?q=GXDLMSDirectorHelp");
+                Process.Start("http://www.gurux.fi/index.php?q=GXDLMSDirectorHelp");
             }
             catch (Exception Ex)
             {
@@ -3027,7 +3102,7 @@ namespace GXDLMSDirector
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
             }
         }
 
@@ -3122,7 +3197,7 @@ namespace GXDLMSDirector
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
             }
             finally
             {
@@ -3349,6 +3424,192 @@ namespace GXDLMSDirector
         private void NotificationPdu_Click(object sender, EventArgs e)
         {
             UpdateNotification(3);
+        }
+
+        /// <summary>
+        /// OBIS code to search.
+        /// </summary>
+        string search = null;
+
+        private bool FindTreeNode(TreeNodeCollection nodes, string text, ref TreeNode first)
+        {
+            foreach (TreeNode it in nodes)
+            {
+                if (first == null)
+                {
+                    if (it == ObjectTree.SelectedNode)
+                    {
+                        first = it;
+                    }
+                }
+                else if (it.Tag is GXDLMSObject && (it.Tag as GXDLMSObject).LogicalName == search)
+                {
+                    ObjectTree.SelectedNode = it;
+                    return true;
+                }
+                if (it.Nodes.Count != 0)
+                {
+                    if (FindTreeNode(it.Nodes, text, ref first))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Find OBIS code from the tree view.
+        /// </summary>
+        /// <param name="nodes">List of OBIS codes to search.</param>
+        /// <param name="text">OBIS code to search</param>
+        /// <param name="first">If selected item found.</param>
+        /// <returns>Is OBIS code found.</returns>
+        private bool FindTreeNode(TreeNodeCollection nodes, string text, ref bool first)
+        {
+            TreeNode node = ObjectTree.SelectedNode;
+            foreach (TreeNode it in nodes)
+            {
+                if (!first)
+                {
+                    first = it == node;
+                }
+                else if (it.Tag is GXDLMSObject && (it.Tag as GXDLMSObject).LogicalName == search)
+                {
+                    ObjectTree.SelectedNode = it;
+                    return true;
+                }
+                if (it.Nodes.Count != 0)
+                {
+                    if (FindTreeNode(it.Nodes, text, ref first))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Find next OBIS code from the tree view.
+        /// </summary>
+        private void findNextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                bool first = false;
+                if (!FindTreeNode(ObjectTree.Nodes, search, ref first))
+                {
+                    first = true;
+                    if (!FindTreeNode(ObjectTree.Nodes, search, ref first))
+                    {
+                        throw new Exception("OBIS code '" + search + "' not found!");
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                GXDLMS.Common.Error.ShowError(this, Ex);
+            }
+        }
+
+        /// <summary>
+        /// Find OBIS code from the tree view.
+        /// </summary>
+        private void findToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                GXFindDlg dlg = new GXFindDlg(search);
+                if (dlg.ShowDialog(this) == DialogResult.OK)
+                {
+                    search = dlg.Target;
+                    bool tmp = string.IsNullOrEmpty(search);
+                    findNextToolStripMenuItem.Enabled = !tmp;
+                    if (!tmp)
+                    {
+                        findNextToolStripMenuItem_Click(null, null);
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                GXDLMS.Common.Error.ShowError(this, Ex);
+            }
+        }
+
+        /// <summary>
+        /// Clone selected device.
+        /// </summary>
+        private void CloneBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                object tag = ObjectTree.SelectedNode.Tag;
+                GXDLMSDevice dev = null;
+                if (tag is GXDLMSDevice)
+                {
+                    dev = tag as GXDLMSDevice;
+                }
+                else if (tag is GXDLMSObject)
+                {
+                    dev = GetDevice(tag as GXDLMSObject);
+                }
+                if (dev != null)
+                {
+                    //Create clone from original items.
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        List<Type> types = new List<Type>(GXDLMSClient.GetObjectTypes());
+                        types.Add(typeof(GXDLMSAttributeSettings));
+                        types.Add(typeof(GXDLMSAttribute));
+                        XmlAttributeOverrides overrides = new XmlAttributeOverrides();
+                        XmlAttributes attribs = new XmlAttributes();
+                        attribs.XmlIgnore = true;
+                        overrides.Add(typeof(GXDLMSDevice), "ObsoleteObjects", attribs);
+                        overrides.Add(typeof(GXDLMSAttributeSettings), attribs);
+                        XmlSerializer x = new XmlSerializer(typeof(GXDLMSDevice), overrides, types.ToArray(), null, "Gurux1");
+                        using (TextWriter writer = new StreamWriter(ms))
+                        {
+                            x.Serialize(writer, dev);
+                            ms.Position = 0;
+                            using (XmlReader reader = XmlReader.Create(ms))
+                            {
+                                dev = (GXDLMSDevice)x.Deserialize(reader);
+                            }
+                        }
+                        ms.Close();
+                        dev.Name = "";
+                        AddDevice(dev);
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                GXDLMS.Common.Error.ShowError(this, Ex);
+            }
+        }
+
+        private void LogHexBtn_Click(object sender, EventArgs e)
+        {
+            LogHexBtn.Checked = !LogHexBtn.Checked;
+            Properties.Settings.Default.Log = LogHexBtn.Checked ? 1 : 0;
+            if (LogXmlBtn.Checked)
+            {
+                Properties.Settings.Default.Log |= 2;
+            }
+            GXLogWriter.LogLevel = Properties.Settings.Default.Log;
+        }
+
+        private void LogXmlBtn_Click(object sender, EventArgs e)
+        {
+            LogXmlBtn.Checked = !LogXmlBtn.Checked;
+            Properties.Settings.Default.Log = LogHexBtn.Checked ? 1 : 0;
+            if (LogXmlBtn.Checked)
+            {
+                Properties.Settings.Default.Log |= 2;
+            }
+            GXLogWriter.LogLevel = Properties.Settings.Default.Log;
         }
     }
 }

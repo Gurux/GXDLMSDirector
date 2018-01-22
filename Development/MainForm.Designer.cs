@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9749 $,
-//                  $Date: 2017-12-05 10:01:35 +0200 (ti, 05 joulu 2017) $
+// Version:         $Revision: 9818 $,
+//                  $Date: 2018-01-22 09:05:42 +0200 (ma, 22 tammi 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -77,6 +77,11 @@ namespace GXDLMSDirector
             this.RecentFilesMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem11 = new System.Windows.Forms.ToolStripSeparator();
             this.ExitMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findNextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem16 = new System.Windows.Forms.ToolStripSeparator();
+            this.CloneBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ViewToolbarMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.ViewStatusbarMnu = new System.Windows.Forms.ToolStripMenuItem();
@@ -90,6 +95,11 @@ namespace GXDLMSDirector
             this.hexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.xmlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pDUToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem15 = new System.Windows.Forms.ToolStripMenuItem();
+            this.NotificationNone = new System.Windows.Forms.ToolStripMenuItem();
+            this.NotificationHex = new System.Windows.Forms.ToolStripMenuItem();
+            this.NotificationXml = new System.Windows.Forms.ToolStripMenuItem();
+            this.NotificationPdu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.ForceReadMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.PropertiesMnu = new System.Windows.Forms.ToolStripMenuItem();
@@ -110,11 +120,11 @@ namespace GXDLMSDirector
             this.OBISCodesMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.notificationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.AutoReset = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem13 = new System.Windows.Forms.ToolStripSeparator();
             this.StartNotifications = new System.Windows.Forms.ToolStripMenuItem();
             this.StopNotifications = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem14 = new System.Windows.Forms.ToolStripSeparator();
+            this.AutoReset = new System.Windows.Forms.ToolStripMenuItem();
             this.ClearNotifications = new System.Windows.Forms.ToolStripMenuItem();
             this.updateManufactureSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -196,11 +206,9 @@ namespace GXDLMSDirector
             this.DeviceList = new System.Windows.Forms.ListView();
             this.DeviceNameCH = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ObjectPanelFrame = new System.Windows.Forms.Panel();
-            this.toolStripMenuItem15 = new System.Windows.Forms.ToolStripMenuItem();
-            this.NotificationNone = new System.Windows.Forms.ToolStripMenuItem();
-            this.NotificationHex = new System.Windows.Forms.ToolStripMenuItem();
-            this.NotificationXml = new System.Windows.Forms.ToolStripMenuItem();
-            this.NotificationPdu = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem17 = new System.Windows.Forms.ToolStripMenuItem();
+            this.LogHexBtn = new System.Windows.Forms.ToolStripMenuItem();
+            this.LogXmlBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -217,6 +225,7 @@ namespace GXDLMSDirector
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.editToolStripMenuItem,
             this.viewToolStripMenuItem,
             this.toolsToolStripMenuItem,
             this.notificationsToolStripMenuItem,
@@ -320,6 +329,46 @@ namespace GXDLMSDirector
             this.ExitMnu.Text = "&Exit";
             this.ExitMnu.Click += new System.EventHandler(this.ExitMnu_Click);
             // 
+            // editToolStripMenuItem
+            // 
+            this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.findToolStripMenuItem,
+            this.findNextToolStripMenuItem,
+            this.toolStripMenuItem16,
+            this.CloneBtn});
+            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
+            this.editToolStripMenuItem.Text = "&Edit";
+            // 
+            // findToolStripMenuItem
+            // 
+            this.findToolStripMenuItem.Name = "findToolStripMenuItem";
+            this.findToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
+            this.findToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.findToolStripMenuItem.Text = "Find...";
+            this.findToolStripMenuItem.Click += new System.EventHandler(this.findToolStripMenuItem_Click);
+            // 
+            // findNextToolStripMenuItem
+            // 
+            this.findNextToolStripMenuItem.Enabled = false;
+            this.findNextToolStripMenuItem.Name = "findNextToolStripMenuItem";
+            this.findNextToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
+            this.findNextToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.findNextToolStripMenuItem.Text = "Find Next";
+            this.findNextToolStripMenuItem.Click += new System.EventHandler(this.findNextToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem16
+            // 
+            this.toolStripMenuItem16.Name = "toolStripMenuItem16";
+            this.toolStripMenuItem16.Size = new System.Drawing.Size(149, 6);
+            // 
+            // CloneBtn
+            // 
+            this.CloneBtn.Name = "CloneBtn";
+            this.CloneBtn.Size = new System.Drawing.Size(152, 22);
+            this.CloneBtn.Text = "Clone...";
+            this.CloneBtn.Click += new System.EventHandler(this.CloneBtn_Click);
+            // 
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -330,6 +379,7 @@ namespace GXDLMSDirector
             this.ObjectListMnu,
             this.GroupsMnu,
             this.toolStripMenuItem7,
+            this.toolStripMenuItem17,
             this.TraceMnu,
             this.toolStripMenuItem15,
             this.toolStripSeparator4,
@@ -422,6 +472,45 @@ namespace GXDLMSDirector
             this.pDUToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.pDUToolStripMenuItem.Text = "&Pdu";
             this.pDUToolStripMenuItem.Click += new System.EventHandler(this.pDUToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem15
+            // 
+            this.toolStripMenuItem15.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.NotificationNone,
+            this.NotificationHex,
+            this.NotificationXml,
+            this.NotificationPdu});
+            this.toolStripMenuItem15.Name = "toolStripMenuItem15";
+            this.toolStripMenuItem15.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem15.Text = "&Notifications";
+            // 
+            // NotificationNone
+            // 
+            this.NotificationNone.Name = "NotificationNone";
+            this.NotificationNone.Size = new System.Drawing.Size(152, 22);
+            this.NotificationNone.Text = "&None";
+            this.NotificationNone.Click += new System.EventHandler(this.NotificationNone_Click);
+            // 
+            // NotificationHex
+            // 
+            this.NotificationHex.Name = "NotificationHex";
+            this.NotificationHex.Size = new System.Drawing.Size(152, 22);
+            this.NotificationHex.Text = "&Hex";
+            this.NotificationHex.Click += new System.EventHandler(this.NotificationHex_Click);
+            // 
+            // NotificationXml
+            // 
+            this.NotificationXml.Name = "NotificationXml";
+            this.NotificationXml.Size = new System.Drawing.Size(152, 22);
+            this.NotificationXml.Text = "Xml";
+            this.NotificationXml.Click += new System.EventHandler(this.NotificationXml_Click);
+            // 
+            // NotificationPdu
+            // 
+            this.NotificationPdu.Name = "NotificationPdu";
+            this.NotificationPdu.Size = new System.Drawing.Size(152, 22);
+            this.NotificationPdu.Text = "&Pdu";
+            this.NotificationPdu.Click += new System.EventHandler(this.NotificationPdu_Click);
             // 
             // toolStripSeparator4
             // 
@@ -579,23 +668,15 @@ namespace GXDLMSDirector
             this.notificationsToolStripMenuItem.Size = new System.Drawing.Size(87, 20);
             this.notificationsToolStripMenuItem.Text = "Notifications";
             // 
-            // AutoReset
-            // 
-            this.AutoReset.Name = "AutoReset";
-            this.AutoReset.Size = new System.Drawing.Size(152, 22);
-            this.AutoReset.Text = "Auto Reset";
-            this.AutoReset.ToolTipText = "Clear notifications view after new message is received.";
-            this.AutoReset.Click += new System.EventHandler(this.AutoReset_Click);
-            // 
             // toolStripMenuItem13
             // 
             this.toolStripMenuItem13.Name = "toolStripMenuItem13";
-            this.toolStripMenuItem13.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem13.Size = new System.Drawing.Size(128, 6);
             // 
             // StartNotifications
             // 
             this.StartNotifications.Name = "StartNotifications";
-            this.StartNotifications.Size = new System.Drawing.Size(152, 22);
+            this.StartNotifications.Size = new System.Drawing.Size(131, 22);
             this.StartNotifications.Text = "Start";
             this.StartNotifications.ToolTipText = "Start receiving notifications";
             this.StartNotifications.Click += new System.EventHandler(this.StartNotifications_Click);
@@ -603,7 +684,7 @@ namespace GXDLMSDirector
             // StopNotifications
             // 
             this.StopNotifications.Name = "StopNotifications";
-            this.StopNotifications.Size = new System.Drawing.Size(152, 22);
+            this.StopNotifications.Size = new System.Drawing.Size(131, 22);
             this.StopNotifications.Text = "Stop";
             this.StopNotifications.ToolTipText = "Stop receiving notifications.";
             this.StopNotifications.Visible = false;
@@ -612,12 +693,20 @@ namespace GXDLMSDirector
             // toolStripMenuItem14
             // 
             this.toolStripMenuItem14.Name = "toolStripMenuItem14";
-            this.toolStripMenuItem14.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem14.Size = new System.Drawing.Size(128, 6);
+            // 
+            // AutoReset
+            // 
+            this.AutoReset.Name = "AutoReset";
+            this.AutoReset.Size = new System.Drawing.Size(131, 22);
+            this.AutoReset.Text = "Auto Reset";
+            this.AutoReset.ToolTipText = "Clear notifications view after new message is received.";
+            this.AutoReset.Click += new System.EventHandler(this.AutoReset_Click);
             // 
             // ClearNotifications
             // 
             this.ClearNotifications.Name = "ClearNotifications";
-            this.ClearNotifications.Size = new System.Drawing.Size(152, 22);
+            this.ClearNotifications.Size = new System.Drawing.Size(131, 22);
             this.ClearNotifications.Text = "Clear";
             this.ClearNotifications.ToolTipText = "Clear received notification.";
             this.ClearNotifications.Click += new System.EventHandler(this.ClearNotifications_Click);
@@ -1318,44 +1407,28 @@ namespace GXDLMSDirector
             this.ObjectPanelFrame.Size = new System.Drawing.Size(187, 142);
             this.ObjectPanelFrame.TabIndex = 32;
             // 
-            // toolStripMenuItem15
+            // toolStripMenuItem17
             // 
-            this.toolStripMenuItem15.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.NotificationNone,
-            this.NotificationHex,
-            this.NotificationXml,
-            this.NotificationPdu});
-            this.toolStripMenuItem15.Name = "toolStripMenuItem15";
-            this.toolStripMenuItem15.Size = new System.Drawing.Size(152, 22);
-            this.toolStripMenuItem15.Text = "&Notifications";
+            this.toolStripMenuItem17.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.LogHexBtn,
+            this.LogXmlBtn});
+            this.toolStripMenuItem17.Name = "toolStripMenuItem17";
+            this.toolStripMenuItem17.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem17.Text = "&Log";
             // 
-            // NotificationNone
+            // LogHexBtn
             // 
-            this.NotificationNone.Name = "NotificationNone";
-            this.NotificationNone.Size = new System.Drawing.Size(152, 22);
-            this.NotificationNone.Text = "&None";
-            this.NotificationNone.Click += new System.EventHandler(this.NotificationNone_Click);
+            this.LogHexBtn.Name = "LogHexBtn";
+            this.LogHexBtn.Size = new System.Drawing.Size(152, 22);
+            this.LogHexBtn.Text = "&Hex";
+            this.LogHexBtn.Click += new System.EventHandler(this.LogHexBtn_Click);
             // 
-            // NotificationHex
+            // LogXmlBtn
             // 
-            this.NotificationHex.Name = "NotificationHex";
-            this.NotificationHex.Size = new System.Drawing.Size(152, 22);
-            this.NotificationHex.Text = "&Hex";
-            this.NotificationHex.Click += new System.EventHandler(this.NotificationHex_Click);
-            // 
-            // NotificationXml
-            // 
-            this.NotificationXml.Name = "NotificationXml";
-            this.NotificationXml.Size = new System.Drawing.Size(152, 22);
-            this.NotificationXml.Text = "Xml";
-            this.NotificationXml.Click += new System.EventHandler(this.NotificationXml_Click);
-            // 
-            // NotificationPdu
-            // 
-            this.NotificationPdu.Name = "NotificationPdu";
-            this.NotificationPdu.Size = new System.Drawing.Size(152, 22);
-            this.NotificationPdu.Text = "&Pdu";
-            this.NotificationPdu.Click += new System.EventHandler(this.NotificationPdu_Click);
+            this.LogXmlBtn.Name = "LogXmlBtn";
+            this.LogXmlBtn.Size = new System.Drawing.Size(152, 22);
+            this.LogXmlBtn.Text = "Xml";
+            this.LogXmlBtn.Click += new System.EventHandler(this.LogXmlBtn_Click);
             // 
             // MainForm
             // 
@@ -1540,6 +1613,14 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ToolStripMenuItem NotificationHex;
         private System.Windows.Forms.ToolStripMenuItem NotificationXml;
         private System.Windows.Forms.ToolStripMenuItem NotificationPdu;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem findToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem findNextToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem16;
+        private System.Windows.Forms.ToolStripMenuItem CloneBtn;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem17;
+        private System.Windows.Forms.ToolStripMenuItem LogHexBtn;
+        private System.Windows.Forms.ToolStripMenuItem LogXmlBtn;
     }
 }
 

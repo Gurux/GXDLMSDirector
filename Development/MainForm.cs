@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9821 $,
-//                  $Date: 2018-01-22 14:36:35 +0200 (ma, 22 tammi 2018) $
+// Version:         $Revision: 9822 $,
+//                  $Date: 2018-01-23 19:45:55 +0200 (ti, 23 tammi 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -274,12 +274,15 @@ namespace GXDLMSDirector
                 ObjectValueView.Visible = obj is GXDLMSObjectCollection;
                 if (DeviceList.Visible)
                 {
+                    SaveAsTemplateBtn.Enabled = false;
                     DeviceState state = Devices.Count == 0 ? DeviceState.None : DeviceState.Initialized;
                     UpdateDeviceUI(null, state);
                     DeleteMnu.Enabled = DeleteBtn.Enabled = OptionsBtn.Enabled = false;
+                    DeviceList.BringToFront();
                 }
                 else if (DeviceInfoView.Visible)
                 {
+                    SaveAsTemplateBtn.Enabled = true;
                     GXDLMSDevice dev = (GXDLMSDevice)obj;
                     DeviceGb.Text = dev.Name;
                     StatusValueLbl.Text = dev.Status.ToString();
@@ -289,9 +292,12 @@ namespace GXDLMSDirector
                     ManufacturerValueLbl.Text = dev.Manufacturers.FindByIdentification(dev.Manufacturer).Name;
                     ConformanceTB.Text = dev.Comm.client.NegotiatedConformance.ToString();
                     UpdateDeviceUI(dev, dev.Status);
+                    DeviceInfoView.BringToFront();
                 }
                 else if (ObjectValueView.Visible)
                 {
+                    ObjectValueView.BringToFront();
+                    SaveAsTemplateBtn.Enabled = true;
                     try
                     {
                         ObjectValueView.BeginUpdate();
@@ -359,6 +365,8 @@ namespace GXDLMSDirector
                 }
                 else
                 {
+                    ObjectPanelFrame.BringToFront();
+                    SaveAsTemplateBtn.Enabled = true;
                     SelectedView = Views[obj.GetType()];
                     foreach (Control it in ObjectPanelFrame.Controls)
                     {
@@ -2565,6 +2573,8 @@ namespace GXDLMSDirector
             try
             {
                 AddDevice(null);
+                //Add OBIS codes.
+
             }
             catch (Exception Ex)
             {
@@ -3586,7 +3596,7 @@ namespace GXDLMSDirector
             }
             catch (Exception Ex)
             {
-                GXDLMS.Common.Error.ShowError(this, Ex);
+                Error.ShowError(this, Ex);
             }
         }
 
@@ -3610,6 +3620,93 @@ namespace GXDLMSDirector
                 Properties.Settings.Default.Log |= 2;
             }
             GXLogWriter.LogLevel = Properties.Settings.Default.Log;
+        }
+
+        /// <summary>
+        /// Save device as template.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SaveAsTemplateBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                object tag = ObjectTree.SelectedNode.Tag;
+                if (tag != null)
+                {
+                    GXDLMSDevice dev = null;
+                    if (tag is GXDLMSDevice)
+                    {
+                        dev = tag as GXDLMSDevice;
+                    }
+                    else if (tag is GXDLMSObject)
+                    {
+                        dev = GetDevice(tag as GXDLMSObject);
+                    }
+                    else if (tag is GXDLMSObjectCollection)
+                    {
+                        dev = (tag as GXDLMSObjectCollection).Tag as GXDLMSDevice;
+                    }
+                    if (dev != null)
+                    {
+                        GXManufacturer man = Manufacturers.FindByIdentification(dev.Manufacturer);
+                        man.ObisCodes.Clear();
+                        foreach (GXDLMSObject it in dev.Objects)
+                        {
+                            GXObisCode c = new GXObisCode(it.LogicalName, it.ObjectType, null);
+                            c.Append = true;
+                            man.ObisCodes.Add(c);
+                        }
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                Error.ShowError(this, Ex);
+            }
+        }
+
+        /// <summary>
+        /// Show help not available message.
+        /// </summary>
+        /// <param name="hevent">A HelpEventArgs that contains the event data.</param>
+        protected override void OnHelpRequested(HelpEventArgs hevent)
+        {
+            try
+            {
+                // Get the control where the user clicked
+                Control ctl = this.GetChildAtPoint(this.PointToClient(hevent.MousePos));
+                string str = Properties.Resources.HelpNotAvailable;
+                if (ctl == toolStrip1)
+                {
+                    str = "http://www.gurux.fi/GXDLMSDirector.Menu";
+                }
+                else if (ctl == ObjectPanelFrame)
+                {
+                    GXDLMSViewAttribute[] att = (GXDLMSViewAttribute[])SelectedView.GetType().GetCustomAttributes(typeof(GXDLMSViewAttribute), true);
+                    str = "http://www.gurux.fi/index.php?q=" + att[0].DLMSType.ToString();
+                }
+                else
+                {
+                    str = "http://www.gurux.fi/index.php?q=GXDLMSDirectorHelp";
+                }
+                // Show as a Help pop-up
+                if (str != "")
+                {
+                    Process.Start(str);
+                }
+                // Set flag to show that the Help event as been handled
+                hevent.Handled = true;
+            }
+            catch (Exception Ex)
+            {
+                Error.ShowError(this, Ex);
+            }
+        }
+
+        private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
         }
     }
 }

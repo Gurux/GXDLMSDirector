@@ -364,7 +364,7 @@ namespace GXDLMSDirector
                 SetCB.Checked = (c & Conformance.Set) != 0;
                 SelectiveAccessCB.Checked = (c & Conformance.SelectiveAccess) != 0;
                 EventNotificationCB.Checked = (c & Conformance.EventNotification) != 0;
-                ActionCB.Checked = (c & Conformance.EventNotification) != 0;
+                ActionCB.Checked = (c & Conformance.Action) != 0;
             }
             else
             {
@@ -470,7 +470,7 @@ namespace GXDLMSDirector
                 }
                 if (ActionCB.Checked)
                 {
-                    c |= Conformance.EventNotification;
+                    c |= Conformance.Action;
                 }
             }
             else

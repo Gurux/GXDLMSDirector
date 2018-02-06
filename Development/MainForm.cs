@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9822 $,
-//                  $Date: 2018-01-23 19:45:55 +0200 (ti, 23 tammi 2018) $
+// Version:         $Revision: 9846 $,
+//                  $Date: 2018-02-06 16:12:41 +0200 (ti, 06 helmi 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -579,6 +579,7 @@ namespace GXDLMSDirector
                             }
                             ActionList.Add(btn, btn.Action);
                         }
+                        return true;
                     }
                 }
                 else if (it.Controls.Count != 0)
@@ -1615,7 +1616,7 @@ namespace GXDLMSDirector
                 {
                     TraceView.AppendText(trace + " " + GXCommon.ToHex(data, true) + Environment.NewLine);
                 }
-                else if (traceLevel == 2 || traceLevel == 3)
+                else if (data != null && (traceLevel == 2 || traceLevel == 3))
                 {
                     //Show data as xml or pdu.
                     receivedTraceData.Set(data);
@@ -3530,10 +3531,10 @@ namespace GXDLMSDirector
         {
             try
             {
-                GXFindDlg dlg = new GXFindDlg(search);
-                if (dlg.ShowDialog(this) == DialogResult.OK)
+                GXFindParameters p = new GXFindParameters();
+                if (GXDlmsUi.Find(this, p))
                 {
-                    search = dlg.Target;
+                    search = p.ObisCode;
                     bool tmp = string.IsNullOrEmpty(search);
                     findNextToolStripMenuItem.Enabled = !tmp;
                     if (!tmp)
@@ -3675,26 +3676,28 @@ namespace GXDLMSDirector
             try
             {
                 // Get the control where the user clicked
+                Point lpe = menuStrip1.PointToClient(hevent.MousePos);
                 Control ctl = this.GetChildAtPoint(this.PointToClient(hevent.MousePos));
-                string str = Properties.Resources.HelpNotAvailable;
-                if (ctl == toolStrip1)
+                string str;
+                if (ctl == toolStrip1 || ctl == menuStrip1)
                 {
                     str = "http://www.gurux.fi/GXDLMSDirector.Menu";
                 }
-                else if (ctl == ObjectPanelFrame)
+                else if (ctl == ObjectPanelFrame && SelectedView != null)
                 {
                     GXDLMSViewAttribute[] att = (GXDLMSViewAttribute[])SelectedView.GetType().GetCustomAttributes(typeof(GXDLMSViewAttribute), true);
                     str = "http://www.gurux.fi/index.php?q=" + att[0].DLMSType.ToString();
+                }
+                else if (ctl == ObjectValueView && ObjectValueView.Items.Count != 0)
+                {
+                    str = "http://www.gurux.fi/index.php?q=" + ObjectValueView.Items[0].Tag.GetType();
                 }
                 else
                 {
                     str = "http://www.gurux.fi/index.php?q=GXDLMSDirectorHelp";
                 }
-                // Show as a Help pop-up
-                if (str != "")
-                {
-                    Process.Start(str);
-                }
+                // Show online help.
+                Process.Start(str);
                 // Set flag to show that the Help event as been handled
                 hevent.Handled = true;
             }
@@ -3702,11 +3705,6 @@ namespace GXDLMSDirector
             {
                 Error.ShowError(this, Ex);
             }
-        }
-
-        private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
         }
     }
 }

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9818 $,
-//                  $Date: 2018-01-22 09:05:42 +0200 (ma, 22 tammi 2018) $
+// Version:         $Revision: 9827 $,
+//                  $Date: 2018-01-24 13:10:34 +0200 (ke, 24 tammi 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -122,7 +122,7 @@ namespace GXDLMS.ManufacturerSettings
                 System.Diagnostics.Trace.WriteLine(str);
             }
             //Show data as xml.
-            if ((LogLevel & 2) != 0)
+            if (value != null && (LogLevel & 2) != 0)
             {
                 receivedTraceData.Set(value);
                 try

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9796 $,
-//                  $Date: 2018-01-09 12:23:45 +0200 (ti, 09 tammi 2018) $
+// Version:         $Revision: 9846 $,
+//                  $Date: 2018-02-06 16:12:41 +0200 (ti, 06 helmi 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -916,11 +916,21 @@ namespace GXDLMSDirector
         public void Read(object sender, GXDLMSObject obj, int attribute, bool forceRead)
         {
             GXReplyData reply = new GXReplyData();
+            int[] indexes;
             if (forceRead)
             {
                 obj.ClearReadTime();
+                indexes = new int[(obj as IGXDLMSBase).GetAttributeCount()];
+                for(int pos = 0; pos != indexes.Length; ++pos)
+                {
+                    indexes[pos] = pos + 1;
+                }
             }
-            foreach (int it in (obj as IGXDLMSBase).GetAttributeIndexToRead())
+            else
+            {
+                indexes = (obj as IGXDLMSBase).GetAttributeIndexToRead();
+            }
+            foreach (int it in indexes)
             {
                 reply.Clear();
                 if (obj is GXDLMSProfileGeneric && it == 2)

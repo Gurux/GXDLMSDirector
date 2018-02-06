@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9822 $,
-//                  $Date: 2018-01-23 19:45:55 +0200 (ti, 23 tammi 2018) $
+// Version:         $Revision: 9827 $,
+//                  $Date: 2018-01-24 13:10:34 +0200 (ke, 24 tammi 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -980,7 +980,6 @@ namespace GXDLMSDirector
             this.toolStrip1.Size = new System.Drawing.Size(725, 25);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
-            this.toolStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStrip1_ItemClicked);
             // 
             // NewBtn
             // 

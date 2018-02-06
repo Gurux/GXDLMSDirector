@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9796 $,
-//                  $Date: 2018-01-09 12:23:45 +0200 (ti, 09 tammi 2018) $
+// Version:         $Revision: 9846 $,
+//                  $Date: 2018-02-06 16:12:41 +0200 (ti, 06 helmi 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -364,7 +364,7 @@ namespace GXDLMSDirector
                 SetCB.Checked = (c & Conformance.Set) != 0;
                 SelectiveAccessCB.Checked = (c & Conformance.SelectiveAccess) != 0;
                 EventNotificationCB.Checked = (c & Conformance.EventNotification) != 0;
-                ActionCB.Checked = (c & Conformance.EventNotification) != 0;
+                ActionCB.Checked = (c & Conformance.Action) != 0;
             }
             else
             {
@@ -470,7 +470,7 @@ namespace GXDLMSDirector
                 }
                 if (ActionCB.Checked)
                 {
-                    c |= Conformance.EventNotification;
+                    c |= Conformance.Action;
                 }
             }
             else
@@ -964,7 +964,7 @@ namespace GXDLMSDirector
                 BlockCipherKeyAsciiCb.Checked = IsAscii(man.BlockCipherKey);
                 if (BlockCipherKeyAsciiCb.Checked)
                 {
-                    SystemTitleTB.Text = ASCIIEncoding.ASCII.GetString(man.BlockCipherKey);
+                    BlockCipherKeyTB.Text = ASCIIEncoding.ASCII.GetString(man.BlockCipherKey);
                 }
                 else
                 {
@@ -974,7 +974,7 @@ namespace GXDLMSDirector
                 AuthenticationKeyAsciiCb.Checked = IsAscii(man.AuthenticationKey);
                 if (AuthenticationKeyAsciiCb.Checked)
                 {
-                    SystemTitleTB.Text = ASCIIEncoding.ASCII.GetString(man.AuthenticationKey);
+                    AuthenticationKeyTB.Text = ASCIIEncoding.ASCII.GetString(man.AuthenticationKey);
                 }
                 else
                 {

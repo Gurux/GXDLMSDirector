@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Messages>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--DATA-->
+        <ClassId Value="1" />
+        <InstanceId Value="00002A0000FF" />
+        <AttributeId Value="2" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <None Value="*" />
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+</Messages>

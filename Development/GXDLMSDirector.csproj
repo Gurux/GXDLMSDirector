@@ -19,6 +19,7 @@
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -41,7 +42,6 @@
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -132,11 +132,11 @@
     <Reference Include="Gurux.Common, Version=8.1.1801.1201, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Common.8.1.1801.1201\lib\portable-win+net40\Gurux.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=8.5.1802.601, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.8.5.1802.601\lib\portable-win+net35\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=8.5.1802.1201, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.8.5.1802.1201\lib\portable-win+net35\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=8.5.1802.601, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.8.5.1802.601\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=8.5.1802.1201, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.8.5.1802.1201\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.Net, Version=8.1.1801.1201, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Net.8.1.1801.1201\lib\portable-win+net40\Gurux.Net.dll</HintPath>
@@ -155,6 +155,7 @@
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Messaging" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -162,12 +163,20 @@
     <Compile Include="Extensions\Actaris.cs" />
     <Compile Include="CryptHelper.cs" />
     <Compile Include="DeviceState.cs" />
+    <Compile Include="GXConformanceDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GXConformanceDlg.Designer.cs">
+      <DependentUpon>GXConformanceDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GXConformanceTest.cs" />
     <Compile Include="GXExternalMediaForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="GXExternalMediaForm.Designer.cs">
       <DependentUpon>GXExternalMediaForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="GXOutput.cs" />
     <Compile Include="GXSettingsDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -229,6 +238,9 @@
       <DependentUpon>DevicePropertiesForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="GXConformanceDlg.resx">
+      <DependentUpon>GXConformanceDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GXExternalMediaForm.resx">
       <DependentUpon>GXExternalMediaForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -311,11 +323,47 @@
     <None Include="Resources\ConnectMnu.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ConformanceTests\ActionSchedule.xml" />
+    <EmbeddedResource Include="ConformanceTests\ActivityCalendar.xml" />
+    <EmbeddedResource Include="ConformanceTests\AssociationLogicalName.xml" />
+    <EmbeddedResource Include="ConformanceTests\AutoAnswer.xml" />
+    <EmbeddedResource Include="ConformanceTests\AutoConnect.xml" />
+    <EmbeddedResource Include="ConformanceTests\Clock.xml" />
+    <EmbeddedResource Include="ConformanceTests\Data.xml" />
+    <EmbeddedResource Include="ConformanceTests\DemandRegister.xml" />
+    <EmbeddedResource Include="ConformanceTests\DisconnectControl.xml" />
+    <EmbeddedResource Include="ConformanceTests\ExtendedRegister.xml" />
+    <EmbeddedResource Include="ConformanceTests\GprsSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\IecHdlcSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\IecLocalPortSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\ImageTransfer.xml" />
+    <EmbeddedResource Include="ConformanceTests\IP4Setup.xml" />
+    <EmbeddedResource Include="ConformanceTests\Limiter.xml" />
+    <EmbeddedResource Include="ConformanceTests\MacAddressSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\MBusClient.xml" />
+    <EmbeddedResource Include="ConformanceTests\MBusMasterPortSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\ModemConfiguration.xml" />
+    <EmbeddedResource Include="ConformanceTests\PPPSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\ProfileGeneric.xml" />
+    <EmbeddedResource Include="ConformanceTests\PushSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\Register.xml" />
+    <EmbeddedResource Include="ConformanceTests\RegisterActivation.xml" />
+    <EmbeddedResource Include="ConformanceTests\RegisterMonitor.xml" />
+    <EmbeddedResource Include="ConformanceTests\SapAssignment.xml" />
+    <EmbeddedResource Include="ConformanceTests\ScriptTable.xml" />
+    <EmbeddedResource Include="ConformanceTests\SecuritySetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\SpecialDaysTable.xml" />
+    <EmbeddedResource Include="ConformanceTests\TcpUdpSetup.xml" />
     <Content Include="GXDLMSDirector.ico" />
     <None Include="Resources\NotifyMnu.bmp" />
     <Content Include="Resources\warning.ico" />
   </ItemGroup>
   <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.6 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
@@ -324,7 +372,7 @@
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
+      <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>

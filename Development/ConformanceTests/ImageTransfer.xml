@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Messages>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--IMAGE_TRANSFER-->
+        <ClassId Value="18" />
+        <!--0.0.44.0.0.255-->
+        <InstanceId Value="00002C0000FF" />
+        <AttributeId Value="2" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <UInt32 Value="*" />
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--IMAGE_TRANSFER-->
+        <ClassId Value="18" />
+        <!--0.0.44.0.0.255-->
+        <InstanceId Value="00002C0000FF" />
+        <AttributeId Value="3" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <BitString Value="*" />
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--IMAGE_TRANSFER-->
+        <ClassId Value="18" />
+        <!--0.0.44.0.0.255-->
+        <InstanceId Value="00002C0000FF" />
+        <AttributeId Value="4" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <UInt32 Value="*" />
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--IMAGE_TRANSFER-->
+        <ClassId Value="18" />
+        <!--0.0.44.0.0.255-->
+        <InstanceId Value="00002C0000FF" />
+        <AttributeId Value="5" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <Boolean Value="*" />
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--IMAGE_TRANSFER-->
+        <ClassId Value="18" />
+        <!--0.0.44.0.0.255-->
+        <InstanceId Value="00002C0000FF" />
+        <AttributeId Value="6" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <Enum Value="*" />
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--IMAGE_TRANSFER-->
+        <ClassId Value="18" />
+        <!--0.0.44.0.0.255-->
+        <InstanceId Value="00002C0000FF" />
+        <AttributeId Value="7" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <Array Qty="*" >
+            <Structure Qty="3" >
+              <UInt32 Value="*" />
+              <OctetString Value="*" />
+              <OctetString Value="*" />
+            </Structure>
+          </Array>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+</Messages>

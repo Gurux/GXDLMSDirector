@@ -233,4 +233,7 @@ All rights reserved.</value>
   <data name="ManufacturerSettingsMissing" xml:space="preserve">
     <value>Install Manufacturer Settings first.</value>
   </data>
+  <data name="ReadyTxt" xml:space="preserve">
+    <value>Ready</value>
+  </data>
 </root>

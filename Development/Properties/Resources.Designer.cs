@@ -285,6 +285,15 @@ namespace GXDLMSDirector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ready.
+        /// </summary>
+        internal static string ReadyTxt {
+            get {
+                return ResourceManager.GetString("ReadyTxt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure that you want to remove selected device(s)?.
         /// </summary>
         internal static string RemoveDeviceConfirmation {

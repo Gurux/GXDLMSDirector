@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Messages>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--SAP_ASSIGNMENT-->
+        <ClassId Value="17" />
+        <!--0.0.41.0.0.255-->
+        <InstanceId Value="0000290000FF" />
+        <AttributeId Value="2" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <Array Qty="*" >
+            <Structure Qty="2" >
+              <UInt16 Value="*" />
+              <OctetString Value="*" />
+            </Structure>
+          </Array>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+</Messages>

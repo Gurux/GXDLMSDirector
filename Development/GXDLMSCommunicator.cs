@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9846 $,
-//                  $Date: 2018-02-06 16:12:41 +0200 (ti, 06 helmi 2018) $
+// Version:         $Revision: 9858 $,
+//                  $Date: 2018-02-12 14:21:19 +0200 (Mon, 12 Feb 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -56,10 +56,15 @@ namespace GXDLMSDirector
     public delegate void ProgressEventHandler(object sender, string description, int current, int maximium);
     public delegate void StatusEventHandler(object sender, DeviceState status);
     public delegate void ReadEventHandler(GXDLMSObject sender, int index);
-    public delegate void MessageTraceEventHandler(GXDLMSDevice sender, string trace, byte[] data);
+    public delegate void MessageTraceEventHandler(GXDLMSDevice sender, string trace, byte[] data, string path);
 
     public class GXDLMSCommunicator
     {
+        /// <summary>
+        /// Log file.
+        /// </summary>
+        internal string LogFile;
+
         internal DateTime lastTransaction = DateTime.MinValue;
         internal DateTime connectionStartTime;
         internal GXDLMSDevice parent;
@@ -197,7 +202,7 @@ namespace GXDLMSDirector
             if (client.InterfaceType == InterfaceType.WRAPPER && media is GXNet && !parent.UseRemoteSerial)
             {
                 eop = null;
-            }           
+            }
             int pos = 0;
             bool succeeded = false;
             ReceiveParameters<byte[]> p = new ReceiveParameters<byte[]>()
@@ -268,7 +273,7 @@ namespace GXDLMSDirector
             GXLogWriter.WriteLog(null, p.Reply);
             if (parent.OnTrace != null)
             {
-                parent.OnTrace(parent, "-> " + DateTime.Now.ToLongTimeString(), p.Reply);
+                parent.OnTrace(parent, "-> " + DateTime.Now.ToLongTimeString(), p.Reply, LogFile);
             }
             if (reply.Error != 0)
             {
@@ -597,8 +602,8 @@ namespace GXDLMSDirector
                     GXServerAddress server = manufacturer.GetServer(parent.HDLCAddressing);
                     if (server != null)
                     {
-                        client.ServerAddressSize = (byte) server.Size;
-                    }                    
+                        client.ServerAddressSize = (byte)server.Size;
+                    }
                 }
             }
             client.Ciphering.Security = parent.Security;
@@ -616,7 +621,7 @@ namespace GXDLMSDirector
                 client.Ciphering.AuthenticationKey = null;
                 client.Ciphering.InvocationCounter = 0;
             }
-            
+
             if (!string.IsNullOrEmpty(parent.Challenge))
             {
                 client.CtoSChallenge = GXCommon.HexToBytes(parent.Challenge);
@@ -624,7 +629,7 @@ namespace GXDLMSDirector
             else
             {
                 client.CtoSChallenge = null;
-            }          
+            }
         }
 
         /// <summary>
@@ -712,7 +717,16 @@ namespace GXDLMSDirector
                 data = SNRMRequest();
                 if (data != null)
                 {
-                    ReadDataBlock(data, "Send SNRM request.", reply);
+                    try
+                    {
+                        ReadDataBlock(data, "Send SNRM request.", reply);
+                    }
+                    catch (Exception e)
+                    {
+                        reply.Clear();
+                        ReadDataBlock(DisconnectRequest(), "Send Disconnect request.", reply);
+                        throw e;
+                    }
                     GXLogWriter.WriteLog("Parsing UA reply succeeded.");
                     //Has server accepted client.
                     ParseUAResponse(reply.Data);
@@ -830,7 +844,7 @@ namespace GXDLMSDirector
             GXLogWriter.WriteLog(text, data);
             if (parent.OnTrace != null)
             {
-                parent.OnTrace(parent, text + "\r\n<- " + DateTime.Now.ToLongTimeString(), data);
+                parent.OnTrace(parent, text + "\r\n<- " + DateTime.Now.ToLongTimeString(), data, LogFile);
             }
             ReadDLMSPacket(data, reply);
 
@@ -857,7 +871,7 @@ namespace GXDLMSDirector
                     }
                     if (parent.OnTrace != null)
                     {
-                        parent.OnTrace(parent, "<- " + DateTime.Now.ToLongTimeString(), data);
+                        parent.OnTrace(parent, "<- " + DateTime.Now.ToLongTimeString(), data, LogFile);
                     }
                     GXLogWriter.WriteLog(text, data);
                     ReadDLMSPacket(data, reply);
@@ -921,7 +935,7 @@ namespace GXDLMSDirector
             {
                 obj.ClearReadTime();
                 indexes = new int[(obj as IGXDLMSBase).GetAttributeCount()];
-                for(int pos = 0; pos != indexes.Length; ++pos)
+                for (int pos = 0; pos != indexes.Length; ++pos)
                 {
                     indexes[pos] = pos + 1;
                 }

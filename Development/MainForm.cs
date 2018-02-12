@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9846 $,
-//                  $Date: 2018-02-06 16:12:41 +0200 (ti, 06 helmi 2018) $
+// Version:         $Revision: 9858 $,
+//                  $Date: 2018-02-12 14:21:19 +0200 (Mon, 12 Feb 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1474,6 +1474,10 @@ namespace GXDLMSDirector
                     NotificationPdu_Click(null, null);
                 }
 
+                conformanceTestsToolStripMenuItem1.Checked = !Properties.Settings.Default.CTT;
+                conformanceTestsToolStripMenuItem1_Click(null, null);
+
+
                 TraceView.Height = Properties.Settings.Default.TraceViewHeight;
                 EventsView.Height = Properties.Settings.Default.EventsViewHeight;
 
@@ -1603,11 +1607,11 @@ namespace GXDLMSDirector
 
         delegate void UpdateTransactionEventHandler(bool start);
 
-        void OnTrace(GXDLMSDevice sender, string trace, byte[] data)
+        void OnTrace(GXDLMSDevice sender, string trace, byte[] data, string path)
         {
             if (InvokeRequired)
             {
-                BeginInvoke(new MessageTraceEventHandler(this.OnTrace), sender, trace, data);
+                BeginInvoke(new MessageTraceEventHandler(this.OnTrace), sender, trace, data, path);
             }
             else
             {
@@ -1916,7 +1920,7 @@ namespace GXDLMSDirector
             }
             finally
             {
-                StatusLbl.Text = "Ready";
+                StatusLbl.Text = Properties.Resources.ReadyTxt;
                 UpdateTransaction(false);
             }
         }
@@ -2346,7 +2350,7 @@ namespace GXDLMSDirector
                         RemoveObject(dev.Objects[0]);
                     }
                     GXManufacturer m = Manufacturers.FindByIdentification(dev.Manufacturer);
-                    dev.ObisCodes = m.ObisCodes;
+                    dev.ObisCodes = null;
                     //Walk through object tree.
                     dev.UpdateObjects();
                     GroupItems(GroupsMnu.Checked);
@@ -3013,7 +3017,7 @@ namespace GXDLMSDirector
                 if (state == AsyncState.Finish ||
                         state == AsyncState.Cancel)
                 {
-                    StatusLbl.Text = "Ready";
+                    StatusLbl.Text = Properties.Resources.ReadyTxt;
                 }
             }
         }
@@ -3327,7 +3331,7 @@ namespace GXDLMSDirector
         private void UpdateTrace(byte level)
         {
             traceLevel = level;
-            panel1.Visible = level != 0 || EventsView.Visible;
+            panel1.Visible = level != 0 || EventsView.Visible || ConformanceTests.Visible;
             TraceView.Visible = level != 0;
             noneToolStripMenuItem.Checked = level == 0;
             hexToolStripMenuItem.Checked = level == 1;
@@ -3397,15 +3401,15 @@ namespace GXDLMSDirector
         private void UpdateNotification(byte level)
         {
             notificationLevel = level;
-            panel1.Visible = level != 0 || TraceView.Visible;
-            EventsView.Visible = level != 0;
+            panel1.Visible = level != 0 || TraceView.Visible || ConformanceTests.Visible;
+            splitter3.Visible = EventsView.Visible = level != 0;
             NotificationNone.Checked = level == 0;
             NotificationHex.Checked = level == 1;
             NotificationXml.Checked = level == 2;
             NotificationPdu.Checked = level == 3;
             //Show data as pdu.
             translator.PduOnly = level == 3;
-            if (level == 0)
+            if (level == 0 && !ConformanceTests.Visible)
             {
                 TraceView.Dock = DockStyle.Fill;
             }
@@ -3678,7 +3682,7 @@ namespace GXDLMSDirector
                 // Get the control where the user clicked
                 Point lpe = menuStrip1.PointToClient(hevent.MousePos);
                 Control ctl = this.GetChildAtPoint(this.PointToClient(hevent.MousePos));
-                string str;
+                string str = "http://www.gurux.fi/index.php?q=GXDLMSDirectorHelp";
                 if (ctl == toolStrip1 || ctl == menuStrip1)
                 {
                     str = "http://www.gurux.fi/GXDLMSDirector.Menu";
@@ -3692,10 +3696,14 @@ namespace GXDLMSDirector
                 {
                     str = "http://www.gurux.fi/index.php?q=" + ObjectValueView.Items[0].Tag.GetType();
                 }
-                else
+                else if (ctl == panel1)
                 {
-                    str = "http://www.gurux.fi/index.php?q=GXDLMSDirectorHelp";
-                }
+                    ctl = panel1.GetChildAtPoint(panel1.PointToClient(hevent.MousePos));
+                    if (ctl == ConformanceTests)
+                    {
+                        str = "http://www.gurux.fi/index.php?q=GXDLMSDirector.ConformanceTest";
+                    }
+                }                
                 // Show online help.
                 Process.Start(str);
                 // Set flag to show that the Help event as been handled
@@ -3705,6 +3713,313 @@ namespace GXDLMSDirector
             {
                 Error.ShowError(this, Ex);
             }
+        }
+
+        /// <summary>
+        /// Show result of conformance test.
+        /// </summary>
+        private void ShowReportBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (ConformanceTests.SelectedItems.Count == 1)
+                {
+                    ListViewItem li = ConformanceTests.SelectedItems[0];
+                    Process.Start((li.Tag as GXConformanceTest).ResultFile);
+                }
+            }
+            catch (Exception Ex)
+            {
+                Error.ShowError(this, Ex);
+            }
+        }
+
+        /// <summary>
+        /// Show log of conformance test.
+        /// </summary>
+        private void ShowLogBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (ConformanceTests.SelectedItems.Count == 1)
+                {
+                    ListViewItem li = ConformanceTests.SelectedItems[0];
+                    Process.Start((li.Tag as GXConformanceTest).LogFile);
+                }
+            }
+            catch (Exception Ex)
+            {
+                Error.ShowError(this, Ex);
+            }
+        }
+
+        void ConformanceExecute(object sender, GXAsyncWork work, object[] parameters)
+        {
+            if (Properties.Settings.Default.ConformanceConcurrent)
+            {
+                List<GXConformanceTest> tests = (List<GXConformanceTest>) parameters[0];
+                ManualResetEvent[] threads = new ManualResetEvent[tests.Count];
+                int pos = 0;
+                foreach (GXConformanceTest it in tests)
+                {
+                    Thread t = new Thread(() =>
+                    {
+                        List<GXConformanceTest> tmp = new List<GXConformanceTest>();
+                        tmp.Add(it);
+                        GXConformanceDlg.ReadXmlMeter(new object[] { tmp });
+                    }
+                    );
+                    it.Done = threads[pos] = new ManualResetEvent(false);
+                    ++pos;
+                    t.Start();
+                }
+                WaitHandle.WaitAll(threads);
+            }
+            else
+            {
+                GXConformanceDlg.ReadXmlMeter(parameters);
+            }
+        }
+
+        void ConformanceError(object sender, Exception ex)
+        {
+            MessageBox.Show(ex.Message);
+        }
+
+        void ConformanceStateChange(object sender, GXAsyncWork work, object[] parameters, AsyncState state, string text)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new AsyncStateChangeEventHandler(ConformanceStateChange), sender, work, parameters, state, text);
+            }
+            else
+            {
+                CancelBtn.Enabled = state == AsyncState.Start;
+                ProgressBar.Visible = state == AsyncState.Start;
+                GXConformanceDlg.Continue = state != AsyncState.Cancel;
+                if (state == AsyncState.Finish ||
+                        state == AsyncState.Cancel)
+                {
+                    StatusLbl.Text = Properties.Resources.ReadyTxt;
+                    MessageBox.Show("Gurux Conformance Tests end.");
+                }
+                else
+                {
+                    StatusLbl.Text = "Running Gurux Conformance Tests.";
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Conformance test is finnished.
+        /// </summary>
+        /// <param name="sender">Executed conformance test.</param>
+        void OnConformanceReady(GXConformanceTest sender)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new ConformanceReadyEvent(OnConformanceReady), sender);
+            }
+            else
+            {
+                foreach (ListViewItem li in ConformanceTests.Items)
+                {
+                    if (li.Tag == sender)
+                    {
+                        li.SubItems[1].Text = sender.ResultFile;
+                        break;
+                    }
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Show failed conformance test.
+        /// </summary>
+        /// <param name="sender">Executed conformance test.</param>
+        /// <param name="e">Occurred exception.</param>
+        public void OnConformanceError(GXConformanceTest sender, Exception e)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new ConformanceErrorEvent(OnConformanceError), sender, e);
+            }
+            else
+            {
+                TraceView.AppendText(e.ToString());
+                foreach (ListViewItem li in ConformanceTests.Items)
+                {
+                    if (li.Tag == sender)
+                    {
+                        li.SubItems[1].Text = e.Message;
+                        break;
+                    }
+                }               
+            }
+        }
+
+        /// <summary>
+        /// Show conformance test trace.
+        /// </summary>
+        /// <param name="sender">Executed conformance test.</param>
+        /// <param name="data"></param>
+        public void OnConformanceTrace(GXConformanceTest sender, string data)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new ConformanceTraceEvent(OnConformanceTrace), sender, data);
+            }
+            else
+            {
+                TraceView.AppendText(data);
+            }
+        }
+
+        /// <summary>
+        /// Conformance test is finnished.
+        /// </summary>
+        /// <param name="sender">Executed conformance test.</param>
+        void OnObjectTestCompleated(GXConformanceTest sender)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new ConformanceReadyEvent(OnObjectTestCompleated), sender);
+            }
+            else
+            {
+                ++ProgressBar.Value;
+            }
+        }
+
+        /// <summary>
+        /// Run basic conformance tests.
+        /// </summary>
+        private void runToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (Devices.Count == 0)
+                {
+                    throw new Exception("No devices to test.");
+                }
+                GXConformanceDlg dlg = new GXConformanceDlg();
+                if (dlg.ShowDialog(this) == DialogResult.OK)
+                {
+                    ConformanceTests.Items.Clear();
+                    GXDLMSDeviceCollection devices = new GXDLMSDeviceCollection();
+                    devices.AddRange(Devices);
+                    List<GXConformanceTest> tests = new List<GXConformanceTest>();
+                    string path2 = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
+                    string reports = Path.Combine(path2, "Reports");
+                    string traces = Path.Combine(path2, "Traces");
+                    if (!Directory.Exists(path2))
+                    {
+                        Directory.CreateDirectory(path2);
+                    }
+                    if (!Directory.Exists(reports))
+                    {
+                        Directory.CreateDirectory(reports);
+                    }
+                    if (!Directory.Exists(traces))
+                    {
+                        Directory.CreateDirectory(traces);
+                    }
+                    string[] list = Directory.GetFiles(reports, "Report*.html");
+                    int ReportNo = list.Length;
+                    foreach (string it in list)
+                    {
+                        FileInfo fi = new FileInfo(it);
+                        string tmp = fi.Name.Substring(6, fi.Name.Length - 11);
+                        if (!string.IsNullOrEmpty(tmp))
+                        {
+                            int t = int.Parse(tmp);
+                            if (t > ReportNo)
+                            {
+                                ReportNo = t + 1;
+                            }
+                        }
+                    }
+                    int testcount = 0;
+                    foreach (GXDLMSDevice it in devices)
+                    {
+                        testcount += it.Objects.Count;
+                        GXConformanceTest t = new GXConformanceTest() { Device = it };
+                        t.OnReady = OnConformanceReady;
+                        t.OnError = OnConformanceError;
+                        t.OnTrace = OnConformanceTrace;
+                        t.OnObjectTestCompleated = OnObjectTestCompleated;
+                        if (ReportNo == 0)
+                        {
+                            t.ResultFile = Path.Combine(reports, "Report.html");
+                            t.LogFile = Path.Combine(traces, "Trace.txt");
+                        }
+                        else
+                        {
+                            t.ResultFile = Path.Combine(reports, "Report" + ReportNo + ".html");
+                            t.LogFile = Path.Combine(traces, "Trace" + ReportNo + ".txt");
+                        }
+                        using (Stream stream = File.Open(t.ResultFile, FileMode.Create))
+                        {
+
+                        }
+                        using (Stream stream = File.Open(t.LogFile, FileMode.Create))
+                        {
+
+                        }
+                        ++ReportNo;
+                        tests.Add(t);
+                        ListViewItem li = ConformanceTests.Items.Add(it.Name);
+                        li.SubItems.Add("");
+                        li.Tag = t;
+                    }
+                    TraceView.ResetText();
+                    ProgressBar.Value = 0;
+                    ProgressBar.Maximum = testcount;
+                    GXConformanceDlg.Continue = true;
+                    TransactionWork = new GXAsyncWork(this, ConformanceStateChange, ConformanceExecute, ConformanceError, null, new object[] { tests });
+                    TransactionWork.Start();
+                }
+            }
+            catch (Exception Ex)
+            {
+                Error.ShowError(this, Ex);
+            }
+        }
+
+        /// <summary>
+        /// Show or hide conformance tests.
+        /// </summary>
+        private void conformanceTestsToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            splitter4.Visible = conformanceTestsToolStripMenuItem1.Checked = !conformanceTestsToolStripMenuItem1.Checked;
+            panel1.Visible = EventsView.Visible || TraceView.Visible || conformanceTestsToolStripMenuItem1.Checked;
+            ConformanceTests.Visible = conformanceTestsToolStripMenuItem1.Checked;
+            if (!conformanceTestsToolStripMenuItem1.Checked)
+            {
+                if (EventsView.Visible)
+                {
+                    EventsView.Dock = DockStyle.Fill;
+                }
+                else if (TraceView.Visible)
+                {
+                    TraceView.Dock = DockStyle.Fill;
+                }
+            }
+            else
+            {
+                ConformanceTests.Dock = DockStyle.Fill;
+                TraceView.Dock = EventsView.Dock = DockStyle.Left;
+                panel1.BringToFront();
+                ConformanceTests.BringToFront();
+            }
+        }
+
+        private void contextMenuStrip2_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            runToolStripMenuItem.Enabled = Devices.Count != 0 && (TransactionWork == null || !TransactionWork.IsRunning);
+            ShowLogBtn.Enabled = ShowReportBtn.Enabled = ConformanceTests.SelectedItems.Count != 0;
         }
     }
 }

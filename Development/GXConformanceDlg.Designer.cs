@@ -36,6 +36,7 @@
             this.ConcurrentReadingCb = new System.Windows.Forms.CheckBox();
             this.ReReadCb = new System.Windows.Forms.CheckBox();
             this.ShowValuesCb = new System.Windows.Forms.CheckBox();
+            this.helpProvider1 = new System.Windows.Forms.HelpProvider();
             ((System.ComponentModel.ISupportInitialize)(this.logoPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -43,8 +44,10 @@
             // 
             this.OKBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.OKBtn.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.helpProvider1.SetHelpNavigator(this.OKBtn, System.Windows.Forms.HelpNavigator.Topic);
             this.OKBtn.Location = new System.Drawing.Point(161, 163);
             this.OKBtn.Name = "OKBtn";
+            this.helpProvider1.SetShowHelp(this.OKBtn, true);
             this.OKBtn.Size = new System.Drawing.Size(75, 23);
             this.OKBtn.TabIndex = 4;
             this.OKBtn.Text = "&OK";
@@ -55,8 +58,10 @@
             // 
             this.CancelBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.helpProvider1.SetHelpNavigator(this.CancelBtn, System.Windows.Forms.HelpNavigator.Topic);
             this.CancelBtn.Location = new System.Drawing.Point(242, 163);
             this.CancelBtn.Name = "CancelBtn";
+            this.helpProvider1.SetShowHelp(this.CancelBtn, true);
             this.CancelBtn.Size = new System.Drawing.Size(75, 23);
             this.CancelBtn.TabIndex = 5;
             this.CancelBtn.Text = "&Cancel";
@@ -65,10 +70,12 @@
             // logoPictureBox
             // 
             this.logoPictureBox.Dock = System.Windows.Forms.DockStyle.Left;
+            this.helpProvider1.SetHelpNavigator(this.logoPictureBox, System.Windows.Forms.HelpNavigator.Topic);
             this.logoPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("logoPictureBox.Image")));
             this.logoPictureBox.Location = new System.Drawing.Point(9, 9);
             this.logoPictureBox.Margin = new System.Windows.Forms.Padding(0);
             this.logoPictureBox.Name = "logoPictureBox";
+            this.helpProvider1.SetShowHelp(this.logoPictureBox, true);
             this.logoPictureBox.Size = new System.Drawing.Size(104, 180);
             this.logoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.logoPictureBox.TabIndex = 13;
@@ -96,8 +103,12 @@
             this.ConcurrentReadingCb.AutoSize = true;
             this.ConcurrentReadingCb.Checked = true;
             this.ConcurrentReadingCb.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.helpProvider1.SetHelpKeyword(this.ConcurrentReadingCb, "Concurrent");
+            this.helpProvider1.SetHelpNavigator(this.ConcurrentReadingCb, System.Windows.Forms.HelpNavigator.Topic);
+            this.helpProvider1.SetHelpString(this.ConcurrentReadingCb, "");
             this.ConcurrentReadingCb.Location = new System.Drawing.Point(119, 93);
             this.ConcurrentReadingCb.Name = "ConcurrentReadingCb";
+            this.helpProvider1.SetShowHelp(this.ConcurrentReadingCb, true);
             this.ConcurrentReadingCb.Size = new System.Drawing.Size(112, 17);
             this.ConcurrentReadingCb.TabIndex = 16;
             this.ConcurrentReadingCb.Text = "Concurrent testing";
@@ -106,8 +117,11 @@
             // ReReadCb
             // 
             this.ReReadCb.AutoSize = true;
+            this.helpProvider1.SetHelpKeyword(this.ReReadCb, "UpdateAssociationView");
+            this.helpProvider1.SetHelpNavigator(this.ReReadCb, System.Windows.Forms.HelpNavigator.Topic);
             this.ReReadCb.Location = new System.Drawing.Point(119, 140);
             this.ReReadCb.Name = "ReReadCb";
+            this.helpProvider1.SetShowHelp(this.ReReadCb, true);
             this.ReReadCb.Size = new System.Drawing.Size(147, 17);
             this.ReReadCb.TabIndex = 17;
             this.ReReadCb.Text = "Re-read Association View";
@@ -118,12 +132,19 @@
             this.ShowValuesCb.AutoSize = true;
             this.ShowValuesCb.Checked = true;
             this.ShowValuesCb.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.helpProvider1.SetHelpKeyword(this.ShowValuesCb, "ShowValues");
+            this.helpProvider1.SetHelpNavigator(this.ShowValuesCb, System.Windows.Forms.HelpNavigator.Topic);
             this.ShowValuesCb.Location = new System.Drawing.Point(119, 116);
             this.ShowValuesCb.Name = "ShowValuesCb";
+            this.helpProvider1.SetShowHelp(this.ShowValuesCb, true);
             this.ShowValuesCb.Size = new System.Drawing.Size(87, 17);
             this.ShowValuesCb.TabIndex = 18;
             this.ShowValuesCb.Text = "Show values";
             this.ShowValuesCb.UseVisualStyleBackColor = true;
+            // 
+            // helpProvider1
+            // 
+            this.helpProvider1.HelpNamespace = "https://www.gurux.fi/GXDLMSDirector.ConformanceTest";
             // 
             // GXConformanceDlg
             // 
@@ -141,10 +162,13 @@
             this.Controls.Add(this.OKBtn);
             this.Controls.Add(this.CancelBtn);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.HelpButton = true;
+            this.helpProvider1.SetHelpNavigator(this, System.Windows.Forms.HelpNavigator.Topic);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "GXConformanceDlg";
             this.Padding = new System.Windows.Forms.Padding(9);
+            this.helpProvider1.SetShowHelp(this, true);
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
@@ -165,5 +189,6 @@
         private System.Windows.Forms.CheckBox ConcurrentReadingCb;
         private System.Windows.Forms.CheckBox ReReadCb;
         private System.Windows.Forms.CheckBox ShowValuesCb;
+        private System.Windows.Forms.HelpProvider helpProvider1;
     }
 }

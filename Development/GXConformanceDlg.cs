@@ -315,6 +315,7 @@ namespace GXDLMSDirector
                     }
                     test = tests[0];
                     dev = CloneDevice(test.Device);
+                    dev.InactivityTimeout = 0;
                     dev.OnTrace = OnMessageTrace;
                     dev.Comm.LogFile = test.LogFile;
                     GXDLMSClient cl = dev.Comm.client;

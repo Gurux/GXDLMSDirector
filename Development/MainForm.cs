@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9858 $,
-//                  $Date: 2018-02-12 14:21:19 +0200 (Mon, 12 Feb 2018) $
+// Version:         $Revision: 9859 $,
+//                  $Date: 2018-02-12 15:43:45 +0200 (Mon, 12 Feb 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -781,6 +781,7 @@ namespace GXDLMSDirector
                 node.Tag = Devices;
                 node.SelectedImageIndex = node.ImageIndex = 0;
                 ObjectTree.SelectedNode = node;
+                ConformanceTests.Items.Clear();
                 SetDirty(false);
             }
             catch (Exception Ex)

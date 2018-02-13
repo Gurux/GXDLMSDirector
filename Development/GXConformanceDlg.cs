@@ -330,11 +330,13 @@ namespace GXDLMSDirector
                 List<string> files = new List<string>();
                 try
                 {
+                    test.OnTrace(null, "Re-reading association view.");
                     media.Open();
                     dev.InitializeConnection();
                     if (Properties.Settings.Default.ConformanceReadAssociationView)
                     {
-                        dev.Comm.GetObjects();
+                        dev.Objects.Clear();
+                        dev.Objects.AddRange(dev.Comm.GetObjects());
                     }
                     if (client.UseLogicalNameReferencing)
                     {
@@ -368,7 +370,7 @@ namespace GXDLMSDirector
                             using (StreamReader sr = new StreamReader(stream))
                             {
                                 XmlDocument doc = new XmlDocument();
-                                doc.LoadXml(sr.ReadToEnd());
+                                doc.Load(sr);
                                 XmlNodeList list = doc.SelectNodes("/Messages/GetRequest/GetRequestNormal");
                                 ObjectType ot = ObjectType.None;
                                 foreach (XmlNode node in list)

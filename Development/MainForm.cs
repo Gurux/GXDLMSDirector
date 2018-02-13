@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9859 $,
-//                  $Date: 2018-02-12 15:43:45 +0200 (Mon, 12 Feb 2018) $
+// Version:         $Revision: 9863 $,
+//                  $Date: 2018-02-13 12:51:37 +0200 (Tue, 13 Feb 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -2131,7 +2131,7 @@ namespace GXDLMSDirector
             }
         }
 
-        TreeNode AddDevice(GXDLMSDevice dev, bool refresh)
+        TreeNode AddDevice(GXDLMSDevice dev, bool refresh, bool first)
         {
             if (!refresh)
             {
@@ -2144,7 +2144,7 @@ namespace GXDLMSDirector
                     Type t = Type.GetType(m.Extension);
                     dev.Extension = Activator.CreateInstance(t) as IGXManufacturerExtension;
                 }
-                if (m.ObisCodes != null)
+                if (first && m.ObisCodes != null)
                 {
                     GXDLMSConverter c = new GXDLMSConverter();
                     foreach (GXObisCode it in m.ObisCodes)
@@ -2248,7 +2248,7 @@ namespace GXDLMSDirector
                 }
                 dev.Objects.Tag = dev;
                 dev.ObisCodes = m.ObisCodes;
-                this.AddDevice(dev, false);
+                this.AddDevice(dev, false, false);
                 RefreshDevice(dev, false);
             }
             GroupItems(GroupsMnu.Checked);
@@ -2567,7 +2567,7 @@ namespace GXDLMSDirector
             {
                 dlg.Device.Manufacturers = this.Manufacturers;
                 dlg.Device.Comm.parentForm = this;
-                AddDevice(dlg.Device, false);
+                AddDevice(dlg.Device, false, dev == null);
                 Devices.Add(dlg.Device);
                 GroupItems(GroupsMnu.Checked);
                 SetDirty(true);
@@ -3069,7 +3069,7 @@ namespace GXDLMSDirector
                 List<ListViewItem> items = new List<ListViewItem>();
                 foreach (GXDLMSDevice dev in Devices)
                 {
-                    TreeNode deviceNode = AddDevice(dev, true);
+                    TreeNode deviceNode = AddDevice(dev, true, false);
                     ListViewGroup group = null;
                     foreach (GXDLMSObject it in dev.Objects)
                     {
@@ -4012,8 +4012,6 @@ namespace GXDLMSDirector
             {
                 ConformanceTests.Dock = DockStyle.Fill;
                 TraceView.Dock = EventsView.Dock = DockStyle.Left;
-                panel1.BringToFront();
-                ConformanceTests.BringToFront();
             }
         }
 

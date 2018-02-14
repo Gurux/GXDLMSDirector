@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9827 $,
-//                  $Date: 2018-01-24 13:10:34 +0200 (ke, 24 tammi 2018) $
+// Version:         $Revision: 9865 $,
+//                  $Date: 2018-02-14 10:33:02 +0200 (Wed, 14 Feb 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -32,14 +32,8 @@
 //---------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Security.Principal;
-using System.Security.AccessControl;
 using System.Diagnostics;
-using System.Windows.Forms;
 using Gurux.Common;
 using Gurux.DLMS;
 using Gurux.DLMS.Enums;

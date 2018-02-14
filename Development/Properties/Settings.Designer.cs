@@ -241,7 +241,7 @@ namespace GXDLMSDirector.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool ConformanceShowValues {
             get {
                 return ((bool)(this["ConformanceShowValues"]));
@@ -260,6 +260,18 @@ namespace GXDLMSDirector.Properties {
             }
             set {
                 this["ConformanceReadAssociationView"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ConformanceWrite {
+            get {
+                return ((bool)(this["ConformanceWrite"]));
+            }
+            set {
+                this["ConformanceWrite"] = value;
             }
         }
     }

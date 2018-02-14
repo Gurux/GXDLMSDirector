@@ -215,7 +215,7 @@ namespace GXDLMS.Common
 
         static public string GetArrayAsString(object data)
         {
-            Array arr = (Array)data;
+            System.Collections.IEnumerable arr = (System.Collections.IEnumerable)data;
             string str = null;
             foreach (object it in arr)
             {
@@ -230,7 +230,7 @@ namespace GXDLMS.Common
                 if (it != null && it.GetType().IsArray)
                 {
                     str += GetArrayAsString(it);
-                }
+                }                
                 else
                 {
                     str += Convert.ToString(it);

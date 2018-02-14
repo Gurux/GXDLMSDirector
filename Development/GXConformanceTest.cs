@@ -61,10 +61,20 @@ namespace GXDLMSDirector
             get;
             set;
         }
+
         /// <summary>
         /// Name of trace file.
         /// </summary>
         public string LogFile
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Name of value file.
+        /// </summary>
+        public string ValueFile
         {
             get;
             set;

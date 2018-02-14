@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9858 $,
-//                  $Date: 2018-02-12 14:21:19 +0200 (Mon, 12 Feb 2018) $
+// Version:         $Revision: 9865 $,
+//                  $Date: 2018-02-14 10:33:02 +0200 (Wed, 14 Feb 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -222,6 +222,7 @@ namespace GXDLMSDirector
             this.DeviceList = new System.Windows.Forms.ListView();
             this.DeviceNameCH = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ObjectPanelFrame = new System.Windows.Forms.Panel();
+            this.showValuesBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -1333,10 +1334,11 @@ namespace GXDLMSDirector
             this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ShowReportBtn,
             this.ShowLogBtn,
+            this.showValuesBtn,
             this.toolStripMenuItem19,
             this.runToolStripMenuItem});
             this.contextMenuStrip2.Name = "contextMenuStrip1";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(153, 98);
+            this.contextMenuStrip2.Size = new System.Drawing.Size(153, 120);
             this.contextMenuStrip2.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip2_Opening);
             // 
             // ShowReportBtn
@@ -1594,6 +1596,13 @@ namespace GXDLMSDirector
             this.ObjectPanelFrame.Size = new System.Drawing.Size(187, 142);
             this.ObjectPanelFrame.TabIndex = 32;
             // 
+            // showValuesToolStripMenuItem
+            // 
+            this.showValuesBtn.Name = "showValuesToolStripMenuItem";
+            this.showValuesBtn.Size = new System.Drawing.Size(152, 22);
+            this.showValuesBtn.Text = "Show Values...";
+            this.showValuesBtn.Click += new System.EventHandler(this.showValuesBtn_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1799,6 +1808,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ListView ConformanceTests;
         private System.Windows.Forms.ColumnHeader DeviceCh;
         private System.Windows.Forms.ColumnHeader ResultCh;
+        private System.Windows.Forms.ToolStripMenuItem showValuesBtn;
     }
 }
 

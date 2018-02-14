@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9863 $,
-//                  $Date: 2018-02-13 12:51:37 +0200 (Tue, 13 Feb 2018) $
+// Version:         $Revision: 9865 $,
+//                  $Date: 2018-02-14 10:33:02 +0200 (Wed, 14 Feb 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -3784,7 +3784,7 @@ namespace GXDLMSDirector
 
         void ConformanceError(object sender, Exception ex)
         {
-            MessageBox.Show(ex.Message);
+            MessageBox.Show(this, ex.Message);
         }
 
         void ConformanceStateChange(object sender, GXAsyncWork work, object[] parameters, AsyncState state, string text)
@@ -3802,7 +3802,7 @@ namespace GXDLMSDirector
                         state == AsyncState.Cancel)
                 {
                     StatusLbl.Text = Properties.Resources.ReadyTxt;
-                    MessageBox.Show("Gurux Conformance Tests end.");
+                    MessageBox.Show(this, "Gurux Conformance Tests end.");
                 }
                 else
                 {
@@ -3875,6 +3875,21 @@ namespace GXDLMSDirector
             else
             {
                 TraceView.AppendText(data);
+                try
+                {
+                    using (FileStream fs = File.Open(sender.ValueFile, FileMode.Append))
+                    {
+                        using (TextWriter writer = new StreamWriter(fs))
+                        {
+                            writer.Write(data);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                    System.Diagnostics.Debug.WriteLine(ex.ToString());
+                }
             }
         }
 
@@ -3915,6 +3930,7 @@ namespace GXDLMSDirector
                     string path2 = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
                     string reports = Path.Combine(path2, "Reports");
                     string traces = Path.Combine(path2, "Traces");
+                    string values = Path.Combine(path2, "Values");
                     if (!Directory.Exists(path2))
                     {
                         Directory.CreateDirectory(path2);
@@ -3926,6 +3942,10 @@ namespace GXDLMSDirector
                     if (!Directory.Exists(traces))
                     {
                         Directory.CreateDirectory(traces);
+                    }
+                    if (!Directory.Exists(values))
+                    {
+                        Directory.CreateDirectory(values);
                     }
                     string[] list = Directory.GetFiles(reports, "Report*.html");
                     int ReportNo = list.Length;
@@ -3955,17 +3975,23 @@ namespace GXDLMSDirector
                         {
                             t.ResultFile = Path.Combine(reports, "Report.html");
                             t.LogFile = Path.Combine(traces, "Trace.txt");
+                            t.ValueFile = Path.Combine(values, "Values.txt");
                         }
                         else
                         {
                             t.ResultFile = Path.Combine(reports, "Report" + ReportNo + ".html");
                             t.LogFile = Path.Combine(traces, "Trace" + ReportNo + ".txt");
+                            t.ValueFile = Path.Combine(values, "Values" + ReportNo + ".txt");
                         }
                         using (Stream stream = File.Open(t.ResultFile, FileMode.Create))
                         {
 
                         }
                         using (Stream stream = File.Open(t.LogFile, FileMode.Create))
+                        {
+
+                        }
+                        using (Stream stream = File.Open(t.ValueFile, FileMode.Create))
                         {
 
                         }
@@ -4018,7 +4044,26 @@ namespace GXDLMSDirector
         private void contextMenuStrip2_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             runToolStripMenuItem.Enabled = Devices.Count != 0 && (TransactionWork == null || !TransactionWork.IsRunning);
-            ShowLogBtn.Enabled = ShowReportBtn.Enabled = ConformanceTests.SelectedItems.Count != 0;
+            showValuesBtn.Enabled = ShowLogBtn.Enabled = ShowReportBtn.Enabled = ConformanceTests.SelectedItems.Count != 0;
+        }
+
+        /// <summary>
+        /// Show read values in Conformance Test Tool.
+        /// </summary>
+        private void showValuesBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (ConformanceTests.SelectedItems.Count == 1)
+                {
+                    ListViewItem li = ConformanceTests.SelectedItems[0];
+                    Process.Start((li.Tag as GXConformanceTest).ValueFile);
+                }
+            }
+            catch (Exception Ex)
+            {
+                Error.ShowError(this, Ex);
+            }
         }
     }
 }

@@ -67,7 +67,7 @@
       <InvokeIdAndPriority Value="*" />
       <Result>
         <Data>
-          <Structure Qty="*" >
+          <Array Qty="*" >
             <Structure Qty="2" >
               <Structure Qty="2" >
                 <OctetString Value="*" />
@@ -78,7 +78,7 @@
                 <UInt16 Value="*" />
               </Structure>
             </Structure>
-          </Structure>
+          </Array>
         </Data>
       </Result>
     </GetResponseNormal>

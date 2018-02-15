@@ -155,6 +155,11 @@ namespace GXDLMSDirector
                         test.OnTrace(test, ot + " " + ln + ":" + index + "\t");
                     }
                     reply.Clear();
+                    //Skip association view and profile generic buffer.
+                    if ((target.ObjectType == ObjectType.AssociationLogicalName || target.ObjectType == ObjectType.ProfileGeneric) && index == 2)
+                    {
+                        continue;
+                    }
                     try
                     {
                         byte[][] tmp = (test.Device.Comm.client as GXDLMSXmlClient).PduToMessages(it);
@@ -194,6 +199,11 @@ namespace GXDLMSDirector
                     List<string> list = it.Compare(reply.ToString());
                     if (list.Count != 0)
                     {
+                        //Association Logical Name attribute 4 and 6 might be also byte array.
+                        if (target.ObjectType == ObjectType.AssociationLogicalName && (index == 4 || index == 6) && reply.Value is byte[])
+                        {
+                            continue;
+                        }
                         if (ot == ObjectType.None)
                         {
                             foreach (string err in list)
@@ -347,7 +357,7 @@ namespace GXDLMSDirector
         public static bool Continue = true;
 
         private static object ConformanceLock = new object();
-
+       
         /// <summary>
         /// Read data from the meter.
         /// </summary>
@@ -384,11 +394,11 @@ namespace GXDLMSDirector
                 List<string> files = new List<string>();
                 try
                 {
-                    test.OnTrace(test, "Re-reading association view.");
                     media.Open();
                     dev.InitializeConnection();
                     if (Properties.Settings.Default.ConformanceReadAssociationView)
                     {
+                        test.OnTrace(test, "Re-reading association view.");
                         dev.Objects.Clear();
                         dev.Objects.AddRange(dev.Comm.GetObjects());
                     }
@@ -448,11 +458,6 @@ namespace GXDLMSDirector
                                     //Update logical name.
                                     foreach (GXDLMSObject obj in dev.Objects.GetObjects(ot))
                                     {
-                                        //Skip association view and profile generic buffer.
-                                        if ((ot == ObjectType.AssociationLogicalName || ot == ObjectType.ProfileGeneric) && index == 2)
-                                        {
-                                            continue;
-                                        }
                                         if ((obj.GetAccess(index) & AccessMode.Read) != 0)
                                         {
                                             string tmp = GXCommon.ToHex(LogicalNameToBytes(obj.LogicalName), false);
@@ -564,6 +569,18 @@ namespace GXDLMSDirector
                             }
                         }
                     }
+                    if (output.Errors.Count != 0)
+                    {
+                        test.ErrorLevel = 2;
+                    }
+                    else if (output.Warnings.Count != 0)
+                    {
+                        test.ErrorLevel = 1;
+                    }
+                    else
+                    {
+                        test.ErrorLevel = 0;
+                    }
                     test.OnReady(test);
                 }
                 catch (Exception ex)
@@ -579,7 +596,10 @@ namespace GXDLMSDirector
                     {
                         dev.Comm.Disconnect();
                     }
-                    test.Done.Set();
+                    if (test.Done != null)
+                    {
+                        test.Done.Set();
+                    }
                 }
             }
         }

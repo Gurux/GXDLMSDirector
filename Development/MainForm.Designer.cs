@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9865 $,
-//                  $Date: 2018-02-14 10:33:02 +0200 (Wed, 14 Feb 2018) $
+// Version:         $Revision: 9868 $,
+//                  $Date: 2018-02-15 11:32:49 +0200 (Thu, 15 Feb 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -196,6 +196,7 @@ namespace GXDLMSDirector
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ShowReportBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.ShowLogBtn = new System.Windows.Forms.ToolStripMenuItem();
+            this.showValuesBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem19 = new System.Windows.Forms.ToolStripSeparator();
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitter4 = new System.Windows.Forms.Splitter();
@@ -222,7 +223,7 @@ namespace GXDLMSDirector
             this.DeviceList = new System.Windows.Forms.ListView();
             this.DeviceNameCH = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ObjectPanelFrame = new System.Windows.Forms.Panel();
-            this.showValuesBtn = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageList2 = new System.Windows.Forms.ImageList(this.components);
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -1314,6 +1315,7 @@ namespace GXDLMSDirector
             this.ConformanceTests.Location = new System.Drawing.Point(241, 0);
             this.ConformanceTests.Name = "ConformanceTests";
             this.ConformanceTests.Size = new System.Drawing.Size(283, 100);
+            this.ConformanceTests.SmallImageList = this.imageList2;
             this.ConformanceTests.TabIndex = 46;
             this.ConformanceTests.UseCompatibleStateImageBehavior = false;
             this.ConformanceTests.View = System.Windows.Forms.View.Details;
@@ -1344,26 +1346,33 @@ namespace GXDLMSDirector
             // ShowReportBtn
             // 
             this.ShowReportBtn.Name = "ShowReportBtn";
-            this.ShowReportBtn.Size = new System.Drawing.Size(152, 22);
+            this.ShowReportBtn.Size = new System.Drawing.Size(150, 22);
             this.ShowReportBtn.Text = "Show Report...";
             this.ShowReportBtn.Click += new System.EventHandler(this.ShowReportBtn_Click);
             // 
             // ShowLogBtn
             // 
             this.ShowLogBtn.Name = "ShowLogBtn";
-            this.ShowLogBtn.Size = new System.Drawing.Size(152, 22);
+            this.ShowLogBtn.Size = new System.Drawing.Size(150, 22);
             this.ShowLogBtn.Text = "Show Log...";
             this.ShowLogBtn.Click += new System.EventHandler(this.ShowLogBtn_Click);
+            // 
+            // showValuesBtn
+            // 
+            this.showValuesBtn.Name = "showValuesBtn";
+            this.showValuesBtn.Size = new System.Drawing.Size(150, 22);
+            this.showValuesBtn.Text = "Show Values...";
+            this.showValuesBtn.Click += new System.EventHandler(this.showValuesBtn_Click);
             // 
             // toolStripMenuItem19
             // 
             this.toolStripMenuItem19.Name = "toolStripMenuItem19";
-            this.toolStripMenuItem19.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem19.Size = new System.Drawing.Size(147, 6);
             // 
             // runToolStripMenuItem
             // 
             this.runToolStripMenuItem.Name = "runToolStripMenuItem";
-            this.runToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.runToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.runToolStripMenuItem.Text = "&Run";
             this.runToolStripMenuItem.Click += new System.EventHandler(this.runToolStripMenuItem_Click);
             // 
@@ -1596,12 +1605,13 @@ namespace GXDLMSDirector
             this.ObjectPanelFrame.Size = new System.Drawing.Size(187, 142);
             this.ObjectPanelFrame.TabIndex = 32;
             // 
-            // showValuesToolStripMenuItem
+            // imageList2
             // 
-            this.showValuesBtn.Name = "showValuesToolStripMenuItem";
-            this.showValuesBtn.Size = new System.Drawing.Size(152, 22);
-            this.showValuesBtn.Text = "Show Values...";
-            this.showValuesBtn.Click += new System.EventHandler(this.showValuesBtn_Click);
+            this.imageList2.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList2.ImageStream")));
+            this.imageList2.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList2.Images.SetKeyName(0, "succees.bmp");
+            this.imageList2.Images.SetKeyName(1, "warning.bmp");
+            this.imageList2.Images.SetKeyName(2, "error.bmp");
             // 
             // MainForm
             // 
@@ -1809,6 +1819,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ColumnHeader DeviceCh;
         private System.Windows.Forms.ColumnHeader ResultCh;
         private System.Windows.Forms.ToolStripMenuItem showValuesBtn;
+        private System.Windows.Forms.ImageList imageList2;
     }
 }
 

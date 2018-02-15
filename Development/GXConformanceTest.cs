@@ -97,7 +97,15 @@ namespace GXDLMSDirector
             get;
             set;
         }
-        
+
+        /// <summary>
+        /// Return error level.
+        /// </summary>
+        public int ErrorLevel
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// Show trace.

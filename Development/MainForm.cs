@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9865 $,
-//                  $Date: 2018-02-14 10:33:02 +0200 (Wed, 14 Feb 2018) $
+// Version:         $Revision: 9868 $,
+//                  $Date: 2018-02-15 11:32:49 +0200 (Thu, 15 Feb 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -3829,6 +3829,7 @@ namespace GXDLMSDirector
                     if (li.Tag == sender)
                     {
                         li.SubItems[1].Text = sender.ResultFile;
+                        li.ImageIndex = sender.ErrorLevel;
                         break;
                     }
                 }
@@ -3905,6 +3906,11 @@ namespace GXDLMSDirector
             }
             else
             {
+                //If assocaiation view is re-read there might be new objects.
+                if (ProgressBar.Value == ProgressBar.Maximum)
+                {
+                    ProgressBar.Maximum = sender.Device.Objects.Count;
+                }
                 ++ProgressBar.Value;
             }
         }

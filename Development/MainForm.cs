@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9868 $,
-//                  $Date: 2018-02-15 11:32:49 +0200 (Thu, 15 Feb 2018) $
+// Version:         $Revision: 9873 $,
+//                  $Date: 2018-02-15 13:02:44 +0200 (Thu, 15 Feb 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -3704,7 +3704,7 @@ namespace GXDLMSDirector
                     {
                         str = "http://www.gurux.fi/index.php?q=GXDLMSDirector.ConformanceTest";
                     }
-                }                
+                }
                 // Show online help.
                 Process.Start(str);
                 // Set flag to show that the Help event as been handled
@@ -3758,7 +3758,7 @@ namespace GXDLMSDirector
         {
             if (Properties.Settings.Default.ConformanceConcurrent)
             {
-                List<GXConformanceTest> tests = (List<GXConformanceTest>) parameters[0];
+                List<GXConformanceTest> tests = (List<GXConformanceTest>)parameters[0];
                 ManualResetEvent[] threads = new ManualResetEvent[tests.Count];
                 int pos = 0;
                 foreach (GXConformanceTest it in tests)
@@ -3858,7 +3858,7 @@ namespace GXDLMSDirector
                         li.SubItems[1].Text = e.Message;
                         break;
                     }
-                }               
+                }
             }
         }
 
@@ -3907,11 +3907,10 @@ namespace GXDLMSDirector
             else
             {
                 //If assocaiation view is re-read there might be new objects.
-                if (ProgressBar.Value == ProgressBar.Maximum)
+                if (ProgressBar.Value < ProgressBar.Maximum)
                 {
-                    ProgressBar.Maximum = sender.Device.Objects.Count;
+                    ++ProgressBar.Value;
                 }
-                ++ProgressBar.Value;
             }
         }
 

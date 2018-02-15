@@ -324,7 +324,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ConformanceTests\ActionSchedule.xml" />
-    <EmbeddedResource Include="ConformanceTests\ActivityCalendar.xml" />
+    <EmbeddedResource Include="ConformanceTests\ActivityCalendar.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="ConformanceTests\AssociationLogicalName.xml" />
     <EmbeddedResource Include="ConformanceTests\AutoAnswer.xml" />
     <EmbeddedResource Include="ConformanceTests\AutoConnect.xml" />

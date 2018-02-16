@@ -54,27 +54,9 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// Name of result file.
+        /// Name of results folder.
         /// </summary>
-        public string ResultFile
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Name of trace file.
-        /// </summary>
-        public string LogFile
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Name of value file.
-        /// </summary>
-        public string ValueFile
+        public string Results
         {
             get;
             set;

@@ -1,0 +1,421 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Messages>
+   <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--ACCOUNT-->
+        <ClassId Value="111" />
+        <!--0.0.19.0.0.255-->
+        <InstanceId Value="0000130000FF" />
+        <AttributeId Value="2" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <Structure Qty="2" >
+            <Enum Value="*" />
+            <Enum Value="*" />
+          </Structure>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--ACCOUNT-->
+        <ClassId Value="111" />
+        <!--0.0.19.0.0.255-->
+        <InstanceId Value="0000130000FF" />
+        <AttributeId Value="3" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <UInt8 Value="*" />
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--ACCOUNT-->
+        <ClassId Value="111" />
+        <!--0.0.19.0.0.255-->
+        <InstanceId Value="0000130000FF" />
+        <AttributeId Value="4" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <BitString Value="*" />
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--ACCOUNT-->
+        <ClassId Value="111" />
+        <!--0.0.19.0.0.255-->
+        <InstanceId Value="0000130000FF" />
+        <AttributeId Value="5" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <Int32 Value="*" />
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--ACCOUNT-->
+        <ClassId Value="111" />
+        <!--0.0.19.0.0.255-->
+        <InstanceId Value="0000130000FF" />
+        <AttributeId Value="6" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <Int32 Value="*" />
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--ACCOUNT-->
+        <ClassId Value="111" />
+        <!--0.0.19.0.0.255-->
+        <InstanceId Value="0000130000FF" />
+        <AttributeId Value="7" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <Int32 Value="*" />
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--ACCOUNT-->
+        <ClassId Value="111" />
+        <!--0.0.19.0.0.255-->
+        <InstanceId Value="0000130000FF" />
+        <AttributeId Value="8" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <Int32 Value="*" />
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--ACCOUNT-->
+        <ClassId Value="111" />
+        <!--0.0.19.0.0.255-->
+        <InstanceId Value="0000130000FF" />
+        <AttributeId Value="9" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <Array Qty="*" >
+            <OctetString Value="*" />
+          </Array>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--ACCOUNT-->
+        <ClassId Value="111" />
+        <!--0.0.19.0.0.255-->
+        <InstanceId Value="0000130000FF" />
+        <AttributeId Value="10" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <Array Qty="*" >
+            <OctetString Value="*" />
+          </Array>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--ACCOUNT-->
+        <ClassId Value="111" />
+        <!--0.0.19.0.0.255-->
+        <InstanceId Value="0000130000FF" />
+        <AttributeId Value="11" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <Array Qty="*" >
+            <Structure Qty="3" >
+              <OctetString Value="*" />
+              <OctetString Value="*" />
+              <BitString Value="*" />
+            </Structure>
+          </Array>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--ACCOUNT-->
+        <ClassId Value="111" />
+        <!--0.0.19.0.0.255-->
+        <InstanceId Value="0000130000FF" />
+        <AttributeId Value="12" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <Array Qty="*" >
+            <Structure Qty="2" >
+              <OctetString Value="*" />
+              <UInt8 Value="*" />
+            </Structure>
+          </Array>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--ACCOUNT-->
+        <ClassId Value="111" />
+        <!--0.0.19.0.0.255-->
+        <InstanceId Value="0000130000FF" />
+        <AttributeId Value="13" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <OctetString Value="*" />
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--ACCOUNT-->
+        <ClassId Value="111" />
+        <!--0.0.19.0.0.255-->
+        <InstanceId Value="0000130000FF" />
+        <AttributeId Value="14" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <OctetString Value="*" />
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--ACCOUNT-->
+        <ClassId Value="111" />
+        <!--0.0.19.0.0.255-->
+        <InstanceId Value="0000130000FF" />
+        <AttributeId Value="15" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <Structure Qty="3" >
+            <StringUTF8 Value="" />
+            <Int8 Value="0" />
+            <Enum Value="0" />
+          </Structure>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--ACCOUNT-->
+        <ClassId Value="111" />
+        <!--0.0.19.0.0.255-->
+        <InstanceId Value="0000130000FF" />
+        <AttributeId Value="16" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <Int32 Value="*" />
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--ACCOUNT-->
+        <ClassId Value="111" />
+        <!--0.0.19.0.0.255-->
+        <InstanceId Value="0000130000FF" />
+        <AttributeId Value="17" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <Int32 Value="*" />
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--ACCOUNT-->
+        <ClassId Value="111" />
+        <!--0.0.19.0.0.255-->
+        <InstanceId Value="0000130000FF" />
+        <AttributeId Value="18" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <UInt16 Value="*" />
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--ACCOUNT-->
+        <ClassId Value="111" />
+        <!--0.0.19.0.0.255-->
+        <InstanceId Value="0000130000FF" />
+        <AttributeId Value="19" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <Int32 Value="*" />
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+</Messages>

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9858 $,
-//                  $Date: 2018-02-12 14:21:19 +0200 (Mon, 12 Feb 2018) $
+// Version:         $Revision: 9881 $,
+//                  $Date: 2018-02-16 11:39:11 +0200 (Fri, 16 Feb 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -751,12 +751,8 @@ namespace GXDLMSDirector
                 //If authentication is required.
                 if (client.Authentication > Authentication.Low)
                 {
-                    foreach (byte[] it in client.GetApplicationAssociationRequest())
-                    {
-                        GXLogWriter.WriteLog("Authenticating", it);
-                        reply.Clear();
-                        ReadDLMSPacket(it, reply);
-                    }
+                    reply.Clear();
+                    ReadDataBlock(client.GetApplicationAssociationRequest(), "Authenticating.", reply);
                     client.ParseApplicationAssociationResponse(reply.Data);
                 }
             }

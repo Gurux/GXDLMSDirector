@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9873 $,
-//                  $Date: 2018-02-15 13:02:44 +0200 (Thu, 15 Feb 2018) $
+// Version:         $Revision: 9881 $,
+//                  $Date: 2018-02-16 11:39:11 +0200 (Fri, 16 Feb 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -38,7 +38,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml.Serialization;
-using System.Reflection;
 using System.Xml;
 using GXDLMS.ManufacturerSettings;
 using System.Diagnostics;
@@ -54,7 +53,6 @@ using Gurux.DLMS.Enums;
 using Gurux.DLMS.UI;
 using Gurux.Net;
 using System.Text;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace GXDLMSDirector
 {
@@ -3726,7 +3724,8 @@ namespace GXDLMSDirector
                 if (ConformanceTests.SelectedItems.Count == 1)
                 {
                     ListViewItem li = ConformanceTests.SelectedItems[0];
-                    Process.Start((li.Tag as GXConformanceTest).ResultFile);
+                    string path = Path.Combine((li.Tag as GXConformanceTest).Results, "Results.html");
+                    Process.Start(path);
                 }
             }
             catch (Exception Ex)
@@ -3745,7 +3744,8 @@ namespace GXDLMSDirector
                 if (ConformanceTests.SelectedItems.Count == 1)
                 {
                     ListViewItem li = ConformanceTests.SelectedItems[0];
-                    Process.Start((li.Tag as GXConformanceTest).LogFile);
+                    string path = Path.Combine((li.Tag as GXConformanceTest).Results, "Trace.txt");
+                    Process.Start(path);
                 }
             }
             catch (Exception Ex)
@@ -3802,7 +3802,10 @@ namespace GXDLMSDirector
                         state == AsyncState.Cancel)
                 {
                     StatusLbl.Text = Properties.Resources.ReadyTxt;
-                    MessageBox.Show(this, "Gurux Conformance Tests end.");
+                    if (state == AsyncState.Finish)
+                    {
+                        MessageBox.Show(this, "Gurux Conformance Tests end.");
+                    }
                 }
                 else
                 {
@@ -3828,7 +3831,8 @@ namespace GXDLMSDirector
                 {
                     if (li.Tag == sender)
                     {
-                        li.SubItems[1].Text = sender.ResultFile;
+                        string path = Path.Combine((li.Tag as GXConformanceTest).Results, "Results.html");
+                        li.SubItems[1].Text = path;
                         li.ImageIndex = sender.ErrorLevel;
                         break;
                     }
@@ -3878,7 +3882,7 @@ namespace GXDLMSDirector
                 TraceView.AppendText(data);
                 try
                 {
-                    using (FileStream fs = File.Open(sender.ValueFile, FileMode.Append))
+                    using (FileStream fs = File.Open(Path.Combine(sender.Results, "Values.txt"), FileMode.Append))
                     {
                         using (TextWriter writer = new StreamWriter(fs))
                         {
@@ -3933,40 +3937,16 @@ namespace GXDLMSDirector
                     devices.AddRange(Devices);
                     List<GXConformanceTest> tests = new List<GXConformanceTest>();
                     string path2 = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
-                    string reports = Path.Combine(path2, "Reports");
-                    string traces = Path.Combine(path2, "Traces");
-                    string values = Path.Combine(path2, "Values");
+                    string testResults = Path.Combine(path2, "TestResults");
                     if (!Directory.Exists(path2))
                     {
                         Directory.CreateDirectory(path2);
                     }
-                    if (!Directory.Exists(reports))
+                    if (!Directory.Exists(testResults))
                     {
-                        Directory.CreateDirectory(reports);
+                        Directory.CreateDirectory(testResults);
                     }
-                    if (!Directory.Exists(traces))
-                    {
-                        Directory.CreateDirectory(traces);
-                    }
-                    if (!Directory.Exists(values))
-                    {
-                        Directory.CreateDirectory(values);
-                    }
-                    string[] list = Directory.GetFiles(reports, "Report*.html");
-                    int ReportNo = list.Length;
-                    foreach (string it in list)
-                    {
-                        FileInfo fi = new FileInfo(it);
-                        string tmp = fi.Name.Substring(6, fi.Name.Length - 11);
-                        if (!string.IsNullOrEmpty(tmp))
-                        {
-                            int t = int.Parse(tmp);
-                            if (t > ReportNo)
-                            {
-                                ReportNo = t + 1;
-                            }
-                        }
-                    }
+                    string[] list = Directory.GetDirectories(testResults);
                     int testcount = 0;
                     foreach (GXDLMSDevice it in devices)
                     {
@@ -3976,31 +3956,20 @@ namespace GXDLMSDirector
                         t.OnError = OnConformanceError;
                         t.OnTrace = OnConformanceTrace;
                         t.OnObjectTestCompleated = OnObjectTestCompleated;
-                        if (ReportNo == 0)
-                        {
-                            t.ResultFile = Path.Combine(reports, "Report.html");
-                            t.LogFile = Path.Combine(traces, "Trace.txt");
-                            t.ValueFile = Path.Combine(values, "Values.txt");
-                        }
-                        else
-                        {
-                            t.ResultFile = Path.Combine(reports, "Report" + ReportNo + ".html");
-                            t.LogFile = Path.Combine(traces, "Trace" + ReportNo + ".txt");
-                            t.ValueFile = Path.Combine(values, "Values" + ReportNo + ".txt");
-                        }
-                        using (Stream stream = File.Open(t.ResultFile, FileMode.Create))
+                        t.Results = Path.Combine(testResults, it.Name + "_" + DateTime.Now.ToString("yyyy-MM-dd hh_mm_ss"));
+                        Directory.CreateDirectory(t.Results);
+                        using (Stream stream = File.Open(Path.Combine(t.Results, "Results.html"), FileMode.Create))
                         {
 
                         }
-                        using (Stream stream = File.Open(t.LogFile, FileMode.Create))
+                        using (Stream stream = File.Open(Path.Combine(t.Results, "Trace.txt"), FileMode.Create))
                         {
 
                         }
-                        using (Stream stream = File.Open(t.ValueFile, FileMode.Create))
+                        using (Stream stream = File.Open(Path.Combine(t.Results, "Values.txt"), FileMode.Create))
                         {
 
                         }
-                        ++ReportNo;
                         tests.Add(t);
                         ListViewItem li = ConformanceTests.Items.Add(it.Name);
                         li.SubItems.Add("");
@@ -4049,7 +4018,7 @@ namespace GXDLMSDirector
         private void contextMenuStrip2_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             runToolStripMenuItem.Enabled = Devices.Count != 0 && (TransactionWork == null || !TransactionWork.IsRunning);
-            showValuesBtn.Enabled = ShowLogBtn.Enabled = ShowReportBtn.Enabled = ConformanceTests.SelectedItems.Count != 0;
+            OpenContainingFolderBtn.Enabled = showValuesBtn.Enabled = ShowLogBtn.Enabled = ShowReportBtn.Enabled = ConformanceTests.SelectedItems.Count != 0;
         }
 
         /// <summary>
@@ -4062,7 +4031,29 @@ namespace GXDLMSDirector
                 if (ConformanceTests.SelectedItems.Count == 1)
                 {
                     ListViewItem li = ConformanceTests.SelectedItems[0];
-                    Process.Start((li.Tag as GXConformanceTest).ValueFile);
+                    string path = Path.Combine((li.Tag as GXConformanceTest).Results, "Values.txt");
+                    Process.Start(path);
+                }
+            }
+            catch (Exception Ex)
+            {
+                Error.ShowError(this, Ex);
+            }
+        }
+
+        /// <summary>
+        /// Open containing folder
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OpenContainingFolderBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (ConformanceTests.SelectedItems.Count == 1)
+                {
+                    ListViewItem li = ConformanceTests.SelectedItems[0];
+                    Process.Start("explorer.exe", string.Format("/select, \"{0}\"", (li.Tag as GXConformanceTest).Results));
                 }
             }
             catch (Exception Ex)

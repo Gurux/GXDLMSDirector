@@ -1,0 +1,213 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Messages>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--IP6_SETUP-->
+        <ClassId Value="48" />
+        <!--0.0.25.7.0.255-->
+        <InstanceId Value="0000190700FF" />
+        <AttributeId Value="2" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <OctetString Value="*" />
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--IP6_SETUP-->
+        <ClassId Value="48" />
+        <!--0.0.25.7.0.255-->
+        <InstanceId Value="0000190700FF" />
+        <AttributeId Value="3" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <Enum Value="*" />
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--IP6_SETUP-->
+        <ClassId Value="48" />
+        <!--0.0.25.7.0.255-->
+        <InstanceId Value="0000190700FF" />
+        <AttributeId Value="4" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <Array Qty="*" >
+            <OctetString Value="*" />
+          </Array>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--IP6_SETUP-->
+        <ClassId Value="48" />
+        <!--0.0.25.7.0.255-->
+        <InstanceId Value="0000190700FF" />
+        <AttributeId Value="5" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <Array Qty="*" >
+            <OctetString Value="*" />
+          </Array>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--IP6_SETUP-->
+        <ClassId Value="48" />
+        <!--0.0.25.7.0.255-->
+        <InstanceId Value="0000190700FF" />
+        <AttributeId Value="6" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <Array Qty="*" >
+            <OctetString Value="*" />
+          </Array>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--IP6_SETUP-->
+        <ClassId Value="48" />
+        <!--0.0.25.7.0.255-->
+        <InstanceId Value="0000190700FF" />
+        <AttributeId Value="7" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <OctetString Value="*" />
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--IP6_SETUP-->
+        <ClassId Value="48" />
+        <!--0.0.25.7.0.255-->
+        <InstanceId Value="0000190700FF" />
+        <AttributeId Value="8" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <OctetString Value="*" />
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--IP6_SETUP-->
+        <ClassId Value="48" />
+        <!--0.0.25.7.0.255-->
+        <InstanceId Value="0000190700FF" />
+        <AttributeId Value="9" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <UInt8 Value="*" />
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*" />
+      <AttributeDescriptor>
+        <!--IP6_SETUP-->
+        <ClassId Value="48" />
+        <!--0.0.25.7.0.255-->
+        <InstanceId Value="0000190700FF" />
+        <AttributeId Value="10" />
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <Array Qty="*" >
+            <Structure Qty="3" >
+              <UInt8 Value="*" />
+              <UInt16 Value="*" />
+              <UInt32 Value="*" />
+            </Structure>
+          </Array>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+</Messages>

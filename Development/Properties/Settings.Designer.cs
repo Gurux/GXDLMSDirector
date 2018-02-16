@@ -274,5 +274,41 @@ namespace GXDLMSDirector.Properties {
                 this["ConformanceWrite"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ConformanceExcludeBasic {
+            get {
+                return ((bool)(this["ConformanceExcludeBasic"]));
+            }
+            set {
+                this["ConformanceExcludeBasic"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ConformanceExternal {
+            get {
+                return ((string)(this["ConformanceExternal"]));
+            }
+            set {
+                this["ConformanceExternal"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public uint ConformanceDelay {
+            get {
+                return ((uint)(this["ConformanceDelay"]));
+            }
+            set {
+                this["ConformanceDelay"] = value;
+            }
+        }
     }
 }

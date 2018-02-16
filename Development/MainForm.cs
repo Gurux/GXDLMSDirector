@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9881 $,
-//                  $Date: 2018-02-16 11:39:11 +0200 (Fri, 16 Feb 2018) $
+// Version:         $Revision: 9882 $,
+//                  $Date: 2018-02-16 13:46:31 +0200 (Fri, 16 Feb 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -3770,6 +3770,7 @@ namespace GXDLMSDirector
                         GXConformanceDlg.ReadXmlMeter(new object[] { tmp });
                     }
                     );
+                    t.IsBackground = true;
                     it.Done = threads[pos] = new ManualResetEvent(false);
                     ++pos;
                     t.Start();
@@ -3854,14 +3855,25 @@ namespace GXDLMSDirector
             }
             else
             {
-                TraceView.AppendText(e.ToString());
-                foreach (ListViewItem li in ConformanceTests.Items)
+                try
                 {
-                    if (li.Tag == sender)
+                    if (traceLevel != 0)
                     {
-                        li.SubItems[1].Text = e.Message;
-                        break;
+                        TraceView.AppendText(e.ToString());
                     }
+                    foreach (ListViewItem li in ConformanceTests.Items)
+                    {
+                        if (li.Tag == sender)
+                        {
+                            li.SubItems[1].Text = e.Message;
+                            break;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                    System.Diagnostics.Debug.WriteLine(ex.ToString());
                 }
             }
         }
@@ -3879,9 +3891,12 @@ namespace GXDLMSDirector
             }
             else
             {
-                TraceView.AppendText(data);
                 try
                 {
+                    if (traceLevel != 0)
+                    {
+                        TraceView.AppendText(data);
+                    }
                     using (FileStream fs = File.Open(Path.Combine(sender.Results, "Values.txt"), FileMode.Append))
                     {
                         using (TextWriter writer = new StreamWriter(fs))

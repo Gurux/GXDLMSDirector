@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9882 $,
-//                  $Date: 2018-02-16 13:46:31 +0200 (Fri, 16 Feb 2018) $
+// Version:         $Revision: 9887 $,
+//                  $Date: 2018-02-19 12:33:52 +0200 (Mon, 19 Feb 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -3948,6 +3948,8 @@ namespace GXDLMSDirector
                 if (dlg.ShowDialog(this) == DialogResult.OK)
                 {
                     ConformanceTests.Items.Clear();
+                    GXConformanceDlg.ValidateTests();
+
                     GXDLMSDeviceCollection devices = new GXDLMSDeviceCollection();
                     devices.AddRange(Devices);
                     List<GXConformanceTest> tests = new List<GXConformanceTest>();

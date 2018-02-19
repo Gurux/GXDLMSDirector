@@ -56,6 +56,16 @@ namespace GXDLMSDirector
     partial class GXConformanceDlg : Form
     {
         /// <summary>
+        /// Continue conformance tests.
+        /// </summary>
+        public static bool Continue = true;
+
+        /// <summary>
+        /// Lock tests so they are read only one thread.
+        /// </summary>
+        private static object ConformanceLock = new object();
+
+        /// <summary>
         /// Constructor.
         /// </summary>
         public GXConformanceDlg()
@@ -116,6 +126,50 @@ namespace GXDLMSDirector
                 return new string[0];
             }
             return Directory.GetFiles(Properties.Settings.Default.ConformanceExternal, "*.xml");
+        }
+
+        /// <summary>
+        /// Load xml test and validate them.
+        /// </summary>
+        public static void ValidateTests()
+        {
+            //Load basic tests.
+            if (!Properties.Settings.Default.ConformanceExcludeBasic)
+            {
+                foreach (string it in GXConformanceDlg.GetBasicTests())
+                {
+                    try
+                    {
+                        using (Stream stream = typeof(Program).Assembly.GetManifestResourceStream(it))
+                        {
+                            GetTests(stream, null, null);
+                            stream.Close();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("Failed to load basic test " + it + ".", ex);
+                    }
+                }
+            }
+            //Load external tests.
+            GXDLMSXmlClient client = new GXDLMSXmlClient(TranslatorOutputType.SimpleXml);
+            string[] list = GXConformanceDlg.GetExternalTests();
+            foreach (string it in list)
+            {
+                try
+                {
+                    using (StreamReader fs = File.OpenText(it))
+                    {
+                        client.Load(it);
+                        fs.Close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Failed to load external test " + it + ".", ex);
+                }
+            }
         }
 
         /// <summary>
@@ -191,7 +245,7 @@ namespace GXDLMSDirector
                 {
                     if (Properties.Settings.Default.ConformanceDelay != 0)
                     {
-                        Thread.Sleep((int) Properties.Settings.Default.ConformanceDelay * 1000);
+                        Thread.Sleep((int)Properties.Settings.Default.ConformanceDelay * 1000);
                     }
                     indexStr = " attribute ";
                     XmlNode i = null;
@@ -455,13 +509,6 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// Continue conformance tests.
-        /// </summary>
-        public static bool Continue = true;
-
-        private static object ConformanceLock = new object();
-
-        /// <summary>
         /// Load tests.
         /// </summary>
         /// <param name="stream">Stream where tests are read.</param>
@@ -477,21 +524,26 @@ namespace GXDLMSDirector
             {
                 ot = (ObjectType)int.Parse(node.SelectNodes("AttributeDescriptor/ClassId")[0].Attributes["Value"].Value);
                 int index = int.Parse(node.SelectNodes("AttributeDescriptor/AttributeId")[0].Attributes["Value"].Value);
-                //Update logical name.
-                foreach (GXDLMSObject obj in dev.Objects.GetObjects(ot))
+                if (dev != null)
                 {
-                    if ((obj.GetAccess(index) & AccessMode.Read) != 0)
+                    //Update logical name.
+                    foreach (GXDLMSObject obj in dev.Objects.GetObjects(ot))
                     {
-                        string tmp = GXCommon.ToHex(LogicalNameToBytes(obj.LogicalName), false);
-                        foreach (XmlNode n in list)
+                        if ((obj.GetAccess(index) & AccessMode.Read) != 0)
                         {
-                            XmlAttribute ln = n.SelectNodes("AttributeDescriptor/InstanceId")[0].Attributes["Value"];
-                            ln.Value = tmp;
+                            string tmp = GXCommon.ToHex(LogicalNameToBytes(obj.LogicalName), false);
+                            foreach (XmlNode n in list)
+                            {
+                                XmlAttribute ln = n.SelectNodes("AttributeDescriptor/InstanceId")[0].Attributes["Value"];
+                                ln.Value = tmp;
+                            }
+                            if (tests != null)
+                            {
+                                tests.Add(new KeyValuePair<GXDLMSObject, List<GXDLMSXmlPdu>>(obj, (dev.Comm.client as GXDLMSXmlClient).LoadXml(doc.InnerXml)));
+                            }
                         }
-                        tests.Add(new KeyValuePair<GXDLMSObject, List<GXDLMSXmlPdu>>(obj, (dev.Comm.client as GXDLMSXmlClient).LoadXml(doc.InnerXml)));
                     }
                 }
-                break;
             }
         }
 
@@ -592,6 +644,7 @@ namespace GXDLMSDirector
                                 using (Stream stream = typeof(Program).Assembly.GetManifestResourceStream(it))
                                 {
                                     GetTests(stream, dev, cosemTests);
+                                    stream.Close();
                                 }
                             }
                         }
@@ -611,7 +664,11 @@ namespace GXDLMSDirector
                             {
                                 try
                                 {
-                                    externalTests.Add(new KeyValuePair<string, List<GXDLMSXmlPdu>>(it, client.Load(it)));
+                                    using (StreamReader fs = File.OpenText(it))
+                                    {
+                                        externalTests.Add(new KeyValuePair<string, List<GXDLMSXmlPdu>>(it, client.Load(fs)));
+                                        fs.Close();
+                                    }
                                 }
                                 catch (Exception e)
                                 {

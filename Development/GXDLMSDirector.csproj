@@ -132,11 +132,11 @@
     <Reference Include="Gurux.Common, Version=8.1.1801.1201, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Common.8.1.1801.1201\lib\portable-win+net40\Gurux.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=8.5.1802.1902, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.8.5.1802.1902\lib\portable-win+net35\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=8.5.1802.2002, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.8.5.1802.2002\lib\portable-win+net35\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=8.5.1802.1901, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.8.5.1802.1901\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=8.5.1802.2002, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.8.5.1802.2002\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.Net, Version=8.1.1801.1201, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Net.8.1.1801.1201\lib\portable-win+net40\Gurux.Net.dll</HintPath>
@@ -153,6 +153,7 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
+    <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Messaging" />
     <Reference Include="System.Web" />
@@ -169,6 +170,8 @@
     <Compile Include="GXConformanceDlg.Designer.cs">
       <DependentUpon>GXConformanceDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="GXConformanceSettings.cs" />
+    <Compile Include="GXConformanceTests.cs" />
     <Compile Include="GXConformanceTest.cs" />
     <Compile Include="GXExternalMediaForm.cs">
       <SubType>Form</SubType>
@@ -367,6 +370,7 @@
     <EmbeddedResource Include="ConformanceTests\TokenGateway.xml" />
     <Content Include="GXDLMSDirector.ico" />
     <None Include="Resources\NotifyMnu.bmp" />
+    <None Include="Resources\cct.png" />
     <Content Include="Resources\warning.ico" />
   </ItemGroup>
   <ItemGroup>

@@ -117,8 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="TemporaryFailureTxt" xml:space="preserve">
-    <value>Access Error : Device reports a temporary failure.</value>
+  <data name="InstallManufacturersOnlineTxt" xml:space="preserve">
+    <value>Device Manufacturer settings are not present. Do you want to install them online from Gurux Web?</value>
+  </data>
+  <data name="ExecutableFilesTxt" xml:space="preserve">
+    <value>Executable files (*.dll)|*.dll|All files (*.*)|*.*</value>
   </data>
   <data name="UndefinedObjectTxt" xml:space="preserve">
     <value>Access Error : Device reports a undefined object.</value>
@@ -133,8 +136,14 @@
   <data name="RemoveDeviceConfirmation" xml:space="preserve">
     <value>Are you sure that you want to remove selected device(s)?</value>
   </data>
+  <data name="ExternalMediaNoUpdates" xml:space="preserve">
+    <value>No updates available.</value>
+  </data>
   <data name="SaveChangesTxt" xml:space="preserve">
     <value>Do you want to save the changes?</value>
+  </data>
+  <data name="ReadAssociationView" xml:space="preserve">
+    <value>You need to read Association view to see all objects what the meter can offer. Do you want to do it now?</value>
   </data>
   <data name="ValueChangedTxt" xml:space="preserve">
     <value>Value changed</value>
@@ -148,8 +157,9 @@
   <data name="WriteMnu" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\WriteMnu.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="FilterTxt" xml:space="preserve">
-    <value>Gurux GXDLMSDirector files (*.gxc)|*.gxc|All files (*.*)|*.*</value>
+  <data name="CopyrightTxt" xml:space="preserve">
+    <value>Copyright© 1998-2018 Gurux Ltd.
+All rights reserved.</value>
   </data>
   <data name="RestartTxt" xml:space="preserve">
     <value>The application must be restarted to apply the changes.</value>
@@ -157,12 +167,14 @@
   <data name="ProtocolsUpdatedTxt" xml:space="preserve">
     <value>Applications updated.</value>
   </data>
-  <data name="CopyrightTxt" xml:space="preserve">
-    <value>Copyright© 1998-2018 Gurux Ltd.
-All rights reserved.</value>
+  <data name="NotifyMnu" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\NotifyMnu.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="InstallManufacturersOnlineTxt" xml:space="preserve">
-    <value>Device Manufacturer settings are not present. Do you want to install them online from Gurux Web?</value>
+  <data name="ReadyTxt" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="cct" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cct.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ReadMnu" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ReadMnu.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -173,29 +185,35 @@ All rights reserved.</value>
   <data name="InvalidASCII" xml:space="preserve">
     <value>Invalid ASCII characters.</value>
   </data>
-  <data name="DeleteMnu" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\DeleteMnu.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="FilterTxt" xml:space="preserve">
+    <value>Gurux GXDLMSDirector files (*.gxc)|*.gxc|All files (*.*)|*.*</value>
   </data>
   <data name="InconsistentClassTxt" xml:space="preserve">
     <value>Access Error : Device reports a inconsistent Class or Object.</value>
   </data>
-  <data name="OpenMnu" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\OpenMnu.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="OptionsMnu" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\OptionsMnu.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="TemporaryFailureTxt" xml:space="preserve">
+    <value>Access Error : Device reports a temporary failure.</value>
   </data>
   <data name="ForMoreInfoTxt" xml:space="preserve">
     <value>For information about Gurux products see:</value>
   </data>
-  <data name="UpdateManufacturersOnlineTxt" xml:space="preserve">
-    <value>New Device Manufacturer settings are available. Do you want to update them online from Gurux Web?</value>
+  <data name="OpenMnu" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\OpenMnu.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="AboutGXDLMSDirectorTxt" xml:space="preserve">
     <value>About Gurux GXDLMSDirector</value>
   </data>
-  <data name="ConnectMnu" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ConnectMnu.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="OptionsMnu" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\OptionsMnu.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GXDLMSDirectorTxt" xml:space="preserve">
+    <value>Gurux GXDLMSDirector</value>
+  </data>
+  <data name="ManufacturerSettingsMissing" xml:space="preserve">
+    <value>Install Manufacturer Settings first.</value>
+  </data>
+  <data name="HelpNotAvailable" xml:space="preserve">
+    <value>No Help topic is associated with this item.</value>
   </data>
   <data name="ReadWriteDeniedTxt" xml:space="preserve">
     <value>Access Error : Device reports Read-Write denied.</value>
@@ -203,37 +221,25 @@ All rights reserved.</value>
   <data name="HardwareFaultTxt" xml:space="preserve">
     <value>Access Error : Device reports a hardware fault.</value>
   </data>
+  <data name="UpdateManufacturersOnlineTxt" xml:space="preserve">
+    <value>New Device Manufacturer settings are available. Do you want to update them online from Gurux Web?</value>
+  </data>
+  <data name="ConnectMnu" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ConnectMnu.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="NewMnu" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\NewMnu.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="GXDLMSDirectorTxt" xml:space="preserve">
-    <value>Gurux GXDLMSDirector</value>
-  </data>
-  <data name="HelpNotAvailable" xml:space="preserve">
-    <value>No Help topic is associated with this item.</value>
-  </data>
-  <data name="UnknownErrorTxt" xml:space="preserve">
-    <value>Unknown Error.</value>
-  </data>
-  <data name="NotifyMnu" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\NotifyMnu.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ExecutableFilesTxt" xml:space="preserve">
-    <value>Executable files (*.dll)|*.dll|All files (*.*)|*.*</value>
+  <data name="DeleteMnu" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DeleteMnu.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ExternalMediaRemove" xml:space="preserve">
     <value>Are you sure that you want to remove selected external media?</value>
   </data>
-  <data name="ExternalMediaNoUpdates" xml:space="preserve">
-    <value>No updates available.</value>
+  <data name="UnknownErrorTxt" xml:space="preserve">
+    <value>Unknown Error.</value>
   </data>
-  <data name="ReadAssociationView" xml:space="preserve">
-    <value>You need to read Association view to see all objects what the meter can offer. Do you want to do it now?</value>
-  </data>
-  <data name="ManufacturerSettingsMissing" xml:space="preserve">
-    <value>Install Manufacturer Settings first.</value>
-  </data>
-  <data name="ReadyTxt" xml:space="preserve">
-    <value>Ready</value>
+  <data name="cct1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cct.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

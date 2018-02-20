@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9881 $,
-//                  $Date: 2018-02-16 11:39:11 +0200 (Fri, 16 Feb 2018) $
+// Version:         $Revision: 9890 $,
+//                  $Date: 2018-02-20 13:02:24 +0200 (Tue, 20 Feb 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -56,7 +56,7 @@ namespace GXDLMSDirector
     public delegate void ProgressEventHandler(object sender, string description, int current, int maximium);
     public delegate void StatusEventHandler(object sender, DeviceState status);
     public delegate void ReadEventHandler(GXDLMSObject sender, int index);
-    public delegate void MessageTraceEventHandler(GXDLMSDevice sender, string trace, byte[] data, string path);
+    public delegate void MessageTraceEventHandler(GXDLMSDevice sender, string trace, byte[] data, int framesize, string path);
 
     public class GXDLMSCommunicator
     {
@@ -64,6 +64,11 @@ namespace GXDLMSDirector
         /// Log file.
         /// </summary>
         internal string LogFile;
+
+        /// <summary>
+        /// Maximum frame size.
+        /// </summary>
+        internal int Framesize;
 
         internal DateTime lastTransaction = DateTime.MinValue;
         internal DateTime connectionStartTime;
@@ -273,7 +278,7 @@ namespace GXDLMSDirector
             GXLogWriter.WriteLog(null, p.Reply);
             if (parent.OnTrace != null)
             {
-                parent.OnTrace(parent, "-> " + DateTime.Now.ToLongTimeString(), p.Reply, LogFile);
+                parent.OnTrace(parent, "-> " + DateTime.Now.ToLongTimeString(), p.Reply, reply.PacketLength, LogFile);
             }
             if (reply.Error != 0)
             {
@@ -840,7 +845,7 @@ namespace GXDLMSDirector
             GXLogWriter.WriteLog(text, data);
             if (parent.OnTrace != null)
             {
-                parent.OnTrace(parent, text + "\r\n<- " + DateTime.Now.ToLongTimeString(), data, LogFile);
+                parent.OnTrace(parent, text + "\r\n<- " + DateTime.Now.ToLongTimeString(), data, 0, LogFile);
             }
             ReadDLMSPacket(data, reply);
 
@@ -867,7 +872,7 @@ namespace GXDLMSDirector
                     }
                     if (parent.OnTrace != null)
                     {
-                        parent.OnTrace(parent, "<- " + DateTime.Now.ToLongTimeString(), data, LogFile);
+                        parent.OnTrace(parent, "<- " + DateTime.Now.ToLongTimeString(), data, 0, LogFile);
                     }
                     GXLogWriter.WriteLog(text, data);
                     ReadDLMSPacket(data, reply);

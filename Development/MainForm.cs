@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9887 $,
-//                  $Date: 2018-02-19 12:33:52 +0200 (Mon, 19 Feb 2018) $
+// Version:         $Revision: 9892 $,
+//                  $Date: 2018-02-20 17:37:15 +0200 (Tue, 20 Feb 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1606,11 +1606,11 @@ namespace GXDLMSDirector
 
         delegate void UpdateTransactionEventHandler(bool start);
 
-        void OnTrace(GXDLMSDevice sender, string trace, byte[] data, string path)
+        void OnTrace(GXDLMSDevice sender, string trace, byte[] data, int length, string path)
         {
             if (InvokeRequired)
             {
-                BeginInvoke(new MessageTraceEventHandler(this.OnTrace), sender, trace, data, path);
+                BeginInvoke(new MessageTraceEventHandler(this.OnTrace), sender, trace, data, length, path);
             }
             else
             {
@@ -3756,7 +3756,8 @@ namespace GXDLMSDirector
 
         void ConformanceExecute(object sender, GXAsyncWork work, object[] parameters)
         {
-            if (Properties.Settings.Default.ConformanceConcurrent)
+            GXConformanceSettings p = (GXConformanceSettings)parameters[1];
+            if (p.ConcurrentTesting)
             {
                 List<GXConformanceTest> tests = (List<GXConformanceTest>)parameters[0];
                 ManualResetEvent[] threads = new ManualResetEvent[tests.Count];
@@ -3767,7 +3768,7 @@ namespace GXDLMSDirector
                     {
                         List<GXConformanceTest> tmp = new List<GXConformanceTest>();
                         tmp.Add(it);
-                        GXConformanceDlg.ReadXmlMeter(new object[] { tmp });
+                        GXConformanceTests.ReadXmlMeter(new object[] { tmp, p });
                     }
                     );
                     t.IsBackground = true;
@@ -3779,7 +3780,7 @@ namespace GXDLMSDirector
             }
             else
             {
-                GXConformanceDlg.ReadXmlMeter(parameters);
+                GXConformanceTests.ReadXmlMeter(parameters);
             }
         }
 
@@ -3798,7 +3799,7 @@ namespace GXDLMSDirector
             {
                 CancelBtn.Enabled = state == AsyncState.Start;
                 ProgressBar.Visible = state == AsyncState.Start;
-                GXConformanceDlg.Continue = state != AsyncState.Cancel;
+                GXConformanceTests.Continue = state != AsyncState.Cancel;
                 if (state == AsyncState.Finish ||
                         state == AsyncState.Cancel)
                 {
@@ -3944,11 +3945,45 @@ namespace GXDLMSDirector
                 {
                     throw new Exception("No devices to test.");
                 }
-                GXConformanceDlg dlg = new GXConformanceDlg();
+                GXConformanceSettings settings;
+                XmlSerializer x = new XmlSerializer(typeof(GXConformanceSettings));
+                if (Properties.Settings.Default.ConformanceSettings == "")
+                {
+                    settings = new GXConformanceSettings();
+                }
+                else
+                {
+                    try
+                    {
+                        using (StringReader reader = new StringReader(Properties.Settings.Default.ConformanceSettings))
+                        {
+                            settings = (GXConformanceSettings)x.Deserialize(reader);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine(ex.Message);
+                        settings = new GXConformanceSettings();
+                    }
+                }
+                GXConformanceDlg dlg = new GXConformanceDlg(settings);
                 if (dlg.ShowDialog(this) == DialogResult.OK)
                 {
+                    try
+                    {
+                        using (StringWriter writer = new StringWriter())
+                        {
+                            x.Serialize(writer, settings);
+                            Properties.Settings.Default.ConformanceSettings = writer.ToString();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine(ex.Message);
+                        Properties.Settings.Default.ConformanceSettings = "";
+                    }
                     ConformanceTests.Items.Clear();
-                    GXConformanceDlg.ValidateTests();
+                    GXConformanceTests.ValidateTests(settings);
 
                     GXDLMSDeviceCollection devices = new GXDLMSDeviceCollection();
                     devices.AddRange(Devices);
@@ -3995,8 +4030,8 @@ namespace GXDLMSDirector
                     TraceView.ResetText();
                     ProgressBar.Value = 0;
                     ProgressBar.Maximum = testcount;
-                    GXConformanceDlg.Continue = true;
-                    TransactionWork = new GXAsyncWork(this, ConformanceStateChange, ConformanceExecute, ConformanceError, null, new object[] { tests });
+                    GXConformanceTests.Continue = true;
+                    TransactionWork = new GXAsyncWork(this, ConformanceStateChange, ConformanceExecute, ConformanceError, null, new object[] { tests, settings });
                     TransactionWork.Start();
                 }
             }

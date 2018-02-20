@@ -229,85 +229,13 @@ namespace GXDLMSDirector.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool ConformanceConcurrent {
-            get {
-                return ((bool)(this["ConformanceConcurrent"]));
-            }
-            set {
-                this["ConformanceConcurrent"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool ConformanceShowValues {
-            get {
-                return ((bool)(this["ConformanceShowValues"]));
-            }
-            set {
-                this["ConformanceShowValues"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ConformanceReadAssociationView {
-            get {
-                return ((bool)(this["ConformanceReadAssociationView"]));
-            }
-            set {
-                this["ConformanceReadAssociationView"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ConformanceWrite {
-            get {
-                return ((bool)(this["ConformanceWrite"]));
-            }
-            set {
-                this["ConformanceWrite"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ConformanceExcludeBasic {
-            get {
-                return ((bool)(this["ConformanceExcludeBasic"]));
-            }
-            set {
-                this["ConformanceExcludeBasic"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ConformanceExternal {
+        public string ConformanceSettings {
             get {
-                return ((string)(this["ConformanceExternal"]));
+                return ((string)(this["ConformanceSettings"]));
             }
             set {
-                this["ConformanceExternal"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public uint ConformanceDelay {
-            get {
-                return ((uint)(this["ConformanceDelay"]));
-            }
-            set {
-                this["ConformanceDelay"] = value;
+                this["ConformanceSettings"] = value;
             }
         }
     }

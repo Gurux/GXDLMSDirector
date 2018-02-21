@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9806 $,
-//                  $Date: 2018-01-12 11:44:00 +0200 (pe, 12 tammi 2018) $
+// Version:         $Revision: 9901 $,
+//                  $Date: 2018-02-21 17:18:01 +0200 (Wed, 21 Feb 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -383,8 +383,22 @@ namespace GXDLMSDirector
         /// </summary>
         /// <remarks>
         /// DefaultValue is 1.
+        /// </remarks>
         [DefaultValue(0xFFFF)]
         public UInt16 PduSize
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// User Id.
+        /// </summary>
+        /// <remarks>
+        /// In default user id is not used.
+        /// </remarks>
+        [DefaultValue(-1)]
+        public short UserId
         {
             get;
             set;
@@ -584,6 +598,7 @@ namespace GXDLMSDirector
             PduSize = 0xFFFF;
             ServiceClass = ServiceClass.Confirmed;
             Priority = Priority.High;
+            UserId = -1;
         }
 
         /// <summary>

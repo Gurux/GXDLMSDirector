@@ -116,7 +116,7 @@ namespace GXDLMSDirector
         [Description("Invalid password.")]
         [Category("Connection")]
         [DefaultValue("")]
-        public string PasswordInvalid
+        public string InvalidPassword
         {
             get;
             set;
@@ -129,69 +129,6 @@ namespace GXDLMSDirector
         {
             get;
             set;
-        }
-
-        [Description("Is connection without authentication tested.")]
-        [Category("Connection")]
-        [DefaultValue(false)]
-        public bool None
-        {
-            get;
-            set;
-        }
-
-        [Description("Low level password.")]
-        [Category("Connection")]
-        [DefaultValue("")]
-        public string PasswordLow
-        {
-            get;
-            set;
-        }
-
-        [Description("High level password.")]
-        [Category("Connection")]
-        [DefaultValue("")]
-        public string PasswordHigh
-        {
-            get;
-            set;
-        }
-
-        [Description("High MD5 level password.")]
-        [Category("Connection")]
-        [DefaultValue("")]
-        public string PasswordHighMD5
-        {
-            get;
-            set;
-        }
-
-        [Description("High SHA1 level password.")]
-        [Category("Connection")]
-        [DefaultValue("")]
-        public string PasswordHighSHA1
-        {
-            get;
-            set;
-        }
-
-        [Description("Is connection tested with GMAC authentication.")]
-        [Category("Connection")]
-        [DefaultValue(false)]
-        public bool HighGMAC
-        {
-            get;
-            set;
-        }
-        [Description("High SHA256 level password.")]
-        [Category("Connection")]
-        [DefaultValue("")]
-        public string PasswordHighSHA256
-        {
-            get;
-            set;
-        }
-        
+        }     
     }
 }

@@ -190,7 +190,6 @@ namespace GXDLMSDirector
             {
                 obj = target as GXDLMSObject;
             }
-
             foreach (GXDLMSXmlPdu it in actions)
             {
                 if (!Continue)
@@ -242,12 +241,31 @@ namespace GXDLMSDirector
                             ot = (ObjectType)int.Parse(i.SelectNodes("AttributeDescriptor/ClassId")[0].Attributes["Value"].Value);
                             index = int.Parse(i.SelectNodes("AttributeDescriptor/AttributeId")[0].Attributes["Value"].Value);
                             ln = (i.SelectNodes("AttributeDescriptor/InstanceId")[0].Attributes["Value"].Value);
+                            //If attribute is not implement on this version.
+                            if (obj != null && index > (obj as IGXDLMSBase).GetAttributeCount())
+                            {
+                                break;
+                            }
+                            if ((obj.GetAccess(index) & AccessMode.Read) == 0)
+                            {
+                                reply.Clear();
+                                continue;
+                            }
                         }
                         else
                         {
                             ot = (ObjectType)int.Parse(i.SelectNodes("MethodDescriptor/ClassId")[0].Attributes["Value"].Value);
                             index = int.Parse(i.SelectNodes("MethodDescriptor/MethodId")[0].Attributes["Value"].Value);
                             ln = (i.SelectNodes("MethodDescriptor/InstanceId")[0].Attributes["Value"].Value);
+                            //If method is not implement on this version.
+                            if (obj != null && index > (obj as IGXDLMSBase).GetMethodCount())
+                            {
+                                break;
+                            }
+                            if (obj.GetMethodAccess(index) == MethodAccessMode.NoAccess)
+                            {
+                                continue;
+                            }
                         }
                         ln = GetLogicalName(ln);
                         test.OnTrace(test, ot + " " + ln + ":" + index + "\t");
@@ -500,24 +518,20 @@ namespace GXDLMSDirector
             foreach (XmlNode node in list)
             {
                 ot = (ObjectType)int.Parse(node.SelectNodes("AttributeDescriptor/ClassId")[0].Attributes["Value"].Value);
-                int index = int.Parse(node.SelectNodes("AttributeDescriptor/AttributeId")[0].Attributes["Value"].Value);
                 if (dev != null)
                 {
                     //Update logical name.
                     foreach (GXDLMSObject obj in dev.Objects.GetObjects(ot))
                     {
-                        if ((obj.GetAccess(index) & AccessMode.Read) != 0)
+                        string tmp = GXCommon.ToHex(LogicalNameToBytes(obj.LogicalName), false);
+                        foreach (XmlNode n in list)
                         {
-                            string tmp = GXCommon.ToHex(LogicalNameToBytes(obj.LogicalName), false);
-                            foreach (XmlNode n in list)
-                            {
-                                XmlAttribute ln = n.SelectNodes("AttributeDescriptor/InstanceId")[0].Attributes["Value"];
-                                ln.Value = tmp;
-                            }
-                            if (tests != null)
-                            {
-                                tests.Add(new KeyValuePair<GXDLMSObject, List<GXDLMSXmlPdu>>(obj, (dev.Comm.client as GXDLMSXmlClient).LoadXml(doc.InnerXml)));
-                            }
+                            XmlAttribute ln = n.SelectNodes("AttributeDescriptor/InstanceId")[0].Attributes["Value"];
+                            ln.Value = tmp;
+                        }
+                        if (tests != null)
+                        {
+                            tests.Add(new KeyValuePair<GXDLMSObject, List<GXDLMSXmlPdu>>(obj, (dev.Comm.client as GXDLMSXmlClient).LoadXml(doc.InnerXml)));
                         }
                     }
                     break;
@@ -566,11 +580,11 @@ namespace GXDLMSDirector
                     output.PreInfo.Add("Start Time: " + start.ToString());
                     media.Open();
                     dev.InitializeConnection();
-                    if (dev.MaxInfoRX != dev.Comm.client.Limits.MaxInfoRX)
+                    if (dev.MaxInfoRX != 128 && dev.MaxInfoRX != dev.Comm.client.Limits.MaxInfoRX)
                     {
                         output.Warnings.Add("Client asked that RX frame size is " + dev.MaxInfoRX + ". Meter uses " + dev.Comm.client.Limits.MaxInfoRX);
                     }
-                    if (dev.MaxInfoTX != dev.Comm.client.Limits.MaxInfoTX)
+                    if (dev.MaxInfoTX != 128 && dev.MaxInfoTX != dev.Comm.client.Limits.MaxInfoTX)
                     {
                         output.Warnings.Add("Client asked that TX frame size is " + dev.MaxInfoTX + ". Meter uses " + dev.Comm.client.Limits.MaxInfoTX);
                     }
@@ -646,7 +660,7 @@ namespace GXDLMSDirector
                     }
                     catch (Exception)
                     {
-                        output.Info.Add("Firmware version is not implemented.");
+                        output.Info.Add("Firmware version is not available.");
                     }
                     GXDLMSClock time = new GXDLMSClock("0.0.1.0.0.255");
                     try
@@ -709,6 +723,7 @@ namespace GXDLMSDirector
                             }
                         }
                     }
+
                     foreach (KeyValuePair<GXDLMSObject, List<GXDLMSXmlPdu>> it in cosemTests)
                     {
                         if (!Continue)
@@ -725,6 +740,7 @@ namespace GXDLMSDirector
                         }
                         test.OnObjectTestCompleated(test);
                     }
+                    TestAssociationLn(settings, dev, output);
 
                     foreach (KeyValuePair<string, List<GXDLMSXmlPdu>> it in externalTests)
                     {
@@ -826,191 +842,7 @@ namespace GXDLMSDirector
                         }
                     }
                     //Test invalid password.
-                    if (!string.IsNullOrEmpty(settings.PasswordInvalid) && dev.Comm.client.Authentication != Authentication.None)
-                    {
-                        dev.Comm.Disconnect();
-                        string pw = dev.Password;
-                        byte[] hpw = dev.HexPassword;
-                        dev.Password = CryptHelper.Encrypt(settings.PasswordInvalid, Password.Key);
-                        dev.HexPassword = null;
-                        try
-                        {
-                            Thread.Sleep(settings.DelayConnection * 1000);
-                            dev.InitializeConnection();
-                            output.Errors.Insert(0, "Login succeeded with wrong password.");
-                            dev.Comm.Disconnect();
-                        }
-                        catch (GXDLMSException)
-                        {
-                            output.Info.Insert(0, "Invalid password test succeeded.");
-                            dev.Comm.Disconnect();
-                        }
-                        //Try to connect again.
-                        dev.Password = pw;
-                        dev.HexPassword = hpw;
-                        try
-                        {
-                            Thread.Sleep(settings.DelayConnection * 1000);
-                            dev.InitializeConnection();
-                        }
-                        catch (GXDLMSException)
-                        {
-                            output.Errors.Insert(0, "Login failed after wrong password.");
-                        }
-                    }
-                    //Test connect with authentication level none.
-                    if (settings.None && dev.Comm.client.Authentication != Authentication.None)
-                    {
-                        dev.Comm.Disconnect();
-                        Authentication auth = dev.Authentication;
-                        dev.Authentication = Authentication.None;
-                        try
-                        {
-                            Thread.Sleep(settings.DelayConnection * 1000);
-                            dev.InitializeConnection();
-                            output.Info.Insert(0, "Login succeeded with authentication level None.");
-                            dev.Comm.Disconnect();
-                        }
-                        catch (GXDLMSException)
-                        {
-                            dev.Comm.Disconnect();
-                        }
-                        dev.Authentication = auth;
-                    }
-
-                    //Test connect with authentication level Low.
-                    if (!string.IsNullOrEmpty(settings.PasswordLow) && dev.Comm.client.Authentication != Authentication.Low)
-                    {
-                        dev.Comm.Disconnect();
-                        string pw = dev.Password;
-                        Authentication auth = dev.Authentication;
-                        dev.Authentication = Authentication.Low;
-                        dev.Password = CryptHelper.Encrypt(settings.PasswordLow, Password.Key);
-                        try
-                        {
-                            Thread.Sleep(settings.DelayConnection * 1000);
-                            dev.InitializeConnection();
-                            output.Info.Insert(0, "Login succeeded with authentication level Low.");
-                            dev.Comm.Disconnect();
-                        }
-                        catch (GXDLMSException)
-                        {
-                            dev.Comm.Disconnect();
-                        }
-                        dev.Authentication = auth;
-                        dev.Password = pw;
-                    }
-
-                    //Test connect with authentication level High.
-                    if (!string.IsNullOrEmpty(settings.PasswordHigh) && dev.Comm.client.Authentication != Authentication.High)
-                    {
-                        dev.Comm.Disconnect();
-                        string pw = dev.Password;
-                        Authentication auth = dev.Authentication;
-                        dev.Authentication = Authentication.High;
-                        dev.Password = CryptHelper.Encrypt(settings.PasswordLow, Password.Key);
-                        try
-                        {
-                            Thread.Sleep(settings.DelayConnection * 1000);
-                            dev.InitializeConnection();
-                            output.Info.Insert(0, "Login succeeded with authentication level High.");
-                            dev.Comm.Disconnect();
-                        }
-                        catch (GXDLMSException)
-                        {
-                            dev.Comm.Disconnect();
-                        }
-                        dev.Authentication = auth;
-                        dev.Password = pw;
-                    }
-
-                    //Test connect with authentication level High MD5.
-                    if (!string.IsNullOrEmpty(settings.PasswordHighMD5) && dev.Comm.client.Authentication != Authentication.HighMD5)
-                    {
-                        dev.Comm.Disconnect();
-                        string pw = dev.Password;
-                        Authentication auth = dev.Authentication;
-                        dev.Authentication = Authentication.HighMD5;
-                        dev.Password = CryptHelper.Encrypt(settings.PasswordHighMD5, Password.Key);
-                        try
-                        {
-                            Thread.Sleep(settings.DelayConnection * 1000);
-                            dev.InitializeConnection();
-                            output.Info.Insert(0, "Login succeeded with authentication level High MD5.");
-                            dev.Comm.Disconnect();
-                        }
-                        catch (GXDLMSException)
-                        {
-                            dev.Comm.Disconnect();
-                        }
-                        dev.Authentication = auth;
-                        dev.Password = pw;
-                    }
-
-                    //Test connect with authentication level High SHA1.
-                    if (!string.IsNullOrEmpty(settings.PasswordHighSHA1) && dev.Comm.client.Authentication != Authentication.HighSHA1)
-                    {
-                        dev.Comm.Disconnect();
-                        string pw = dev.Password;
-                        Authentication auth = dev.Authentication;
-                        dev.Authentication = Authentication.HighSHA1;
-                        dev.Password = CryptHelper.Encrypt(settings.PasswordHighSHA1, Password.Key);
-                        try
-                        {
-                            Thread.Sleep(settings.DelayConnection * 1000);
-                            dev.InitializeConnection();
-                            output.Info.Insert(0, "Login succeeded with authentication level High SHA1.");
-                            dev.Comm.Disconnect();
-                        }
-                        catch (GXDLMSException)
-                        {
-                            dev.Comm.Disconnect();
-                        }
-                        dev.Authentication = auth;
-                        dev.Password = pw;
-                    }
-
-                    //Test connect with authentication level High GMAC.
-                    if (settings.HighGMAC && dev.Comm.client.Authentication != Authentication.HighGMAC)
-                    {
-                        dev.Comm.Disconnect();
-                        Authentication auth = dev.Authentication;
-                        dev.Authentication = Authentication.HighGMAC;
-                        try
-                        {
-                            Thread.Sleep(settings.DelayConnection * 1000);
-                            dev.InitializeConnection();
-                            output.Info.Insert(0, "Login succeeded with authentication level High GMAC.");
-                            dev.Comm.Disconnect();
-                        }
-                        catch (GXDLMSException)
-                        {
-                            dev.Comm.Disconnect();
-                        }
-                        dev.Authentication = auth;
-                    }
-                    //Test connect with authentication level High SHA256.
-                    if (!string.IsNullOrEmpty(settings.PasswordHighSHA256) && dev.Comm.client.Authentication != Authentication.HighSHA256)
-                    {
-                        dev.Comm.Disconnect();
-                        string pw = dev.Password;
-                        Authentication auth = dev.Authentication;
-                        dev.Authentication = Authentication.HighSHA256;
-                        dev.Password = CryptHelper.Encrypt(settings.PasswordHighSHA256, Password.Key);
-                        try
-                        {
-                            Thread.Sleep(settings.DelayConnection * 1000);
-                            dev.InitializeConnection();
-                            output.Info.Insert(0, "Login succeeded with authentication level High SHA256.");
-                            dev.Comm.Disconnect();
-                        }
-                        catch (GXDLMSException)
-                        {
-                            dev.Comm.Disconnect();
-                        }
-                        dev.Authentication = auth;
-                        dev.Password = pw;
-                    }
+                    TestInvalidPassword(settings, dev, output);
 
                     if (dev.Comm.Framesize != 0)
                     {
@@ -1049,6 +881,72 @@ namespace GXDLMSDirector
                     {
                         test.Done.Set();
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Test current association.
+        /// </summary>
+        /// <param name="settings">Conformance settings.</param>
+        /// <param name="dev">DLMS device.</param>
+        /// <param name="output"></param>
+        private static void TestAssociationLn(GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output)
+        {
+            GXDLMSAssociationLogicalName ln = (GXDLMSAssociationLogicalName)dev.Comm.client.Objects.FindByLN(ObjectType.AssociationLogicalName, "0.0.40.0.0.255");
+            if (ln != null)
+            {
+                dev.Comm.ReadValue(ln, 5);
+                dev.Comm.ReadValue(ln, 6);
+                if (ln.XDLMSContextInfo.DlmsVersionNumber != 6)
+                {
+                    output.Errors.Insert(0, "Invalid DLMS version: " + ln.ApplicationContextName.DlmsUA);
+                }
+                if (ln.AuthenticationMechanismName.MechanismId != dev.Comm.client.Authentication)
+                {
+                    output.Errors.Insert(0, "Wrong AuthenticationMechanismName.MechanismId: " + ln.AuthenticationMechanismName.MechanismId);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Test that meter can handle invalid password.
+        /// </summary>
+        /// <param name="settings">Conformance settings.</param>
+        /// <param name="dev">DLMS device.</param>
+        /// <param name="output"></param>
+        private static void TestInvalidPassword(GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output)
+        {
+            if (!string.IsNullOrEmpty(settings.InvalidPassword) && dev.Comm.client.Authentication != Authentication.None)
+            {
+                dev.Comm.Disconnect();
+                string pw = dev.Password;
+                byte[] hpw = dev.HexPassword;
+                dev.Password = CryptHelper.Encrypt(settings.InvalidPassword, Password.Key);
+                dev.HexPassword = null;
+                try
+                {
+                    Thread.Sleep(settings.DelayConnection * 1000);
+                    dev.InitializeConnection();
+                    output.Errors.Insert(0, "Login succeeded with wrong password.");
+                    dev.Comm.Disconnect();
+                }
+                catch (GXDLMSException)
+                {
+                    output.Info.Insert(0, "Invalid password test succeeded.");
+                    dev.Comm.Disconnect();
+                }
+                //Try to connect again.
+                dev.Password = pw;
+                dev.HexPassword = hpw;
+                try
+                {
+                    Thread.Sleep(settings.DelayConnection * 1000);
+                    dev.InitializeConnection();
+                }
+                catch (GXDLMSException)
+                {
+                    output.Errors.Insert(0, "Login failed after wrong password.");
                 }
             }
         }

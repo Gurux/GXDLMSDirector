@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9846 $,
-//                  $Date: 2018-02-06 16:12:41 +0200 (ti, 06 helmi 2018) $
+// Version:         $Revision: 9901 $,
+//                  $Date: 2018-02-21 17:18:01 +0200 (Wed, 21 Feb 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -336,7 +336,10 @@ namespace GXDLMSDirector
                 WindowSizeRXTb.Text = Device.WindowSizeRX.ToString();
                 InactivityTimeoutTb.Text = Device.InactivityTimeout.ToString();
                 MaxPduTb.Text = Device.PduSize.ToString();
-
+                if (Device.UserId != -1)
+                {
+                    UserIdTb.Text = Device.UserId.ToString();
+                }
                 PriorityCb.SelectedItem = Device.Priority;
                 ServiceClassCb.SelectedItem = Device.ServiceClass;
             }
@@ -633,6 +636,15 @@ namespace GXDLMSDirector
                 Device.WindowSizeRX = byte.Parse(WindowSizeRXTb.Text);
                 Device.InactivityTimeout = int.Parse(InactivityTimeoutTb.Text);
                 Device.PduSize = UInt16.Parse(MaxPduTb.Text);
+                byte v;
+                if (byte.TryParse(UserIdTb.Text, out v))
+                {
+                     Device.UserId = v;
+                }
+                else
+                {
+                    Device.UserId = -1;
+                }
                 Device.Priority = (Priority)PriorityCb.SelectedItem;
                 Device.ServiceClass = (ServiceClass)ServiceClassCb.SelectedItem;
 

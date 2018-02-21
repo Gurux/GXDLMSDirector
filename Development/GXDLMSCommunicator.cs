@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9890 $,
-//                  $Date: 2018-02-20 13:02:24 +0200 (Tue, 20 Feb 2018) $
+// Version:         $Revision: 9901 $,
+//                  $Date: 2018-02-21 17:18:01 +0200 (Wed, 21 Feb 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -716,6 +716,7 @@ namespace GXDLMSDirector
                 client.Limits.MaxInfoRX = parent.MaxInfoRX;
                 client.Limits.MaxInfoTX = parent.MaxInfoTX;
                 client.MaxReceivePDUSize = parent.PduSize;
+                client.UserId = parent.UserId;                
                 client.Priority = parent.Priority;
                 client.ServiceClass = parent.ServiceClass;
 

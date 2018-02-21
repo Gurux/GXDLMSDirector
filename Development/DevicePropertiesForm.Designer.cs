@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9754 $,
-//                  $Date: 2017-12-05 12:48:42 +0200 (ti, 05 joulu 2017) $
+// Version:         $Revision: 9901 $,
+//                  $Date: 2018-02-21 17:18:01 +0200 (Wed, 21 Feb 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -182,6 +182,8 @@ namespace GXDLMSDirector
             this.UseUtcTimeZone = new System.Windows.Forms.CheckBox();
             this.helpProvider1 = new System.Windows.Forms.HelpProvider();
             this.conformanceHelpProvider = new System.Windows.Forms.HelpProvider();
+            this.UserIdTb = new System.Windows.Forms.TextBox();
+            this.UserIDLbl = new System.Windows.Forms.Label();
             this.SupportedServicesTab.SuspendLayout();
             this.SNSettings.SuspendLayout();
             this.LNSettings.SuspendLayout();
@@ -1392,6 +1394,8 @@ namespace GXDLMSDirector
             // 
             // AdvancedTab
             // 
+            this.AdvancedTab.Controls.Add(this.UserIdTb);
+            this.AdvancedTab.Controls.Add(this.UserIDLbl);
             this.AdvancedTab.Controls.Add(this.MaxPduTb);
             this.AdvancedTab.Controls.Add(this.MaxPduLbl);
             this.AdvancedTab.Controls.Add(this.UseWrapperCb);
@@ -1415,7 +1419,7 @@ namespace GXDLMSDirector
             this.MaxPduTb.Location = new System.Drawing.Point(146, 269);
             this.MaxPduTb.Name = "MaxPduTb";
             this.helpProvider1.SetShowHelp(this.MaxPduTb, true);
-            this.MaxPduTb.Size = new System.Drawing.Size(77, 20);
+            this.MaxPduTb.Size = new System.Drawing.Size(93, 20);
             this.MaxPduTb.TabIndex = 47;
             // 
             // MaxPduLbl
@@ -1623,6 +1627,25 @@ namespace GXDLMSDirector
             // 
             this.conformanceHelpProvider.HelpNamespace = "https://www.gurux.fi/Gurux.DLMS.Conformance";
             // 
+            // UserIdTb
+            // 
+            this.helpProvider1.SetHelpKeyword(this.UserIdTb, "UseId");
+            this.helpProvider1.SetHelpNavigator(this.UserIdTb, System.Windows.Forms.HelpNavigator.Topic);
+            this.UserIdTb.Location = new System.Drawing.Point(146, 295);
+            this.UserIdTb.Name = "UserIdTb";
+            this.helpProvider1.SetShowHelp(this.UserIdTb, true);
+            this.UserIdTb.Size = new System.Drawing.Size(93, 20);
+            this.UserIdTb.TabIndex = 48;
+            // 
+            // UserIDLbl
+            // 
+            this.UserIDLbl.AutoSize = true;
+            this.UserIDLbl.Location = new System.Drawing.Point(16, 299);
+            this.UserIDLbl.Name = "UserIDLbl";
+            this.UserIDLbl.Size = new System.Drawing.Size(46, 13);
+            this.UserIDLbl.TabIndex = 54;
+            this.UserIDLbl.Text = "User ID:";
+            // 
             // DevicePropertiesForm
             // 
             this.AcceptButton = this.OKBtn;
@@ -1792,5 +1815,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label PriorityLbl;
         private System.Windows.Forms.ComboBox ServiceClassCb;
         private System.Windows.Forms.ComboBox PriorityCb;
+        private System.Windows.Forms.TextBox UserIdTb;
+        private System.Windows.Forms.Label UserIDLbl;
     }
 }

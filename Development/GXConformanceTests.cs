@@ -763,8 +763,10 @@ namespace GXDLMSDirector
                         }
                         test.OnObjectTestCompleated(test);
                     }
-                    TestAssociationLn(settings, dev, output);
-
+                    if (!settings.ExcludeBasicTests)
+                    {
+                        TestAssociationLn(settings, dev, output);
+                    }
                     foreach (KeyValuePair<string, List<GXDLMSXmlPdu>> it in externalTests)
                     {
                         if (!Continue)

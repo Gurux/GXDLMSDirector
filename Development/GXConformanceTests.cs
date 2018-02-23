@@ -37,6 +37,7 @@ using Gurux.DLMS.Conformance.Test;
 using Gurux.DLMS.Enums;
 using Gurux.DLMS.ManufacturerSettings;
 using Gurux.DLMS.Objects;
+using Gurux.DLMS.Objects.Enums;
 using GXDLMS.Common;
 using System;
 using System.Collections.Generic;
@@ -577,7 +578,10 @@ namespace GXDLMSDirector
                 DateTime start = DateTime.Now;
                 try
                 {
+                    output.PreInfo.Add("<a target=\"_blank\" href=\"https://www.gurux.fi/gurux.dlms.ctt.tests\">Gurux Conformance Tests</a>");
+
                     output.PreInfo.Add("Start Time: " + start.ToString());
+                    output.PreInfo.Add("<hr>");
                     media.Open();
                     dev.InitializeConnection();
                     if (dev.MaxInfoRX != 128 && dev.MaxInfoRX != dev.Comm.client.Limits.MaxInfoRX)
@@ -609,6 +613,20 @@ namespace GXDLMSDirector
                     }
                     output.PreInfo.Add("Authentication level: " + dev.Authentication);
                     StringBuilder sb = new StringBuilder();
+                    foreach (Conformance it in Enum.GetValues(typeof(Conformance)))
+                    {
+                        if (((int)it & (int)client.ProposedConformance) != 0)
+                        {
+                            sb.Append("<a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Conformance?" + it + ">" + it + "</a>, ");
+                        }
+                    }
+                    if (sb.Length != 0)
+                    {
+                        sb.Length -= 2;
+                    }
+                    output.PreInfo.Add("Proposed services:");
+                    output.PreInfo.Add(sb.ToString());
+                    sb.Clear();
                     foreach (Conformance it in Enum.GetValues(typeof(Conformance)))
                     {
                         if (((int)it & (int)client.NegotiatedConformance) != 0)
@@ -656,7 +674,12 @@ namespace GXDLMSDirector
                     try
                     {
                         dev.Comm.ReadValue(firmware, 2);
-                        output.PreInfo.Add("Firmware version is: " + Convert.ToString(firmware.Value) + ".");
+                        object v = firmware.Value;
+                        if (v is byte[])
+                        {
+                            v = ASCIIEncoding.ASCII.GetString((byte[])v);
+                        }
+                        output.PreInfo.Add("Firmware version is: " + Convert.ToString(v) + ".");
                     }
                     catch (Exception)
                     {
@@ -694,7 +717,7 @@ namespace GXDLMSDirector
                         else
                         {
                             test.OnTrace(test, "Basic tests are ignored.\r\n");
-                            output.PreInfo.Add("<hr>Basic tests are ignored.");
+                            output.PreInfo.Add("Basic tests are ignored.");
                         }
                         //Load external tests.
                         string[] list = GetExternalTests(settings);
@@ -894,19 +917,135 @@ namespace GXDLMSDirector
         private static void TestAssociationLn(GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output)
         {
             GXDLMSAssociationLogicalName ln = (GXDLMSAssociationLogicalName)dev.Comm.client.Objects.FindByLN(ObjectType.AssociationLogicalName, "0.0.40.0.0.255");
-            if (ln != null)
+            if (ln == null)
             {
-                dev.Comm.ReadValue(ln, 5);
-                dev.Comm.ReadValue(ln, 6);
-                if (ln.XDLMSContextInfo.DlmsVersionNumber != 6)
+                if (ln == null)
                 {
-                    output.Errors.Insert(0, "Invalid DLMS version: " + ln.ApplicationContextName.DlmsUA);
+                    GXDLMSObjectCollection objects = dev.Comm.client.Objects.GetObjects(ObjectType.AssociationLogicalName);
+                    foreach(GXDLMSAssociationLogicalName it in objects)
+                    {
+                        if (it.AuthenticationMechanismName.MechanismId == dev.Authentication)
+                        {
+                            ln = (GXDLMSAssociationLogicalName) it;
+                            break;
+                        }
+                    }
                 }
-                if (ln.AuthenticationMechanismName.MechanismId != dev.Comm.client.Authentication)
+                if (ln == null)
                 {
-                    output.Errors.Insert(0, "Wrong AuthenticationMechanismName.MechanismId: " + ln.AuthenticationMechanismName.MechanismId);
+                    ln = new GXDLMSAssociationLogicalName("0.0.40.0.0.255");
                 }
             }
+            //Read values if not read yet.
+            if (settings.ExcludeBasicTests)
+            {
+                dev.Comm.ReadValue(ln, 4);
+                dev.Comm.ReadValue(ln, 5);
+                dev.Comm.ReadValue(ln, 6);
+                dev.Comm.ReadValue(ln, 8);
+            }
+            if (ln.XDLMSContextInfo.DlmsVersionNumber != 6)
+            {
+                output.Errors.Insert(0, "Invalid DLMS version: " + ln.ApplicationContextName.DlmsUA);
+            }
+
+            if (ln.ApplicationContextName.JointIsoCtt != 2 && ln.ApplicationContextName.JointIsoCtt != 96)
+            {
+                output.Errors.Insert(0, "Wrong ApplicationContextName.JointIsoCtt: " + ln.ApplicationContextName.JointIsoCtt);
+            }
+            if (ln.ApplicationContextName.Country != 16 && ln.ApplicationContextName.Country != 133)
+            {
+                output.Errors.Insert(0, "Wrong ApplicationContextName.Country: " + ln.ApplicationContextName.Country);
+            }
+            if (ln.ApplicationContextName.CountryName != 756 && ln.ApplicationContextName.CountryName != 116)
+            {
+                output.Errors.Insert(0, "Wrong ApplicationContextName.CountryName: " + ln.ApplicationContextName.CountryName);
+            }
+            if (ln.ApplicationContextName.IdentifiedOrganization != 5)
+            {
+                output.Errors.Insert(0, "Wrong ApplicationContextName.IdentifiedOrganization: " + ln.ApplicationContextName.IdentifiedOrganization);
+            }
+            if (ln.ApplicationContextName.DlmsUA != 8)
+            {
+                output.Errors.Insert(0, "Wrong ApplicationContextName.DlmsUA: " + ln.ApplicationContextName.DlmsUA);
+            }
+            if (ln.ApplicationContextName.ApplicationContext != 1)
+            {
+                output.Errors.Insert(0, "Wrong ApplicationContextName.ApplicationContext: " + ln.ApplicationContextName.ApplicationContext);
+            }
+            if (dev.Comm.client.UseLogicalNameReferencing)
+            {
+                if (dev.Comm.client.Ciphering.Security == Security.None && ln.ApplicationContextName.ContextId != ApplicationContextName.LogicalName)
+                {
+                    output.Errors.Insert(0, "Wrong ApplicationContextName.ContextId: " + ln.ApplicationContextName.ContextId);
+                }
+                else if (dev.Comm.client.Ciphering.Security != Security.None && ln.ApplicationContextName.ContextId != ApplicationContextName.LogicalNameWithCiphering)
+                {
+                    output.Errors.Insert(0, "Wrong ApplicationContextName.ContextId: " + ln.ApplicationContextName.ContextId);
+                }
+            }
+            else
+            {
+                if (dev.Comm.client.Ciphering.Security == Security.None && ln.ApplicationContextName.ContextId != ApplicationContextName.ShortName)
+                {
+                    output.Errors.Insert(0, "Wrong ApplicationContextName.ContextId: " + ln.ApplicationContextName.ContextId);
+                }
+                else if (dev.Comm.client.Ciphering.Security != Security.None && ln.ApplicationContextName.ContextId != ApplicationContextName.ShortNameWithCiphering)
+                {
+                    output.Errors.Insert(0, "Wrong ApplicationContextName.ContextId: " + ln.ApplicationContextName.ContextId);
+                }
+            }
+
+            if (ln.AuthenticationMechanismName.JointIsoCtt != 2 && ln.AuthenticationMechanismName.JointIsoCtt != 96)
+            {
+                output.Errors.Insert(0, "Wrong AuthenticationMechanismName.JointIsoCtt: " + ln.AuthenticationMechanismName.JointIsoCtt);
+            }
+            if (ln.AuthenticationMechanismName.Country != 16 && ln.AuthenticationMechanismName.Country != 133)
+            {
+                output.Errors.Insert(0, "Wrong AuthenticationMechanismName.Country: " + ln.AuthenticationMechanismName.Country);
+            }
+            if (ln.AuthenticationMechanismName.CountryName != 756 && ln.AuthenticationMechanismName.CountryName != 116)
+            {
+                output.Errors.Insert(0, "Wrong AuthenticationMechanismName.CountryName: " + ln.AuthenticationMechanismName.CountryName);
+            }
+            if (ln.AuthenticationMechanismName.IdentifiedOrganization != 5)
+            {
+                output.Errors.Insert(0, "Wrong AuthenticationMechanismName.IdentifiedOrganization: " + ln.AuthenticationMechanismName.IdentifiedOrganization);
+            }
+            if (ln.AuthenticationMechanismName.DlmsUA != 8)
+            {
+                output.Errors.Insert(0, "Wrong AuthenticationMechanismName.DlmsUA: " + ln.AuthenticationMechanismName.DlmsUA);
+            }
+            if (ln.AuthenticationMechanismName.AuthenticationMechanismName != 2)
+            {
+                output.Errors.Insert(0, "Wrong AuthenticationMechanismName.AuthenticationMechanismName:0 " + ln.AuthenticationMechanismName.AuthenticationMechanismName);
+            }
+            if (ln.AuthenticationMechanismName.MechanismId != dev.Comm.client.Authentication)
+            {
+                output.Errors.Insert(0, "Wrong AuthenticationMechanismName.MechanismId: " + ln.AuthenticationMechanismName.MechanismId);
+            }
+
+            if (ln.AssociationStatus != Gurux.DLMS.Objects.Enums.AssociationStatus.Associated)
+            {
+                output.Errors.Insert(0, "Invalid AssociationStatus: " + ln.AssociationStatus);
+            }
+            if (ln.XDLMSContextInfo.Conformance == Conformance.None)
+            {
+                output.Errors.Insert(0, "Invalid Conformance: " + ln.XDLMSContextInfo.Conformance);
+            }
+            if (ln.XDLMSContextInfo.MaxReceivePduSize == 0)
+            {
+                output.Errors.Insert(0, "Invalid MaxReceivePduSize: " + ln.XDLMSContextInfo.MaxReceivePduSize);
+            }
+            if (ln.XDLMSContextInfo.MaxSendPduSize == 0)
+            {
+                output.Errors.Insert(0, "Invalid MaxSendPduSize: " + ln.XDLMSContextInfo.MaxSendPduSize);
+            }
+            /*Mikko
+            if (ln.XDLMSContextInfo.QualityOfService == 0)
+            {
+                output.Errors.Insert(0, "Invalid QualityOfService: " + ln.XDLMSContextInfo.QualityOfService);
+            }*/
         }
 
         /// <summary>

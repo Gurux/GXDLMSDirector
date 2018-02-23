@@ -83,7 +83,7 @@
       <InvokeIdAndPriority Value="*" />
       <Result>
         <Data>
-          <UInt16 Value="*" />
+          <UInt8 Value="*" />
         </Data>
       </Result>
     </GetResponseNormal>
@@ -105,7 +105,7 @@
       <InvokeIdAndPriority Value="*" />
       <Result>
         <Data>
-          <UInt16 Value="*" />
+          <UInt8 Value="*" />
         </Data>
       </Result>
     </GetResponseNormal>

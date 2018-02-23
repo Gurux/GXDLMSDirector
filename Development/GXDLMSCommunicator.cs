@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9901 $,
-//                  $Date: 2018-02-21 17:18:01 +0200 (Wed, 21 Feb 2018) $
+// Version:         $Revision: 9916 $,
+//                  $Date: 2018-02-23 14:38:33 +0200 (Fri, 23 Feb 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -278,7 +278,7 @@ namespace GXDLMSDirector
             GXLogWriter.WriteLog(null, p.Reply);
             if (parent.OnTrace != null)
             {
-                parent.OnTrace(parent, "-> " + DateTime.Now.ToLongTimeString(), p.Reply, reply.PacketLength, LogFile);
+                parent.OnTrace(parent, "->\t" + DateTime.Now.ToLongTimeString(), p.Reply, reply.PacketLength, LogFile);
             }
             if (reply.Error != 0)
             {
@@ -846,7 +846,7 @@ namespace GXDLMSDirector
             GXLogWriter.WriteLog(text, data);
             if (parent.OnTrace != null)
             {
-                parent.OnTrace(parent, text + "\r\n<- " + DateTime.Now.ToLongTimeString(), data, 0, LogFile);
+                parent.OnTrace(parent, text + "\r\n<-\t" + DateTime.Now.ToLongTimeString(), data, 0, LogFile);
             }
             ReadDLMSPacket(data, reply);
 
@@ -873,7 +873,7 @@ namespace GXDLMSDirector
                     }
                     if (parent.OnTrace != null)
                     {
-                        parent.OnTrace(parent, "<- " + DateTime.Now.ToLongTimeString(), data, 0, LogFile);
+                        parent.OnTrace(parent, "<-\t" + DateTime.Now.ToLongTimeString(), data, 0, LogFile);
                     }
                     GXLogWriter.WriteLog(text, data);
                     ReadDLMSPacket(data, reply);

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9892 $,
-//                  $Date: 2018-02-20 17:37:15 +0200 (Tue, 20 Feb 2018) $
+// Version:         $Revision: 9916 $,
+//                  $Date: 2018-02-23 14:38:33 +0200 (Fri, 23 Feb 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -2817,7 +2817,7 @@ namespace GXDLMSDirector
                 }
                 catch (Exception ex)
                 {
-                    EventsView.AppendText(ex.Message);
+                    Console.WriteLine(ex.Message);
                 }
             }
         }
@@ -2891,23 +2891,30 @@ namespace GXDLMSDirector
                 }
                 else
                 {
-                    //Show as PDU.
-                    GXDLMSTranslator translator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
-                    translator.PduOnly = NotificationPdu.Checked;
-                    GXByteBuffer bb = new GXByteBuffer((byte[])e.Data);
-                    GXByteBuffer pdu = new GXByteBuffer();
-                    InterfaceType type = GXDLMSTranslator.GetDlmsFraming(bb);
-                    StringBuilder sb = new StringBuilder();
-                    while (translator.FindNextFrame(bb, pdu, type))
+                    try
                     {
-                        sb.Append(translator.MessageToXml(bb));
-                        pdu.Clear();
+                        //Show as PDU.
+                        GXDLMSTranslator translator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
+                        translator.PduOnly = NotificationPdu.Checked;
+                        GXByteBuffer bb = new GXByteBuffer((byte[])e.Data);
+                        GXByteBuffer pdu = new GXByteBuffer();
+                        InterfaceType type = GXDLMSTranslator.GetDlmsFraming(bb);
+                        StringBuilder sb = new StringBuilder();
+                        while (translator.FindNextFrame(bb, pdu, type))
+                        {
+                            sb.Append(translator.MessageToXml(bb));
+                            pdu.Clear();
+                        }
+                        if (AutoReset.Checked)
+                        {
+                            EventsView.ResetText();
+                        }
+                        OnAddNotification(DateTime.Now.ToString() + " " + sb.ToString());
                     }
-                    if (AutoReset.Checked)
+                    catch(Exception ex)
                     {
-                        EventsView.ResetText();
+                        OnAddNotification(ex.Message);
                     }
-                    OnAddNotification(DateTime.Now.ToString() + " " + sb.ToString());
                 }
             }
         }

@@ -4,9 +4,9 @@
 //
 //
 //
-// Version:         $Revision: 9916 $,
-//                  $Date: 2018-02-23 14:38:33 +0200 (Fri, 23 Feb 2018) $
-//                  $Author: gurux01 $
+// Version:         $Revision: 9919 $,
+//                  $Date: 2018-02-26 20:27:46 -0500 (ma, 26 helmi 2018) $
+//                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -278,7 +278,7 @@ namespace GXDLMSDirector
             GXLogWriter.WriteLog(null, p.Reply);
             if (parent.OnTrace != null)
             {
-                parent.OnTrace(parent, "->\t" + DateTime.Now.ToLongTimeString(), p.Reply, reply.PacketLength, LogFile);
+                parent.OnTrace(parent, "->\t" + DateTime.Now.ToLongTimeString(), p.Reply, reply.PacketLength + 3, LogFile);
             }
             if (reply.Error != 0)
             {
@@ -1057,6 +1057,8 @@ namespace GXDLMSDirector
                 reply.Clear();
                 if (it == index || (index == 0 && obj.GetDirty(it, out val)))
                 {
+                    bool forced = false;
+                    GXDLMSAttributeSettings att = obj.Attributes.Find(it);
                     //Read DLMS data type if not known.
                     DataType type = obj.GetDataType(it);
                     if (type == DataType.None)
@@ -1073,6 +1075,10 @@ namespace GXDLMSDirector
                     }
                     try
                     {
+                        if (att != null && att.ForceToBlocks)
+                        {
+                            forced = client.ForceToBlocks = true;
+                        }
                         foreach (byte[] tmp in client.Write(obj, it))
                         {
                             ReadDataBlock(tmp, "Write object", reply);
@@ -1098,6 +1104,13 @@ namespace GXDLMSDirector
                         else
                         {
                             throw ex;
+                        }
+                    }
+                    finally
+                    {
+                        if (forced)
+                        {
+                            client.ForceToBlocks = false;
                         }
                     }
                 }

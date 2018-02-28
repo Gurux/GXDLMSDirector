@@ -132,11 +132,11 @@
     <Reference Include="Gurux.Common, Version=8.1.1801.1201, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Common.8.1.1801.1201\lib\portable-win+net40\Gurux.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=8.5.1802.2301, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.8.5.1802.2301\lib\portable-win+net35\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=8.5.1802.2702, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.8.5.1802.2702\lib\portable-win+net35\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=8.5.1802.2301, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.8.5.1802.2301\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=8.5.1802.2801, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.8.5.1802.2801\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.Net, Version=8.1.1801.1201, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Net.8.1.1801.1201\lib\portable-win+net40\Gurux.Net.dll</HintPath>
@@ -343,7 +343,6 @@
     <EmbeddedResource Include="ConformanceTests\DisconnectControl.xml" />
     <EmbeddedResource Include="ConformanceTests\ExtendedRegister.xml" />
     <EmbeddedResource Include="ConformanceTests\GprsSetup.xml" />
-    <EmbeddedResource Include="ConformanceTests\IecHdlcSetup.xml" />
     <EmbeddedResource Include="ConformanceTests\IecLocalPortSetup.xml" />
     <EmbeddedResource Include="ConformanceTests\ImageTransfer.xml" />
     <EmbeddedResource Include="ConformanceTests\IP4Setup.xml" />
@@ -368,6 +367,8 @@
     <EmbeddedResource Include="ConformanceTests\Credit.xml" />
     <EmbeddedResource Include="ConformanceTests\Charge.xml" />
     <EmbeddedResource Include="ConformanceTests\TokenGateway.xml" />
+    <EmbeddedResource Include="ConformanceTests\v0\IecHdlcSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\v1\IecHdlcSetup.xml" />
     <Content Include="GXDLMSDirector.ico" />
     <None Include="Resources\NotifyMnu.bmp" />
     <None Include="Resources\cct.png" />

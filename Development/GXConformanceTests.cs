@@ -98,13 +98,14 @@ namespace GXDLMSDirector
             //Load basic tests.
             if (!settings.ExcludeBasicTests)
             {
-                foreach (string it in GetBasicTests())
+                List<string> tests = new List<string>(GetBasicTests());
+                foreach (string it in tests)
                 {
                     try
                     {
                         using (Stream stream = typeof(Program).Assembly.GetManifestResourceStream(it))
                         {
-                            GetTests(stream, null, null);
+                            GetTests(it, stream, null, null);
                             stream.Close();
                         }
                     }
@@ -129,7 +130,7 @@ namespace GXDLMSDirector
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception("Failed to load external test " + it + ".", ex);
+                    throw new Exception("Failed to load external test " + it + "." + Environment.NewLine + ex.ToString());
                 }
             }
         }
@@ -247,7 +248,7 @@ namespace GXDLMSDirector
                             {
                                 break;
                             }
-                            if ((obj.GetAccess(index) & AccessMode.Read) == 0)
+                            if (obj != null && (obj.GetAccess(index) & AccessMode.Read) == 0)
                             {
                                 reply.Clear();
                                 continue;
@@ -361,74 +362,76 @@ namespace GXDLMSDirector
                             output.Errors.Add("</span></div>");
                         }
                     }
-                    else
+                    else if (it.Command == Command.GetResponse)
                     {
                         indexStr += " Index ";
-                        if (obj != null)
+                        if (obj == null)
                         {
-                            ValueEventArgs e = new ValueEventArgs(obj, index, 0, null);
-                            object value;
-                            string name = (target as IGXDLMSBase).GetNames()[index - 1];
-                            if (target is GXDLMSAssociationLogicalName && index == 2)
-                            {
-                                value = reply.Value;
-                            }
-                            else
-                            {
-                                e.Value = reply.Value;
-                                (target as IGXDLMSBase).SetValue(test.Device.Comm.client.Settings, e);
-                                value = obj.GetValues()[index - 1];
-                            }
-                            string str;
-                            if (value is byte[])
-                            {
-                                DataType dt = obj.GetUIDataType(index);
-                                if (dt == DataType.String)
-                                {
-                                    str = ASCIIEncoding.ASCII.GetString((byte[])value);
-                                }
-                                else if (dt == DataType.DateTime || dt == DataType.Date || dt == DataType.Time)
-                                {
-                                    str = GXDLMSClient.ChangeType((byte[])value, dt).ToString();
-                                }
-                                else
-                                {
-                                    str = GXCommon.ToHex((byte[])value);
-                                }
-                            }
-                            else if (value is Object[])
-                            {
-                                str = GXHelpers.GetArrayAsString(value);
-                            }
-                            else if (value is System.Collections.IList)
-                            {
-                                str = GXHelpers.GetArrayAsString(value);
-                            }
-                            else
-                            {
-                                str = Convert.ToString(value);
-                            }
-                            test.OnTrace(test, str + "\r\n");
-                            if (settings.ShowValues)
-                            {
-                                succeeded.Add(new KeyValuePair<ObjectType, string>(ot, indexStr + index.ToString() + ":" + name + "<br/>" + str));
-                            }
-                            else
-                            {
-                                if (it.Command == Command.GetResponse && settings.ShowValues)
-                                {
-                                    succeeded.Add(new KeyValuePair<ObjectType, string>(ot, indexStr + index.ToString()));
-                                }
-                                else
-                                {
-                                    succeeded.Add(new KeyValuePair<ObjectType, string>(ot, indexStr + index.ToString()));
-                                }
-                            }
+                            obj = GXDLMSClient.CreateObject(ot);
+                            obj.LogicalName = ln;
+                        }
+                        ValueEventArgs e = new ValueEventArgs(obj, index, 0, null);
+                        object value;
+                        string name = (obj as IGXDLMSBase).GetNames()[index - 1];
+                        if (target is GXDLMSAssociationLogicalName && index == 2)
+                        {
+                            value = reply.Value;
                         }
                         else
                         {
-                            succeeded.Add(new KeyValuePair<ObjectType, string>(ot, "Test: " + Path.GetFileNameWithoutExtension((string)target) + " " + indexStr + index.ToString()));
+                            e.Value = reply.Value;
+                            (obj as IGXDLMSBase).SetValue(test.Device.Comm.client.Settings, e);
+                            value = obj.GetValues()[index - 1];
                         }
+                        string str;
+                        if (value is byte[])
+                        {
+                            DataType dt = obj.GetUIDataType(index);
+                            if (dt == DataType.String)
+                            {
+                                str = ASCIIEncoding.ASCII.GetString((byte[])value);
+                            }
+                            else if (dt == DataType.DateTime || dt == DataType.Date || dt == DataType.Time)
+                            {
+                                str = GXDLMSClient.ChangeType((byte[])value, dt).ToString();
+                            }
+                            else
+                            {
+                                str = GXCommon.ToHex((byte[])value);
+                            }
+                        }
+                        else if (value is Object[])
+                        {
+                            str = GXHelpers.GetArrayAsString(value);
+                        }
+                        else if (value is System.Collections.IList)
+                        {
+                            str = GXHelpers.GetArrayAsString(value);
+                        }
+                        else
+                        {
+                            str = Convert.ToString(value);
+                        }
+                        test.OnTrace(test, str + "\r\n");
+                        if (settings.ShowValues)
+                        {
+                            succeeded.Add(new KeyValuePair<ObjectType, string>(ot, indexStr + index.ToString() + ":" + name + "<br/>" + str));
+                        }
+                        else
+                        {
+                            if (it.Command == Command.GetResponse && settings.ShowValues)
+                            {
+                                succeeded.Add(new KeyValuePair<ObjectType, string>(ot, indexStr + index.ToString()));
+                            }
+                            else
+                            {
+                                succeeded.Add(new KeyValuePair<ObjectType, string>(ot, indexStr + index.ToString()));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        succeeded.Add(new KeyValuePair<ObjectType, string>(ot, "Test: " + Path.GetFileNameWithoutExtension((string)target) + " " + indexStr + index.ToString()));
                     }
                 }
             }
@@ -510,12 +513,13 @@ namespace GXDLMSDirector
         /// <param name="stream">Stream where tests are read.</param>
         /// <param name="dev">DLMS device</param>
         /// <param name="tests">tests.</param>
-        private static void GetTests(Stream stream, GXDLMSDevice dev, List<KeyValuePair<GXDLMSObject, List<GXDLMSXmlPdu>>> tests)
+        private static void GetTests(string name, Stream stream, GXDLMSDevice dev, List<KeyValuePair<GXDLMSObject, List<GXDLMSXmlPdu>>> tests)
         {
             XmlDocument doc = new XmlDocument();
             doc.Load(stream);
             XmlNodeList list = doc.SelectNodes("/Messages/GetRequest/GetRequestNormal");
             ObjectType ot = ObjectType.None;
+            name = name.Remove(0, "GXDLMSDirector.ConformanceTests.".Length);
             foreach (XmlNode node in list)
             {
                 ot = (ObjectType)int.Parse(node.SelectNodes("AttributeDescriptor/ClassId")[0].Attributes["Value"].Value);
@@ -524,6 +528,16 @@ namespace GXDLMSDirector
                     //Update logical name.
                     foreach (GXDLMSObject obj in dev.Objects.GetObjects(ot))
                     {
+                        if (name.StartsWith("v0.") ||
+                            name.StartsWith("v1.") ||
+                            name.StartsWith("v2.") ||
+                            name.StartsWith("v3."))
+                        {
+                            if (!name.StartsWith("v" + obj.Version + "."))
+                            {
+                                break;
+                            }
+                        }
                         string tmp = GXCommon.ToHex(LogicalNameToBytes(obj.LogicalName), false);
                         foreach (XmlNode n in list)
                         {
@@ -709,7 +723,7 @@ namespace GXDLMSDirector
                             {
                                 using (Stream stream = typeof(Program).Assembly.GetManifestResourceStream(it))
                                 {
-                                    GetTests(stream, dev, cosemTests);
+                                    GetTests(it, stream, dev, cosemTests);
                                     stream.Close();
                                 }
                             }
@@ -746,128 +760,138 @@ namespace GXDLMSDirector
                             }
                         }
                     }
+                    if (settings.Amount != 1)
+                    {
+                        string str = "Tests are run " + settings.Amount + " times.\r\n";
+                        test.OnTrace(test, str);
+                        output.PreInfo.Add(str);
+                    }
 
-                    foreach (KeyValuePair<GXDLMSObject, List<GXDLMSXmlPdu>> it in cosemTests)
+                    for (int pos = 0; pos != settings.Amount; ++pos)
                     {
-                        if (!Continue)
+                        foreach (KeyValuePair<GXDLMSObject, List<GXDLMSXmlPdu>> it in cosemTests)
                         {
-                            break;
-                        }
-                        try
-                        {
-                            Execute(converter, test, it.Key, it.Value, output, settings);
-                        }
-                        catch (Exception ex)
-                        {
-                            test.OnError(test, ex);
-                        }
-                        test.OnObjectTestCompleated(test);
-                    }
-                    if (!settings.ExcludeBasicTests)
-                    {
-                        TestAssociationLn(settings, dev, output);
-                    }
-                    foreach (KeyValuePair<string, List<GXDLMSXmlPdu>> it in externalTests)
-                    {
-                        if (!Continue)
-                        {
-                            break;
-                        }
-                        try
-                        {
-                            Execute(converter, test, it.Key, it.Value, output, settings);
-                        }
-                        catch (Exception ex)
-                        {
-                            test.OnError(test, ex);
-                        }
-                        test.OnObjectTestCompleated(test);
-                    }
-                    if (!settings.ExcludeBasicTests)
-                    {
-                        List<ObjectType> unknownDataTypes = new List<ObjectType>();
-                        foreach (GXDLMSObject o in dev.Objects)
-                        {
-                            if (!unknownDataTypes.Contains(o.ObjectType))
+                            if (!Continue)
                             {
-                                bool found = false;
-                                foreach (KeyValuePair<GXDLMSObject, List<GXDLMSXmlPdu>> t in cosemTests)
+                                break;
+                            }
+                            try
+                            {
+                                Execute(converter, test, it.Key, it.Value, output, settings);
+                            }
+                            catch (Exception ex)
+                            {
+                                test.OnError(test, ex);
+                            }
+                            test.OnObjectTestCompleated(test);
+                        }
+                        foreach (KeyValuePair<string, List<GXDLMSXmlPdu>> it in externalTests)
+                        {
+                            if (!Continue)
+                            {
+                                break;
+                            }
+                            try
+                            {
+                                Execute(converter, test, it.Key, it.Value, output, settings);
+                            }
+                            catch (Exception ex)
+                            {
+                                test.OnError(test, ex);
+                            }
+                            test.OnObjectTestCompleated(test);
+                        }
+                        //Check this only once.
+                        if (!settings.ExcludeBasicTests && pos == 0)
+                        {
+                            List<ObjectType> unknownDataTypes = new List<ObjectType>();
+                            foreach (GXDLMSObject o in dev.Objects)
+                            {
+                                if (!unknownDataTypes.Contains(o.ObjectType))
                                 {
-                                    if (o.ObjectType == t.Key.ObjectType)
+                                    bool found = false;
+                                    foreach (KeyValuePair<GXDLMSObject, List<GXDLMSXmlPdu>> t in cosemTests)
                                     {
-                                        found = true;
-                                        break;
+                                        if (o.ObjectType == t.Key.ObjectType)
+                                        {
+                                            found = true;
+                                            break;
+                                        }
                                     }
-                                }
-                                if (!found)
-                                {
-                                    unknownDataTypes.Add(o.ObjectType);
-                                    output.Warnings.Add("<a target=\"_blank\" href=http://www.gurux.fi/" + o.GetType().FullName + ">" + o.ObjectType + "</a> is not tested.");
+                                    if (!found)
+                                    {
+                                        unknownDataTypes.Add(o.ObjectType);
+                                        output.Warnings.Add("<a target=\"_blank\" href=http://www.gurux.fi/" + o.GetType().FullName + ">" + o.ObjectType + "</a> is not tested.");
+                                    }
                                 }
                             }
                         }
-                    }
-                    if (settings.Write)
-                    {
-                        test.OnTrace(test, "Write tests started\r\n");
-                        foreach (GXDLMSObject obj in dev.Objects)
+                        if (settings.Write)
                         {
-                            for (int index = 1; index != (obj as IGXDLMSBase).GetAttributeCount(); ++index)
+                            test.OnTrace(test, "Write tests started\r\n");
+                            foreach (GXDLMSObject obj in dev.Objects)
                             {
-                                if ((obj.GetAccess(index) & AccessMode.Read) != 0 && (obj.GetAccess(index) & AccessMode.Write) != 0)
+                                for (int index = 1; index != (obj as IGXDLMSBase).GetAttributeCount(); ++index)
                                 {
-                                    ObjectType ot = obj.ObjectType;
-                                    string ln = obj.LogicalName;
-                                    try
+                                    if ((obj.GetAccess(index) & AccessMode.Read) != 0 && (obj.GetAccess(index) & AccessMode.Write) != 0)
                                     {
-                                        test.OnTrace(test, ot + " " + ln + ":" + index + "\r\n");
-                                        object expected = obj.GetValues()[index - 1];
-                                        dev.Comm.Write(obj, index);
-                                        object actual = obj.GetValues()[index - 1];
-                                        //Check that value is not changed.
-                                        if (Convert.ToString(expected) != Convert.ToString(actual))
+                                        ObjectType ot = obj.ObjectType;
+                                        string ln = obj.LogicalName;
+                                        try
                                         {
-                                            output.Errors.Add("Write <a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " is <div class=\"tooltip\">failed.");
-                                            output.Errors.Add("<span class=\"tooltiptext\">");
-                                            output.Errors.Add("Expected:</b><br/>");
-                                            output.Errors.Add(Convert.ToString(expected).Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
-                                            output.Errors.Add("<br/><b>Actual:</b><br/>");
-                                            output.Errors.Add(Convert.ToString(actual).Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
-                                            output.Errors.Add("</span></div>");
+                                            test.OnTrace(test, ot + " " + ln + ":" + index + "\r\n");
+                                            object expected = obj.GetValues()[index - 1];
+                                            dev.Comm.Write(obj, index);
+                                            object actual = obj.GetValues()[index - 1];
+                                            //Check that value is not changed.
+                                            if (Convert.ToString(expected) != Convert.ToString(actual))
+                                            {
+                                                output.Errors.Add("Write <a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " is <div class=\"tooltip\">failed.");
+                                                output.Errors.Add("<span class=\"tooltiptext\">");
+                                                output.Errors.Add("Expected:</b><br/>");
+                                                output.Errors.Add(Convert.ToString(expected).Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
+                                                output.Errors.Add("<br/><b>Actual:</b><br/>");
+                                                output.Errors.Add(Convert.ToString(actual).Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
+                                                output.Errors.Add("</span></div>");
+                                            }
+                                            else
+                                            {
+                                                output.Info.Add("Write" + ot + " " + ln + " attribute " + index + " Succeeded.");
+                                            }
                                         }
-                                        else
+                                        catch (GXDLMSException ex)
                                         {
-                                            output.Info.Add("Write" + ot + " " + ln + " attribute " + index + " Succeeded.");
+                                            if (ex.ErrorCode != 0)
+                                            {
+                                                ErrorCode e = (ErrorCode)ex.ErrorCode;
+                                                output.Errors.Add("<a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " failed: <a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.ErrorCodes?" + e + ">" + e + "</a>)");
+                                            }
+                                            else
+                                            {
+                                                output.Errors.Add("<a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " <div class=\"tooltip\">failed:" + ex.Message);
+                                                output.Errors.Add("<span class=\"tooltiptext\">");
+                                                output.Errors.Add(ex.ToString().Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
+                                                output.Errors.Add("</span></div>");
+                                            }
                                         }
-                                    }
-                                    catch (GXDLMSException ex)
-                                    {
-                                        if (ex.ErrorCode != 0)
+                                        catch (Exception ex)
                                         {
-                                            ErrorCode e = (ErrorCode)ex.ErrorCode;
-                                            output.Errors.Add("<a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " failed: <a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.ErrorCodes?" + e + ">" + e + "</a>)");
-                                        }
-                                        else
-                                        {
-                                            output.Errors.Add("<a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " <div class=\"tooltip\">failed:" + ex.Message);
+                                            output.Errors.Add("Write <a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " <div class=\"tooltip\">failed. " + ex.Message);
                                             output.Errors.Add("<span class=\"tooltiptext\">");
                                             output.Errors.Add(ex.ToString().Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
                                             output.Errors.Add("</span></div>");
                                         }
                                     }
-                                    catch (Exception ex)
-                                    {
-                                        output.Errors.Add("Write <a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " <div class=\"tooltip\">failed. " + ex.Message);
-                                        output.Errors.Add("<span class=\"tooltiptext\">");
-                                        output.Errors.Add(ex.ToString().Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
-                                        output.Errors.Add("</span></div>");
-                                    }
                                 }
                             }
                         }
                     }
-                    //Test invalid password.
-                    TestInvalidPassword(settings, dev, output);
+                    if (!settings.ExcludeBasicTests)
+                    {
+                        TestAssociationLn(settings, dev, output);
+                        //Test invalid password.
+                        TestInvalidPassword(settings, dev, output);
+                    }
 
                     if (dev.Comm.Framesize != 0)
                     {
@@ -885,7 +909,6 @@ namespace GXDLMSDirector
                     {
                         test.ErrorLevel = 0;
                     }
-
                     test.OnReady(test);
                 }
                 catch (Exception ex)
@@ -924,11 +947,11 @@ namespace GXDLMSDirector
                 if (ln == null)
                 {
                     GXDLMSObjectCollection objects = dev.Comm.client.Objects.GetObjects(ObjectType.AssociationLogicalName);
-                    foreach(GXDLMSAssociationLogicalName it in objects)
+                    foreach (GXDLMSAssociationLogicalName it in objects)
                     {
                         if (it.AuthenticationMechanismName.MechanismId == dev.Authentication)
                         {
-                            ln = (GXDLMSAssociationLogicalName) it;
+                            ln = (GXDLMSAssociationLogicalName)it;
                             break;
                         }
                     }
@@ -1043,11 +1066,6 @@ namespace GXDLMSDirector
             {
                 output.Errors.Insert(0, "Invalid MaxSendPduSize: " + ln.XDLMSContextInfo.MaxSendPduSize);
             }
-            /*Mikko
-            if (ln.XDLMSContextInfo.QualityOfService == 0)
-            {
-                output.Errors.Insert(0, "Invalid QualityOfService: " + ln.XDLMSContextInfo.QualityOfService);
-            }*/
         }
 
         /// <summary>

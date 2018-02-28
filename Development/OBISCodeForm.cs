@@ -5,9 +5,9 @@
 //
 //
 //
-// Version:         $Revision: 9442 $,
-//                  $Date: 2017-05-23 15:21:03 +0300 (ti, 23 touko 2017) $
-//                  $Author: gurux01 $
+// Version:         $Revision: 9919 $,
+//                  $Date: 2018-02-26 20:27:46 -0500 (ma, 26 helmi 2018) $
+//                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -86,7 +86,7 @@ namespace GXDLMSDirector
             //If logical name is not given set default value.
             if (string.IsNullOrEmpty(Target.LogicalName))
             {
-                Target.LogicalName = "1.2.3.4.5";
+                Target.LogicalName = "0.0.0.0.0.255";
             }
             ObisPropertyGrid.SelectedObject = Target;
             InterfaceCB.SelectedItem = Target;

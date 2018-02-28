@@ -31,6 +31,7 @@
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
+using System;
 using System.ComponentModel;
 
 namespace GXDLMSDirector
@@ -46,6 +47,7 @@ namespace GXDLMSDirector
         public GXConformanceSettings()
         {
             ShowValues = true;
+            Amount = 1;
         }
 
         [Description("Are meters reading concurrently.")]
@@ -129,6 +131,15 @@ namespace GXDLMSDirector
         {
             get;
             set;
-        }     
+        }
+
+        [Description("How many times the tests are executed.")]
+        [Category("Accessibility")]
+        [DefaultValue(1)]
+        public UInt16 Amount
+        {
+            get;
+            set;
+        }
     }
 }

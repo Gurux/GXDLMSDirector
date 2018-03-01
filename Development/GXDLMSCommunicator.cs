@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9919 $,
-//                  $Date: 2018-02-26 20:27:46 -0500 (ma, 26 helmi 2018) $
+// Version:         $Revision: 9931 $,
+//                  $Date: 2018-02-28 17:11:24 -0500 (ke, 28 helmi 2018) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -116,7 +116,7 @@ namespace GXDLMSDirector
             return tmp;
         }
 
-        public void MethodRequest(GXDLMSObject target, int methodIndex, object data, GXReplyData reply)
+        public void MethodRequest(GXDLMSObject target, int methodIndex, object data, string text, GXReplyData reply)
         {
             lastTransaction = DateTime.Now;
             byte[][] tmp;
@@ -128,7 +128,18 @@ namespace GXDLMSDirector
             {
                 tmp = client.Method(target, methodIndex, data, GXDLMSConverter.GetDLMSDataType(data));
             }
-            ReadDataBlock(tmp, "", reply);
+            int pos = 0;
+            foreach (byte[] it in tmp)
+            {
+                reply.Clear();
+                if (tmp.Length != 1)
+                {
+                    ++pos;
+                    NotifyProgress(text, pos, tmp.Length);
+                }
+                ReadDataBlock(it, text, reply);
+            }
+            NotifyProgress(text, 1, 1);
         }
 
         byte[] ReleaseRequest()

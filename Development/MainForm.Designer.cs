@@ -5,9 +5,9 @@
 //
 //
 //
-// Version:         $Revision: 9881 $,
-//                  $Date: 2018-02-16 11:39:11 +0200 (pe, 16 helmi 2018) $
-//                  $Author: gurux01 $
+// Version:         $Revision: 9931 $,
+//                  $Date: 2018-02-28 17:11:24 -0500 (ke, 28 helmi 2018) $
+//                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -197,6 +197,7 @@ namespace GXDLMSDirector
             this.ShowReportBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.ShowLogBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.showValuesBtn = new System.Windows.Forms.ToolStripMenuItem();
+            this.OpenContainingFolderBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem19 = new System.Windows.Forms.ToolStripSeparator();
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageList2 = new System.Windows.Forms.ImageList(this.components);
@@ -224,7 +225,7 @@ namespace GXDLMSDirector
             this.DeviceList = new System.Windows.Forms.ListView();
             this.DeviceNameCH = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ObjectPanelFrame = new System.Windows.Forms.Panel();
-            this.OpenContainingFolderBtn = new System.Windows.Forms.ToolStripMenuItem();
+            this.reRunToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -1340,9 +1341,10 @@ namespace GXDLMSDirector
             this.showValuesBtn,
             this.OpenContainingFolderBtn,
             this.toolStripMenuItem19,
-            this.runToolStripMenuItem});
+            this.runToolStripMenuItem,
+            this.reRunToolStripMenuItem});
             this.contextMenuStrip2.Name = "contextMenuStrip1";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(202, 142);
+            this.contextMenuStrip2.Size = new System.Drawing.Size(202, 164);
             this.contextMenuStrip2.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip2_Opening);
             // 
             // ShowReportBtn
@@ -1365,6 +1367,13 @@ namespace GXDLMSDirector
             this.showValuesBtn.Size = new System.Drawing.Size(201, 22);
             this.showValuesBtn.Text = "Show Values...";
             this.showValuesBtn.Click += new System.EventHandler(this.showValuesBtn_Click);
+            // 
+            // OpenContainingFolderBtn
+            // 
+            this.OpenContainingFolderBtn.Name = "OpenContainingFolderBtn";
+            this.OpenContainingFolderBtn.Size = new System.Drawing.Size(201, 22);
+            this.OpenContainingFolderBtn.Text = "Open Containing Folder";
+            this.OpenContainingFolderBtn.Click += new System.EventHandler(this.OpenContainingFolderBtn_Click);
             // 
             // toolStripMenuItem19
             // 
@@ -1615,12 +1624,12 @@ namespace GXDLMSDirector
             this.ObjectPanelFrame.Size = new System.Drawing.Size(187, 142);
             this.ObjectPanelFrame.TabIndex = 32;
             // 
-            // OpenContainingFolderBtn
+            // reRunToolStripMenuItem
             // 
-            this.OpenContainingFolderBtn.Name = "OpenContainingFolderBtn";
-            this.OpenContainingFolderBtn.Size = new System.Drawing.Size(201, 22);
-            this.OpenContainingFolderBtn.Text = "Open Containing Folder";
-            this.OpenContainingFolderBtn.Click += new System.EventHandler(this.OpenContainingFolderBtn_Click);
+            this.reRunToolStripMenuItem.Name = "reRunToolStripMenuItem";
+            this.reRunToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            this.reRunToolStripMenuItem.Text = "Re-Run";
+            this.reRunToolStripMenuItem.Click += new System.EventHandler(this.reRunToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -1830,6 +1839,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ToolStripMenuItem showValuesBtn;
         private System.Windows.Forms.ImageList imageList2;
         private System.Windows.Forms.ToolStripMenuItem OpenContainingFolderBtn;
+        private System.Windows.Forms.ToolStripMenuItem reRunToolStripMenuItem;
     }
 }
 

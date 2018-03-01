@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9926 $,
-//                  $Date: 2018-02-27 20:15:56 -0500 (ti, 27 helmi 2018) $
+// Version:         $Revision: 9933 $,
+//                  $Date: 2018-02-28 23:53:11 -0500 (ke, 28 helmi 2018) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -53,6 +53,7 @@ using Gurux.DLMS.Enums;
 using Gurux.DLMS.UI;
 using Gurux.Net;
 using System.Text;
+using Gurux.DLMS.Secure;
 
 namespace GXDLMSDirector
 {
@@ -153,6 +154,7 @@ namespace GXDLMSDirector
         public MainForm()
         {
             InitializeComponent();
+            reRunToolStripMenuItem.Visible = false;
             CancelBtn.Enabled = false;
             translator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
 
@@ -482,7 +484,7 @@ namespace GXDLMSDirector
 
         static Dictionary<GXButton, ActionType> ActionList = new Dictionary<GXButton, ActionType>();
 
-        private static GXValueField UpdateProperties(IGXDLMSView view, System.Windows.Forms.Control.ControlCollection controls, GXDLMSObject target, int index, object value)
+        private GXValueField UpdateProperties(IGXDLMSView view, System.Windows.Forms.Control.ControlCollection controls, GXDLMSObject target, int index, object value)
         {
             GXDLMSDevice dev = (GXDLMSDevice)view.Target.Parent.Tag;
             GXValueField item = null;
@@ -592,14 +594,88 @@ namespace GXDLMSDirector
             return found;
         }
 
-        static void OnHandleAction(object sender, EventArgs e)
+        delegate void ActionEventHandler(IGXDLMSView view, GXActionArgs arg);
+
+        private static void OnPreAction(IGXDLMSView view, GXActionArgs arg)
+        {
+            view.PreAction(arg);
+        }
+
+        private static void OnPostAction(IGXDLMSView view, GXActionArgs arg)
+        {
+            view.PostAction(arg);
+        }
+
+        private void OnAction(object sender, GXAsyncWork work, object[] parameters)
+        {
+            GXButton btn = parameters[0] as GXButton;
+            GXDLMSDevice dev = btn.Target.Parent.Tag as GXDLMSDevice;
+            GXActionArgs ve = new GXActionArgs(btn.Target, btn.Index);
+            ve.Client = dev.Comm.client;
+            ve.Action = btn.Action;
+            do
+            {
+                this.BeginInvoke(new ActionEventHandler(OnPreAction), btn.View, ve).AsyncWaitHandle.WaitOne();
+                if (ve.Handled)
+                {
+                    break;
+                }
+                else
+                {
+                    GXReplyData reply = new GXReplyData();
+                    if (ve.Value is byte[][])
+                    {
+                        int pos = 0, cnt = ((byte[][])ve.Value).Length;
+                        foreach (byte[] it in (byte[][])ve.Value)
+                        {
+                            if (cnt != 1)
+                            {
+                                OnProgress(null, ve.Text, ++pos, cnt);
+                            }
+                            reply.Clear();
+                            dev.Comm.ReadDataBlock(it, ve.Text, 1, reply);
+                        }
+                    }
+                    else if (ve.Action == ActionType.Read)
+                    {
+                        dev.Comm.ReadValue(ve.Target, ve.Index);
+                    }
+                    else if (ve.Action == ActionType.Write)
+                    {
+                        dev.Comm.Write(ve.Target, ve.Index);
+                    }
+                    else if (ve.Action == ActionType.Action)
+                    {
+                        dev.Comm.MethodRequest(ve.Target, ve.Index, ve.Value, ve.Text, reply);
+                    }
+                    this.BeginInvoke(new ActionEventHandler(OnPostAction), btn.View, ve).AsyncWaitHandle.WaitOne();
+                    ve.Value = null;
+                }
+            } while (ve.Action != ActionType.None);
+        }
+
+        void OnHandleAction(object sender, EventArgs e)
         {
             GXButton btn = sender as GXButton;
             try
             {
+                if (TransactionWork != null && TransactionWork.IsRunning)
+                {
+                    throw new Exception("Transaction in progress.");
+                }
+                TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, OnAction, OnError, null, new object[] { btn });
+                TransactionWork.Start();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(btn, ex.Message);
+            }
+            /*
+            try
+            {
                 ActionType act = btn.Action;
                 GXDLMSDevice dev = btn.Target.Parent.Tag as GXDLMSDevice;
-                ValueEventArgs ve = new ValueEventArgs(btn.Target, btn.Index, 0, null);
+                GXActionArgs ve = new GXActionArgs(btn.Target, btn.Index);
                 do
                 {
                     act = btn.View.PreAction(dev.Comm.client, act, ve);
@@ -612,7 +688,7 @@ namespace GXDLMSDirector
                         GXReplyData reply = new GXReplyData();
                         if (ve.Value is byte[][])
                         {
-                            dev.Comm.ReadDataBlock((byte[][])ve.Value, "", 1, reply);
+                            dev.Comm.ReadDataBlock((byte[][])ve.Value, ve.Text, 1, reply);
                         }
                         else if (act == ActionType.Read)
                         {
@@ -624,7 +700,7 @@ namespace GXDLMSDirector
                         }
                         else if (act == ActionType.Action)
                         {
-                            dev.Comm.MethodRequest(ve.Target, ve.Index, ve.Value, reply);
+                            dev.Comm.MethodRequest(ve.Target, ve.Index, ve.Value, ve.Text, reply);
                         }
                         act = btn.View.PostAction(act, ve);
                         ve.Value = null;
@@ -635,6 +711,7 @@ namespace GXDLMSDirector
             {
                 MessageBox.Show(btn, ex.Message);
             }
+            */
         }
 
         delegate void ValueChangedEventHandler(IGXDLMSView view, int index, object value, bool changeByUser, bool connected);
@@ -2480,8 +2557,6 @@ namespace GXDLMSDirector
             return item;
         }
 
-        delegate void RefreshEventHandler(System.Windows.Forms.Control sender, object[] parameters);
-
         void Refresh(object sender, GXAsyncWork work, object[] parameters)
         {
             try
@@ -3993,6 +4068,8 @@ namespace GXDLMSDirector
                 {
                     throw new Exception("No devices to test.");
                 }
+                GXDLMSDeviceCollection devices = new GXDLMSDeviceCollection();
+                devices.AddRange(Devices);
                 GXConformanceSettings settings;
                 XmlSerializer x = new XmlSerializer(typeof(GXConformanceSettings));
                 if (Properties.Settings.Default.ConformanceSettings == "")
@@ -4014,8 +4091,7 @@ namespace GXDLMSDirector
                         settings = new GXConformanceSettings();
                     }
                 }
-                GXConformanceDlg dlg = new GXConformanceDlg(settings);
-                if (dlg.ShowDialog(this) == DialogResult.OK)
+                if (RunConformanceTest(settings, devices))
                 {
                     try
                     {
@@ -4030,76 +4106,85 @@ namespace GXDLMSDirector
                         System.Diagnostics.Debug.WriteLine(ex.Message);
                         Properties.Settings.Default.ConformanceSettings = "";
                     }
-                    TraceView.ResetText();
-                    ConformanceTests.Items.Clear();
-                    GXConformanceTests.ValidateTests(settings);
-
-                    GXDLMSDeviceCollection devices = new GXDLMSDeviceCollection();
-                    devices.AddRange(Devices);
-                    List<GXConformanceTest> tests = new List<GXConformanceTest>();
-                    string path2 = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
-                    string testResults = Path.Combine(path2, "TestResults");
-                    if (!Directory.Exists(path2))
-                    {
-                        Directory.CreateDirectory(path2);
-                    }
-                    if (!Directory.Exists(testResults))
-                    {
-                        Directory.CreateDirectory(testResults);
-                    }
-                    string[] list = Directory.GetDirectories(testResults);
-                    int testcount = 0;
-                    foreach (GXDLMSDevice it in devices)
-                    {
-                        testcount += it.Objects.Count;
-                        GXConformanceTest t = new GXConformanceTest() { Device = it };
-                        t.OnReady = OnConformanceReady;
-                        t.OnError = OnConformanceError;
-                        t.OnTrace = OnConformanceTrace;
-                        t.OnObjectTestCompleated = OnObjectTestCompleated;
-                        t.Results = Path.Combine(testResults, it.Name + "_" + DateTime.Now.ToString("yyyy-MM-dd hh_mm_ss"));
-                        Directory.CreateDirectory(t.Results);
-                        using (Stream stream = File.Open(Path.Combine(t.Results, "Results.html"), FileMode.Create))
-                        {
-
-                        }
-                        using (Stream stream = File.Open(Path.Combine(t.Results, "Trace.txt"), FileMode.Create))
-                        {
-
-                        }
-                        using (Stream stream = File.Open(Path.Combine(t.Results, "Values.txt"), FileMode.Create))
-                        {
-
-                        }
-                        using (Stream stream = File.Open(Path.Combine(t.Results, "settings.xml"), FileMode.Create))
-                        {
-                            using (TextWriter writer = new StreamWriter(stream))
-                            {
-                                x.Serialize(writer, settings);
-                                writer.Flush();
-                                writer.Close();
-                            }
-                        }
-                        GXDLMSDeviceCollection devs = new GXDLMSDeviceCollection();
-                        devs.Add(it);
-                        Save(Path.Combine(t.Results, "device.gxc"), devs);
-                        tests.Add(t);
-                        ListViewItem li = ConformanceTests.Items.Add(it.Name);
-                        li.SubItems.Add("");
-                        li.Tag = t;
-                    }
-                    TraceView.ResetText();
-                    ProgressBar.Value = 0;
-                    ProgressBar.Maximum = testcount;
-                    GXConformanceTests.Continue = true;
-                    TransactionWork = new GXAsyncWork(this, ConformanceStateChange, ConformanceExecute, ConformanceError, null, new object[] { tests, settings });
-                    TransactionWork.Start();
                 }
             }
             catch (Exception Ex)
             {
                 Error.ShowError(this, Ex);
             }
+        }
+
+        private bool RunConformanceTest(GXConformanceSettings settings, GXDLMSDeviceCollection devices)
+        {
+            GXConformanceDlg dlg = new GXConformanceDlg(settings);
+            if (dlg.ShowDialog(this) != DialogResult.OK)
+            {
+                return false;
+            }
+            TraceView.ResetText();
+            ConformanceTests.Items.Clear();
+            GXConformanceTests.ValidateTests(settings);
+
+            List<GXConformanceTest> tests = new List<GXConformanceTest>();
+            string path2 = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
+            string testResults = Path.Combine(path2, "TestResults");
+            if (!Directory.Exists(path2))
+            {
+                Directory.CreateDirectory(path2);
+            }
+            if (!Directory.Exists(testResults))
+            {
+                Directory.CreateDirectory(testResults);
+            }
+            string[] list = Directory.GetDirectories(testResults);
+            int testcount = 0;
+            foreach (GXDLMSDevice it in devices)
+            {
+                testcount += it.Objects.Count;
+                GXConformanceTest t = new GXConformanceTest() { Device = it };
+                t.OnReady = OnConformanceReady;
+                t.OnError = OnConformanceError;
+                t.OnTrace = OnConformanceTrace;
+                t.OnObjectTestCompleated = OnObjectTestCompleated;
+                t.Results = Path.Combine(testResults, it.Name + "_" + DateTime.Now.ToString("yyyy-MM-dd hh_mm_ss"));
+                Directory.CreateDirectory(t.Results);
+                using (Stream stream = File.Open(Path.Combine(t.Results, "Results.html"), FileMode.Create))
+                {
+
+                }
+                using (Stream stream = File.Open(Path.Combine(t.Results, "Trace.txt"), FileMode.Create))
+                {
+
+                }
+                using (Stream stream = File.Open(Path.Combine(t.Results, "Values.txt"), FileMode.Create))
+                {
+
+                }
+                using (Stream stream = File.Open(Path.Combine(t.Results, "settings.xml"), FileMode.Create))
+                {
+                    XmlSerializer x = new XmlSerializer(typeof(GXConformanceSettings));
+                    using (TextWriter writer = new StreamWriter(stream))
+                    {
+                        x.Serialize(writer, settings);
+                        writer.Flush();
+                        writer.Close();
+                    }
+                }
+                GXDLMSDeviceCollection devs = new GXDLMSDeviceCollection();
+                devs.Add(it);
+                Save(Path.Combine(t.Results, "device.gxc"), devs);
+                tests.Add(t);
+                ListViewItem li = ConformanceTests.Items.Add(it.Name);
+                li.SubItems.Add("");
+                li.Tag = t;
+            }
+            TraceView.ResetText();
+            ProgressBar.Value = 0;
+            ProgressBar.Maximum = testcount;
+            GXConformanceTests.Continue = true;
+            TransactionWork = new GXAsyncWork(this, ConformanceStateChange, ConformanceExecute, ConformanceError, null, new object[] { tests, settings });
+            TransactionWork.Start();
+            return true;
         }
 
         /// <summary>
@@ -4132,6 +4217,7 @@ namespace GXDLMSDirector
         {
             runToolStripMenuItem.Enabled = Devices.Count != 0 && (TransactionWork == null || !TransactionWork.IsRunning);
             OpenContainingFolderBtn.Enabled = showValuesBtn.Enabled = ShowLogBtn.Enabled = ShowReportBtn.Enabled = ConformanceTests.SelectedItems.Count != 0;
+            reRunToolStripMenuItem.Enabled = ConformanceTests.SelectedItems.Count != 0 && (TransactionWork == null || !TransactionWork.IsRunning);
         }
 
         /// <summary>
@@ -4173,6 +4259,14 @@ namespace GXDLMSDirector
             {
                 Error.ShowError(this, Ex);
             }
+        }
+
+        /// <summary>
+        /// Re-Run selected conformance test.
+        /// </summary>
+        private void reRunToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

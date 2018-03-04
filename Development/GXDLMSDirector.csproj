@@ -132,11 +132,11 @@
     <Reference Include="Gurux.Common, Version=8.1.1801.1201, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Common.8.1.1801.1201\lib\portable-win+net40\Gurux.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=8.5.1803.101, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.8.5.1803.101\lib\portable-win+net35\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=8.5.1803.401, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.8.5.1803.401\lib\portable-win+net35\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=8.5.1803.101, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.8.5.1803.101\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=8.5.1803.401, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.8.5.1803.401\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.Net, Version=8.1.1801.1201, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Net.8.1.1801.1201\lib\portable-win+net40\Gurux.Net.dll</HintPath>
@@ -161,6 +161,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GXByteConverter.cs" />
+    <Compile Include="GXByteUIEditor.cs" />
     <Compile Include="Extensions\Actaris.cs" />
     <Compile Include="CryptHelper.cs" />
     <Compile Include="DeviceState.cs" />
@@ -178,6 +180,12 @@
     </Compile>
     <Compile Include="GXExternalMediaForm.Designer.cs">
       <DependentUpon>GXExternalMediaForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GXByteEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GXByteEditor.Designer.cs">
+      <DependentUpon>GXByteEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="GXOutput.cs" />
     <Compile Include="GXSettingsDlg.cs">
@@ -246,6 +254,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GXExternalMediaForm.resx">
       <DependentUpon>GXExternalMediaForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GXByteEditor.resx">
+      <DependentUpon>GXByteEditor.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="GXObisValueItemForm.resx">
       <DependentUpon>GXObisValueItemForm.cs</DependentUpon>

@@ -33,12 +33,7 @@
 using System;
 
 using System.Windows.Forms;
-using System.Diagnostics;
-using System.Collections;
-using Microsoft.Win32;
 using System.IO;
-using System.Text;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
 namespace MRUSample

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9933 $,
-//                  $Date: 2018-02-28 23:53:11 -0500 (ke, 28 helmi 2018) $
+// Version:         $Revision: 9938 $,
+//                  $Date: 2018-03-04 12:15:11 -0500 (su, 04 maalis 2018) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -375,7 +375,7 @@ namespace GXDLMSDirector
                     ObjectPanelFrame.Controls.Clear();
                     SelectedView.Target = (GXDLMSObject)obj;
                     SelectedView.Target.OnChange += new ObjectChangeEventHandler(DLMSItemOnChange);
-                    UpdateProperties(obj, SelectedView, new List<object>(), 0, true);
+                    GXDlmsUi.ObjectChanged(SelectedView, obj as GXDLMSObject, (GetDevice((GXDLMSObject)obj).Status & DeviceState.Connected) != 0);
                     ObjectPanelFrame.Controls.Add((Form)SelectedView);
                     ((Form)SelectedView).Show();
                     UpdateDeviceUI(GetDevice(SelectedView.Target), GetDevice((GXDLMSObject)obj).Status);
@@ -482,203 +482,28 @@ namespace GXDLMSDirector
             }
         }
 
-        static Dictionary<GXButton, ActionType> ActionList = new Dictionary<GXButton, ActionType>();
-
-        private GXValueField UpdateProperties(IGXDLMSView view, System.Windows.Forms.Control.ControlCollection controls, GXDLMSObject target, int index, object value)
-        {
-            GXDLMSDevice dev = (GXDLMSDevice)view.Target.Parent.Tag;
-            GXValueField item = null;
-            foreach (Control it in controls)
-            {
-                if (it is GXValueField)
-                {
-                    GXValueField obj = it as GXValueField;
-                    if (obj.Index == index)
-                    {
-                        obj.Target = target;
-                        obj.UpdateValueItems(target, index, value, (dev.Status & DeviceState.Connected) != 0);
-                        obj.Value = value;
-                        item = obj;
-                    }
-                }
-                else if (it.Controls.Count != 0)
-                {
-                    if (item == null)
-                    {
-                        item = UpdateProperties(view, it.Controls, target, index, value);
-                    }
-                    else
-                    {
-                        UpdateProperties(view, it.Controls, target, index, value);
-                    }
-                }
-                if (it is GXButton && !ActionList.ContainsKey(it as GXButton))
-                {
-                    GXButton btn = it as GXButton;
-                    if ((btn.Action == ActionType.Read || btn.Action == ActionType.Write) && btn.Index == index)
-                    {
-                        btn.View = view;
-                        btn.Enabled = (dev.Status & DeviceState.Connected) != 0 && (target.GetAccess(index) & AccessMode.Write) != 0;
-                        if (btn.Enabled)
-                        {
-                            btn.Target = target;
-                            if (btn.Action == ActionType.Read)
-                            {
-                                btn.Click += new EventHandler(OnHandleAction);
-                            }
-                            else if (btn.Action == ActionType.Write)
-                            {
-                                btn.Click += new EventHandler(OnHandleAction);
-                            }
-                            ActionList.Add(btn, btn.Action);
-                        }
-                    }
-                }
-            }
-            return item;
-        }
-
-        private bool UpdateActions(IGXDLMSView view, System.Windows.Forms.Control.ControlCollection controls, GXDLMSObject target, int index)
-        {
-            bool found = false;
-            foreach (Control it in controls)
-            {
-                if (it is GXButton)
-                {
-                    GXButton btn = it as GXButton;
-                    if (btn.Action == ActionType.Action && (btn.Index == index || (btn.Index < 1 && !ActionList.ContainsKey(btn))))
-                    {
-                        btn.View = view;
-                        bool enabled = false;
-                        if (btn.Index < 1)
-                        {
-                            enabled = true;
-                        }
-                        else
-                        {
-                            if (ReadBtn.Enabled)
-                            {
-                                enabled = target.GetMethodAccess(btn.Index) != MethodAccessMode.NoAccess;
-                            }
-                        }
-                        btn.Enabled = enabled;
-                        if (enabled && !ActionList.ContainsKey(btn))
-                        {
-                            btn.Target = target;
-                            if (btn.Action == ActionType.Read)
-                            {
-                                it.Click += new EventHandler(OnHandleAction);
-                            }
-                            else if (btn.Action == ActionType.Write)
-                            {
-                                it.Click += new EventHandler(OnHandleAction);
-                            }
-                            else
-                            {
-                                it.Click += new EventHandler(OnHandleAction);
-                            }
-                            ActionList.Add(btn, btn.Action);
-                        }
-                        return true;
-                    }
-                }
-                else if (it.Controls.Count != 0)
-                {
-                    found = UpdateActions(view, it.Controls, target, index);
-                }
-                if (found)
-                {
-                    break;
-                }
-            }
-            return found;
-        }
-
-        delegate void ActionEventHandler(IGXDLMSView view, GXActionArgs arg);
-
-        private static void OnPreAction(IGXDLMSView view, GXActionArgs arg)
-        {
-            view.PreAction(arg);
-        }
-
-        private static void OnPostAction(IGXDLMSView view, GXActionArgs arg)
-        {
-            view.PostAction(arg);
-        }
-
+        /// <summary>
+        /// User is executing action.
+        /// </summary>
         private void OnAction(object sender, GXAsyncWork work, object[] parameters)
         {
+            ClearTrace();
+            UpdateTransaction(true);
             GXButton btn = parameters[0] as GXButton;
             GXDLMSDevice dev = btn.Target.Parent.Tag as GXDLMSDevice;
             GXActionArgs ve = new GXActionArgs(btn.Target, btn.Index);
             ve.Client = dev.Comm.client;
             ve.Action = btn.Action;
-            do
-            {
-                this.BeginInvoke(new ActionEventHandler(OnPreAction), btn.View, ve).AsyncWaitHandle.WaitOne();
-                if (ve.Handled)
-                {
-                    break;
-                }
-                else
-                {
-                    GXReplyData reply = new GXReplyData();
-                    if (ve.Value is byte[][])
-                    {
-                        int pos = 0, cnt = ((byte[][])ve.Value).Length;
-                        foreach (byte[] it in (byte[][])ve.Value)
-                        {
-                            if (cnt != 1)
-                            {
-                                OnProgress(null, ve.Text, ++pos, cnt);
-                            }
-                            reply.Clear();
-                            dev.Comm.ReadDataBlock(it, ve.Text, 1, reply);
-                        }
-                    }
-                    else if (ve.Action == ActionType.Read)
-                    {
-                        dev.Comm.ReadValue(ve.Target, ve.Index);
-                    }
-                    else if (ve.Action == ActionType.Write)
-                    {
-                        dev.Comm.Write(ve.Target, ve.Index);
-                    }
-                    else if (ve.Action == ActionType.Action)
-                    {
-                        dev.Comm.MethodRequest(ve.Target, ve.Index, ve.Value, ve.Text, reply);
-                    }
-                    this.BeginInvoke(new ActionEventHandler(OnPostAction), btn.View, ve).AsyncWaitHandle.WaitOne();
-                    ve.Value = null;
-                }
-            } while (ve.Action != ActionType.None);
-        }
-
-        void OnHandleAction(object sender, EventArgs e)
-        {
-            GXButton btn = sender as GXButton;
+            GXDlmsUi.UpdateAccessRights(btn.View, btn.Target, false);
             try
             {
-                if (TransactionWork != null && TransactionWork.IsRunning)
-                {
-                    throw new Exception("Transaction in progress.");
-                }
-                TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, OnAction, OnError, null, new object[] { btn });
-                TransactionWork.Start();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(btn, ex.Message);
-            }
-            /*
-            try
-            {
-                ActionType act = btn.Action;
-                GXDLMSDevice dev = btn.Target.Parent.Tag as GXDLMSDevice;
-                GXActionArgs ve = new GXActionArgs(btn.Target, btn.Index);
                 do
                 {
-                    act = btn.View.PreAction(dev.Comm.client, act, ve);
+                    btn.View.PreAction(ve);
+                    if (ve.Exception != null)
+                    {
+                        throw ve.Exception;
+                    }
                     if (ve.Handled)
                     {
                         break;
@@ -688,30 +513,60 @@ namespace GXDLMSDirector
                         GXReplyData reply = new GXReplyData();
                         if (ve.Value is byte[][])
                         {
-                            dev.Comm.ReadDataBlock((byte[][])ve.Value, ve.Text, 1, reply);
+                            int pos = 0, cnt = ((byte[][])ve.Value).Length;
+                            foreach (byte[] it in (byte[][])ve.Value)
+                            {
+                                if (cnt != 1)
+                                {
+                                    OnProgress(null, ve.Text, ++pos, cnt);
+                                }
+                                reply.Clear();
+                                dev.Comm.ReadDataBlock(it, ve.Text, 1, reply);
+                            }
                         }
-                        else if (act == ActionType.Read)
+                        else if (ve.Action == ActionType.Read)
                         {
                             dev.Comm.ReadValue(ve.Target, ve.Index);
                         }
-                        else if (act == ActionType.Write)
+                        else if (ve.Action == ActionType.Write)
                         {
                             dev.Comm.Write(ve.Target, ve.Index);
                         }
-                        else if (act == ActionType.Action)
+                        else if (ve.Action == ActionType.Action)
                         {
                             dev.Comm.MethodRequest(ve.Target, ve.Index, ve.Value, ve.Text, reply);
                         }
-                        act = btn.View.PostAction(act, ve);
+                        btn.View.PostAction(ve);
+                        if (ve.Exception != null)
+                        {
+                            throw ve.Exception;
+                        }
                         ve.Value = null;
                     }
-                } while (act != ActionType.None);
+                } while (ve.Action != ActionType.None);
+            }
+            finally
+            {
+                GXDlmsUi.UpdateAccessRights(btn.View, btn.Target, (dev.Status & DeviceState.Connected) != 0);
+                UpdateTransaction(false);
+            }
+        }
+
+        void OnHandleAction(object sender, EventArgs e)
+        {
+            try
+            {
+                if (TransactionWork != null && TransactionWork.IsRunning)
+                {
+                    throw new Exception("Transaction in progress.");
+                }
+                TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, OnAction, OnError, null, new object[] { sender });
+                TransactionWork.Start();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(btn, ex.Message);
+                MessageBox.Show(this, ex.Message);
             }
-            */
         }
 
         delegate void ValueChangedEventHandler(IGXDLMSView view, int index, object value, bool changeByUser, bool connected);
@@ -719,97 +574,6 @@ namespace GXDLMSDirector
         static void OnValueChanged(IGXDLMSView view, int index, object value, bool changeByUser, bool connected)
         {
             view.OnValueChanged(index, value, changeByUser, connected);
-        }
-
-        private void UpdateProperties(object obj, IGXDLMSView view, List<object> UpdatedObjects, int index, bool updateAccessLevels)
-        {
-            if (obj == null)
-            {
-                return;
-            }
-            UpdateWriteEnabled();
-            GXDLMSObject tmp = view.Target;
-            GXDLMSDevice dev = (GXDLMSDevice)tmp.Parent.Tag;
-            view.Description = tmp.Description;
-            if (view.ErrorProvider != null)
-            {
-                view.ErrorProvider.Clear();
-                foreach (int it in tmp.GetDirtyAttributeIndexes())
-                {
-                    UpdateDirty(view, ((Form)view).Controls, tmp, it, true);
-                }
-            }
-            if (index == 0)
-            {
-                foreach (var it in ActionList)
-                {
-                    if (it.Value == ActionType.Read)
-                    {
-                        it.Key.Click -= new EventHandler(OnHandleAction);
-                    }
-                    else if (it.Value == ActionType.Write)
-                    {
-                        it.Key.Click -= new EventHandler(OnHandleAction);
-                    }
-                    else
-                    {
-                        it.Key.Click -= new EventHandler(OnHandleAction);
-                    }
-                }
-                ActionList.Clear();
-            }
-            bool InvokeRequired = ((Form)view).InvokeRequired;
-            for (int it = 1; it != (obj as IGXDLMSBase).GetAttributeCount() + 1; ++it)
-            {
-                if (index == 0 || index == it)
-                {
-                    object value = null;
-                    bool dirty;
-                    if (index == 0)
-                    {
-                        dirty = true;
-                        value = view.Target.GetValues()[it - 1];
-                    }
-                    else
-                    {
-                        dirty = view.Target.GetDirty(it, out value);
-                        value = view.Target.GetValues()[it - 1];
-                    }
-                    GXValueField item = UpdateProperties(view, ((Form)view).Controls, view.Target, it, value);
-                    if (item == null || item.NotifyChanges)
-                    {
-                        if (InvokeRequired)
-                        {
-                            ((Form)view).Invoke(new ValueChangedEventHandler(OnValueChanged), new object[] { view, it, value, dirty, (dev.Status & DeviceState.Connected) != 0 });
-                        }
-                        else
-                        {
-                            view.OnValueChanged(it, value, false, (dev.Status & DeviceState.Connected) != 0);
-                        }
-                        if (updateAccessLevels)
-                        {
-                            bool connected = (dev.Status & DeviceState.Connected) != 0;
-                            view.OnAccessRightsChange(it, tmp.GetAccess(it), connected);
-                        }
-                    }
-                }
-            }
-            if (index == 0)
-            {
-                MethodAccessMode ma = MethodAccessMode.NoAccess;
-                for (int it = 1; it != (obj as IGXDLMSBase).GetMethodCount() + 1; ++it)
-                {
-                    bool bFound = UpdateActions(view, ((Form)view).Controls, view.Target, it);
-                    if (!bFound)
-                    {
-                        if ((dev.Status & DeviceState.Connected) != 0)
-                        {
-                            ma = view.Target.GetMethodAccess(it);
-                        }
-                        view.OnAccessRightsChange(it, ma, (dev.Status & DeviceState.Connected) != 0);
-                    }
-                }
-            }
         }
 
         /// <summary>
@@ -1120,21 +884,6 @@ namespace GXDLMSDirector
             }
         }
 
-        /// <summary>
-        /// Ask is association view read when connecting first time.
-        /// </summary>
-        /// <param name="obj">Selected object.</param>
-        delegate void UpdateAccessRightsEventHandler(GXDLMSObject obj);
-
-        /// <summary>
-        /// Ask is association view read when connecting first time.
-        /// </summary>
-        /// <param name="obj">Selected object.</param>
-        private void UpdateAccessRights(GXDLMSObject obj)
-        {
-            UpdateProperties(obj, SelectedView, new List<object>(), 0, true);
-        }
-
         void Connect(object sender, GXAsyncWork work, object[] parameters)
         {
             try
@@ -1186,14 +935,7 @@ namespace GXDLMSDirector
                     Connect(sender, work, new object[] { devices });
                     if (tmp.Count == 1)
                     {
-                        if (InvokeRequired)
-                        {
-                            BeginInvoke(new UpdateAccessRightsEventHandler(UpdateAccessRights), tmp[0]);
-                        }
-                        else
-                        {
-                            UpdateAccessRights(tmp[0]);
-                        }
+                        GXDlmsUi.ObjectChanged(SelectedView, tmp[0] as GXDLMSObject, true);
                     }
                 }
                 else
@@ -1205,14 +947,7 @@ namespace GXDLMSDirector
                     {
                         dev.InitializeConnection();
                     }
-                    if (InvokeRequired)
-                    {
-                        BeginInvoke(new UpdateAccessRightsEventHandler(UpdateAccessRights), tmp);
-                    }
-                    else
-                    {
-                        UpdateAccessRights(tmp);
-                    }
+                    GXDlmsUi.ObjectChanged(SelectedView, tmp as GXDLMSObject, true);
                 }
             }
             catch (ThreadAbortException)
@@ -1285,14 +1020,7 @@ namespace GXDLMSDirector
                     Disconnect(sender, work, new object[] { devices });
                     if (tmp.Count == 1)
                     {
-                        if (InvokeRequired)
-                        {
-                            BeginInvoke(new UpdateAccessRightsEventHandler(UpdateAccessRights), tmp[0]);
-                        }
-                        else
-                        {
-                            UpdateAccessRights(tmp[0]);
-                        }
+                        GXDlmsUi.ObjectChanged(SelectedView, tmp[0] as GXDLMSObject, false);
                     }
                 }
                 else
@@ -1301,14 +1029,7 @@ namespace GXDLMSDirector
                     GXDLMSObject tmp = obj as GXDLMSObject;
                     GXDLMSDevice dev = tmp.Parent.Tag as GXDLMSDevice;
                     dev.Disconnect();
-                    if (InvokeRequired)
-                    {
-                        BeginInvoke(new UpdateAccessRightsEventHandler(UpdateAccessRights), tmp);
-                    }
-                    else
-                    {
-                        UpdateAccessRights(tmp);
-                    }
+                    GXDlmsUi.ObjectChanged(SelectedView, tmp, false);
                 }
             }
             catch (ThreadAbortException)
@@ -1452,6 +1173,7 @@ namespace GXDLMSDirector
                     Properties.Settings.Default.TraceViewHeight = TraceView.Height;
                 }
                 Properties.Settings.Default.Save();
+                GXDlmsUi.Save();
 
                 string path = UserDataPath;
                 if (System.Environment.OSVersion.Platform == PlatformID.Unix)
@@ -1798,7 +1520,7 @@ namespace GXDLMSDirector
                 }
                 if (SelectedView != null && SelectedView.Target == sender)
                 {
-                    UpdateProperties(sender, SelectedView, new List<object>(), index, false);
+                    GXDlmsUi.UpdateProperty(sender as GXDLMSObject, index, SelectedView, true);
                 }
                 ListViewItem lv = ObjectValueItems[sender] as ListViewItem;
                 if (lv != null)
@@ -1979,7 +1701,7 @@ namespace GXDLMSDirector
                         foreach (GXDLMSObject obj in objects)
                         {
                             dev.Comm.Write(obj, 0);
-                            UpdateProperties(obj, SelectedView, new List<object>(), 0, false);
+                            GXDlmsUi.UpdateProperty(obj as GXDLMSObject, 0, SelectedView, true);
                         }
                         dev.KeepAliveStart();
                     }
@@ -1990,7 +1712,7 @@ namespace GXDLMSDirector
                         dev.KeepAliveStop();
                         OnProgress(dev, "Writing...", 0, 1);
                         dev.Comm.Write(obj, 0);
-                        UpdateProperties(obj, SelectedView, new List<object>(), 0, false);
+                        GXDlmsUi.UpdateProperty(obj as GXDLMSObject, 0, SelectedView, true);
                         dev.KeepAliveStart();
                     }
                 }
@@ -2332,10 +2054,10 @@ namespace GXDLMSDirector
                 RefreshDevice(dev, false);
 
                 //Update association views.
-                GXDLMSObject it = dev.Objects.FindByLN(ObjectType.AssociationLogicalName, "0.0.40.0.4.255");
+                GXDLMSObject it = dev.Objects.FindByLN(ObjectType.AssociationLogicalName, "0.0.40.0.0.255");
                 if (it is GXDLMSAssociationLogicalName)
                 {
-                    (it as GXDLMSAssociationLogicalName).ObjectList = dev.Objects;
+                    (it as GXDLMSAssociationLogicalName).ObjectList.AddRange(dev.Objects);
                 }
             }
             GroupItems(GroupsMnu.Checked);
@@ -2426,7 +2148,7 @@ namespace GXDLMSDirector
             }
             else
             {
-                TraceView.Text = "";
+                TraceView.ResetText();
             }
         }
 
@@ -2472,7 +2194,7 @@ namespace GXDLMSDirector
                         //Update association views.
                         if (it is GXDLMSAssociationLogicalName && it.LogicalName == "0.0.40.0.4.255")
                         {
-                            (it as GXDLMSAssociationLogicalName).ObjectList = dev.Objects;
+                            (it as GXDLMSAssociationLogicalName).ObjectList.AddRange(dev.Objects);
                         }
                     }
                     //Read inactivity timeout.
@@ -2892,6 +2614,7 @@ namespace GXDLMSDirector
                         f.Width = ObjectPanelFrame.Width;
                         f.Height = ObjectPanelFrame.Height;
                         Views.Add(att[0].DLMSType, view);
+                        GXDlmsUi.Init(view, OnHandleAction);
                     }
                 }
 
@@ -4038,26 +3761,6 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// Conformance test is finnished.
-        /// </summary>
-        /// <param name="sender">Executed conformance test.</param>
-        void OnObjectTestCompleated(GXConformanceTest sender)
-        {
-            if (InvokeRequired)
-            {
-                BeginInvoke(new ConformanceReadyEvent(OnObjectTestCompleated), sender);
-            }
-            else
-            {
-                //If assocaiation view is re-read there might be new objects.
-                if (ProgressBar.Value < ProgressBar.Maximum)
-                {
-                    ++ProgressBar.Value;
-                }
-            }
-        }
-
-        /// <summary>
         /// Run basic conformance tests.
         /// </summary>
         private void runToolStripMenuItem_Click(object sender, EventArgs e)
@@ -4145,7 +3848,7 @@ namespace GXDLMSDirector
                 t.OnReady = OnConformanceReady;
                 t.OnError = OnConformanceError;
                 t.OnTrace = OnConformanceTrace;
-                t.OnObjectTestCompleated = OnObjectTestCompleated;
+                t.OnProgress = OnProgress;
                 t.Results = Path.Combine(testResults, it.Name + "_" + DateTime.Now.ToString("yyyy-MM-dd hh_mm_ss"));
                 Directory.CreateDirectory(t.Results);
                 using (Stream stream = File.Open(Path.Combine(t.Results, "Results.html"), FileMode.Create))

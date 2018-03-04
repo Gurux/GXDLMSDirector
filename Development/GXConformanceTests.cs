@@ -38,6 +38,7 @@ using Gurux.DLMS.Enums;
 using Gurux.DLMS.ManufacturerSettings;
 using Gurux.DLMS.Objects;
 using Gurux.DLMS.Objects.Enums;
+using Gurux.DLMS.UI;
 using GXDLMS.Common;
 using System;
 using System.Collections.Generic;
@@ -769,6 +770,7 @@ namespace GXDLMSDirector
 
                     for (int pos = 0; pos != settings.Amount; ++pos)
                     {
+                        int i = 0, cnt = cosemTests.Count;
                         foreach (KeyValuePair<GXDLMSObject, List<GXDLMSXmlPdu>> it in cosemTests)
                         {
                             if (!Continue)
@@ -777,14 +779,16 @@ namespace GXDLMSDirector
                             }
                             try
                             {
+                                test.OnProgress(test, "Testing " + it.Key.LogicalName, ++i, cnt);
                                 Execute(converter, test, it.Key, it.Value, output, settings);
                             }
                             catch (Exception ex)
                             {
                                 test.OnError(test, ex);
                             }
-                            test.OnObjectTestCompleated(test);
                         }
+                        i = 0;
+                        cnt = externalTests.Count;
                         foreach (KeyValuePair<string, List<GXDLMSXmlPdu>> it in externalTests)
                         {
                             if (!Continue)
@@ -793,13 +797,13 @@ namespace GXDLMSDirector
                             }
                             try
                             {
+                                test.OnProgress(test, "Testing " + it.Key, ++i, cnt);
                                 Execute(converter, test, it.Key, it.Value, output, settings);
                             }
                             catch (Exception ex)
                             {
                                 test.OnError(test, ex);
                             }
-                            test.OnObjectTestCompleated(test);
                         }
                         //Check this only once.
                         if (!settings.ExcludeBasicTests && pos == 0)
@@ -885,12 +889,13 @@ namespace GXDLMSDirector
                                 }
                             }
                         }
+                        //Test invalid password.
+                        TestInvalidPassword(settings, dev, output);
+                        TestImageTransfer(settings, test, dev, output);
                     }
                     if (!settings.ExcludeBasicTests)
                     {
                         TestAssociationLn(settings, dev, output);
-                        //Test invalid password.
-                        TestInvalidPassword(settings, dev, output);
                     }
 
                     if (dev.Comm.Framesize != 0)
@@ -1085,7 +1090,7 @@ namespace GXDLMSDirector
                 dev.HexPassword = null;
                 try
                 {
-                    Thread.Sleep(settings.DelayConnection * 1000);
+                    Thread.Sleep((int)settings.DelayConnection.TotalMilliseconds);
                     dev.InitializeConnection();
                     output.Errors.Insert(0, "Login succeeded with wrong password.");
                     dev.Comm.Disconnect();
@@ -1100,12 +1105,86 @@ namespace GXDLMSDirector
                 dev.HexPassword = hpw;
                 try
                 {
-                    Thread.Sleep(settings.DelayConnection * 1000);
+                    Thread.Sleep((int)settings.DelayConnection.TotalMilliseconds);
                     dev.InitializeConnection();
                 }
                 catch (GXDLMSException)
                 {
                     output.Errors.Insert(0, "Login failed after wrong password.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Test image transfer.
+        /// </summary>
+        /// <param name="settings">Conformance settings.</param>
+        /// <param name="dev">DLMS device.</param>
+        /// <param name="output"></param>
+        private static void TestImageTransfer(GXConformanceSettings settings, GXConformanceTest test, GXDLMSDevice dev, GXOutput output)
+        {
+            if (!string.IsNullOrEmpty(settings.ImageFile) && settings.ImageIdentifier != null && settings.ImageIdentifier.Length != 0)
+            {
+                GXDLMSObjectCollection objects = dev.Comm.client.Objects.GetObjects(ObjectType.ImageTransfer);
+                if (objects.Count != 0)
+                {
+                    output.PreInfo.Add("Testing Image transfer.");
+                    GXDLMSImageTransfer img = (GXDLMSImageTransfer)objects[0];
+                    dev.Comm.ReadValue(img, 5);
+                    if (!img.ImageTransferEnabled)
+                    {
+                        output.Errors.Insert(0, "Image transfer is not enabled.");
+                    }
+                    else
+                    {
+                        dev.Comm.ReadValue(img, 2);
+                        if (!img.ImageTransferEnabled)
+                        {
+                            output.Info.Add("Image block size is " + img.ImageBlockSize + " bytes.");
+                        }
+                        byte[] image = null;
+                        if (string.Compare(Path.GetExtension(settings.ImageFile), ".xml", true) == 0)
+                        {
+                            XmlDocument doc = new XmlDocument();
+                            doc.Load(settings.ImageFile);
+                            GXImageDlg.GetImage(doc.ChildNodes, ref image);
+                        }
+                        else
+                        {
+                            image = File.ReadAllBytes(settings.ImageFile);
+                        }
+                        GXReplyData reply = new GXReplyData();
+                        dev.Comm.ReadDataBlock(img.ImageTransferInitiate(dev.Comm.client, settings.ImageIdentifier, image.Length), "", 1, reply);
+                        reply.Clear();
+                        int imageBlockCount;
+                        byte[][] messages = img.ImageBlockTransfer(dev.Comm.client, image, out imageBlockCount);
+                        int pos = 0, cnt = messages.Length;
+                        foreach (byte[] it in messages)
+                        {
+                            test.OnProgress(test, "Image block transfer...", ++pos, cnt);
+                            dev.Comm.ReadDataBlock(it, "", 1, reply);
+                            reply.Clear();
+                        }
+                        if (settings.ImageVerify)
+                        {
+                            Thread.Sleep((int)settings.ImageVerifyWaitTime.TotalMilliseconds);
+                            dev.Comm.ReadDataBlock(img.ImageVerify(dev.Comm.client), "", 1, reply);
+                            if (reply.Error != 0)
+                            {
+                                output.Errors.Insert(0, "Image verification failed. Error code: " + reply.Error);
+                            }
+                        }
+                        reply.Clear();
+                        if (settings.ImageActivate)
+                        {
+                            Thread.Sleep((int)settings.ImageActivateWaitTime.TotalMilliseconds);
+                            dev.Comm.ReadDataBlock(img.ImageActivate(dev.Comm.client), "", 1, reply);
+                            if (reply.Error != 0)
+                            {
+                                output.Errors.Insert(0, "Image activation failed. Error code: " + reply.Error);
+                            }
+                        }
+                    }
                 }
             }
         }

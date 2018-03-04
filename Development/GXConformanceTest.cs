@@ -98,10 +98,7 @@ namespace GXDLMSDirector
             set;
         }
 
-        /// <summary>
-        /// Called when object test is ready.
-        /// </summary>
-        public ConformanceReadyEvent OnObjectTestCompleated
+        public ProgressEventHandler OnProgress
         {
             get;
             set;

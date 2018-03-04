@@ -31,8 +31,12 @@
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
+using Gurux.DLMS.UI;
 using System;
 using System.ComponentModel;
+using System.IO;
+using System.Windows.Forms;
+using System.Xml;
 
 namespace GXDLMSDirector
 {
@@ -127,7 +131,7 @@ namespace GXDLMSDirector
         [Description("Delay between connections.")]
         [Category("Connection")]
         [DefaultValue(0)]
-        public int DelayConnection
+        public TimeSpan DelayConnection
         {
             get;
             set;
@@ -141,5 +145,97 @@ namespace GXDLMSDirector
             get;
             set;
         }
+
+        private string imageFile;
+
+        [Description("Updated image file.")]
+        [Category("Image")]
+        [DefaultValue(null)]
+        [EditorAttribute(typeof(System.Windows.Forms.Design.FileNameEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public string ImageFile
+        {
+            get
+            {
+                return imageFile;
+            }
+            set
+            {
+                if (imageFile != value && ImageIdentifier == null || ImageIdentifier.Length == 0)
+                {
+                    if (string.Compare(Path.GetExtension(value), ".xml", true) == 0)
+                    {
+                        try
+                        {
+                            XmlDocument doc = new XmlDocument();
+                            doc.Load(value);
+                            ImageIdentifier = GXImageDlg.GetIdentification(doc.ChildNodes);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                            value = null;
+                        }
+                    }
+                }
+                imageFile = value;
+            }
+        }
+
+        [Description("Image Identifier.")]
+        [Category("Image")]
+        [DefaultValue(null)]
+        [TypeConverter(typeof(GXByteConverter))]
+        [Editor(typeof(UITextTypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public byte[] ImageIdentifier
+        {
+            get;
+            set;
+        }
+        /*
+        [Description("Send image in reversed order. This can be used to simulate that blocks are lost and they are re-sent.")]
+        [Category("Image")]
+        [DefaultValue(false)]
+        public bool ImageReverse
+        {
+            get;
+            set;
+        }
+        */
+
+        [Description("Is image verified.")]
+        [Category("Image")]
+        [DefaultValue(false)]
+        public bool ImageVerify
+        {
+            get;
+            set;
+        }
+        [Description("How long is waited before image is verified.")]
+        [Category("Image")]
+        [DefaultValue(false)]
+        public TimeSpan ImageVerifyWaitTime
+        {
+            get;
+            set;
+        }
+
+
+        [Description("Is image activated.")]
+        [Category("Image")]
+        [DefaultValue(false)]
+        public bool ImageActivate
+        {
+            get;
+            set;
+        }
+        [Description("How long is waited before image is activated.")]
+        [Category("Image")]
+        [DefaultValue(false)]
+        public TimeSpan ImageActivateWaitTime
+        {
+            get;
+            set;
+        }
+
     }
 }

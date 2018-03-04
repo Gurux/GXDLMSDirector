@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9931 $,
-//                  $Date: 2018-02-28 17:11:24 -0500 (ke, 28 helmi 2018) $
+// Version:         $Revision: 9938 $,
+//                  $Date: 2018-03-04 12:15:11 -0500 (su, 04 maalis 2018) $
 //                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
@@ -112,7 +112,7 @@ namespace GXDLMSDirector
         {
             lastTransaction = DateTime.Now;
             byte[] tmp = client.Read(it, attributeOrdinal)[0];
-            GXLogWriter.WriteLog(string.Format("Reading object {0} from interface {1}", it.LogicalName, it.ObjectType), tmp);
+            GXLogWriter.WriteLog(string.Format("Reading object {0}, interface {1}", it.LogicalName, it.ObjectType), tmp);
             return tmp;
         }
 
@@ -129,6 +129,7 @@ namespace GXDLMSDirector
                 tmp = client.Method(target, methodIndex, data, GXDLMSConverter.GetDLMSDataType(data));
             }
             int pos = 0;
+            string str = string.Format("Method object {0}, interface {1}", target.LogicalName, target.ObjectType);
             foreach (byte[] it in tmp)
             {
                 reply.Clear();
@@ -137,7 +138,7 @@ namespace GXDLMSDirector
                     ++pos;
                     NotifyProgress(text, pos, tmp.Length);
                 }
-                ReadDataBlock(it, text, reply);
+                ReadDataBlock(it, str, reply);
             }
             NotifyProgress(text, 1, 1);
         }
@@ -727,7 +728,7 @@ namespace GXDLMSDirector
                 client.Limits.MaxInfoRX = parent.MaxInfoRX;
                 client.Limits.MaxInfoTX = parent.MaxInfoTX;
                 client.MaxReceivePDUSize = parent.PduSize;
-                client.UserId = parent.UserId;                
+                client.UserId = parent.UserId;
                 client.Priority = parent.Priority;
                 client.ServiceClass = parent.ServiceClass;
 
@@ -943,20 +944,7 @@ namespace GXDLMSDirector
         public void Read(object sender, GXDLMSObject obj, int attribute, bool forceRead)
         {
             GXReplyData reply = new GXReplyData();
-            int[] indexes;
-            if (forceRead)
-            {
-                obj.ClearReadTime();
-                indexes = new int[(obj as IGXDLMSBase).GetAttributeCount()];
-                for (int pos = 0; pos != indexes.Length; ++pos)
-                {
-                    indexes[pos] = pos + 1;
-                }
-            }
-            else
-            {
-                indexes = (obj as IGXDLMSBase).GetAttributeIndexToRead();
-            }
+            int[] indexes = (obj as IGXDLMSBase).GetAttributeIndexToRead(forceRead);
             foreach (int it in indexes)
             {
                 reply.Clear();
@@ -1075,7 +1063,7 @@ namespace GXDLMSDirector
                     if (type == DataType.None)
                     {
                         byte[] data = client.Read(obj, it)[0];
-                        ReadDataBlock(data, "Write object type " + obj.ObjectType, reply);
+                        ReadDataBlock(data, "Read object type " + obj.ObjectType, reply);
                         type = reply.DataType;
                         if (type == DataType.None)
                         {
@@ -1092,13 +1080,13 @@ namespace GXDLMSDirector
                         }
                         foreach (byte[] tmp in client.Write(obj, it))
                         {
-                            ReadDataBlock(tmp, "Write object", reply);
+                            ReadDataBlock(tmp, string.Format("Writing object {0}, interface {1}", obj.LogicalName, obj.ObjectType), reply);
                         }
                         obj.ClearDirty(it);
                         //Read data once again to make sure it is updated.
                         reply.Clear();
                         byte[] data = client.Read(obj, it)[0];
-                        ReadDataBlock(data, "Read object " + obj.ObjectType, reply);
+                        ReadDataBlock(data, string.Format("Reading object {0}, interface {1}", obj.LogicalName, obj.ObjectType), reply);
                         val = reply.Value;
                         if (val is byte[] && (type = obj.GetUIDataType(it)) != DataType.None)
                         {
@@ -1131,7 +1119,9 @@ namespace GXDLMSDirector
         public void ReadValue(GXDLMSObject it, int attributeOrdinal)
         {
             GXReplyData reply = new GXReplyData();
-            ReadDataBlock(Read(it, attributeOrdinal), "Read object", reply);
+            lastTransaction = DateTime.Now;
+            string str = string.Format("Reading object {0}, interface {1}", it.LogicalName, it.ObjectType);
+            ReadDataBlock(client.Read(it, attributeOrdinal), str, reply);
             //If data type is unknown
             if (it.GetDataType(attributeOrdinal) == DataType.None)
             {

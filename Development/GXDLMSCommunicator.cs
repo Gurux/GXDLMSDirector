@@ -4,9 +4,9 @@
 //
 //
 //
-// Version:         $Revision: 9938 $,
-//                  $Date: 2018-03-04 12:15:11 -0500 (su, 04 maalis 2018) $
-//                  $Author: kurumi $
+// Version:         $Revision: 9942 $,
+//                  $Date: 2018-03-06 11:16:57 +0200 (Tue, 06 Mar 2018) $
+//                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -1030,6 +1030,10 @@ namespace GXDLMSDirector
                         if (value is byte[] && (type = obj.GetUIDataType(it)) != DataType.None)
                         {
                             value = GXDLMSClient.ChangeType((byte[])value, type);
+                        }
+                        if (reply.DataType != DataType.None && obj.GetDataType(it) == DataType.None)
+                        {
+                            obj.SetDataType(it, reply.DataType);
                         }
                         client.UpdateValue(obj, it, value);
                     }

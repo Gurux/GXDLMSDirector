@@ -32,6 +32,7 @@
 //---------------------------------------------------------------------------
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace GXDLMSDirector
@@ -62,6 +63,30 @@ namespace GXDLMSDirector
             {
                 MessageBox.Show(this, ex.Message);
             }
-        }      
+        }
+
+        /// <summary>
+        /// Reset to default value.
+        /// </summary>
+        private void ResetBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                propertyGrid1.ResetSelectedProperty();
+                PropertyDescriptor pg = TypeDescriptor.GetProperties(propertyGrid1.SelectedObject)[propertyGrid1.SelectedGridItem.Label];
+                AttributeCollection attributes = pg.Attributes;
+                DefaultValueAttribute myAttribute = (DefaultValueAttribute)attributes[typeof(DefaultValueAttribute)];
+                pg.SetValue(propertyGrid1.SelectedObject, myAttribute.Value);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message);
+            }
+        }
+
+        private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+
+        }
     }
 }

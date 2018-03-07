@@ -5,9 +5,9 @@
 //
 //
 //
-// Version:         $Revision: 9938 $,
-//                  $Date: 2018-03-04 19:15:11 +0200 (Sun, 04 Mar 2018) $
-//                  $Author: kurumi $
+// Version:         $Revision: 9950 $,
+//                  $Date: 2018-03-07 18:34:03 +0200 (Wed, 07 Mar 2018) $
+//                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -510,31 +510,38 @@ namespace GXDLMSDirector
                     }
                     else
                     {
-                        GXReplyData reply = new GXReplyData();
-                        if (ve.Value is byte[][])
+                        try
                         {
-                            int pos = 0, cnt = ((byte[][])ve.Value).Length;
-                            foreach (byte[] it in (byte[][])ve.Value)
+                            GXReplyData reply = new GXReplyData();
+                            if (ve.Value is byte[][])
                             {
-                                if (cnt != 1)
+                                int pos = 0, cnt = ((byte[][])ve.Value).Length;
+                                foreach (byte[] it in (byte[][])ve.Value)
                                 {
-                                    OnProgress(null, ve.Text, ++pos, cnt);
+                                    if (cnt != 1)
+                                    {
+                                        OnProgress(null, ve.Text, ++pos, cnt);
+                                    }
+                                    reply.Clear();
+                                    dev.Comm.ReadDataBlock(it, ve.Text, 1, reply);
                                 }
-                                reply.Clear();
-                                dev.Comm.ReadDataBlock(it, ve.Text, 1, reply);
+                            }
+                            else if (ve.Action == ActionType.Read)
+                            {
+                                dev.Comm.ReadValue(ve.Target, ve.Index);
+                            }
+                            else if (ve.Action == ActionType.Write)
+                            {
+                                dev.Comm.Write(ve.Target, ve.Index);
+                            }
+                            else if (ve.Action == ActionType.Action)
+                            {
+                                dev.Comm.MethodRequest(ve.Target, ve.Index, ve.Value, ve.Text, reply);
                             }
                         }
-                        else if (ve.Action == ActionType.Read)
+                        catch(Exception ex)
                         {
-                            dev.Comm.ReadValue(ve.Target, ve.Index);
-                        }
-                        else if (ve.Action == ActionType.Write)
-                        {
-                            dev.Comm.Write(ve.Target, ve.Index);
-                        }
-                        else if (ve.Action == ActionType.Action)
-                        {
-                            dev.Comm.MethodRequest(ve.Target, ve.Index, ve.Value, ve.Text, reply);
+                            ve.Exception = ex;
                         }
                         btn.View.PostAction(ve);
                         if (ve.Exception != null)
@@ -3970,6 +3977,38 @@ namespace GXDLMSDirector
         private void reRunToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
+        }
+
+        /// <summary>
+        /// Clear trace.
+        /// </summary>
+        private void clearTraceMnu_Click(object sender, EventArgs e)
+        {
+            TraceView.ResetText();
+        }
+
+        private void CopyTrace_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Clipboard.SetText(TraceView.Text);
+            }
+            catch (Exception ex)
+            {
+                Error.ShowError(this, ex);
+            }
+        }
+
+        private void NotificationCopy_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Clipboard.SetText(EventsView.Text);
+            }
+            catch (Exception ex)
+            {
+                Error.ShowError(this, ex);
+            }
         }
     }
 }

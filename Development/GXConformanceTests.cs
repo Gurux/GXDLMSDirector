@@ -212,9 +212,9 @@ namespace GXDLMSDirector
                 string indexStr = " attribute ";
                 if (it.IsRequest())
                 {
-                    if (settings.Delay != 0)
+                    if (settings.Delay.TotalSeconds != 0)
                     {
-                        Thread.Sleep((int)settings.Delay * 1000);
+                        Thread.Sleep((int)settings.Delay.TotalMilliseconds);
                     }
                     indexStr = " attribute ";
                     XmlNode i = null;
@@ -738,6 +738,12 @@ namespace GXDLMSDirector
                         string[] list = GetExternalTests(settings);
                         if (list.Length != 0)
                         {
+                            string dir = Path.Combine(test.Results, "External");
+                            if (!Directory.Exists(dir))
+                            {
+                                Directory.CreateDirectory(dir);
+                            }
+
                             string str = "External tests: " + list.Length;
                             test.OnTrace(test, str + ".\r\n");
                             output.PreInfo.Add(str);
@@ -750,6 +756,7 @@ namespace GXDLMSDirector
                                         externalTests.Add(new KeyValuePair<string, List<GXDLMSXmlPdu>>(it, client.Load(fs)));
                                         fs.Close();
                                     }
+                                    File.Copy(it, Path.Combine(dir, Path.GetFileName(it)));
                                 }
                                 catch (Exception e)
                                 {
@@ -1122,7 +1129,7 @@ namespace GXDLMSDirector
         /// <param name="dev">DLMS device.</param>
         /// <param name="output"></param>
         private static void TestImageTransfer(GXConformanceSettings settings, GXConformanceTest test, GXDLMSDevice dev, GXOutput output)
-        {
+        {          
             if (!string.IsNullOrEmpty(settings.ImageFile) && settings.ImageIdentifier != null && settings.ImageIdentifier.Length != 0)
             {
                 GXDLMSObjectCollection objects = dev.Comm.client.Objects.GetObjects(ObjectType.ImageTransfer);
@@ -1137,11 +1144,9 @@ namespace GXDLMSDirector
                     }
                     else
                     {
+                        //Step 1. BB: 4.4.6.4
                         dev.Comm.ReadValue(img, 2);
-                        if (!img.ImageTransferEnabled)
-                        {
-                            output.Info.Add("Image block size is " + img.ImageBlockSize + " bytes.");
-                        }
+                        output.Info.Add("Image block size is " + img.ImageBlockSize + " bytes.");
                         byte[] image = null;
                         if (string.Compare(Path.GetExtension(settings.ImageFile), ".xml", true) == 0)
                         {
@@ -1153,36 +1158,205 @@ namespace GXDLMSDirector
                         {
                             image = File.ReadAllBytes(settings.ImageFile);
                         }
+                        //Step 2. BB: 4.4.6.4
+                        bool error = false;
                         GXReplyData reply = new GXReplyData();
                         dev.Comm.ReadDataBlock(img.ImageTransferInitiate(dev.Comm.client, settings.ImageIdentifier, image.Length), "", 1, reply);
                         reply.Clear();
-                        int imageBlockCount;
-                        byte[][] messages = img.ImageBlockTransfer(dev.Comm.client, image, out imageBlockCount);
-                        int pos = 0, cnt = messages.Length;
-                        foreach (byte[] it in messages)
+
+                        //Check ImageTransferredBlocksStatus.
+                        dev.Comm.ReadValue(img, 3);
+                        if (img.ImageTransferredBlocksStatus != null)
                         {
-                            test.OnProgress(test, "Image block transfer...", ++pos, cnt);
-                            dev.Comm.ReadDataBlock(it, "", 1, reply);
-                            reply.Clear();
+                            foreach (char it in img.ImageTransferredBlocksStatus)
+                            {
+                                if (it != '0')
+                                {
+                                    error = true;
+                                    output.Errors.Add("Image transferred blocks status is wrong. It's " + img.ImageTransferredBlocksStatus + " and it shoud be zilled with 0.");
+                                }
+                            }
                         }
-                        if (settings.ImageVerify)
+
+                        //Check ImageTransferStatus.
+                        dev.Comm.ReadValue(img, 6);
+                        if (img.ImageTransferStatus != ImageTransferStatus.TransferInitiated)
                         {
-                            Thread.Sleep((int)settings.ImageVerifyWaitTime.TotalMilliseconds);
-                            dev.Comm.ReadDataBlock(img.ImageVerify(dev.Comm.client), "", 1, reply);
+                            error = true;
+                            output.Errors.Add("Image transfer status is wrong. It's " + img.ImageTransferStatus + " and it shoud be TransferInitiated.");
+                        }
+                        //Check ImageFirstNotTransferredBlockNumber.
+                        dev.Comm.ReadValue(img, 4);
+                        if (img.ImageFirstNotTransferredBlockNumber != 0)
+                        {
+                            error = true;
+                            output.Errors.Add("Image first not transferred block number wrong. It's " + img.ImageFirstNotTransferredBlockNumber + " and it shoud be 0.");
+                        }
+                        //Check ImageActivateInfo.
+                        dev.Comm.ReadValue(img, 7);
+                        if (img.ImageActivateInfo != null && img.ImageActivateInfo.Length != 0)
+                        {
+                            error = true;
+                            output.Errors.Add("Image activate info is not reset.");
+                        }
+                        if (!error)
+                        {
+                            output.Info.Add("Image activation Step 2 succeeded.");
+                        }
+                        //Step 3. BB: 4.4.6.4
+                        DateTime start = DateTime.Now;
+                        error = false;
+                        byte[][] blocks = img.GetImageBlocks(image);
+                        int pos = 0, cnt = blocks.Length;
+                        reply.Clear();
+                        foreach (byte[] b in blocks)
+                        {
+                            dev.Comm.ReadDataBlock(dev.Comm.client.Method(img, 2, b, DataType.Array), "", 1, reply);
                             if (reply.Error != 0)
                             {
-                                output.Errors.Insert(0, "Image verification failed. Error code: " + reply.Error);
+                                output.Errors.Insert(0, "Image transfer failed. Error code: " + reply.Error);
+                                return;
                             }
+                            reply.Clear();
+                            //Check ImageTransferredBlocksStatus.
+                            dev.Comm.ReadValue(img, 3);
+                            if (img.ImageTransferredBlocksStatus == null)
+                            {
+                                error = true;
+                                output.Errors.Add("Image Transferred blocks status is not implemented.");
+                            }
+                            else
+                            {
+                                if (img.ImageTransferredBlocksStatus.Length < pos)
+                                {
+                                    error = true;
+                                    output.Errors.Add("Image Transferred blocks status is wrong. Amount of bits is different than block size. (" + img.ImageTransferredBlocksStatus.Length + "/" + blocks.Length + ")");
+                                }
+                                else
+                                {
+                                    if (img.ImageTransferredBlocksStatus[pos] != '1')
+                                    {
+                                        error = true;
+                                        output.Errors.Add("Image transferred blocks status is wrong. It's " + img.ImageFirstNotTransferredBlockNumber + " and it shoud be " + blocks.Length + ".");
+                                    }
+                                }
+                            }
+                            test.OnProgress(test, "Image block transfer...", ++pos, cnt);
+                        }
+                        if (!error)
+                        {
+                            output.Info.Add("Image transfer (Step 3) succeeded.");
+                            output.Info.Add("Image transfer takes " + (DateTime.Now - start).ToString(@"hh\:mm\:ss"));
+                        }
+                        //Step 4. BB: 4.4.6.4
+                        error = false;
+                        test.OnProgress(test, "Checing completeness of the Image...", 1, 1);
+                        //Check ImageFirstNotTransferredBlockNumber.
+                        dev.Comm.ReadValue(img, 4);
+                        if (img.ImageFirstNotTransferredBlockNumber != blocks.Length)
+                        {
+                            error = true;
+                            output.Errors.Add("Image first not transferred block number wrong. It's " + img.ImageFirstNotTransferredBlockNumber + " and it shoud be " + blocks.Length + ".");
+                        }
+                        //Check ImageTransferredBlocksStatus.
+                        dev.Comm.ReadValue(img, 3);
+                        if (img.ImageTransferredBlocksStatus == null)
+                        {
+                            error = true;
+                            output.Errors.Add("Image Transferred blocks status is not implemented.");
+                        }
+                        else
+                        {
+                            if (img.ImageTransferredBlocksStatus.Length != blocks.Length)
+                            {
+                                error = true;
+                                output.Errors.Add("Image Transferred blocks status is wrong. Amount of bits is different than block size. (" + img.ImageTransferredBlocksStatus.Length + "/" + blocks.Length + ")");
+                            }
+                            foreach (char it in img.ImageTransferredBlocksStatus)
+                            {
+                                if (it != '1')
+                                {
+                                    error = true;
+                                    output.Errors.Add("Image transferred blocks status is wrong. It's " + img.ImageFirstNotTransferredBlockNumber + " and it shoud be " + blocks.Length + ".");
+                                }
+                            }
+                        }
+                        if (!error)
+                        {
+                            output.Info.Add("Image completeness Step 4 succeeded.");
+                        }
+
+                        if (settings.ImageVerify)
+                        {
+                            start = DateTime.Now;
+                            //Step 5. BB: 4.4.6.4
+                            do
+                            {
+                                reply.Clear();
+                                test.OnProgress(test, "Verifying image...", 1, 1);
+                                try
+                                {
+                                    dev.Comm.ReadDataBlock(img.ImageVerify(dev.Comm.client), "", 1, reply);
+                                }
+                                catch (GXDLMSException ex)
+                                {
+                                    reply.Error = (short)ex.ErrorCode;
+                                }
+                                if (reply.Error == (short)ErrorCode.TemporaryFailure)
+                                {
+                                    test.OnProgress(test, "Check is image verify ready...", 1, 1);
+                                    dev.Comm.ReadValue(img, 6);
+                                    if (img.ImageTransferStatus == ImageTransferStatus.VerificationInitiated)
+                                    {
+                                        test.OnProgress(test, "Still verifying...", 1, 1);
+                                    }
+                                    Thread.Sleep((int)settings.ImageVerifyWaitTime.TotalMilliseconds);
+                                }
+                                else if (reply.Error != 0)
+                                {
+                                    output.Errors.Insert(0, "Image verification failed. Error code: " + reply.Error);
+                                    return;
+                                }
+                            } while (reply.Error != 0);
+                            output.Info.Add("Image verify succeeded (Step 5).");
+                            output.Info.Add("Verify takes " + (DateTime.Now - start).ToString(@"hh\:mm\:ss"));
                         }
                         reply.Clear();
                         if (settings.ImageActivate)
                         {
-                            Thread.Sleep((int)settings.ImageActivateWaitTime.TotalMilliseconds);
-                            dev.Comm.ReadDataBlock(img.ImageActivate(dev.Comm.client), "", 1, reply);
-                            if (reply.Error != 0)
+                            start = DateTime.Now;
+                            //Step 7. BB: 4.4.6.4
+                            do
                             {
-                                output.Errors.Insert(0, "Image activation failed. Error code: " + reply.Error);
-                            }
+                                test.OnProgress(test, "Activating image...", 1, 1);
+                                try
+                                {
+                                    reply.Clear();
+                                    dev.Comm.ReadDataBlock(img.ImageActivate(dev.Comm.client), "", 1, reply);
+                                }
+                                catch (GXDLMSException ex)
+                                {
+                                    reply.Error = (short)ex.ErrorCode;
+                                }
+                                if (reply.Error == (short)ErrorCode.TemporaryFailure)
+                                {
+                                    test.OnProgress(test, "Check is image activation ready...", 1, 1);
+                                    dev.Comm.ReadValue(img, 6);
+                                    if (img.ImageTransferStatus == ImageTransferStatus.ActivationInitiated)
+                                    {
+                                        test.OnProgress(test, "Still activating...", 1, 1);
+                                    }
+                                    Thread.Sleep((int)settings.ImageActivateWaitTime.TotalMilliseconds);
+                                }
+                                else if (reply.Error != 0)
+                                {
+                                    output.Errors.Insert(0, "Image activation failed. Error code: " + reply.Error);
+                                    return;
+                                }
+                            } while (reply.Error != 0);
+                            output.Info.Add("Image activation succeeded (Step 6).");
+                            output.Info.Add("Activation takes " + (DateTime.Now - start).ToString(@"hh\:mm\:ss"));
+
                         }
                     }
                 }

@@ -37,6 +37,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace GXDLMSDirector
 {
@@ -52,6 +53,9 @@ namespace GXDLMSDirector
         {
             ShowValues = true;
             Amount = 1;
+            ImageVerifyWaitTime = new TimeSpan(0, 0, 10);
+            ImageActivateWaitTime = new TimeSpan(0, 0, 10);
+            DelayConnection = Delay = new TimeSpan(0, 0, 0);
         }
 
         [Description("Are meters reading concurrently.")]
@@ -100,18 +104,35 @@ namespace GXDLMSDirector
 
         }
 
-        [Description("Delay between tests in seconds.")]
-        [DefaultValue(0)]
-        [Category("Accessibility")]
-        public uint Delay
+        [XmlIgnore]
+        [Description("Delay between tests.")]
+        [DefaultValue(typeof(TimeSpan), "00:00:00")]
+        public TimeSpan Delay
         {
             get;
             set;
+        }
 
+        [Browsable(false)]
+        [DefaultValue("00:00:00")]
+        public string DelayAsString
+        {
+            get
+            {
+                return XmlConvert.ToString(Delay);
+            }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    Delay = XmlConvert.ToTimeSpan(value);
+                }
+            }
         }
 
         [Description("External tests")]
         [EditorAttribute(typeof(System.Windows.Forms.Design.FolderNameEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [DefaultValue(null)]
         [Category("Accessibility")]
         public string ExternalTests
         {
@@ -121,20 +142,38 @@ namespace GXDLMSDirector
 
         [Description("Invalid password.")]
         [Category("Connection")]
-        [DefaultValue("")]
+        [DefaultValue(null)]
         public string InvalidPassword
         {
             get;
             set;
         }
 
+        [XmlIgnore]
         [Description("Delay between connections.")]
         [Category("Connection")]
-        [DefaultValue(0)]
+        [DefaultValue(typeof(TimeSpan), "00:00:00")]
         public TimeSpan DelayConnection
         {
             get;
             set;
+        }
+
+        [Browsable(false)]
+        [DefaultValue("00:00:00")]
+        public string DelayConnectionAsString
+        {
+            get
+            {
+                return XmlConvert.ToString(DelayConnection);
+            }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    DelayConnection = XmlConvert.ToTimeSpan(value);
+                }
+            }
         }
 
         [Description("How many times the tests are executed.")]
@@ -210,13 +249,32 @@ namespace GXDLMSDirector
             get;
             set;
         }
+
+        [XmlIgnore]
         [Description("How long is waited before image is verified.")]
         [Category("Image")]
-        [DefaultValue(false)]
+        [DefaultValue(typeof(TimeSpan), "00:00:10")]
         public TimeSpan ImageVerifyWaitTime
         {
             get;
             set;
+        }
+
+        [Browsable(false)]
+        [DefaultValue("00:00:10")]
+        public string ImageVerifyWaitTimeAsString
+        {
+            get
+            {
+                return XmlConvert.ToString(ImageVerifyWaitTime);
+            }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    ImageVerifyWaitTime = XmlConvert.ToTimeSpan(value);
+                }
+            }
         }
 
 
@@ -228,14 +286,32 @@ namespace GXDLMSDirector
             get;
             set;
         }
+
+        [XmlIgnore]
         [Description("How long is waited before image is activated.")]
         [Category("Image")]
-        [DefaultValue(false)]
+        [DefaultValue(typeof(TimeSpan), "00:00:10")]
         public TimeSpan ImageActivateWaitTime
         {
             get;
             set;
         }
 
+        [Browsable(false)]
+        [DefaultValue("00:00:10")]
+        public string ImageActivateWaitTimeAsString
+        {
+            get
+            {
+                return XmlConvert.ToString(ImageActivateWaitTime);
+            }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    ImageActivateWaitTime = XmlConvert.ToTimeSpan(value);
+                }
+            }
+        }
     }
 }

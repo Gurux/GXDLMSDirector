@@ -38,6 +38,7 @@ using System.Collections.Generic;
 
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 
 namespace GXDLMSDirector
@@ -310,6 +311,35 @@ namespace GXDLMSDirector
                 if (checkUpdates != null)
                 {
                     checkUpdates.Cancel();
+                }
+            }
+            catch (Exception Ex)
+            {
+                GXDLMS.Common.Error.ShowError(this, Ex);
+            }
+        }
+
+        /// <summary>
+        /// Copy external media info to the clipboard.
+        /// </summary>
+        private void NotificationCopy_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (ListViewItem it in MediaList.SelectedItems)
+                {
+                    foreach(var i in it.SubItems)
+                    {
+                        sb.Append(i.ToString());
+                        sb.Append(";");
+                    }
+                    if (sb.Length != 0)
+                    {
+                        --sb.Length;
+                        sb.AppendLine("");
+                        Clipboard.SetText(sb.ToString());
+                    }
                 }
             }
             catch (Exception Ex)

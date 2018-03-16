@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9950 $,
-//                  $Date: 2018-03-07 18:34:03 +0200 (Wed, 07 Mar 2018) $
+// Version:         $Revision: 9972 $,
+//                  $Date: 2018-03-16 16:58:07 +0200 (Fri, 16 Mar 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -53,7 +53,6 @@ using Gurux.DLMS.Enums;
 using Gurux.DLMS.UI;
 using Gurux.Net;
 using System.Text;
-using Gurux.DLMS.Secure;
 
 namespace GXDLMSDirector
 {
@@ -63,7 +62,7 @@ namespace GXDLMSDirector
 
         delegate void CheckUpdatesEventHandler(MainForm form);
         GXAsyncWork TransactionWork;
-        Dictionary<Type, IGXDLMSView> Views = new Dictionary<Type, IGXDLMSView>();
+        Dictionary<Type, List<IGXDLMSView>> Views;
         String path;
         GXManufacturerCollection Manufacturers;
         System.Collections.Hashtable ObjectTreeItems = new System.Collections.Hashtable();
@@ -367,7 +366,7 @@ namespace GXDLMSDirector
                 {
                     ObjectPanelFrame.BringToFront();
                     SaveAsTemplateBtn.Enabled = true;
-                    SelectedView = Views[obj.GetType()];
+                    SelectedView = GXDlmsUi.GetView(Views, (GXDLMSObject)obj);
                     foreach (Control it in ObjectPanelFrame.Controls)
                     {
                         it.Hide();
@@ -494,6 +493,7 @@ namespace GXDLMSDirector
             GXActionArgs ve = new GXActionArgs(btn.Target, btn.Index);
             ve.Client = dev.Comm.client;
             ve.Action = btn.Action;
+
             GXDlmsUi.UpdateAccessRights(btn.View, btn.Target, false);
             try
             {
@@ -1566,7 +1566,6 @@ namespace GXDLMSDirector
                     {
                         GXDLMSObject obj = item as GXDLMSObject;
                         dev = obj.Parent.Tag as GXDLMSDevice;
-                        IGXDLMSView view = Views[obj.GetType()];
                         dev.KeepAliveStop();
                         this.OnProgress(dev, "Reading...", 0, 1);
                         try
@@ -1582,11 +1581,6 @@ namespace GXDLMSDirector
                         }
                         DLMSItemOnChange(obj, false, 0, null);
                         dev.KeepAliveStart();
-                        //Draw graph again...
-                        if (view is GXDLMSProfileGenericView)
-                        {
-                            view.Target = obj;
-                        }
                     }
                     else if (item is GXDLMSObjectCollection)
                     {
@@ -2607,23 +2601,8 @@ namespace GXDLMSDirector
                 ObjectValueView.Columns.Add("Object Type");
                 ObjectValueView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
                 LoadXmlPositioning();
-                foreach (Type type in typeof(IGXDLMSView).Assembly.GetTypes())
-                {
-                    GXDLMSViewAttribute[] att = (GXDLMSViewAttribute[])type.GetCustomAttributes(typeof(GXDLMSViewAttribute), true);
-                    if (!type.IsInterface && typeof(IGXDLMSView).IsAssignableFrom(type))
-                    {
-                        IGXDLMSView view = Activator.CreateInstance(type) as IGXDLMSView;
-                        Form f = view as Form;
-                        f.TopLevel = false;
-                        f.TopMost = false;
-                        f.FormBorderStyle = FormBorderStyle.None;
-                        f.Dock = DockStyle.Fill;
-                        f.Width = ObjectPanelFrame.Width;
-                        f.Height = ObjectPanelFrame.Height;
-                        Views.Add(att[0].DLMSType, view);
-                        GXDlmsUi.Init(view, OnHandleAction);
-                    }
-                }
+
+                Views = GXDlmsUi.GetViews(ObjectPanelFrame, OnHandleAction);
 
                 if (GXManufacturerCollection.IsFirstRun())
                 {

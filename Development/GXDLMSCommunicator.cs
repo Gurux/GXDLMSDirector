@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9942 $,
-//                  $Date: 2018-03-06 11:16:57 +0200 (Tue, 06 Mar 2018) $
+// Version:         $Revision: 9972 $,
+//                  $Date: 2018-03-16 16:58:07 +0200 (Fri, 16 Mar 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -110,7 +110,6 @@ namespace GXDLMSDirector
 
         public byte[] Read(GXDLMSObject it, int attributeOrdinal)
         {
-            lastTransaction = DateTime.Now;
             byte[] tmp = client.Read(it, attributeOrdinal)[0];
             GXLogWriter.WriteLog(string.Format("Reading object {0}, interface {1}", it.LogicalName, it.ObjectType), tmp);
             return tmp;
@@ -118,7 +117,6 @@ namespace GXDLMSDirector
 
         public void MethodRequest(GXDLMSObject target, int methodIndex, object data, string text, GXReplyData reply)
         {
-            lastTransaction = DateTime.Now;
             byte[][] tmp;
             if (data is byte[])
             {
@@ -855,6 +853,7 @@ namespace GXDLMSDirector
         /// <returns>Received data.</returns>
         internal void ReadDataBlock(byte[] data, string text, int multiplier, GXReplyData reply)
         {
+            lastTransaction = DateTime.Now;
             GXLogWriter.WriteLog(text, data);
             if (parent.OnTrace != null)
             {
@@ -1123,7 +1122,6 @@ namespace GXDLMSDirector
         public void ReadValue(GXDLMSObject it, int attributeOrdinal)
         {
             GXReplyData reply = new GXReplyData();
-            lastTransaction = DateTime.Now;
             string str = string.Format("Reading object {0}, interface {1}", it.LogicalName, it.ObjectType);
             ReadDataBlock(client.Read(it, attributeOrdinal), str, reply);
             //If data type is unknown

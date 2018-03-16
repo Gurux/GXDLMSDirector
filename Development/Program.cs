@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9818 $,
-//                  $Date: 2018-01-22 09:05:42 +0200 (ma, 22 tammi 2018) $
+// Version:         $Revision: 9972 $,
+//                  $Date: 2018-03-16 16:58:07 +0200 (Fri, 16 Mar 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -34,7 +34,6 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using GXDLMS.ManufacturerSettings;
 using System.IO;
 using System.Threading;
 using System.Reflection;
@@ -42,7 +41,6 @@ using Gurux.Common;
 using System.Deployment.Application;
 using Microsoft.Win32;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 namespace GXDLMSDirector
 {
@@ -91,9 +89,34 @@ namespace GXDLMSDirector
         static void DownloadMedias(object sender, GXAsyncWork work, object[] parameters)
         {
             string[] list = (string[])parameters[0];
+            string medias = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Medias");
             foreach (string it in list)
             {
-                GXExternalMediaForm.DownLoadMedia(it);
+                IGXUpdater updater = null;
+                string path = Path.Combine(medias, Path.GetFileName(it));
+                Assembly asm = null;
+                //Check is there new version from the media.
+                if (File.Exists(path))
+                {
+                    asm = Assembly.LoadFile(path);
+                    foreach (Type type in asm.GetTypes())
+                    {
+                        if (!type.IsAbstract && type.IsClass && typeof(IGXUpdater).IsAssignableFrom(type))
+                        {
+                            updater = Activator.CreateInstance(type) as IGXUpdater;
+                            break;
+                        }
+                    }
+                    if (updater != null && GXExternalMediaForm.CheckUpdates(updater, asm))
+                    {
+                        //TODO: Show that there are new updates.
+                    }
+                }
+                else
+                {
+                    //If external media is missing.
+                    GXExternalMediaForm.DownLoadMedia(it);
+                }
             }
         }
 
@@ -212,7 +235,7 @@ namespace GXDLMSDirector
                         if (downloadedMedias.Count != 0)
                         {
                             //Download media again if not found.
-                            GXAsyncWork checkUpdates = new GXAsyncWork(null, OnAsyncStateChange, DownloadMedias, OnError, null, new object[] { missingMedias.ToArray() });
+                            GXAsyncWork checkUpdates = new GXAsyncWork(null, OnAsyncStateChange, DownloadMedias, OnError, null, new object[] { downloadedMedias.ToArray() });
                             checkUpdates.Start();
                         }
                     }

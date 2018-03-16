@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Messages>
+<GetRequest>
+  <GetRequestNormal>
+    <InvokeIdAndPriority Value="*" />
+    <AttributeDescriptor>
+      <!--PARAMETER_MONITOR-->
+      <ClassId Value="65" />
+      <InstanceId Value="0000100200FF" />
+      <AttributeId Value="2" />
+    </AttributeDescriptor>
+  </GetRequestNormal>
+</GetRequest>
+<GetResponse>
+  <GetResponseNormal>
+    <InvokeIdAndPriority Value="*" />
+    <Result>
+      <Data>
+        <Structure Qty="4" >
+          <UInt16 Value="*" />
+          <OctetString Value="*" />
+          <Int8 Value="*" />
+          <None Value="*" />
+        </Structure>
+      </Data>
+    </Result>
+  </GetResponseNormal>
+</GetResponse>
+<GetRequest>
+  <GetRequestNormal>
+    <InvokeIdAndPriority Value="*" />
+    <AttributeDescriptor>
+      <!--PARAMETER_MONITOR-->
+      <ClassId Value="65" />
+      <InstanceId Value="0000100200FF" />
+      <AttributeId Value="3" />
+    </AttributeDescriptor>
+  </GetRequestNormal>
+</GetRequest>
+<GetResponse>
+  <GetResponseNormal>
+    <InvokeIdAndPriority Value="*" />
+    <Result>
+      <Data>
+        <OctetString Value="*" />
+      </Data>
+    </Result>
+  </GetResponseNormal>
+</GetResponse>
+<GetRequest>
+  <GetRequestNormal>
+    <InvokeIdAndPriority Value="*" />
+    <AttributeDescriptor>
+      <!--PARAMETER_MONITOR-->
+      <ClassId Value="65" />
+      <InstanceId Value="0000100200FF" />
+      <AttributeId Value="4" />
+    </AttributeDescriptor>
+  </GetRequestNormal>
+</GetRequest>
+<GetResponse>
+  <GetResponseNormal>
+    <InvokeIdAndPriority Value="*" />
+    <Result>
+      <Data>
+        <Array Qty="*" >
+          <Structure Qty="3" >
+            <UInt16 Value="*" />
+            <OctetString Value="*" />
+            <Int8 Value="*" />
+          </Structure>
+        </Array>
+      </Data>
+    </Result>
+  </GetResponseNormal>
+</GetResponse>
+</Messages>

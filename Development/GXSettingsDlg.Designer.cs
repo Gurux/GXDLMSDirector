@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GXSettingsDlg));
             this.panel1 = new System.Windows.Forms.Panel();
             this.OKBtn = new System.Windows.Forms.Button();
@@ -37,16 +38,20 @@
             this.ExternalMediasTab = new System.Windows.Forms.TabPage();
             this.MediaList = new System.Windows.Forms.ListView();
             this.MediaNameCH = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.VersionCH = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.PathCH = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.panel2 = new System.Windows.Forms.Panel();
             this.CheckUpdatesBtn = new System.Windows.Forms.Button();
             this.RemoveBtn = new System.Windows.Forms.Button();
             this.AddBtn = new System.Windows.Forms.Button();
-            this.VersionCH = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.PathCH = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.NotificationMnu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.NotificationCopy = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.panel1.SuspendLayout();
             this.Tabs.SuspendLayout();
             this.ExternalMediasTab.SuspendLayout();
             this.panel2.SuspendLayout();
+            this.NotificationMnu.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -122,6 +127,7 @@
             this.MediaNameCH,
             this.VersionCH,
             this.PathCH});
+            this.MediaList.ContextMenuStrip = this.NotificationMnu;
             this.MediaList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MediaList.FullRowSelect = true;
             this.MediaList.HideSelection = false;
@@ -137,6 +143,16 @@
             // 
             this.MediaNameCH.Text = "Name";
             this.MediaNameCH.Width = 72;
+            // 
+            // VersionCH
+            // 
+            this.VersionCH.Text = "Version";
+            this.VersionCH.Width = 72;
+            // 
+            // PathCH
+            // 
+            this.PathCH.Text = "Path";
+            this.PathCH.Width = 172;
             // 
             // panel2
             // 
@@ -182,15 +198,25 @@
             this.AddBtn.UseVisualStyleBackColor = true;
             this.AddBtn.Click += new System.EventHandler(this.AddBtn_Click);
             // 
-            // VersionCH
+            // NotificationMnu
             // 
-            this.VersionCH.Text = "Version";
-            this.VersionCH.Width = 72;
+            this.NotificationMnu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.NotificationCopy,
+            this.toolStripSeparator7});
+            this.NotificationMnu.Name = "contextMenuStrip1";
+            this.NotificationMnu.Size = new System.Drawing.Size(153, 54);
             // 
-            // PathCH
+            // NotificationCopy
             // 
-            this.PathCH.Text = "Path";
-            this.PathCH.Width = 172;
+            this.NotificationCopy.Name = "NotificationCopy";
+            this.NotificationCopy.Size = new System.Drawing.Size(152, 22);
+            this.NotificationCopy.Text = "Copy";
+            this.NotificationCopy.Click += new System.EventHandler(this.NotificationCopy_Click);
+            // 
+            // toolStripSeparator7
+            // 
+            this.toolStripSeparator7.Name = "toolStripSeparator7";
+            this.toolStripSeparator7.Size = new System.Drawing.Size(149, 6);
             // 
             // GXSettingsDlg
             // 
@@ -212,6 +238,7 @@
             this.Tabs.ResumeLayout(false);
             this.ExternalMediasTab.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
+            this.NotificationMnu.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -232,5 +259,8 @@
         private System.Windows.Forms.Button AddBtn;
         private System.Windows.Forms.ColumnHeader VersionCH;
         private System.Windows.Forms.ColumnHeader PathCH;
+        private System.Windows.Forms.ContextMenuStrip NotificationMnu;
+        private System.Windows.Forms.ToolStripMenuItem NotificationCopy;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
     }
 }

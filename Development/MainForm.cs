@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9972 $,
-//                  $Date: 2018-03-16 16:58:07 +0200 (Fri, 16 Mar 2018) $
+// Version:         $Revision: 9981 $,
+//                  $Date: 2018-03-21 20:07:23 +0200 (Wed, 21 Mar 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -233,12 +233,14 @@ namespace GXDLMSDirector
                 receivedTraceData.Clear();
                 TraceView.ResetText();
                 selectedDevice.OnTrace = null;
+                selectedDevice.OnEvent = null;
                 selectedDevice = null;
             }
             if (device != null)
             {
                 selectedDevice = device;
                 device.OnTrace = OnTrace;
+                device.OnEvent = Events_OnReceived;
             }
             ConnectCMnu.Enabled = ConnectBtn.Enabled = ConnectMnu.Enabled = (state & DeviceState.Initialized) != 0;
             ReadCMnu.Enabled = ReadBtn.Enabled = RefreshMnu.Enabled = ReadMnu.Enabled = (state & DeviceState.Connected) == DeviceState.Connected;
@@ -2694,6 +2696,9 @@ namespace GXDLMSDirector
             }
         }
 
+        GXDLMSTranslator eventsTranslator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
+        GXByteBuffer eventsData = new GXByteBuffer();
+
         /// <summary>
         /// Meter sends event notification.
         /// </summary>
@@ -2719,15 +2724,14 @@ namespace GXDLMSDirector
                     try
                     {
                         //Show as PDU.
-                        GXDLMSTranslator translator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
-                        translator.PduOnly = NotificationPdu.Checked;
-                        GXByteBuffer bb = new GXByteBuffer((byte[])e.Data);
+                        eventsTranslator.PduOnly = NotificationPdu.Checked;
+                        eventsData.Set((byte[])e.Data);
                         GXByteBuffer pdu = new GXByteBuffer();
-                        InterfaceType type = GXDLMSTranslator.GetDlmsFraming(bb);
+                        InterfaceType type = GXDLMSTranslator.GetDlmsFraming(eventsData);
                         StringBuilder sb = new StringBuilder();
-                        while (translator.FindNextFrame(bb, pdu, type))
+                        while (eventsTranslator.FindNextFrame(eventsData, pdu, type))
                         {
-                            sb.Append(translator.MessageToXml(bb));
+                            sb.Append(eventsTranslator.MessageToXml(eventsData));
                             pdu.Clear();
                         }
                         if (AutoReset.Checked)
@@ -2738,6 +2742,7 @@ namespace GXDLMSDirector
                     }
                     catch (Exception ex)
                     {
+                        eventsData.Clear();
                         OnAddNotification(ex.Message);
                     }
                 }

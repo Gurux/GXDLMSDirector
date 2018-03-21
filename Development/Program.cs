@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9972 $,
-//                  $Date: 2018-03-16 16:58:07 +0200 (Fri, 16 Mar 2018) $
+// Version:         $Revision: 9981 $,
+//                  $Date: 2018-03-21 20:07:23 +0200 (Wed, 21 Mar 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -168,6 +168,7 @@ namespace GXDLMSDirector
                         Properties.Settings.Default.Upgrade();
                         Properties.Settings.Default.UpdateSettings = false;
                         Properties.Settings.Default.Save();
+                        Gurux.DLMS.UI.GXDlmsUi.Upgrade();
                     }
 
                     Assembly asm = Assembly.GetExecutingAssembly();

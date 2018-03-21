@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9901 $,
-//                  $Date: 2018-02-21 17:18:01 +0200 (Wed, 21 Feb 2018) $
+// Version:         $Revision: 9981 $,
+//                  $Date: 2018-03-21 20:07:23 +0200 (Wed, 21 Mar 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -156,6 +156,23 @@ namespace GXDLMSDirector
                         AuthenticationKeyAsciiCb.CheckedChanged += AuthenticationKeyAsciiCb_CheckedChanged;
                         AuthenticationKeyTB.Text = Device.AuthenticationKey;
                     }
+
+                    if (IsAscii(GXCommon.HexToBytes(Device.ServerSystemTitle)))
+                    {
+                        ServerSystemTitleAsciiCb.CheckedChanged -= ServerSystemTitleAsciiCb_CheckedChanged;
+                        ServerSystemTitleAsciiCb.Checked = true;
+                        ServerSystemTitleAsciiCb.CheckedChanged += ServerSystemTitleAsciiCb_CheckedChanged;
+                        ServerSystemTitle.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(Device.ServerSystemTitle));
+                    }
+                    else
+                    {
+                        ServerSystemTitleAsciiCb.CheckedChanged -= ServerSystemTitleAsciiCb_CheckedChanged;
+                        ServerSystemTitleAsciiCb.Checked = false;
+                        ServerSystemTitleAsciiCb.CheckedChanged += ServerSystemTitleAsciiCb_CheckedChanged;
+                        ServerSystemTitle.Text = Device.ServerSystemTitle;
+                    }
+                    UsePreEstablishedApplicationAssociations.Checked = Device.PreEstablished;
+
                     this.VerboseModeCB.Checked = Device.Verbose;
                     this.NameTB.Text = Device.Name;
                     SelectedMedia = Device.Media;
@@ -604,6 +621,14 @@ namespace GXDLMSDirector
                     {
                         throw new ArgumentException("Invalid block cipher key.");
                     }
+
+                    if (UsePreEstablishedApplicationAssociations.Checked)
+                    {
+                        if (ServerSystemTitle.Text.Trim().Length == 0)
+                        {
+                            throw new ArgumentException("Invalid server system title.");
+                        }
+                    }
                 }
                 GXServerAddress server = (GXServerAddress)ServerAddressTypeCB.SelectedItem;
                 if (server.HDLCAddress == HDLCAddressType.SerialNumber && PhysicalServerAddressTB.Value == 0)
@@ -729,6 +754,9 @@ namespace GXDLMSDirector
                 Device.SystemTitle = GetAsHex(SystemTitleTB.Text, SystemTitleAsciiCb.Checked);
                 Device.BlockCipherKey = GetAsHex(BlockCipherKeyTB.Text, BlockCipherKeyAsciiCb.Checked);
                 Device.AuthenticationKey = GetAsHex(AuthenticationKeyTB.Text, AuthenticationKeyAsciiCb.Checked);
+                Device.ServerSystemTitle = GetAsHex(ServerSystemTitle.Text, ServerSystemTitleAsciiCb.Checked);
+                Device.PreEstablished = UsePreEstablishedApplicationAssociations.Checked;
+
                 Device.InvocationCounter = UInt32.Parse(InvocationCounterTB.Text);
                 Device.Challenge = GXCommon.ToHex(GXCommon.HexToBytes(ChallengeTB.Text), false);
                 UpdateConformance();
@@ -983,7 +1011,7 @@ namespace GXDLMSDirector
                     BlockCipherKeyTB.Text = GXCommon.ToHex(man.BlockCipherKey, true);
                 }
 
-                AuthenticationKeyAsciiCb.Checked = IsAscii(man.AuthenticationKey);
+                AuthenticationKeyAsciiCb.Checked = man.AuthenticationKey == null || IsAscii(man.AuthenticationKey);
                 if (AuthenticationKeyAsciiCb.Checked)
                 {
                     AuthenticationKeyTB.Text = ASCIIEncoding.ASCII.GetString(man.AuthenticationKey);
@@ -991,6 +1019,15 @@ namespace GXDLMSDirector
                 else
                 {
                     AuthenticationKeyTB.Text = GXCommon.ToHex(man.AuthenticationKey, true);
+                }
+                ServerSystemTitleAsciiCb.Checked = IsAscii(man.ServerSystemTitle);
+                if (ServerSystemTitleAsciiCb.Checked)
+                {
+                    ServerSystemTitle.Text = ASCIIEncoding.ASCII.GetString(man.ServerSystemTitle);
+                }
+                else
+                {
+                    ServerSystemTitle.Text = GXCommon.ToHex(man.ServerSystemTitle, true);
                 }
 
                 InvocationCounterTB.Text = "0";
@@ -1286,6 +1323,42 @@ namespace GXDLMSDirector
         private void InactivityTimeoutTb_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        /// <summary>
+        /// Enable server system title when Pre-Established Application Associations are used.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void UsePreEstablishedApplicationAssociations_CheckedChanged(object sender, EventArgs e)
+        {
+            ServerSystemTitle.ReadOnly = !UsePreEstablishedApplicationAssociations.Checked;
+        }
+
+        private void ServerSystemTitleAsciiCb_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (ServerSystemTitleAsciiCb.Checked)
+                {
+                    if (!IsAscii(GXCommon.HexToBytes(ServerSystemTitle.Text)))
+                    {
+                        ServerSystemTitleAsciiCb.CheckedChanged -= ServerSystemTitleAsciiCb_CheckedChanged;
+                        ServerSystemTitleAsciiCb.Checked = !ServerSystemTitleAsciiCb.Checked;
+                        ServerSystemTitleAsciiCb.CheckedChanged += ServerSystemTitleAsciiCb_CheckedChanged;
+                        throw new ArgumentOutOfRangeException(Properties.Resources.InvalidASCII);
+                    }
+                    ServerSystemTitle.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(ServerSystemTitle.Text));
+                }
+                else
+                {
+                    ServerSystemTitle.Text = GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(ServerSystemTitle.Text), true);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message);
+            }
         }
     }
 }

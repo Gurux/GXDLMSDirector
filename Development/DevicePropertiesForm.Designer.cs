@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9901 $,
-//                  $Date: 2018-02-21 17:18:01 +0200 (Wed, 21 Feb 2018) $
+// Version:         $Revision: 9981 $,
+//                  $Date: 2018-03-21 20:07:23 +0200 (Wed, 21 Mar 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -97,6 +97,9 @@ namespace GXDLMSDirector
             this.EventNotificationCB = new System.Windows.Forms.CheckBox();
             this.ActionCB = new System.Windows.Forms.CheckBox();
             this.CipheringTab = new System.Windows.Forms.TabPage();
+            this.ServerSystemTitle = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.UsePreEstablishedApplicationAssociations = new System.Windows.Forms.CheckBox();
             this.ChallengeTB = new System.Windows.Forms.TextBox();
             this.ChallengeLbl = new System.Windows.Forms.Label();
             this.InvocationCounterTB = new System.Windows.Forms.TextBox();
@@ -161,6 +164,8 @@ namespace GXDLMSDirector
             this.SerialPortCB = new System.Windows.Forms.ComboBox();
             this.DeviceTab = new System.Windows.Forms.TabControl();
             this.AdvancedTab = new System.Windows.Forms.TabPage();
+            this.UserIdTb = new System.Windows.Forms.TextBox();
+            this.UserIDLbl = new System.Windows.Forms.Label();
             this.MaxPduTb = new System.Windows.Forms.TextBox();
             this.MaxPduLbl = new System.Windows.Forms.Label();
             this.UseWrapperCb = new System.Windows.Forms.CheckBox();
@@ -182,8 +187,7 @@ namespace GXDLMSDirector
             this.UseUtcTimeZone = new System.Windows.Forms.CheckBox();
             this.helpProvider1 = new System.Windows.Forms.HelpProvider();
             this.conformanceHelpProvider = new System.Windows.Forms.HelpProvider();
-            this.UserIdTb = new System.Windows.Forms.TextBox();
-            this.UserIDLbl = new System.Windows.Forms.Label();
+            this.ServerSystemTitleAsciiCb = new System.Windows.Forms.CheckBox();
             this.SupportedServicesTab.SuspendLayout();
             this.SNSettings.SuspendLayout();
             this.LNSettings.SuspendLayout();
@@ -646,6 +650,10 @@ namespace GXDLMSDirector
             // 
             // CipheringTab
             // 
+            this.CipheringTab.Controls.Add(this.ServerSystemTitleAsciiCb);
+            this.CipheringTab.Controls.Add(this.ServerSystemTitle);
+            this.CipheringTab.Controls.Add(this.label4);
+            this.CipheringTab.Controls.Add(this.UsePreEstablishedApplicationAssociations);
             this.CipheringTab.Controls.Add(this.ChallengeTB);
             this.CipheringTab.Controls.Add(this.ChallengeLbl);
             this.CipheringTab.Controls.Add(this.InvocationCounterTB);
@@ -667,6 +675,36 @@ namespace GXDLMSDirector
             this.CipheringTab.TabIndex = 2;
             this.CipheringTab.Text = "Secured Connections";
             this.CipheringTab.UseVisualStyleBackColor = true;
+            // 
+            // ServerSystemTitle
+            // 
+            this.ServerSystemTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ServerSystemTitle.Location = new System.Drawing.Point(113, 182);
+            this.ServerSystemTitle.Name = "ServerSystemTitle";
+            this.ServerSystemTitle.ReadOnly = true;
+            this.ServerSystemTitle.Size = new System.Drawing.Size(226, 20);
+            this.ServerSystemTitle.TabIndex = 67;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(8, 185);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(63, 13);
+            this.label4.TabIndex = 68;
+            this.label4.Text = "System title:";
+            // 
+            // UsePreEstablishedApplicationAssociations
+            // 
+            this.UsePreEstablishedApplicationAssociations.AutoSize = true;
+            this.UsePreEstablishedApplicationAssociations.Location = new System.Drawing.Point(8, 159);
+            this.UsePreEstablishedApplicationAssociations.Name = "UsePreEstablishedApplicationAssociations";
+            this.UsePreEstablishedApplicationAssociations.Size = new System.Drawing.Size(218, 17);
+            this.UsePreEstablishedApplicationAssociations.TabIndex = 66;
+            this.UsePreEstablishedApplicationAssociations.Text = "Pre-established Application Associations ";
+            this.UsePreEstablishedApplicationAssociations.UseVisualStyleBackColor = true;
+            this.UsePreEstablishedApplicationAssociations.CheckedChanged += new System.EventHandler(this.UsePreEstablishedApplicationAssociations_CheckedChanged);
             // 
             // ChallengeTB
             // 
@@ -707,7 +745,7 @@ namespace GXDLMSDirector
             // BlockCipherKeyAsciiCb
             // 
             this.BlockCipherKeyAsciiCb.AutoSize = true;
-            this.BlockCipherKeyAsciiCb.Location = new System.Drawing.Point(345, 57);
+            this.BlockCipherKeyAsciiCb.Location = new System.Drawing.Point(347, 57);
             this.BlockCipherKeyAsciiCb.Name = "BlockCipherKeyAsciiCb";
             this.BlockCipherKeyAsciiCb.Size = new System.Drawing.Size(53, 17);
             this.BlockCipherKeyAsciiCb.TabIndex = 4;
@@ -718,7 +756,7 @@ namespace GXDLMSDirector
             // AuthenticationKeyAsciiCb
             // 
             this.AuthenticationKeyAsciiCb.AutoSize = true;
-            this.AuthenticationKeyAsciiCb.Location = new System.Drawing.Point(345, 83);
+            this.AuthenticationKeyAsciiCb.Location = new System.Drawing.Point(347, 83);
             this.AuthenticationKeyAsciiCb.Name = "AuthenticationKeyAsciiCb";
             this.AuthenticationKeyAsciiCb.Size = new System.Drawing.Size(53, 17);
             this.AuthenticationKeyAsciiCb.TabIndex = 6;
@@ -1412,6 +1450,25 @@ namespace GXDLMSDirector
             this.AdvancedTab.Text = "Advanced";
             this.AdvancedTab.UseVisualStyleBackColor = true;
             // 
+            // UserIdTb
+            // 
+            this.helpProvider1.SetHelpKeyword(this.UserIdTb, "UseId");
+            this.helpProvider1.SetHelpNavigator(this.UserIdTb, System.Windows.Forms.HelpNavigator.Topic);
+            this.UserIdTb.Location = new System.Drawing.Point(146, 295);
+            this.UserIdTb.Name = "UserIdTb";
+            this.helpProvider1.SetShowHelp(this.UserIdTb, true);
+            this.UserIdTb.Size = new System.Drawing.Size(93, 20);
+            this.UserIdTb.TabIndex = 48;
+            // 
+            // UserIDLbl
+            // 
+            this.UserIDLbl.AutoSize = true;
+            this.UserIDLbl.Location = new System.Drawing.Point(16, 299);
+            this.UserIDLbl.Name = "UserIDLbl";
+            this.UserIDLbl.Size = new System.Drawing.Size(46, 13);
+            this.UserIDLbl.TabIndex = 54;
+            this.UserIDLbl.Text = "User ID:";
+            // 
             // MaxPduTb
             // 
             this.helpProvider1.SetHelpKeyword(this.MaxPduTb, "MaxPdu");
@@ -1627,24 +1684,16 @@ namespace GXDLMSDirector
             // 
             this.conformanceHelpProvider.HelpNamespace = "https://www.gurux.fi/Gurux.DLMS.Conformance";
             // 
-            // UserIdTb
+            // ServerSystemTitleAsciiCb
             // 
-            this.helpProvider1.SetHelpKeyword(this.UserIdTb, "UseId");
-            this.helpProvider1.SetHelpNavigator(this.UserIdTb, System.Windows.Forms.HelpNavigator.Topic);
-            this.UserIdTb.Location = new System.Drawing.Point(146, 295);
-            this.UserIdTb.Name = "UserIdTb";
-            this.helpProvider1.SetShowHelp(this.UserIdTb, true);
-            this.UserIdTb.Size = new System.Drawing.Size(93, 20);
-            this.UserIdTb.TabIndex = 48;
-            // 
-            // UserIDLbl
-            // 
-            this.UserIDLbl.AutoSize = true;
-            this.UserIDLbl.Location = new System.Drawing.Point(16, 299);
-            this.UserIDLbl.Name = "UserIDLbl";
-            this.UserIDLbl.Size = new System.Drawing.Size(46, 13);
-            this.UserIDLbl.TabIndex = 54;
-            this.UserIDLbl.Text = "User ID:";
+            this.ServerSystemTitleAsciiCb.AutoSize = true;
+            this.ServerSystemTitleAsciiCb.Location = new System.Drawing.Point(347, 184);
+            this.ServerSystemTitleAsciiCb.Name = "ServerSystemTitleAsciiCb";
+            this.ServerSystemTitleAsciiCb.Size = new System.Drawing.Size(53, 17);
+            this.ServerSystemTitleAsciiCb.TabIndex = 69;
+            this.ServerSystemTitleAsciiCb.Text = "ASCII";
+            this.ServerSystemTitleAsciiCb.UseVisualStyleBackColor = true;
+            this.ServerSystemTitleAsciiCb.CheckedChanged += new System.EventHandler(this.ServerSystemTitleAsciiCb_CheckedChanged);
             // 
             // DevicePropertiesForm
             // 
@@ -1817,5 +1866,9 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ComboBox PriorityCb;
         private System.Windows.Forms.TextBox UserIdTb;
         private System.Windows.Forms.Label UserIDLbl;
+        private System.Windows.Forms.CheckBox UsePreEstablishedApplicationAssociations;
+        private System.Windows.Forms.TextBox ServerSystemTitle;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.CheckBox ServerSystemTitleAsciiCb;
     }
 }

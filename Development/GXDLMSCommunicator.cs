@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9972 $,
-//                  $Date: 2018-03-16 16:58:07 +0200 (Fri, 16 Mar 2018) $
+// Version:         $Revision: 9981 $,
+//                  $Date: 2018-03-21 20:07:23 +0200 (Wed, 21 Mar 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -258,8 +258,18 @@ namespace GXDLMSDirector
                 try
                 {
                     //Loop until whole COSEM packet is received.
-                    while (!client.GetData(p.Reply, reply))
+                    while (!client.GetData(p.Reply, reply) || reply.IsNotify)
                     {
+                        if (reply.IsNotify)
+                        {
+                            if (parent.OnEvent != null)
+                            {
+                                parent.OnEvent(media, new ReceiveEventArgs(p.Reply, media.ToString()));
+                            }
+                            reply.Clear();
+                            p.Reply = null;
+                            p.Eop = eop;
+                        }
                         //If Eop is not set read one byte at time.
                         if (p.Eop == null)
                         {
@@ -729,47 +739,53 @@ namespace GXDLMSDirector
                 client.UserId = parent.UserId;
                 client.Priority = parent.Priority;
                 client.ServiceClass = parent.ServiceClass;
-
-                data = SNRMRequest();
-                if (data != null)
+                if (parent.PreEstablished)
                 {
+                    client.ServerSystemTitle = GXCommon.HexToBytes(parent.ServerSystemTitle);
+                }
+                else
+                {
+                    data = SNRMRequest();
+                    if (data != null)
+                    {
+                        try
+                        {
+                            ReadDataBlock(data, "Send SNRM request.", reply);
+                        }
+                        catch (Exception e)
+                        {
+                            reply.Clear();
+                            ReadDataBlock(DisconnectRequest(), "Send Disconnect request.", reply);
+                            throw e;
+                        }
+                        GXLogWriter.WriteLog("Parsing UA reply succeeded.");
+                        //Has server accepted client.
+                        ParseUAResponse(reply.Data);
+                    }
+                    //Generate AARQ request.
+                    //Split requests to multiple packets if needed.
+                    //If password is used all data might not fit to one packet.
+                    reply.Clear();
+                    ReadDataBlock(AARQRequest(), "Send AARQ request.", reply);
                     try
                     {
-                        ReadDataBlock(data, "Send SNRM request.", reply);
+                        //Parse reply.
+                        ParseAAREResponse(reply.Data);
+                        GXLogWriter.WriteLog("Parsing AARE reply succeeded.");
                     }
-                    catch (Exception e)
+                    catch (Exception Ex)
                     {
                         reply.Clear();
-                        ReadDataBlock(DisconnectRequest(), "Send Disconnect request.", reply);
-                        throw e;
+                        ReadDLMSPacket(DisconnectRequest(), 1, reply);
+                        throw Ex;
                     }
-                    GXLogWriter.WriteLog("Parsing UA reply succeeded.");
-                    //Has server accepted client.
-                    ParseUAResponse(reply.Data);
-                }
-                //Generate AARQ request.
-                //Split requests to multiple packets if needed.
-                //If password is used all data might not fit to one packet.
-                reply.Clear();
-                ReadDataBlock(AARQRequest(), "Send AARQ request.", reply);
-                try
-                {
-                    //Parse reply.
-                    ParseAAREResponse(reply.Data);
-                    GXLogWriter.WriteLog("Parsing AARE reply succeeded.");
-                }
-                catch (Exception Ex)
-                {
-                    reply.Clear();
-                    ReadDLMSPacket(DisconnectRequest(), 1, reply);
-                    throw Ex;
-                }
-                //If authentication is required.
-                if (client.Authentication > Authentication.Low)
-                {
-                    reply.Clear();
-                    ReadDataBlock(client.GetApplicationAssociationRequest(), "Authenticating.", reply);
-                    client.ParseApplicationAssociationResponse(reply.Data);
+                    //If authentication is required.
+                    if (client.Authentication > Authentication.Low)
+                    {
+                        reply.Clear();
+                        ReadDataBlock(client.GetApplicationAssociationRequest(), "Authenticating.", reply);
+                        client.ParseApplicationAssociationResponse(reply.Data);
+                    }
                 }
             }
             catch (Exception ex)

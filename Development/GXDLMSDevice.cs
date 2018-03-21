@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9901 $,
-//                  $Date: 2018-02-21 17:18:01 +0200 (Wed, 21 Feb 2018) $
+// Version:         $Revision: 9981 $,
+//                  $Date: 2018-03-21 20:07:23 +0200 (Wed, 21 Mar 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -95,6 +95,14 @@ namespace GXDLMSDirector
         [Browsable(false)]
         [XmlIgnore()]
         public MessageTraceEventHandler OnTrace;
+
+        /// <summary>
+        /// Meter sends event notification.
+        /// </summary>
+        [Browsable(false)]
+        [XmlIgnore()]
+        public ReceivedEventHandler OnEvent;
+
 
         [Browsable(false)]
         [XmlIgnore()]
@@ -187,6 +195,27 @@ namespace GXDLMSDirector
             get;
             set;
         }
+
+        /// <summary>
+        /// Server System Title.
+        /// </summary>
+        [DefaultValue("")]
+        public string ServerSystemTitle
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Use pre-established application associations.
+        /// </summary>
+        [DefaultValue(false)]
+        public bool PreEstablished
+        {
+            get;
+            set;
+        }
+        
 
         /// <summary>
         /// Block cipher key.

@@ -45,6 +45,7 @@ namespace GXDLMSDirector
 {
     public partial class GXSettingsDlg : Form
     {
+        Form notifications;
         List<IGXSettingsPage> MediaPropertiesForm;
         Gurux.Common.GXAsyncWork checkUpdates;
         private void Move2(Control.ControlCollection source, Control.ControlCollection target, bool enabled)
@@ -76,7 +77,7 @@ namespace GXDLMSDirector
             try
             {
                 //Show notification settings.
-                Form notifications = media.PropertiesForm;
+                notifications = media.PropertiesForm;
                 (notifications as IGXPropertyPage).Initialize();
                 Move2(notifications.Controls, NotificationsTab.Controls, !media.IsOpen);
                 //Show custom settings.
@@ -155,6 +156,7 @@ namespace GXDLMSDirector
         {
             try
             {
+                (notifications as IGXPropertyPage).Apply();
                 foreach (IGXSettingsPage it in MediaPropertiesForm)
                 {
                     it.Apply();

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9981 $,
-//                  $Date: 2018-03-21 20:07:23 +0200 (Wed, 21 Mar 2018) $
+// Version:         $Revision: 9982 $,
+//                  $Date: 2018-03-22 15:11:47 +0200 (Thu, 22 Mar 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -57,7 +57,7 @@ namespace GXDLMSDirector
         public DevicePropertiesForm(GXManufacturerCollection manufacturers, GXDLMSDevice dev2)
         {
             if (manufacturers.Count == 0)
-            {                
+            {
                 throw new Exception(Properties.Resources.ManufacturerSettingsMissing);
             }
             try
@@ -664,7 +664,7 @@ namespace GXDLMSDirector
                 byte v;
                 if (byte.TryParse(UserIdTb.Text, out v))
                 {
-                     Device.UserId = v;
+                    Device.UserId = v;
                 }
                 else
                 {
@@ -1014,7 +1014,14 @@ namespace GXDLMSDirector
                 AuthenticationKeyAsciiCb.Checked = man.AuthenticationKey == null || IsAscii(man.AuthenticationKey);
                 if (AuthenticationKeyAsciiCb.Checked)
                 {
-                    AuthenticationKeyTB.Text = ASCIIEncoding.ASCII.GetString(man.AuthenticationKey);
+                    if (man.AuthenticationKey == null)
+                    {
+                        AuthenticationKeyTB.Text = "";
+                    }
+                    else
+                    {
+                        AuthenticationKeyTB.Text = ASCIIEncoding.ASCII.GetString(man.AuthenticationKey);
+                    }
                 }
                 else
                 {

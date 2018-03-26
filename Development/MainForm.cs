@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9981 $,
-//                  $Date: 2018-03-21 20:07:23 +0200 (Wed, 21 Mar 2018) $
+// Version:         $Revision: 9990 $,
+//                  $Date: 2018-03-26 17:53:08 +0300 (Mon, 26 Mar 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -541,7 +541,7 @@ namespace GXDLMSDirector
                                 dev.Comm.MethodRequest(ve.Target, ve.Index, ve.Value, ve.Text, reply);
                             }
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             ve.Exception = ex;
                         }
@@ -1477,7 +1477,7 @@ namespace GXDLMSDirector
             }
         }
 
-        public void OnBeforeRead(GXDLMSObject sender, int index)
+        public void OnBeforeRead(GXDLMSObject sender, int index, Exception ex)
         {
             try
             {
@@ -1485,7 +1485,7 @@ namespace GXDLMSDirector
                 {
                     if (this.InvokeRequired)
                     {
-                        this.Invoke(new ReadEventHandler(OnBeforeRead), new object[] { sender, index });
+                        this.Invoke(new ReadEventHandler(OnBeforeRead), new object[] { sender, index, ex });
                     }
                     else if (SelectedView != null && SelectedView.Target == sender)
                     {
@@ -1494,9 +1494,9 @@ namespace GXDLMSDirector
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(e.Message);
             }
         }
 
@@ -1515,16 +1515,17 @@ namespace GXDLMSDirector
                     str = GXHelpers.ConvertDLMS2String(value);
                 }
                 lv.SubItems[index].Text = str;
+                }
             }
         }
 
-        public void OnAfterRead(GXDLMSObject sender, int index)
+        public void OnAfterRead(GXDLMSObject sender, int index, Exception ex)
         {
             try
             {
                 if (this.InvokeRequired)
                 {
-                    this.Invoke(new ReadEventHandler(OnAfterRead), new object[] { sender, index });
+                    this.Invoke(new ReadEventHandler(OnAfterRead), new object[] { sender, index, ex });
                     return;
                 }
                 if (SelectedView != null && SelectedView.Target == sender)
@@ -1536,10 +1537,15 @@ namespace GXDLMSDirector
                 {
                     UpdateValue(sender, index, lv);
                 }
+                if (ex != null)
+                {
+                    GXDlmsUi.UpdateError(SelectedView, sender as GXDLMSObject, index, ex);
+
+                }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(e.Message);
             }
         }
 
@@ -1699,30 +1705,46 @@ namespace GXDLMSDirector
                     {
                         GXDLMSObjectCollection objects = (GXDLMSObjectCollection)this.ObjectTree.SelectedNode.Tag;
                         GXDLMSDevice dev = objects.Tag as GXDLMSDevice;
-                        dev.KeepAliveStop();
-                        OnProgress(dev, "Writing...", 0, 1);
-                        foreach (GXDLMSObject obj in objects)
+                        dev.Comm.OnError += new ReadEventHandler(OnError);
+                        try
                         {
-                            dev.Comm.Write(obj, 0);
-                            GXDlmsUi.UpdateProperty(obj as GXDLMSObject, 0, SelectedView, true);
+                            dev.KeepAliveStop();
+                            OnProgress(dev, "Writing...", 0, 1);
+                            foreach (GXDLMSObject obj in objects)
+                            {
+                                dev.Comm.Write(obj, 0);
+                                GXDlmsUi.UpdateProperty(obj as GXDLMSObject, 0, SelectedView, true);
+                            }
                         }
-                        dev.KeepAliveStart();
+                        finally
+                        {
+                            dev.Comm.OnError -= new ReadEventHandler(OnError);
+                            dev.KeepAliveStart();
+                        }
                     }
                     else if (this.ObjectTree.SelectedNode.Tag is GXDLMSObject)
                     {
                         GXDLMSObject obj = (GXDLMSObject)this.ObjectTree.SelectedNode.Tag;
                         GXDLMSDevice dev = obj.Parent.Tag as GXDLMSDevice;
-                        dev.KeepAliveStop();
-                        OnProgress(dev, "Writing...", 0, 1);
-                        dev.Comm.Write(obj, 0);
-                        GXDlmsUi.UpdateProperty(obj as GXDLMSObject, 0, SelectedView, true);
-                        dev.KeepAliveStart();
+                        try
+                        {
+                            dev.KeepAliveStop();
+                            dev.Comm.OnError += new ReadEventHandler(OnError);
+                            OnProgress(dev, "Writing...", 0, 1);
+                            dev.Comm.Write(obj, 0);
+                            GXDlmsUi.UpdateProperty(obj as GXDLMSObject, 0, SelectedView, true);
+                        }
+                        finally
+                        {
+                            dev.Comm.OnError -= new ReadEventHandler(OnError);
+                            dev.KeepAliveStart();
+                        }
                     }
                 }
             }
-            catch (Exception Ex)
+            catch (Exception ex)
             {
-                GXDLMS.Common.Error.ShowError(this, Ex);
+                GXDLMS.Common.Error.ShowError(this, ex);
             }
             finally
             {
@@ -1730,6 +1752,12 @@ namespace GXDLMSDirector
                 UpdateTransaction(false);
             }
         }
+
+        public void OnError(GXDLMSObject sender, int index, Exception ex)
+        {
+            GXDlmsUi.UpdateError(SelectedView, sender as GXDLMSObject, index, ex);
+        }
+
 
         /// <summary>
         /// Close application.

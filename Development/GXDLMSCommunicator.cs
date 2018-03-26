@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9981 $,
-//                  $Date: 2018-03-21 20:07:23 +0200 (Wed, 21 Mar 2018) $
+// Version:         $Revision: 9990 $,
+//                  $Date: 2018-03-26 17:53:08 +0300 (Mon, 26 Mar 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -55,7 +55,7 @@ namespace GXDLMSDirector
 
     public delegate void ProgressEventHandler(object sender, string description, int current, int maximium);
     public delegate void StatusEventHandler(object sender, DeviceState status);
-    public delegate void ReadEventHandler(GXDLMSObject sender, int index);
+    public delegate void ReadEventHandler(GXDLMSObject sender, int index, Exception ex);
     public delegate void MessageTraceEventHandler(GXDLMSDevice sender, string trace, byte[] data, int framesize, string path);
 
     public class GXDLMSCommunicator
@@ -87,6 +87,7 @@ namespace GXDLMSDirector
         public ProgressEventHandler OnProgress;
         public ReadEventHandler OnBeforeRead;
         public ReadEventHandler OnAfterRead;
+        public ReadEventHandler OnError;
 
         public byte[] SNRMRequest()
         {
@@ -846,7 +847,7 @@ namespace GXDLMSDirector
                 }
                 if (OnAfterRead != null)
                 {
-                    OnAfterRead(CurrentProfileGeneric, 2);
+                    OnAfterRead(CurrentProfileGeneric, 2, null);
                 }
             }
         }
@@ -967,7 +968,7 @@ namespace GXDLMSDirector
                 {
                     if (OnBeforeRead != null)
                     {
-                        OnBeforeRead(obj, it);
+                        OnBeforeRead(obj, it, null);
                     }
                     try
                     {
@@ -1005,7 +1006,7 @@ namespace GXDLMSDirector
                     {
                         if (OnAfterRead != null)
                         {
-                            OnAfterRead(obj, it);
+                            OnAfterRead(obj, it, null);
                         }
                         OnDataReceived -= new GXDLMSCommunicator.DataReceivedEventHandler(OnProfileGenericDataReceived);
                     }
@@ -1015,7 +1016,7 @@ namespace GXDLMSDirector
                 {
                     if (OnBeforeRead != null)
                     {
-                        OnBeforeRead(obj, it);
+                        OnBeforeRead(obj, it, null);
                     }
                     byte[] data = client.Read(obj.Name, obj.ObjectType, it)[0];
                     try
@@ -1031,6 +1032,10 @@ namespace GXDLMSDirector
                                 ex.ErrorCode == (int)ErrorCode.AccessViolated)
                         {
                             obj.SetAccess(it, AccessMode.NoAccess);
+                            if (OnAfterRead != null)
+                            {
+                                OnAfterRead(obj, it, ex);
+                            }
                             continue;
                         }
                         else
@@ -1054,7 +1059,7 @@ namespace GXDLMSDirector
                     }
                     if (OnAfterRead != null)
                     {
-                        OnAfterRead(obj, it);
+                        OnAfterRead(obj, it, null);
                     }
                     obj.SetLastReadTime(it, DateTime.Now);
                     //If only selected attribute is read.
@@ -1097,9 +1102,20 @@ namespace GXDLMSDirector
                         {
                             forced = client.ForceToBlocks = true;
                         }
-                        foreach (byte[] tmp in client.Write(obj, it))
+                        try
                         {
-                            ReadDataBlock(tmp, string.Format("Writing object {0}, interface {1}", obj.LogicalName, obj.ObjectType), reply);
+                            foreach (byte[] tmp in client.Write(obj, it))
+                            {
+                                ReadDataBlock(tmp, string.Format("Writing object {0}, interface {1}", obj.LogicalName, obj.ObjectType), reply);
+                            }
+                        }
+                        catch(GXDLMSException  ex)
+                        {
+                            if (OnError != null)
+                            {
+                                OnError(obj, it, ex);
+                            }
+                            throw ex;
                         }
                         obj.ClearDirty(it);
                         //Read data once again to make sure it is updated.
@@ -1112,17 +1128,6 @@ namespace GXDLMSDirector
                             val = GXDLMSClient.ChangeType((byte[])val, type);
                         }
                         client.UpdateValue(obj, it, val);
-                    }
-                    catch (GXDLMSException ex)
-                    {
-                        if (ex.ErrorCode == 3)
-                        {
-                            throw new Exception("Read/Write Failed.");
-                        }
-                        else
-                        {
-                            throw ex;
-                        }
                     }
                     finally
                     {

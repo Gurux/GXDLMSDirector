@@ -284,7 +284,7 @@ namespace Extensions
             }
             if (comm.OnBeforeRead != null)
             {
-                comm.OnBeforeRead(item, attribute);
+                comm.OnBeforeRead(item, attribute, null);
             }
             CurrentProfileGeneric = item as GXDLMSProfileGeneric;
             if (item is GXDLMSProfileGeneric)

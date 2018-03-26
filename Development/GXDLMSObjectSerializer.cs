@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9442 $,
-//                  $Date: 2017-05-23 15:21:03 +0300 (ti, 23 touko 2017) $
+// Version:         $Revision: 9990 $,
+//                  $Date: 2018-03-26 17:53:08 +0300 (Mon, 26 Mar 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -34,10 +34,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml.Serialization;
-using System.Xml.Schema;
-using System.Xml;
 using Gurux.DLMS.Objects;
 
 namespace GXDLMS.Common

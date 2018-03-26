@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9990 $,
-//                  $Date: 2018-03-26 17:53:08 +0300 (Mon, 26 Mar 2018) $
+// Version:         $Revision: 9992 $,
+//                  $Date: 2018-03-26 18:03:38 +0300 (Mon, 26 Mar 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1514,8 +1514,7 @@ namespace GXDLMSDirector
                 {
                     str = GXHelpers.ConvertDLMS2String(value);
                 }
-                lv.SubItems[index].Text = str;
-                }
+                lv.SubItems[index].Text = str;                
             }
         }
 

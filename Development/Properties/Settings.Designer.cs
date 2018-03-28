@@ -238,5 +238,41 @@ namespace GXDLMSDirector.Properties {
                 this["ConformanceSettings"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LogComments {
+            get {
+                return ((bool)(this["LogComments"]));
+            }
+            set {
+                this["LogComments"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool TraceComments {
+            get {
+                return ((bool)(this["TraceComments"]));
+            }
+            set {
+                this["TraceComments"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool NotificationsComments {
+            get {
+                return ((bool)(this["NotificationsComments"]));
+            }
+            set {
+                this["NotificationsComments"] = value;
+            }
+        }
     }
 }

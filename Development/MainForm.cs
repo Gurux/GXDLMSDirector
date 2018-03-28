@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9992 $,
-//                  $Date: 2018-03-26 18:03:38 +0300 (Mon, 26 Mar 2018) $
+// Version:         $Revision: 10002 $,
+//                  $Date: 2018-03-28 17:40:47 +0300 (Wed, 28 Mar 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -60,6 +60,17 @@ namespace GXDLMSDirector
     {
         GXNet events;
 
+        /// <summary>
+        /// Events translator.
+        /// </summary>
+        GXDLMSTranslator eventsTranslator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
+        GXByteBuffer eventsData = new GXByteBuffer();
+
+        /// <summary>
+        /// Log translator.
+        /// </summary>
+        GXDLMSTranslator traceTranslator;
+
         delegate void CheckUpdatesEventHandler(MainForm form);
         GXAsyncWork TransactionWork;
         Dictionary<Type, List<IGXDLMSView>> Views;
@@ -84,7 +95,6 @@ namespace GXDLMSDirector
         /// </summary>
         private byte notificationLevel = 0;
 
-        GXDLMSTranslator translator;
         /// <summary>
         /// Received trace data.
         /// </summary>
@@ -155,7 +165,7 @@ namespace GXDLMSDirector
             InitializeComponent();
             reRunToolStripMenuItem.Visible = false;
             CancelBtn.Enabled = false;
-            translator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
+            traceTranslator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
 
             Devices = new GXDLMSDeviceCollection();
             ObjectValueView.Visible = DeviceInfoView.Visible = DeviceList.Visible = false;
@@ -1173,6 +1183,11 @@ namespace GXDLMSDirector
                 Properties.Settings.Default.NotificationType = notificationLevel;
                 Properties.Settings.Default.ForceRead = ForceReadMnu.Checked;
                 Properties.Settings.Default.NotificationAutoReset = AutoReset.Checked;
+
+                Properties.Settings.Default.LogComments = LogCommentsMenu.Checked;
+                Properties.Settings.Default.TraceComments = TraceCommentsMenu.Checked;
+                Properties.Settings.Default.NotificationsComments = NotificationsCommentsMenu.Checked;
+
                 if (EventsView.Height > 50)
                 {
                     Properties.Settings.Default.EventsViewHeight = EventsView.Height;
@@ -1297,6 +1312,13 @@ namespace GXDLMSDirector
                 ForceReadMnu_Click(null, null);
                 AutoReset.Checked = !Properties.Settings.Default.NotificationAutoReset;
                 AutoReset_Click(null, null);
+
+                LogCommentsMenu.Checked = !Properties.Settings.Default.LogComments;
+                LogCommentsMenu_Click(null, null);
+                TraceCommentsMenu.Checked = !Properties.Settings.Default.TraceComments;
+                TraceCommentsMenu_Click(null, null);
+                NotificationsCommentsMenu.Checked = !Properties.Settings.Default.NotificationsComments;
+                NotificationsCommentsMenu_Click(null, null);
 
                 LogHexBtn.Checked = (Properties.Settings.Default.Log & 1) != 0;
                 LogXmlBtn.Checked = (Properties.Settings.Default.Log & 2) != 0;
@@ -1430,7 +1452,7 @@ namespace GXDLMSDirector
                 //Show data as hex.
                 if (traceLevel == 1)
                 {
-                    TraceView.AppendText(trace + " " + GXCommon.ToHex(data, true) + Environment.NewLine);
+                    TraceView.AppendText(DateTime.Now.ToString() + trace + " " + GXCommon.ToHex(data, true) + Environment.NewLine);
                 }
                 else if (data != null && (traceLevel == 2 || traceLevel == 3))
                 {
@@ -1440,9 +1462,9 @@ namespace GXDLMSDirector
                     {
                         GXByteBuffer pdu = new GXByteBuffer();
                         InterfaceType type = GXDLMSTranslator.GetDlmsFraming(receivedTraceData);
-                        if (translator.FindNextFrame(receivedTraceData, pdu, type))
+                        if (traceTranslator.FindNextFrame(receivedTraceData, pdu, type))
                         {
-                            TraceView.AppendText(translator.MessageToXml(receivedTraceData));
+                            TraceView.AppendText(Environment.NewLine + DateTime.Now.ToString() + Environment.NewLine + traceTranslator.MessageToXml(receivedTraceData));
                             receivedTraceData.Clear();
                         }
                     }
@@ -1450,8 +1472,8 @@ namespace GXDLMSDirector
                     {
                         receivedTraceData.Clear();
                         TraceView.ResetText();
-                        TraceView.AppendText(ex.Message + Environment.NewLine);
-                        TraceView.AppendText(trace + " " + GXCommon.ToHex(data, true) + Environment.NewLine);
+                        TraceView.AppendText(Environment.NewLine + DateTime.Now.ToString() + ex.Message + Environment.NewLine);
+                        TraceView.AppendText(trace + Environment.NewLine + GXCommon.ToHex(data, true) + Environment.NewLine);
                     }
                 }
             }
@@ -1529,7 +1551,7 @@ namespace GXDLMSDirector
                 }
                 if (SelectedView != null && SelectedView.Target == sender)
                 {
-                    GXDlmsUi.UpdateProperty(sender as GXDLMSObject, index, SelectedView, true);
+                    GXDlmsUi.UpdateProperty(sender as GXDLMSObject, index, SelectedView, true, false);
                 }
                 ListViewItem lv = ObjectValueItems[sender] as ListViewItem;
                 if (lv != null)
@@ -1712,7 +1734,7 @@ namespace GXDLMSDirector
                             foreach (GXDLMSObject obj in objects)
                             {
                                 dev.Comm.Write(obj, 0);
-                                GXDlmsUi.UpdateProperty(obj as GXDLMSObject, 0, SelectedView, true);
+                                GXDlmsUi.UpdateProperty(obj as GXDLMSObject, 0, SelectedView, true, false);
                             }
                         }
                         finally
@@ -1731,7 +1753,7 @@ namespace GXDLMSDirector
                             dev.Comm.OnError += new ReadEventHandler(OnError);
                             OnProgress(dev, "Writing...", 0, 1);
                             dev.Comm.Write(obj, 0);
-                            GXDlmsUi.UpdateProperty(obj as GXDLMSObject, 0, SelectedView, true);
+                            GXDlmsUi.UpdateProperty(obj as GXDLMSObject, 0, SelectedView, true, false);
                         }
                         finally
                         {
@@ -2723,9 +2745,6 @@ namespace GXDLMSDirector
             }
         }
 
-        GXDLMSTranslator eventsTranslator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
-        GXByteBuffer eventsData = new GXByteBuffer();
-
         /// <summary>
         /// Meter sends event notification.
         /// </summary>
@@ -2744,7 +2763,7 @@ namespace GXDLMSDirector
                 else if (NotificationHex.Checked)
                 {
                     //Show as hex.
-                    OnAddNotification(DateTime.Now.ToString() + " " + GXCommon.ToHex((byte[])e.Data, true));
+                    OnAddNotification(DateTime.Now.ToString() + Environment.NewLine + GXCommon.ToHex((byte[])e.Data, true));
                 }
                 else
                 {
@@ -2765,7 +2784,7 @@ namespace GXDLMSDirector
                         {
                             EventsView.ResetText();
                         }
-                        OnAddNotification(DateTime.Now.ToString() + " " + sb.ToString());
+                        OnAddNotification(DateTime.Now.ToString() + Environment.NewLine + sb.ToString());
                     }
                     catch (Exception ex)
                     {
@@ -3201,7 +3220,9 @@ namespace GXDLMSDirector
             xmlToolStripMenuItem.Checked = level == 2;
             pDUToolStripMenuItem.Checked = level == 3;
             //Show data as pdu.
-            translator.PduOnly = level == 3;
+            traceTranslator.PduOnly = level == 3;
+
+            TraceCommentsMenu.Enabled = level > 1;
         }
 
         /// <summary>
@@ -3271,7 +3292,7 @@ namespace GXDLMSDirector
             NotificationXml.Checked = level == 2;
             NotificationPdu.Checked = level == 3;
             //Show data as pdu.
-            translator.PduOnly = level == 3;
+            eventsTranslator.PduOnly = level == 3;
             if (level == 0 && !ConformanceTests.Visible)
             {
                 TraceView.Dock = DockStyle.Fill;
@@ -3280,6 +3301,7 @@ namespace GXDLMSDirector
             {
                 TraceView.Dock = DockStyle.Left;
             }
+            NotificationsCommentsMenu.Enabled = level > 1;
         }
 
 
@@ -3468,6 +3490,9 @@ namespace GXDLMSDirector
             }
         }
 
+        /// <summary>
+        /// Log as hex.
+        /// </summary>
         private void LogHexBtn_Click(object sender, EventArgs e)
         {
             LogHexBtn.Checked = !LogHexBtn.Checked;
@@ -3477,8 +3502,12 @@ namespace GXDLMSDirector
                 Properties.Settings.Default.Log |= 2;
             }
             GXLogWriter.LogLevel = Properties.Settings.Default.Log;
+            LogCommentsMenu.Enabled = LogXmlBtn.Checked;
         }
 
+        /// <summary>
+        /// Log as XML.
+        /// </summary>
         private void LogXmlBtn_Click(object sender, EventArgs e)
         {
             LogXmlBtn.Checked = !LogXmlBtn.Checked;
@@ -3488,6 +3517,7 @@ namespace GXDLMSDirector
                 Properties.Settings.Default.Log |= 2;
             }
             GXLogWriter.LogLevel = Properties.Settings.Default.Log;
+            LogCommentsMenu.Enabled = LogXmlBtn.Checked;
         }
 
         /// <summary>
@@ -4020,6 +4050,33 @@ namespace GXDLMSDirector
             {
                 Error.ShowError(this, ex);
             }
+        }
+
+        /// <summary>
+        /// Are Log comments shown.
+        /// </summary>
+        private void LogCommentsMenu_Click(object sender, EventArgs e)
+        {
+            LogCommentsMenu.Checked = !LogCommentsMenu.Checked;
+           //Mikko eventsTranslator.Comments = LogCommentsMenu.Checked;
+        }
+
+        /// <summary>
+        /// Are Trace comments shown.
+        /// </summary>
+        private void TraceCommentsMenu_Click(object sender, EventArgs e)
+        {
+            TraceCommentsMenu.Checked = !TraceCommentsMenu.Checked;
+            traceTranslator.Comments = TraceCommentsMenu.Checked;
+        }
+
+        /// <summary>
+        /// Are Notification comments shown.
+        /// </summary>
+        private void NotificationsCommentsMenu_Click(object sender, EventArgs e)
+        {
+            NotificationsCommentsMenu.Checked = !NotificationsCommentsMenu.Checked;
+            eventsTranslator.Comments = NotificationsCommentsMenu.Checked;
         }
     }
 }

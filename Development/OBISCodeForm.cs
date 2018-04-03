@@ -5,9 +5,9 @@
 //
 //
 //
-// Version:         $Revision: 9919 $,
-//                  $Date: 2018-02-27 03:27:46 +0200 (Tue, 27 Feb 2018) $
-//                  $Author: kurumi $
+// Version:         $Revision: 10008 $,
+//                  $Date: 2018-04-03 13:55:41 +0300 (Tue, 03 Apr 2018) $
+//                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -32,18 +32,9 @@
 //---------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using GXDLMS.ManufacturerSettings;
-using Gurux.DLMS;
-using System.Reflection;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using GXDLMS.Common;
 using Gurux.DLMS.ManufacturerSettings;
 using Gurux.DLMS.Objects;
 using Gurux.DLMS.Enums;

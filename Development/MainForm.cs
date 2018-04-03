@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10002 $,
-//                  $Date: 2018-03-28 17:40:47 +0300 (Wed, 28 Mar 2018) $
+// Version:         $Revision: 10008 $,
+//                  $Date: 2018-04-03 13:55:41 +0300 (Tue, 03 Apr 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -101,7 +101,7 @@ namespace GXDLMSDirector
         GXByteBuffer receivedTraceData = new GXByteBuffer();
 
 
-        GXDLMSDevice GetDevice(GXDLMSObject item)
+        private static GXDLMSDevice GetDevice(GXDLMSObject item)
         {
             return item.Parent.Tag as GXDLMSDevice;
         }
@@ -1536,7 +1536,7 @@ namespace GXDLMSDirector
                 {
                     str = GXHelpers.ConvertDLMS2String(value);
                 }
-                lv.SubItems[index].Text = str;                
+                lv.SubItems[index].Text = str;
             }
         }
 
@@ -1985,6 +1985,22 @@ namespace GXDLMSDirector
             }
         }
 
+        private static void UpdateAttributes(GXDLMSObject obj, GXObisCode it)
+        {
+            foreach (GXDLMSAttributeSettings a in it.Attributes)
+            {
+                if (a.UIType != DataType.None)
+                {
+                    obj.SetUIDataType(a.Index, a.UIType);
+                }
+                if (a.Type != DataType.None)
+                {
+                    obj.SetDataType(a.Index, a.UIType);
+                }
+            }
+
+        }
+
         TreeNode AddDevice(GXDLMSDevice dev, bool refresh, bool first)
         {
             if (!refresh)
@@ -2016,6 +2032,7 @@ namespace GXDLMSDirector
                             {
                                 obj.Description = it.Description;
                             }
+                            UpdateAttributes(obj, it);
                             dev.Objects.Add(obj);
                         }
                     }
@@ -3277,9 +3294,48 @@ namespace GXDLMSDirector
 
         }
 
+        private static GXDLMSDevice GetDevice(TreeNode node)
+        {
+            GXDLMSDevice dev = null;
+            if (node != null)
+            {
+                if (node.Tag is GXDLMSDeviceCollection)
+                {
+                    dev = null;
+                }
+                if (node.Tag is GXDLMSDevice)
+                {
+                    dev = node.Tag as GXDLMSDevice;
+                }
+                else if (node.Tag is GXDLMSObject)
+                {
+                    dev = GetDevice(node.Tag as GXDLMSObject);
+                }
+                else if (node.Parent != null)
+                {
+                    dev = (GXDLMSDevice)node.Parent.Tag;
+                }
+            }
+            return dev;
+        }
+
         private void ObjectTree_BeforeSelect(object sender, TreeViewCancelEventArgs e)
         {
-
+            GXDLMSDevice oldDev = GetDevice(ObjectTree.SelectedNode);
+            GXDLMSDevice newDev = GetDevice(e.Node);
+            if (oldDev != newDev)
+            {
+                eventsTranslator.Clear();
+                if (newDev != null)
+                {
+                    traceTranslator.Security = newDev.Security;
+                    traceTranslator.SystemTitle = GXCommon.HexToBytes(newDev.SystemTitle);
+                    traceTranslator.BlockCipherKey = GXCommon.HexToBytes(newDev.BlockCipherKey);
+                    traceTranslator.AuthenticationKey = GXCommon.HexToBytes(newDev.AuthenticationKey);
+                    traceTranslator.InvocationCounter = newDev.InvocationCounter;
+                    traceTranslator.ServerSystemTitle = GXCommon.HexToBytes(newDev.ServerSystemTitle);
+                }
+            }
         }
 
         private void UpdateNotification(byte level)
@@ -4058,7 +4114,7 @@ namespace GXDLMSDirector
         private void LogCommentsMenu_Click(object sender, EventArgs e)
         {
             LogCommentsMenu.Checked = !LogCommentsMenu.Checked;
-           //Mikko eventsTranslator.Comments = LogCommentsMenu.Checked;
+            eventsTranslator.Comments = LogCommentsMenu.Checked;
         }
 
         /// <summary>
@@ -4077,6 +4133,71 @@ namespace GXDLMSDirector
         {
             NotificationsCommentsMenu.Checked = !NotificationsCommentsMenu.Checked;
             eventsTranslator.Comments = NotificationsCommentsMenu.Checked;
+        }
+
+        /// <summary>
+        /// Add new object to the device.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AddObjectMenu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ObjectType ot = ObjectType.None;
+                object tag = ObjectTree.SelectedNode.Tag;
+                GXDLMSDevice dev = null;
+                if (tag is GXDLMSDevice)
+                {
+                    dev = tag as GXDLMSDevice;
+                }
+                else if (tag is GXDLMSObject)
+                {
+                    ot = (tag as GXDLMSObject).ObjectType;
+                    dev = GetDevice(tag as GXDLMSObject);
+                }
+                else
+                {
+                    dev = (GXDLMSDevice)ObjectTree.SelectedNode.Parent.Tag;
+                }
+                if (dev != null)
+                {
+                    GXObisCodeCollection collection = new GXObisCodeCollection();
+                    GXObisCode item = new GXObisCode();
+                    item.ObjectType = ot;
+                    OBISCodeForm dlg = new OBISCodeForm(collection, item);
+                    if (dlg.ShowDialog(this) == DialogResult.OK)
+                    {
+                        GXDLMSObject obj = GXDLMSClient.CreateObject(item.ObjectType);
+                        obj.LogicalName = item.LogicalName;
+                        obj.Version = item.Version;
+                        obj.Description = item.Description;
+                        UpdateAttributes(obj, item);
+                        dev.Objects.Add(obj);
+                        TreeNode deviceNode = (TreeNode)ObjectTreeItems[dev];
+                        ListViewGroup group = null;
+                        foreach (ListViewGroup g in ObjectList.Groups)
+                        {
+                            if (g.ToString() == obj.ObjectType.ToString())
+                            {
+                                group = g;
+                                break;
+                            }
+                        }
+                        if (group == null)
+                        {
+                            group = new ListViewGroup(obj.ObjectType.ToString(), obj.ObjectType.ToString());
+                            ObjectList.Groups.Add(group);
+                        }
+                        ListViewItem li = AddNode(obj, deviceNode, group);
+                        ObjectList.Items.Add(li);
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                GXDLMS.Common.Error.ShowError(this, Ex);
+            }
         }
     }
 }

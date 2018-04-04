@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10008 $,
-//                  $Date: 2018-04-03 13:55:41 +0300 (Tue, 03 Apr 2018) $
+// Version:         $Revision: 10015 $,
+//                  $Date: 2018-04-04 14:56:26 +0300 (Wed, 04 Apr 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1670,7 +1670,10 @@ namespace GXDLMSDirector
             }
             finally
             {
-                UpdateTransaction(false);
+                if ((dev.Status & DeviceState.Connected) != 0)
+                {
+                    UpdateTransaction(false);
+                }
             }
         }
 

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9990 $,
-//                  $Date: 2018-03-26 17:53:08 +0300 (Mon, 26 Mar 2018) $
+// Version:         $Revision: 10026 $,
+//                  $Date: 2018-04-11 12:17:59 +0300 (ke, 11 huhti 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -149,7 +149,7 @@ namespace GXDLMSDirector
             return data;
         }
 
-        byte[] DisconnectRequest()
+        public byte[] DisconnectRequest()
         {
             byte[] data = client.DisconnectRequest();
             GXLogWriter.WriteLog("Disconnect request");
@@ -176,8 +176,15 @@ namespace GXDLMSDirector
                     {
                         //All meters don't support release.
                     }
-                    reply.Clear();
-                    ReadDataBlock(DisconnectRequest(), "Disconnect request", reply);
+                    try
+                    {
+                        reply.Clear();
+                        ReadDataBlock(DisconnectRequest(), "Disconnect request", reply);
+                    }
+                    catch (Exception ex)
+                    {
+                        //All meters don't support release.
+                    }
                 }
                 finally
                 {
@@ -303,15 +310,7 @@ namespace GXDLMSDirector
             }
             if (reply.Error != 0)
             {
-                if (reply.Error == (int)ErrorCode.Rejected)
-                {
-                    Thread.Sleep(1000);
-                    ReadDLMSPacket(data, tryCount, reply);
-                }
-                else
-                {
-                    throw new GXDLMSException(reply.Error);
-                }
+                throw new GXDLMSException(reply.Error);
             }
         }
 
@@ -624,12 +623,8 @@ namespace GXDLMSDirector
                 }
                 else
                 {
-                    client.ServerAddress = GXDLMSClient.GetServerAddress(parent.LogicalAddress, Convert.ToInt32(parent.PhysicalAddress));
-                    GXServerAddress server = manufacturer.GetServer(parent.HDLCAddressing);
-                    if (server != null)
-                    {
-                        client.ServerAddressSize = (byte)server.Size;
-                    }
+                    client.ServerAddress = GXDLMSClient.GetServerAddress(parent.LogicalAddress, Convert.ToInt32(parent.PhysicalAddress), parent.ServerAddressSize);
+                    client.ServerAddressSize = parent.ServerAddressSize;
                 }
             }
             client.Ciphering.Security = parent.Security;
@@ -870,13 +865,25 @@ namespace GXDLMSDirector
         /// <returns>Received data.</returns>
         internal void ReadDataBlock(byte[] data, string text, int multiplier, GXReplyData reply)
         {
+            ReadDataBlock(data, text, multiplier, 3, reply);
+        }
+
+        /// <summary>
+        /// Read data block from the device.
+        /// </summary>
+        /// <param name="data">data to send</param>
+        /// <param name="text">Progress text.</param>
+        /// <param name="multiplier"></param>
+        /// <returns>Received data.</returns>
+        internal void ReadDataBlock(byte[] data, string text, int multiplier, int tryCount, GXReplyData reply)
+        {
             lastTransaction = DateTime.Now;
             GXLogWriter.WriteLog(text, data);
             if (parent.OnTrace != null)
             {
                 parent.OnTrace(parent, text + "\r\n<-\t" + DateTime.Now.ToLongTimeString(), data, 0, LogFile);
             }
-            ReadDLMSPacket(data, reply);
+            ReadDLMSPacket(data, tryCount, reply);
 
             if (OnDataReceived != null)
             {
@@ -1049,7 +1056,7 @@ namespace GXDLMSDirector
                         DataType type;
                         if (value is byte[] && (type = obj.GetUIDataType(it)) != DataType.None)
                         {
-                            value = GXDLMSClient.ChangeType((byte[])value, type);
+                            value = GXDLMSClient.ChangeType((byte[])value, type, client.UtcTimeZone);
                         }
                         if (reply.DataType != DataType.None && obj.GetDataType(it) == DataType.None)
                         {
@@ -1109,7 +1116,7 @@ namespace GXDLMSDirector
                                 ReadDataBlock(tmp, string.Format("Writing object {0}, interface {1}", obj.LogicalName, obj.ObjectType), reply);
                             }
                         }
-                        catch(GXDLMSException  ex)
+                        catch (GXDLMSException ex)
                         {
                             if (OnError != null)
                             {
@@ -1125,7 +1132,7 @@ namespace GXDLMSDirector
                         val = reply.Value;
                         if (val is byte[] && (type = obj.GetUIDataType(it)) != DataType.None)
                         {
-                            val = GXDLMSClient.ChangeType((byte[])val, type);
+                            val = GXDLMSClient.ChangeType((byte[])val, type, client.UtcTimeZone);
                         }
                         client.UpdateValue(obj, it, val);
                     }

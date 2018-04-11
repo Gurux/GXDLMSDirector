@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9982 $,
-//                  $Date: 2018-03-22 15:11:47 +0200 (Thu, 22 Mar 2018) $
+// Version:         $Revision: 10026 $,
+//                  $Date: 2018-04-11 12:17:59 +0300 (ke, 11 huhti 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -63,6 +63,11 @@ namespace GXDLMSDirector
             try
             {
                 InitializeComponent();
+                ServerAddressSizeCb.Items.Add("");
+                ServerAddressSizeCb.Items.Add(1);
+                ServerAddressSizeCb.Items.Add(2);
+                ServerAddressSizeCb.Items.Add(4);
+
                 PriorityCb.Items.Add(Priority.Normal);
                 PriorityCb.Items.Add(Priority.High);
                 ServiceClassCb.Items.Add(ServiceClass.UnConfirmed);
@@ -359,6 +364,16 @@ namespace GXDLMSDirector
                 }
                 PriorityCb.SelectedItem = Device.Priority;
                 ServiceClassCb.SelectedItem = Device.ServiceClass;
+                if (Device.ServerAddressSize == 0)
+                {
+                    //If server address is not used.
+                    ServerAddressSizeCb.SelectedIndex = 0;
+                }
+                else
+                {
+                    //Forse to use server address size.
+                    ServerAddressSizeCb.SelectedItem = Device.ServerAddressSize;
+                }
             }
             catch (Exception Ex)
             {
@@ -672,6 +687,14 @@ namespace GXDLMSDirector
                 }
                 Device.Priority = (Priority)PriorityCb.SelectedItem;
                 Device.ServiceClass = (ServiceClass)ServiceClassCb.SelectedItem;
+                if (ServerAddressSizeCb.SelectedItem is string)
+                {
+                    Device.ServerAddressSize = 0;
+                }
+                else
+                {
+                    Device.ServerAddressSize = Convert.ToByte(ServerAddressSizeCb.SelectedItem);
+                }
 
                 Device.Name = name;
                 Device.Media = SelectedMedia;

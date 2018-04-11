@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9981 $,
-//                  $Date: 2018-03-21 20:07:23 +0200 (Wed, 21 Mar 2018) $
+// Version:         $Revision: 10026 $,
+//                  $Date: 2018-04-11 12:17:59 +0300 (ke, 11 huhti 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -97,6 +97,7 @@ namespace GXDLMSDirector
             this.EventNotificationCB = new System.Windows.Forms.CheckBox();
             this.ActionCB = new System.Windows.Forms.CheckBox();
             this.CipheringTab = new System.Windows.Forms.TabPage();
+            this.ServerSystemTitleAsciiCb = new System.Windows.Forms.CheckBox();
             this.ServerSystemTitle = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.UsePreEstablishedApplicationAssociations = new System.Windows.Forms.CheckBox();
@@ -187,7 +188,8 @@ namespace GXDLMSDirector
             this.UseUtcTimeZone = new System.Windows.Forms.CheckBox();
             this.helpProvider1 = new System.Windows.Forms.HelpProvider();
             this.conformanceHelpProvider = new System.Windows.Forms.HelpProvider();
-            this.ServerSystemTitleAsciiCb = new System.Windows.Forms.CheckBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.ServerAddressSizeCb = new System.Windows.Forms.ComboBox();
             this.SupportedServicesTab.SuspendLayout();
             this.SNSettings.SuspendLayout();
             this.LNSettings.SuspendLayout();
@@ -675,6 +677,17 @@ namespace GXDLMSDirector
             this.CipheringTab.TabIndex = 2;
             this.CipheringTab.Text = "Secured Connections";
             this.CipheringTab.UseVisualStyleBackColor = true;
+            // 
+            // ServerSystemTitleAsciiCb
+            // 
+            this.ServerSystemTitleAsciiCb.AutoSize = true;
+            this.ServerSystemTitleAsciiCb.Location = new System.Drawing.Point(347, 184);
+            this.ServerSystemTitleAsciiCb.Name = "ServerSystemTitleAsciiCb";
+            this.ServerSystemTitleAsciiCb.Size = new System.Drawing.Size(53, 17);
+            this.ServerSystemTitleAsciiCb.TabIndex = 69;
+            this.ServerSystemTitleAsciiCb.Text = "ASCII";
+            this.ServerSystemTitleAsciiCb.UseVisualStyleBackColor = true;
+            this.ServerSystemTitleAsciiCb.CheckedChanged += new System.EventHandler(this.ServerSystemTitleAsciiCb_CheckedChanged);
             // 
             // ServerSystemTitle
             // 
@@ -1432,6 +1445,8 @@ namespace GXDLMSDirector
             // 
             // AdvancedTab
             // 
+            this.AdvancedTab.Controls.Add(this.ServerAddressSizeCb);
+            this.AdvancedTab.Controls.Add(this.label5);
             this.AdvancedTab.Controls.Add(this.UserIdTb);
             this.AdvancedTab.Controls.Add(this.UserIDLbl);
             this.AdvancedTab.Controls.Add(this.MaxPduTb);
@@ -1684,16 +1699,25 @@ namespace GXDLMSDirector
             // 
             this.conformanceHelpProvider.HelpNamespace = "https://www.gurux.fi/Gurux.DLMS.Conformance";
             // 
-            // ServerSystemTitleAsciiCb
+            // label5
             // 
-            this.ServerSystemTitleAsciiCb.AutoSize = true;
-            this.ServerSystemTitleAsciiCb.Location = new System.Drawing.Point(347, 184);
-            this.ServerSystemTitleAsciiCb.Name = "ServerSystemTitleAsciiCb";
-            this.ServerSystemTitleAsciiCb.Size = new System.Drawing.Size(53, 17);
-            this.ServerSystemTitleAsciiCb.TabIndex = 69;
-            this.ServerSystemTitleAsciiCb.Text = "ASCII";
-            this.ServerSystemTitleAsciiCb.UseVisualStyleBackColor = true;
-            this.ServerSystemTitleAsciiCb.CheckedChanged += new System.EventHandler(this.ServerSystemTitleAsciiCb_CheckedChanged);
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(16, 325);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(102, 13);
+            this.label5.TabIndex = 56;
+            this.label5.Text = "Server address size:";
+            // 
+            // ServerAddressSizeCb
+            // 
+            this.ServerAddressSizeCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.helpProvider1.SetHelpKeyword(this.ServerAddressSizeCb, "ServiceClass");
+            this.helpProvider1.SetHelpNavigator(this.ServerAddressSizeCb, System.Windows.Forms.HelpNavigator.Topic);
+            this.ServerAddressSizeCb.Location = new System.Drawing.Point(146, 321);
+            this.ServerAddressSizeCb.Name = "ServerAddressSizeCb";
+            this.helpProvider1.SetShowHelp(this.ServerAddressSizeCb, true);
+            this.ServerAddressSizeCb.Size = new System.Drawing.Size(93, 21);
+            this.ServerAddressSizeCb.TabIndex = 57;
             // 
             // DevicePropertiesForm
             // 
@@ -1870,5 +1894,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.TextBox ServerSystemTitle;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.CheckBox ServerSystemTitleAsciiCb;
+        private System.Windows.Forms.ComboBox ServerAddressSizeCb;
+        private System.Windows.Forms.Label label5;
     }
 }

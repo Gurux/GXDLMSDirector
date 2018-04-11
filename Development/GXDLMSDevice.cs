@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9981 $,
-//                  $Date: 2018-03-21 20:07:23 +0200 (Wed, 21 Mar 2018) $
+// Version:         $Revision: 10026 $,
+//                  $Date: 2018-04-11 12:17:59 +0300 (ke, 11 huhti 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -466,7 +466,16 @@ namespace GXDLMSDirector
             set;
         }
 
-
+        
+        /// <summary>
+        /// Server address size.
+        /// </summary>
+        [DefaultValue(0)]
+        public byte ServerAddressSize
+        {
+            get;
+            set;
+        }
 
         void NotifyProgress(object sender, string description, int current, int maximium)
         {

@@ -394,7 +394,7 @@ namespace GXDLMSDirector
                             }
                             else if (dt == DataType.DateTime || dt == DataType.Date || dt == DataType.Time)
                             {
-                                str = GXDLMSClient.ChangeType((byte[])value, dt).ToString();
+                                str = GXDLMSClient.ChangeType((byte[])value, dt, test.Device.Comm.client.UtcTimeZone).ToString();
                             }
                             else
                             {
@@ -582,7 +582,7 @@ namespace GXDLMSDirector
                     dev.Comm.LogFile = Path.Combine(test.Results, "Trace.txt");
                     GXDLMSClient cl = dev.Comm.client;
                     dev.Comm.client = new GXDLMSXmlClient(TranslatorOutputType.SimpleXml);
-                    cl.CopyTo(dev.Comm.client);
+                    //Mikko cl.CopyTo(dev.Comm.client);
                     test.Device = dev;
                     output = new GXOutput(Path.Combine(test.Results, "Results.html"), dev.Name);
                     tests.RemoveAt(0);
@@ -591,25 +591,37 @@ namespace GXDLMSDirector
                 GXDLMSXmlClient client = (GXDLMSXmlClient)dev.Comm.client;
                 List<string> files = new List<string>();
                 DateTime start = DateTime.Now;
+                test.OnTrace(test, "Starting to execute test for " + dev.Name + ".\r\n");
                 try
                 {
                     output.PreInfo.Add("<a target=\"_blank\" href=\"https://www.gurux.fi/gurux.dlms.ctt.tests\">Gurux Conformance Tests</a>");
 
                     output.PreInfo.Add("Start Time: " + start.ToString());
                     output.PreInfo.Add("<hr>");
-                    media.Open();
                     dev.InitializeConnection();
-                    if (dev.MaxInfoRX != 128 && dev.MaxInfoRX != dev.Comm.client.Limits.MaxInfoRX)
+                    if (!settings.ExcludeHdlcTests && dev.Comm.client.InterfaceType == InterfaceType.HDLC)
                     {
-                        output.Warnings.Add("Client asked that RX frame size is " + dev.MaxInfoRX + ". Meter uses " + dev.Comm.client.Limits.MaxInfoRX);
+                        HdlcTests(test, settings, dev, output);
+                        if (!Continue)
+                        {
+                            continue;
+                        }
+                        dev.InitializeConnection();
                     }
-                    if (dev.MaxInfoTX != 128 && dev.MaxInfoTX != dev.Comm.client.Limits.MaxInfoTX)
+                    if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
                     {
-                        output.Warnings.Add("Client asked that TX frame size is " + dev.MaxInfoTX + ". Meter uses " + dev.Comm.client.Limits.MaxInfoTX);
-                    }
-                    if (dev.PduSize < dev.Comm.client.MaxReceivePDUSize)
-                    {
-                        output.Warnings.Add("Client asked that PDU size is " + dev.PduSize + ". Meter uses " + dev.Comm.client.MaxReceivePDUSize);
+                        if (dev.MaxInfoRX != 128 && dev.MaxInfoRX != dev.Comm.client.Limits.MaxInfoRX)
+                        {
+                            output.Warnings.Add("Client asked that RX frame size is " + dev.MaxInfoRX + ". Meter uses " + dev.Comm.client.Limits.MaxInfoRX);
+                        }
+                        if (dev.MaxInfoTX != 128 && dev.MaxInfoTX != dev.Comm.client.Limits.MaxInfoTX)
+                        {
+                            output.Warnings.Add("Client asked that TX frame size is " + dev.MaxInfoTX + ". Meter uses " + dev.Comm.client.Limits.MaxInfoTX);
+                        }
+                        if (dev.PduSize < dev.Comm.client.MaxReceivePDUSize)
+                        {
+                            output.Warnings.Add("Client asked that PDU size is " + dev.PduSize + ". Meter uses " + dev.Comm.client.MaxReceivePDUSize);
+                        }
                     }
                     int maxframesize = dev.Comm.client.Limits.MaxInfoRX;
                     if (settings.ReReadAssociationView)
@@ -1123,13 +1135,920 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
+        /// Send Disc, SNRM and Receiver ready to check that meter is in Normal Response Mode. 
+        /// </summary>
+        /// <remarks>
+        /// DLMS CCT: T_HDLC_FRAME_P1
+        /// </remarks>
+        /// <param name="test"></param>
+        /// <param name="settings"></param>
+        /// <param name="dev"></param>
+        /// <param name="output"></param>
+        private static void Test1(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output, int tryCount)
+        {
+            GXReplyData reply = new GXReplyData();
+            bool passed = true;
+            test.OnTrace(test, "Starting HDLC tests #1.\r\n");
+            try
+            {
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(), "HDLC test #1. Disconnect request", 1, tryCount, reply);
+                dev.Comm.ParseUAResponse(reply.Data);
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                {
+                    output.Info.Add("Meter returns DisconnectMode.");
+                }
+                else
+                {
+                    passed = false;
+                }
+            }
+            catch (Exception)
+            {
+                passed = false;
+            }
+            try
+            {
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.SNRMRequest(), "HDLC test #1. SNRM request", 1, tryCount, reply);
+                dev.Comm.ParseUAResponse(reply.Data);
+                output.Info.Add("SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.Limits.MaxInfoTX +
+                    " MaxInfoLengthReceive: " + dev.Comm.client.Limits.MaxInfoRX + " WindowSizeTransmit: " +
+                    dev.Comm.client.Limits.WindowSizeTX + " WindowSizeReceive: " + dev.Comm.client.Limits.WindowSizeRX);
+            }
+            catch (Exception ex)
+            {
+                passed = false;
+            }
+            //Check that meter is Normal Response Mode. 
+            try
+            {
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.client.ReceiverReady(RequestTypes.None), "HDLC test #1. Receiver Ready ", 1, tryCount, reply);
+            }
+            catch (Exception)
+            {
+                passed = false;
+                output.Errors.Add("Receiver Ready failed.");
+            }
+            if (passed)
+            {
+                test.OnTrace(test, "Passed.\r\n");
+            }
+            else
+            {
+                test.OnTrace(test, "Failed.\r\n");
+                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc1\">Test #1 failed.</a>");
+            }
+        }
+
+        /// <summary>
+        /// Send SNRM and SNRM again where one byte from CRC is removed. Then check that meter is in Normal Response Mode. 
+        /// </summary>
+        /// <remarks>
+        /// DLMS CCT: T_HDLC_FRAME_P2
+        /// </remarks>
+        /// <param name="test"></param>
+        /// <param name="settings"></param>
+        /// <param name="dev"></param>
+        /// <param name="output"></param>
+        private static void Test2(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output, int tryCount)
+        {
+            GXReplyData reply = new GXReplyData();
+            bool passed = true;
+            test.OnTrace(test, "Starting HDLC tests #2.\r\n");
+            try
+            {
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.SNRMRequest(), "HDLC test #2. SNRM request", 1, tryCount, reply);
+                dev.Comm.ParseUAResponse(reply.Data);
+                output.Info.Add("SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.Limits.MaxInfoTX +
+                    " MaxInfoLengthReceive: " + dev.Comm.client.Limits.MaxInfoRX + " WindowSizeTransmit: " +
+                    dev.Comm.client.Limits.WindowSizeTX + " WindowSizeReceive: " + dev.Comm.client.Limits.WindowSizeRX);
+            }
+            catch (Exception ex)
+            {
+                output.Errors.Add("SNRM request failed. " + ex.Message);
+                passed = false;
+            }
+            try
+            {
+                reply.Clear();
+                GXByteBuffer bb = new GXByteBuffer(dev.Comm.SNRMRequest());
+                bb.Move(bb.Size - 1, bb.Size - 2, 1);
+                dev.Comm.ReadDataBlock(bb.Array(), "HDLC test #2. Illegal frame.", 1, tryCount, reply);
+                output.Info.Add("Illegal frame failed.");
+                passed = false;
+            }
+            catch (Exception)
+            {
+                output.Info.Add("Illegal frame succeeded.");
+            }
+            //Check that meter is Normal Response Mode. 
+            try
+            {
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.client.ReceiverReady(RequestTypes.None), "HDLC test #2. Receiver Ready ", 1, tryCount, reply);
+                if ((reply.FrameId & 0xF) != 1)
+                {
+                    passed = false;
+                }
+            }
+            catch (Exception)
+            {
+                passed = false;
+            }
+            if (passed)
+            {
+                test.OnTrace(test, "Passed.\r\n");
+            }
+            else
+            {
+                test.OnTrace(test, "Failed.\r\n");
+                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc2\">Test #2 failed.</a>");
+            }
+        }
+
+        /// <summary>
+        /// Send SNRM and then wait to check that inactivity timeout is working. 
+        /// </summary>
+        /// <remarks>
+        /// DLMS CCT: T_HDLC_FRAME_P3
+        /// </remarks>
+        /// <param name="test"></param>
+        /// <param name="settings"></param>
+        /// <param name="dev"></param>
+        /// <param name="output"></param>
+        private static void Test3(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output, int tryCount)
+        {
+            test.OnTrace(test, "Starting HDLC tests #3.\r\n");
+            GXDLMSObjectCollection objs = dev.Comm.client.Objects.GetObjects(ObjectType.IecHdlcSetup);
+            if (objs.Count == 0)
+            {
+                output.PreInfo.Add("Inactivity timeout is not tested.");
+                test.OnTrace(test, "Ignored.\r\n");
+            }
+            else
+            {
+                GXDLMSHdlcSetup s = (GXDLMSHdlcSetup)objs[0];
+                dev.Comm.Read(s, 8);
+                output.PreInfo.Add("HDLC Setup default inactivity timeout value is " + s.InactivityTimeout + " seconds.");
+                if (s.InactivityTimeout == 0)
+                {
+                    test.OnTrace(test, "Ignored.\r\n");
+                }
+                else
+                {
+                    GXReplyData reply = new GXReplyData();
+                    bool passed = true;
+                    try
+                    {
+                        reply.Clear();
+                        dev.Comm.ReadDataBlock(dev.Comm.SNRMRequest(), "HDLC test #3. SNRM request", 1, tryCount, reply);
+                        dev.Comm.ParseUAResponse(reply.Data);
+                        output.Info.Add("Disconect SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.Limits.MaxInfoTX +
+                            " MaxInfoLengthReceive: " + dev.Comm.client.Limits.MaxInfoRX + " WindowSizeTransmit: " +
+                            dev.Comm.client.Limits.WindowSizeTX + " WindowSizeReceive: " + dev.Comm.client.Limits.WindowSizeRX);
+                    }
+                    catch (Exception ex)
+                    {
+                        output.Errors.Add("SNRM request failed. " + ex.Message);
+                        passed = false;
+                    }
+                    test.OnTrace(test, "Testing inactivity timeout and sleeping for " + s.InactivityTimeout + " seconds.\r\n");
+                    Thread.Sleep(s.InactivityTimeout * 1000);
+                    try
+                    {
+                        reply.Clear();
+                        dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(), "HDLC test #3. Disconnect request", 1, tryCount, reply);
+                        passed = false;
+                    }
+                    catch (GXDLMSException ex)
+                    {
+                        if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                        {
+                            output.Info.Add("Meter returns DisconnectMode.");
+                        }
+                        else
+                        {
+                            passed = false;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        passed = false;
+                    }
+                    if (passed)
+                    {
+                        test.OnTrace(test, "Passed.\r\n");
+                    }
+                    else
+                    {
+                        test.OnTrace(test, "Failed.\r\n");
+                        output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc3\">Test #3 failed.</a>");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Send Disc and then send invalid frames and check that meter is in Normal Disconnected Mode.
+        /// </summary>
+        /// <remarks>
+        /// DLMS CCT: T_HDLC_FRAME_N1
+        /// </remarks>
+        /// <param name="test"></param>
+        /// <param name="settings"></param>
+        /// <param name="dev"></param>
+        /// <param name="output"></param>
+        private static void Test4(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output, int tryCount)
+        {
+            GXReplyData reply = new GXReplyData();
+            bool passed = true;
+            test.OnTrace(test, "Starting HDLC tests #4.\r\n");
+            try
+            {
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(), "HDLC Test #4. Disconnect request", 1, tryCount, reply);
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                {
+                    output.Info.Add("Meter returns DisconnectMode.");
+                }
+                else if (ex.ErrorCode == (int)ErrorCode.Rejected)
+                {
+                    output.Info.Add("Meter returns Rejected.");
+                }
+                else
+                {
+                    passed = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                passed = false;
+                output.Errors.Add("DisconnectRequest failed. " + ex.Message);
+            }
+
+            //Opening flag missing
+            test.OnTrace(test, "HDLC Illecal frame test (Opening flag missing).\r\n");
+            try
+            {
+                reply.Clear();
+                GXByteBuffer bb = new GXByteBuffer(dev.Comm.SNRMRequest());
+                bb.Move(1, 0, bb.Size - 1);
+                dev.Comm.ReadDataBlock(bb.Array(), "HDLC test #4. Opening flag missing.", 1, tryCount, reply);
+                output.Errors.Add("Opening flag missing failed.");
+                passed = false;
+            }
+            catch (Exception)
+            {
+                output.Info.Add("Opening flag missing succeeded.");
+            }
+
+            //Closing flag missing.
+            test.OnTrace(test, "HDLC Illecal frame test (Closing flag missing).\r\n");
+            try
+            {
+                reply.Clear();
+                GXByteBuffer bb = new GXByteBuffer(dev.Comm.SNRMRequest());
+                --bb.Size;
+                dev.Comm.ReadDataBlock(bb.Array(), "HDLC test #4. Closing flag missing.", 1, tryCount, reply);
+                output.Errors.Add("Closing flag missing failed.");
+                passed = false;
+            }
+            catch (Exception)
+            {
+                output.Info.Add("Closing flag missing succeeded.");
+            }
+
+            //Both flags are missing.
+            test.OnTrace(test, "HDLC Illecal frame test (Both flags are missing).\r\n");
+            try
+            {
+                reply.Clear();
+                GXByteBuffer bb = new GXByteBuffer(dev.Comm.SNRMRequest());
+                bb.Move(1, 0, bb.Size - 1);
+                --bb.Size;
+                dev.Comm.ReadDataBlock(bb.Array(), "HDLC test #4. Both flags missing.", 1, tryCount, reply);
+                output.Errors.Add("Both flags missing failed.");
+                passed = false;
+            }
+            catch (Exception)
+            {
+                output.Info.Add("Both flags missing succeeded.");
+            }
+
+            try
+            {
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(), "HDLC test #4. Disconnect request", 1, tryCount, reply);
+                passed = false;
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                {
+                    output.Info.Add("Meter returns DisconnectMode.");
+                }
+                else if (ex.ErrorCode == (int)ErrorCode.Rejected)
+                {
+                    output.Info.Add("Meter returns Rejected.");
+                }
+                else
+                {
+                    passed = false;
+                }
+            }
+            catch (Exception)
+            {
+                output.Errors.Add("Disconnect request failed.");
+            }
+            if (passed)
+            {
+                test.OnTrace(test, "Passed.\r\n");
+            }
+            else
+            {
+                test.OnTrace(test, "Failed.\r\n");
+                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc4\">Test #4 failed.</a>");
+            }
+        }
+
+        /// <summary>
+        /// Send Disc and then send invalid frames and SNRM and wait UA.
+        /// </summary>
+        /// <remarks>
+        /// DLMS CCT: T_HDLC_FRAME_N2
+        /// </remarks>
+        /// <param name="test"></param>
+        /// <param name="settings"></param>
+        /// <param name="dev"></param>
+        /// <param name="output"></param>
+        private static void Test5(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output, int tryCount)
+        {
+            GXReplyData reply = new GXReplyData();
+            bool passed = true;
+            test.OnTrace(test, "Starting HDLC tests #5.\r\n");
+            try
+            {
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(), "HDLC test #5. Disconnect request", 1, tryCount, reply);
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                {
+                    output.Info.Add("Meter returns DisconnectMode.");
+                }
+                else if (ex.ErrorCode == (int)ErrorCode.Rejected)
+                {
+                    output.Info.Add("Meter rejects Disconnect Request.");
+                }
+                else
+                {
+                    passed = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                output.Errors.Add("DisconnectRequest failed. " + ex.Message);
+            }
+
+            //Remove content one byte at the time.
+            UInt16 rx = dev.Comm.client.Limits.MaxInfoRX, tx = dev.Comm.client.Limits.MaxInfoTX;
+            dev.Comm.client.Limits.MaxInfoRX = dev.Comm.client.Limits.MaxInfoTX = 128;
+            try
+            {
+                GXByteBuffer bb = new GXByteBuffer(dev.Comm.SNRMRequest());
+                while (bb.Size - 4 > 0)
+                {
+                    bb.Move(4, 3, bb.Size - 4);
+                    --bb.Data[2];
+                    try
+                    {
+                        reply.Clear();
+                        dev.Comm.ReadDataBlock(bb.Array(), "HDLC test #5. Invalid frame.", 1, tryCount, reply);
+                        passed = false;
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        //This should fail.
+                    }
+                }
+            }
+            finally
+            {
+                dev.Comm.client.Limits.MaxInfoRX = rx;
+                dev.Comm.client.Limits.MaxInfoTX = tx;
+            }
+            try
+            {
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.SNRMRequest(), "HDLC test #5. SNRM request", 1, tryCount, reply);
+                dev.Comm.ParseUAResponse(reply.Data);
+                output.Info.Add("Disconect SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.Limits.MaxInfoTX +
+                    " MaxInfoLengthReceive: " + dev.Comm.client.Limits.MaxInfoRX + " WindowSizeTransmit: " +
+                    dev.Comm.client.Limits.WindowSizeTX + " WindowSizeReceive: " + dev.Comm.client.Limits.WindowSizeRX);
+            }
+            catch (Exception ex)
+            {
+                output.Errors.Add("SNRM request failed. " + ex.Message);
+                passed = false;
+            }
+
+            if (passed)
+            {
+                test.OnTrace(test, "Passed.\r\n");
+            }
+            else
+            {
+                test.OnTrace(test, "Failed.\r\n");
+                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc5\">Test #5 failed.</a>");
+            }
+        }
+
+        /// <summary>
+        /// Send Disc and then send invalid SNRM frame and Disc and check that meter is in Normal Disconnected Mode.
+        /// </summary>
+        /// <remarks>
+        /// DLMS CCT: T_HDLC_FRAME_N3
+        /// </remarks>
+        /// <param name="test"></param>
+        /// <param name="settings"></param>
+        /// <param name="dev"></param>
+        /// <param name="output"></param>
+        private static void Test6(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output, int tryCount)
+        {
+            GXReplyData reply = new GXReplyData();
+            bool passed = true;
+            test.OnTrace(test, "Starting HDLC tests #6.\r\n");
+            try
+            {
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(), "HDLC test #6. Disconnect request", 1, tryCount, reply);
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                {
+                    output.Info.Add("Meter returns DisconnectMode.");
+                }
+            }
+            catch (Exception ex)
+            {
+                output.Errors.Add("Disconnect request failed. " + ex.Message);
+                passed = false;
+            }
+            try
+            {
+                reply.Clear();
+                byte[] data = dev.Comm.SNRMRequest();
+                data[1] = 0;
+                dev.Comm.ReadDataBlock(data, "HDLC test #6. SNRM request", 1, tryCount, reply);
+                output.Errors.Add("SNRM request failed.");
+                passed = false;
+            }
+            catch (Exception)
+            {
+                output.Info.Add("SNRM request succeeded.");
+            }
+            try
+            {
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(), "HDLC test #6. Disconnect request", 1, tryCount, reply);
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                {
+                    output.Info.Add("Meter returns DisconnectMode.");
+                }
+                else
+                {
+                    passed = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                passed = false;
+                output.Errors.Add("SNRM request failed. " + ex.Message);
+            }
+            if (passed)
+            {
+                test.OnTrace(test, "Passed.\r\n");
+            }
+            else
+            {
+                test.OnTrace(test, "Failed.\r\n");
+                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc6\">Test #6 failed.</a>");
+            }
+        }
+
+        /// <summary>
+        /// Send Disc and then send invalid SNRM frame where length is too long. Send Disc and check that meter is in Normal Disconnected Mode.
+        /// </summary>
+        /// <remarks>
+        /// DLMS CCT: T_HDLC_FRAME_N4
+        /// </remarks>
+        /// <param name="test"></param>
+        /// <param name="settings"></param>
+        /// <param name="dev"></param>
+        /// <param name="output"></param>
+        private static void Test7(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output, int tryCount)
+        {
+            GXReplyData reply = new GXReplyData();
+            bool passed = true;
+            test.OnTrace(test, "Starting HDLC tests #7.\r\n");
+            try
+            {
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(), "HDLC test #7. Disconnect request", 1, tryCount, reply);
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                {
+                    output.Info.Add("Meter returns DisconnectMode.");
+                }
+            }
+            catch (Exception ex)
+            {
+                passed = false;
+                output.Errors.Add("Disconnect request failed. " + ex.Message);
+            }
+            try
+            {
+                reply.Clear();
+                byte[] data = dev.Comm.SNRMRequest();
+                ++data[2];
+                dev.Comm.ReadDataBlock(data, "HDLC test #7. SNRM request", 1, tryCount, reply);
+                output.Errors.Add("SNRM request failed. ");
+                passed = false;
+            }
+            catch (Exception)
+            {
+                output.Info.Add("SNRM request succeeded.");
+            }
+            try
+            {
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(), "HDLC test #7. Disconnect request", 1, tryCount, reply);
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                {
+                    output.Info.Add("Meter returns DisconnectMode.");
+                }
+                else
+                {
+                    passed = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                passed = false;
+                output.Errors.Add("Disconnect request failed. " + ex.Message);
+            }
+
+            if (passed)
+            {
+                test.OnTrace(test, "Passed.\r\n");
+            }
+            else
+            {
+                test.OnTrace(test, "Failed.\r\n");
+                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc7\">Test #7 failed.</a>");
+            }
+        }
+
+        /// <summary>
+        /// Send SNRM and then send Unknown command identifier.
+        /// </summary>
+        /// <remarks>
+        /// DLMS CCT: T_HDLC_FRAME_N5
+        /// </remarks>
+        /// <param name="test"></param>
+        /// <param name="settings"></param>
+        /// <param name="dev"></param>
+        /// <param name="output"></param>
+        private static void Test8(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output, int tryCount)
+        {
+            GXReplyData reply = new GXReplyData();
+            bool passed = true;
+            test.OnTrace(test, "Starting HDLC tests #8.\r\n");
+            try
+            {
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(), "HDLC test #8. Disconnect request", 1, tryCount, reply);
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                {
+                    output.Info.Add("Meter returns DisconnectMode.");
+                }
+                else
+                {
+                    passed = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                passed = false;
+                output.Errors.Add("Disconnect request failed. " + ex.Message);
+            }
+            try
+            {
+                reply.Clear();
+                byte[] data = dev.Comm.client.CustomHdlcFrameRequest(0xFF, null);
+                dev.Comm.ReadDataBlock(data, "HDLC test #8. Unknown command", 1, tryCount, reply);
+                passed = false;
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.UnacceptableFrame)
+                {
+                    output.Info.Add("Unknown command succeeded. " + ex.Message);
+                }
+                else
+                {
+                    passed = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                passed = false;
+            }
+            if (passed)
+            {
+                test.OnTrace(test, "Passed.\r\n");
+            }
+            else
+            {
+                test.OnTrace(test, "Failed.\r\n");
+                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc8\">Test #8 failed.</a>");
+            }
+        }
+
+        /// <summary>
+        /// Send Disc and then send illegal frame. Send Disc and check that meter is in Normal Disconnected Mode.
+        /// </summary>
+        /// <remarks>
+        /// DLMS CCT: T_HDLC_FRAME_N7
+        /// </remarks>
+        /// <param name="test"></param>
+        /// <param name="settings"></param>
+        /// <param name="dev"></param>
+        /// <param name="output"></param>
+        private static void Test9(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output, int tryCount)
+        {
+            GXReplyData reply = new GXReplyData();
+            bool passed = true;
+            test.OnTrace(test, "Starting HDLC tests #9.\r\n");
+            try
+            {
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(), "HDLC test #9. Disconnect request", 1, tryCount, reply);
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                {
+                    output.Info.Add("Meter returns DisconnectMode.");
+                }
+                else
+                {
+                    passed = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                passed = false;
+                output.Errors.Add("Disconnect request failed. " + ex.Message);
+            }
+            try
+            {
+                reply.Clear();
+                GXByteBuffer bb = new GXByteBuffer(new byte[] { 0x81, 0x80, 0x12, 0x05, 0x01, 0x80, 0x06, 0x01, 0x80, 0x07, 0x04, 0x00, 0x00, 0x00, 0x01, 0x08, 0x04, 0x00, 0x00, 0x00, 0x01 });
+                byte[] data = dev.Comm.client.CustomHdlcFrameRequest(0x94, bb);
+                dev.Comm.ReadDataBlock(data, "HDLC test #9. Unknown command", 1, tryCount, reply);
+                passed = false;
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.Rejected)
+                {
+                    output.Info.Add("Unknown command succeeded. (Meter rejects the frame)");
+                }
+                else if (ex.ErrorCode == (int)ErrorCode.UnacceptableFrame)
+                {
+                    output.Info.Add("Unknown command succeeded. (Unacceptable Frame)");
+                }
+                else
+                {
+                    passed = false;
+                }
+            }
+            catch (Exception)
+            {
+                output.Info.Add("Unknown command succeeded (timeout).");
+            }
+            try
+            {
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(), "HDLC test #9. Disconnect request", 1, tryCount, reply);
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                {
+                    output.Info.Add("Meter returns DisconnectMode.");
+                }
+                else if (ex.ErrorCode == (int)ErrorCode.Rejected)
+                {
+                    output.Info.Add("Meter rejects the frame.");
+                }
+                else
+                {
+                    passed = false;
+                }
+            }
+            catch (Exception)
+            {
+                output.Info.Add("Disconnect request failed (timeout).");
+                passed = false;
+            }
+            if (passed)
+            {
+                test.OnTrace(test, "Passed.\r\n");
+            }
+            else
+            {
+                test.OnTrace(test, "Failed.\r\n");
+                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc9\">Test #9 failed.</a>");
+            }
+        }
+
+        /// <summary>
+        /// Send Disc and then send SNRM frame where CRC is wrong. Then send Disc and check that meter is in Normal Disconnected Mode.
+        /// </summary>
+        /// <remarks>
+        /// DLMS CCT: T_HDLC_FRAME_N8
+        /// </remarks>
+        /// <param name="test"></param>
+        /// <param name="settings"></param>
+        /// <param name="dev"></param>
+        /// <param name="output"></param>
+        private static void Test10(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output, int tryCount)
+        {
+            GXReplyData reply = new GXReplyData();
+            bool passed = true;
+            test.OnTrace(test, "Starting HDLC tests #10.\r\n");
+            try
+            {
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(), "HDLC test #10. Disconnect request", 1, tryCount, reply);
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                {
+                    output.Info.Add("Meter returns DisconnectMode.");
+                }
+                else
+                {
+                    passed = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                passed = false;
+                output.Errors.Add("Disconnect request failed. " + ex.Message);
+            }
+            try
+            {
+                reply.Clear();
+                byte[] data = dev.Comm.client.SNRMRequest();
+                ++data[data.Length - 2];
+                dev.Comm.ReadDataBlock(data, "HDLC test #10. Unknown command", 1, tryCount, reply);
+                passed = false;
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.UnacceptableFrame)
+                {
+                    output.Info.Add("Meter returns Unacceptable Frame.");
+                }
+                else
+                {
+                    passed = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                //This should happened.
+            }
+            try
+            {
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(), "HDLC test #10. Disconnect request", 1, tryCount, reply);
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                {
+                    output.Info.Add("Meter returns DisconnectMode.");
+                }
+                else
+                {
+                    passed = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                passed = false;
+            }
+            if (passed)
+            {
+                test.OnTrace(test, "Passed.\r\n");
+            }
+            else
+            {
+                test.OnTrace(test, "Failed.\r\n");
+                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc10\">Test #10 failed.</a>");
+            }
+        }
+
+        private static void HdlcTests(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output)
+        {
+            int tryCount = 1;
+            if (!Continue)
+            {
+                return;
+            }
+            Test1(test, settings, dev, output, tryCount);
+            if (!Continue)
+            {
+                return;
+            }
+            Test2(test, settings, dev, output, tryCount);
+            if (!Continue)
+            {
+                return;
+            }
+            //  Test3(test, settings, dev, output, tryCount);
+            if (!Continue)
+            {
+                return;
+            }
+            Test4(test, settings, dev, output, tryCount);
+            if (!Continue)
+            {
+                return;
+            }
+            Test5(test, settings, dev, output, tryCount);
+            if (!Continue)
+            {
+                return;
+            }
+            Test6(test, settings, dev, output, tryCount);
+            if (!Continue)
+            {
+                return;
+            }
+            Test7(test, settings, dev, output, tryCount);
+            if (!Continue)
+            {
+                return;
+            }
+            Test8(test, settings, dev, output, tryCount);
+            if (!Continue)
+            {
+                return;
+            }
+            Test9(test, settings, dev, output, tryCount);
+            if (!Continue)
+            {
+                return;
+            }
+            Test10(test, settings, dev, output, tryCount);
+        }
+
+        /// <summary>
         /// Test image transfer.
         /// </summary>
         /// <param name="settings">Conformance settings.</param>
         /// <param name="dev">DLMS device.</param>
         /// <param name="output"></param>
         private static void TestImageTransfer(GXConformanceSettings settings, GXConformanceTest test, GXDLMSDevice dev, GXOutput output)
-        {          
+        {
             if (!string.IsNullOrEmpty(settings.ImageFile) && settings.ImageIdentifier != null && settings.ImageIdentifier.Length != 0)
             {
                 GXDLMSObjectCollection objects = dev.Comm.client.Objects.GetObjects(ObjectType.ImageTransfer);

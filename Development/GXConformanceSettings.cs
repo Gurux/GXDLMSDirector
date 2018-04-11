@@ -313,5 +313,14 @@ namespace GXDLMSDirector
                 }
             }
         }
+
+        [Description("Exclude HDLC framing tests. HDLC tests are executed only when HDLC framing is used.")]
+        [DefaultValue(false)]
+        [Category("Accessibility")]
+        public bool ExcludeHdlcTests
+        {
+            get;
+            set;
+        }
     }
 }

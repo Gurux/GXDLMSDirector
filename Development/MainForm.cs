@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10015 $,
-//                  $Date: 2018-04-04 14:56:26 +0300 (Wed, 04 Apr 2018) $
+// Version:         $Revision: 10026 $,
+//                  $Date: 2018-04-11 12:17:59 +0300 (ke, 11 huhti 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -618,7 +618,11 @@ namespace GXDLMSDirector
                         }
                     }
                 }
-
+                if (TransactionWork != null)
+                {
+                    TransactionWork.Cancel();
+                    TransactionWork = null;
+                }
                 path = "";
                 ObjectTreeItems.Clear();
                 SelectedListItems.Clear();

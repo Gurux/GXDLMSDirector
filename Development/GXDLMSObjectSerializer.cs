@@ -6,7 +6,7 @@
 //
 //
 // Version:         $Revision: 9990 $,
-//                  $Date: 2018-03-26 17:53:08 +0300 (Mon, 26 Mar 2018) $
+//                  $Date: 2018-03-26 17:53:08 +0300 (ma, 26 maalis 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd

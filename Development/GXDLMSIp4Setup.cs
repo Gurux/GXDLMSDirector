@@ -4,7 +4,7 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSIp4Setup.cs $
+// Filename:        $HeadURL: https://146.185.146.169/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSIp4Setup.cs $
 //
 // Version:         $Revision: 5551 $,
 //                  $Date: 2012-07-31 13:18:30 +0300 (ti, 31 heinä 2012) $

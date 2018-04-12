@@ -582,7 +582,7 @@ namespace GXDLMSDirector
                     dev.Comm.LogFile = Path.Combine(test.Results, "Trace.txt");
                     GXDLMSClient cl = dev.Comm.client;
                     dev.Comm.client = new GXDLMSXmlClient(TranslatorOutputType.SimpleXml);
-                    //Mikko cl.CopyTo(dev.Comm.client);
+                    cl.CopyTo(dev.Comm.client);
                     test.Device = dev;
                     output = new GXOutput(Path.Combine(test.Results, "Results.html"), dev.Name);
                     tests.RemoveAt(0);
@@ -598,16 +598,17 @@ namespace GXDLMSDirector
 
                     output.PreInfo.Add("Start Time: " + start.ToString());
                     output.PreInfo.Add("<hr>");
-                    dev.InitializeConnection();
                     if (!settings.ExcludeHdlcTests && dev.Comm.client.InterfaceType == InterfaceType.HDLC)
                     {
+                        dev.Comm.UpdateSettings();
+                        dev.Comm.media.Open();
                         HdlcTests(test, settings, dev, output);
                         if (!Continue)
                         {
                             continue;
                         }
-                        dev.InitializeConnection();
                     }
+                    dev.InitializeConnection();
                     if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
                     {
                         if (dev.MaxInfoRX != 128 && dev.MaxInfoRX != dev.Comm.client.Limits.MaxInfoRX)
@@ -1183,16 +1184,57 @@ namespace GXDLMSDirector
                 passed = false;
             }
             //Check that meter is Normal Response Mode. 
-            try
+            if (passed)
             {
-                reply.Clear();
-                dev.Comm.ReadDataBlock(dev.Comm.client.ReceiverReady(RequestTypes.None), "HDLC test #1. Receiver Ready ", 1, tryCount, reply);
+                try
+                {
+                    reply.Clear();
+                    dev.Comm.ReadDataBlock(dev.Comm.client.ReceiverReady(RequestTypes.None), "HDLC test #1. Receiver Ready ", 1, tryCount, reply);
+                    if ((reply.FrameId & 0xF) != 1)
+                    {
+                        output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc1\">Test #1 failed</a>. Send sequence number is not 0");
+                        passed = false;
+                    }
+                    if ((reply.FrameId & 0x10) != 0x10)
+                    {
+                        output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc1\">Test #1 failed</a>. P/F is 0");
+                        passed = false;
+                    }
+                    if ((reply.FrameId & 0xF0) != 0x10)
+                    {
+                        output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc1\">Test #1 failed</a>. Receive sequence number is not 0");
+                        passed = false;
+                    }
+                }
+                catch (Exception)
+                {
+                    passed = false;
+                    output.Errors.Add("Receiver Ready failed.");
+                }
             }
-            catch (Exception)
+            //Send disc.
+            if (passed)
             {
-                passed = false;
-                output.Errors.Add("Receiver Ready failed.");
+                try
+                {
+                    reply.Clear();
+                    dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(), "HDLC test 1. Disconnect request", 1, tryCount, reply);
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
+                catch (GXDLMSException ex)
+                {
+                    if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                    {
+                        output.Info.Add("Meter returns DisconnectMode.");
+                    }
+                    passed = false;
+                }
+                catch (Exception)
+                {
+                    passed = false;
+                }
             }
+
             if (passed)
             {
                 test.OnTrace(test, "Passed.\r\n");
@@ -1236,8 +1278,8 @@ namespace GXDLMSDirector
             try
             {
                 reply.Clear();
-                GXByteBuffer bb = new GXByteBuffer(dev.Comm.SNRMRequest());
-                bb.Move(bb.Size - 1, bb.Size - 2, 1);
+                GXByteBuffer bb = new GXByteBuffer(dev.Comm.DisconnectRequest());
+                --bb.Size;
                 dev.Comm.ReadDataBlock(bb.Array(), "HDLC test #2. Illegal frame.", 1, tryCount, reply);
                 output.Info.Add("Illegal frame failed.");
                 passed = false;
@@ -1251,9 +1293,10 @@ namespace GXDLMSDirector
             {
                 reply.Clear();
                 dev.Comm.ReadDataBlock(dev.Comm.client.ReceiverReady(RequestTypes.None), "HDLC test #2. Receiver Ready ", 1, tryCount, reply);
-                if ((reply.FrameId & 0xF) != 1)
+                if (reply.FrameId != 0x11)
                 {
                     passed = false;
+                    output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc2\">Test #2 failed</a>. Response is not RR.");
                 }
             }
             catch (Exception)
@@ -1377,11 +1420,12 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    output.Info.Add("HDLC Test #4. Meter returns DisconnectMode.");
                 }
                 else if (ex.ErrorCode == (int)ErrorCode.Rejected)
                 {
-                    output.Info.Add("Meter returns Rejected.");
+                    passed = false;
+                    output.Info.Add("HDLC Test #4. Meter returns Rejected.");
                 }
                 else
                 {
@@ -1391,7 +1435,7 @@ namespace GXDLMSDirector
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("DisconnectRequest failed. " + ex.Message);
+                output.Errors.Add("HDLC Test #4. DisconnectRequest failed. " + ex.Message);
             }
 
             //Opening flag missing
@@ -1402,12 +1446,12 @@ namespace GXDLMSDirector
                 GXByteBuffer bb = new GXByteBuffer(dev.Comm.SNRMRequest());
                 bb.Move(1, 0, bb.Size - 1);
                 dev.Comm.ReadDataBlock(bb.Array(), "HDLC test #4. Opening flag missing.", 1, tryCount, reply);
-                output.Errors.Add("Opening flag missing failed.");
+                output.Errors.Add("HDLC Test #4. Opening flag missing failed.");
                 passed = false;
             }
             catch (Exception)
             {
-                output.Info.Add("Opening flag missing succeeded.");
+                output.Info.Add("HDLC Test #4. Opening flag missing succeeded.");
             }
 
             //Closing flag missing.
@@ -1418,16 +1462,16 @@ namespace GXDLMSDirector
                 GXByteBuffer bb = new GXByteBuffer(dev.Comm.SNRMRequest());
                 --bb.Size;
                 dev.Comm.ReadDataBlock(bb.Array(), "HDLC test #4. Closing flag missing.", 1, tryCount, reply);
-                output.Errors.Add("Closing flag missing failed.");
+                output.Errors.Add("HDLC Test #4. Closing flag missing failed.");
                 passed = false;
             }
             catch (Exception)
             {
-                output.Info.Add("Closing flag missing succeeded.");
+                output.Info.Add("HDLC Test #4. Closing flag missing succeeded.");
             }
 
             //Both flags are missing.
-            test.OnTrace(test, "HDLC Illecal frame test (Both flags are missing).\r\n");
+            test.OnTrace(test, "HDLC Test #4. HDLC Illecal frame test (Both flags are missing).\r\n");
             try
             {
                 reply.Clear();
@@ -1435,14 +1479,14 @@ namespace GXDLMSDirector
                 bb.Move(1, 0, bb.Size - 1);
                 --bb.Size;
                 dev.Comm.ReadDataBlock(bb.Array(), "HDLC test #4. Both flags missing.", 1, tryCount, reply);
-                output.Errors.Add("Both flags missing failed.");
+                output.Errors.Add("HDLC Test #4. Both flags missing failed.");
                 passed = false;
             }
             catch (Exception)
             {
-                output.Info.Add("Both flags missing succeeded.");
+                output.Info.Add("HDLC Test #4. Both flags missing succeeded.");
             }
-
+            //Check that the IUT is in NDM.
             try
             {
                 reply.Clear();
@@ -1453,11 +1497,12 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    output.Info.Add("HDLC Test #4. Meter returns DisconnectMode.");
                 }
                 else if (ex.ErrorCode == (int)ErrorCode.Rejected)
                 {
-                    output.Info.Add("Meter returns Rejected.");
+                    passed = false;
+                    output.Info.Add("HDLC Test #4. Meter returns Rejected.");
                 }
                 else
                 {
@@ -1466,7 +1511,8 @@ namespace GXDLMSDirector
             }
             catch (Exception)
             {
-                output.Errors.Add("Disconnect request failed.");
+                output.Errors.Add("HDLC Test #4. Disconnect request failed.");
+                passed = false;
             }
             if (passed)
             {
@@ -2209,70 +2255,102 @@ namespace GXDLMSDirector
                         {
                             start = DateTime.Now;
                             //Step 5. BB: 4.4.6.4
+                            reply.Clear();
+                            test.OnProgress(test, "Verifying image...", 1, 1);
                             do
                             {
-                                reply.Clear();
-                                test.OnProgress(test, "Verifying image...", 1, 1);
-                                try
+                                dev.Comm.ReadValue(img, 6);
+                                if (img.ImageTransferStatus != ImageTransferStatus.TransferInitiated)
                                 {
-                                    dev.Comm.ReadDataBlock(img.ImageVerify(dev.Comm.client), "", 1, reply);
-                                }
-                                catch (GXDLMSException ex)
-                                {
-                                    reply.Error = (short)ex.ErrorCode;
-                                }
-                                if (reply.Error == (short)ErrorCode.TemporaryFailure)
-                                {
-                                    test.OnProgress(test, "Check is image verify ready...", 1, 1);
-                                    dev.Comm.ReadValue(img, 6);
-                                    if (img.ImageTransferStatus == ImageTransferStatus.VerificationInitiated)
-                                    {
-                                        test.OnProgress(test, "Still verifying...", 1, 1);
-                                    }
+                                    test.OnProgress(test, "Transfering image on progress. Waiting...", 1, 1);
                                     Thread.Sleep((int)settings.ImageVerifyWaitTime.TotalMilliseconds);
                                 }
-                                else if (reply.Error != 0)
+                            } while (img.ImageTransferStatus != ImageTransferStatus.TransferInitiated);
+                            try
+                            {
+                                dev.Comm.ReadDataBlock(img.ImageVerify(dev.Comm.client), "", 1, reply);
+                            }
+                            catch (GXDLMSException ex)
+                            {
+                                reply.Error = (short)ex.ErrorCode;
+                            }
+                            if (reply.Error == (short)ErrorCode.TemporaryFailure)
+                            {
+                                test.OnProgress(test, "Check is image verify ready...", 1, 1);
+                                dev.Comm.ReadValue(img, 6);
+                                if (img.ImageTransferStatus == ImageTransferStatus.VerificationInitiated)
                                 {
-                                    output.Errors.Insert(0, "Image verification failed. Error code: " + reply.Error);
-                                    return;
+                                    test.OnProgress(test, "Still verifying...", 1, 1);
                                 }
-                            } while (reply.Error != 0);
-                            output.Info.Add("Image verify succeeded (Step 5).");
-                            output.Info.Add("Verify takes " + (DateTime.Now - start).ToString(@"hh\:mm\:ss"));
+                                Thread.Sleep((int)settings.ImageVerifyWaitTime.TotalMilliseconds);
+                            }
+                            else if (reply.Error != 0)
+                            {
+                                output.Errors.Insert(0, "Image verification failed. Error code: " + reply.Error);
+                                return;
+                            }
+                            //Wait until image is verified.
+                            do
+                            {
+                                dev.Comm.ReadValue(img, 6);
+                                if (img.ImageTransferStatus == ImageTransferStatus.VerificationFailed)
+                                {
+                                    throw new Exception("Image verification failed.");
+                                }
+                                if (img.ImageTransferStatus != ImageTransferStatus.VerificationSuccessful)
+                                {
+                                    test.OnProgress(test, "Image verification is on progress. Waiting...", 1, 1);
+                                    Thread.Sleep((int)settings.ImageVerifyWaitTime.TotalMilliseconds);
+                                }
+                            } while ((img.ImageTransferStatus != ImageTransferStatus.VerificationSuccessful));
                         }
+                        output.Info.Add("Image verify succeeded (Step 5).");
+                        output.Info.Add("Verify takes " + (DateTime.Now - start).ToString(@"hh\:mm\:ss"));
+
                         reply.Clear();
                         if (settings.ImageActivate)
                         {
                             start = DateTime.Now;
                             //Step 7. BB: 4.4.6.4
+                            test.OnProgress(test, "Activating image...", 1, 1);                           
+                            try
+                            {
+                                reply.Clear();
+                                dev.Comm.ReadDataBlock(img.ImageActivate(dev.Comm.client), "", 1, reply);
+                            }
+                            catch (GXDLMSException ex)
+                            {
+                                reply.Error = (short)ex.ErrorCode;
+                            }
+                            if (reply.Error == (short)ErrorCode.TemporaryFailure)
+                            {
+                                test.OnProgress(test, "Check is image activation ready...", 1, 1);
+                                dev.Comm.ReadValue(img, 6);
+                                if (img.ImageTransferStatus == ImageTransferStatus.ActivationInitiated)
+                                {
+                                    test.OnProgress(test, "Still activating...", 1, 1);
+                                }
+                                Thread.Sleep((int)settings.ImageActivateWaitTime.TotalMilliseconds);
+                            }
+                            else if (reply.Error != 0)
+                            {
+                                output.Errors.Insert(0, "Image activation failed. Error code: " + reply.Error);
+                                return;
+                            }
+                            //Wait until image is activated.
                             do
                             {
-                                test.OnProgress(test, "Activating image...", 1, 1);
-                                try
+                                dev.Comm.ReadValue(img, 6);
+                                if (img.ImageTransferStatus == ImageTransferStatus.ActivationFailed)
                                 {
-                                    reply.Clear();
-                                    dev.Comm.ReadDataBlock(img.ImageActivate(dev.Comm.client), "", 1, reply);
+                                    throw new Exception("Image activation failed.");
                                 }
-                                catch (GXDLMSException ex)
+                                if (img.ImageTransferStatus != ImageTransferStatus.ActivationSuccessful)
                                 {
-                                    reply.Error = (short)ex.ErrorCode;
+                                    test.OnProgress(test, "Image activation is on progress. Waiting...", 1, 1);
+                                    Thread.Sleep((int)settings.ImageVerifyWaitTime.TotalMilliseconds);
                                 }
-                                if (reply.Error == (short)ErrorCode.TemporaryFailure)
-                                {
-                                    test.OnProgress(test, "Check is image activation ready...", 1, 1);
-                                    dev.Comm.ReadValue(img, 6);
-                                    if (img.ImageTransferStatus == ImageTransferStatus.ActivationInitiated)
-                                    {
-                                        test.OnProgress(test, "Still activating...", 1, 1);
-                                    }
-                                    Thread.Sleep((int)settings.ImageActivateWaitTime.TotalMilliseconds);
-                                }
-                                else if (reply.Error != 0)
-                                {
-                                    output.Errors.Insert(0, "Image activation failed. Error code: " + reply.Error);
-                                    return;
-                                }
-                            } while (reply.Error != 0);
+                            } while ((img.ImageTransferStatus != ImageTransferStatus.ActivationSuccessful));
                             output.Info.Add("Image activation succeeded (Step 6).");
                             output.Info.Add("Activation takes " + (DateTime.Now - start).ToString(@"hh\:mm\:ss"));
 

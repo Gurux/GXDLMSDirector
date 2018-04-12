@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10026 $,
-//                  $Date: 2018-04-11 12:17:59 +0300 (ke, 11 huhti 2018) $
+// Version:         $Revision: 10036 $,
+//                  $Date: 2018-04-12 17:18:06 +0300 (to, 12 huhti 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -237,12 +237,20 @@ namespace GXDLMSDirector
             };
             lock (media.Synchronous)
             {
+                if (!media.IsOpen)
+                {
+                    throw new InvalidOperationException("Media is closed.");
+                }
                 if (data != null)
                 {
                     media.Send(data, null);
                 }
                 while (!succeeded && pos != 3)
                 {
+                    if (!media.IsOpen)
+                    {
+                        throw new InvalidOperationException("Media is closed.");
+                    }
                     succeeded = media.Receive(p);
                     if (!succeeded)
                     {
@@ -260,7 +268,7 @@ namespace GXDLMSDirector
                         }
                         string err = "Failed to receive reply from the device in given time.";
                         GXLogWriter.WriteLog(err, p.Reply);
-                        throw new Exception(err);
+                        throw new TimeoutException(err);
                     }
                 }
                 try
@@ -283,6 +291,10 @@ namespace GXDLMSDirector
                         {
                             p.Count = 1;
                         }
+                        if (!media.IsOpen)
+                        {
+                            throw new InvalidOperationException("Media is closed.");
+                        }
                         if (!media.Receive(p))
                         {
                             //Try to read again...
@@ -293,7 +305,7 @@ namespace GXDLMSDirector
                             }
                             string err = "Failed to receive reply from the device in given time.";
                             GXLogWriter.WriteLog(err, p.Reply);
-                            throw new Exception(err);
+                            throw new TimeoutException(err);
                         }
                     }
                 }
@@ -695,6 +707,103 @@ namespace GXDLMSDirector
             }
         }
 
+        public void UpdateSettings()
+        {
+            client.Authentication = this.parent.Authentication;
+            client.InterfaceType = InterfaceType.HDLC;
+            if (!string.IsNullOrEmpty(this.parent.Password))
+            {
+                client.Password = CryptHelper.Decrypt(this.parent.Password, Password.Key);
+            }
+            else if (this.parent.HexPassword != null)
+            {
+                client.Password = CryptHelper.Decrypt(this.parent.HexPassword, Password.Key);
+            }
+            client.UseLogicalNameReferencing = this.parent.UseLogicalNameReferencing;
+            client.UtcTimeZone = parent.UtcTimeZone;
+            //Show media verbose.
+            if (this.parent.Verbose && media.Trace != System.Diagnostics.TraceLevel.Verbose)
+            {
+                media.Trace = System.Diagnostics.TraceLevel.Verbose;
+                media.OnTrace += new TraceEventHandler(Media_OnTrace);
+            }
+            else if (!this.parent.Verbose && media.Trace == System.Diagnostics.TraceLevel.Verbose)
+            {
+                media.Trace = System.Diagnostics.TraceLevel.Off;
+                media.OnTrace -= new TraceEventHandler(Media_OnTrace);
+            }
+
+            //If network media is used check is manufacturer supporting IEC 62056-47
+            if (parent.UseWrapper && !parent.UseRemoteSerial && this.media is GXNet)
+            {
+                client.InterfaceType = InterfaceType.WRAPPER;
+            }
+
+            client.ClientAddress = parent.ClientAddress;
+            if (parent.HDLCAddressing == HDLCAddressType.SerialNumber)
+            {
+                string formula = null;
+                GXManufacturer manufacturer = this.parent.Manufacturers.FindByIdentification(parent.Manufacturer);
+                GXServerAddress server = manufacturer.GetServer(parent.HDLCAddressing);
+                if (server != null)
+                {
+                    formula = server.Formula;
+                }
+                client.ServerAddress = GXDLMSClient.GetServerAddress(Convert.ToInt32(parent.PhysicalAddress), formula);
+                client.ServerAddressSize = 4;
+            }
+            else
+            {
+                if (client.InterfaceType == InterfaceType.WRAPPER)
+                {
+                    client.ServerAddress = Convert.ToInt32(parent.PhysicalAddress);
+                }
+                else
+                {
+                    client.ServerAddress = GXDLMSClient.GetServerAddress(parent.LogicalAddress, Convert.ToInt32(parent.PhysicalAddress), parent.ServerAddressSize);
+                    client.ServerAddressSize = parent.ServerAddressSize;
+                }
+            }
+            client.Ciphering.Security = parent.Security;
+            if (parent.SystemTitle != null && parent.BlockCipherKey != null && parent.AuthenticationKey != null)
+            {
+                client.Ciphering.SystemTitle = GXCommon.HexToBytes(parent.SystemTitle);
+                client.Ciphering.BlockCipherKey = GXCommon.HexToBytes(parent.BlockCipherKey);
+                client.Ciphering.AuthenticationKey = GXCommon.HexToBytes(parent.AuthenticationKey);
+                client.Ciphering.InvocationCounter = parent.InvocationCounter;
+            }
+            else
+            {
+                client.Ciphering.SystemTitle = null;
+                client.Ciphering.BlockCipherKey = null;
+                client.Ciphering.AuthenticationKey = null;
+                client.Ciphering.InvocationCounter = 0;
+            }
+
+            if (!string.IsNullOrEmpty(parent.Challenge))
+            {
+                client.CtoSChallenge = GXCommon.HexToBytes(parent.Challenge);
+            }
+            else
+            {
+                client.CtoSChallenge = null;
+            }
+
+            client.Limits.WindowSizeRX = parent.WindowSizeRX;
+            client.Limits.WindowSizeTX = parent.WindowSizeTX;
+            client.Limits.MaxInfoRX = parent.MaxInfoRX;
+            client.Limits.MaxInfoTX = parent.MaxInfoTX;
+            client.MaxReceivePDUSize = parent.PduSize;
+            client.UserId = parent.UserId;
+            client.Priority = parent.Priority;
+            client.ServiceClass = parent.ServiceClass;
+            if (parent.PreEstablished)
+            {
+                client.ServerSystemTitle = GXCommon.HexToBytes(parent.ServerSystemTitle);
+            }
+
+        }
+
         public void InitializeConnection()
         {
             if (!string.IsNullOrEmpty(parent.Manufacturer))
@@ -727,25 +836,25 @@ namespace GXDLMSDirector
             {
                 GXReplyData reply = new GXReplyData();
                 byte[] data;
-                client.Limits.WindowSizeRX = parent.WindowSizeRX;
-                client.Limits.WindowSizeTX = parent.WindowSizeTX;
-                client.Limits.MaxInfoRX = parent.MaxInfoRX;
-                client.Limits.MaxInfoTX = parent.MaxInfoTX;
-                client.MaxReceivePDUSize = parent.PduSize;
-                client.UserId = parent.UserId;
-                client.Priority = parent.Priority;
-                client.ServiceClass = parent.ServiceClass;
-                if (parent.PreEstablished)
-                {
-                    client.ServerSystemTitle = GXCommon.HexToBytes(parent.ServerSystemTitle);
-                }
-                else
+                UpdateSettings();
+                if (!parent.PreEstablished)
                 {
                     data = SNRMRequest();
                     if (data != null)
                     {
                         try
                         {
+                            ReadDataBlock(data, "Send SNRM request.", reply);
+                        }
+                        catch (GXDLMSException e)
+                        {
+                            reply.Clear();
+                            //Meter sends DisconnectMode if previous connection is not closed properly.
+                            if (e.ErrorCode != (int) ErrorCode.DisconnectMode)
+                            {
+                                ReadDataBlock(DisconnectRequest(), "Send Disconnect request.", reply);
+                                throw e;
+                            }
                             ReadDataBlock(data, "Send SNRM request.", reply);
                         }
                         catch (Exception e)

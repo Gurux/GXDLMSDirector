@@ -4,7 +4,7 @@
 // 
 //
 //
-// Filename:        $HeadURL: svn://mars/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSIECOpticalPortSetup.cs $
+// Filename:        $HeadURL: https://146.185.146.169/Projects/GuruxClub/GXDLMSDirector/Development/GXDLMSIECOpticalPortSetup.cs $
 //
 // Version:         $Revision: 5059 $,
 //                  $Date: 2012-05-09 15:19:43 +0300 (ke, 09 touko 2012) $

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10026 $,
-//                  $Date: 2018-04-11 12:17:59 +0300 (ke, 11 huhti 2018) $
+// Version:         $Revision: 10042 $,
+//                  $Date: 2018-04-17 09:57:56 +0300 (ti, 17 huhti 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -940,23 +940,26 @@ namespace GXDLMSDirector
 
         void UpdateStartProtocol()
         {
-            //If IEC47 is used DLMS is only protocol.
-            GXManufacturer man = this.ManufacturerCB.SelectedItem as GXManufacturer;
-            if (man != null)
+            if (Device.Name == null)
             {
-                UseWrapperCb.Checked = man.UseIEC47;
-                UseLNCB.Checked = Device.UseLogicalNameReferencing = man.UseLogicalNameReferencing;
-                if (SelectedMedia is GXNet)
+                //If IEC47 is used DLMS is only protocol.
+                GXManufacturer man = this.ManufacturerCB.SelectedItem as GXManufacturer;
+                if (man != null)
                 {
-                    StartProtocolCB.Enabled = !man.UseIEC47;
-                }
-                else
-                {
-                    StartProtocolCB.Enabled = true;
-                }
-                if (!StartProtocolCB.Enabled)
-                {
-                    StartProtocolCB.SelectedItem = StartProtocolType.DLMS;
+                    UseWrapperCb.Checked = man.UseIEC47;
+                    UseLNCB.Checked = Device.UseLogicalNameReferencing = man.UseLogicalNameReferencing;
+                    if (SelectedMedia is GXNet)
+                    {
+                        StartProtocolCB.Enabled = !man.UseIEC47;
+                    }
+                    else
+                    {
+                        StartProtocolCB.Enabled = true;
+                    }
+                    if (!StartProtocolCB.Enabled)
+                    {
+                        StartProtocolCB.SelectedItem = StartProtocolType.DLMS;
+                    }
                 }
             }
         }

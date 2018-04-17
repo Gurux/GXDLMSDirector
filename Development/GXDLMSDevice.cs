@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10026 $,
-//                  $Date: 2018-04-11 12:17:59 +0300 (ke, 11 huhti 2018) $
+// Version:         $Revision: 10042 $,
+//                  $Date: 2018-04-17 09:57:56 +0300 (ti, 17 huhti 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -800,7 +800,14 @@ namespace GXDLMSDirector
         {
             if (Comm.parentForm.InvokeRequired)
             {
-                Comm.parentForm.Invoke(new UpdateColumnsEventHandler(UpdateColumns), item, man);
+                try
+                {
+                    Comm.parentForm.Invoke(new UpdateColumnsEventHandler(UpdateColumns), item, man);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
                 return;
             }
             try

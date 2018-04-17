@@ -576,7 +576,7 @@ namespace GXDLMSDirector
                         return;
                     }
                     test = tests[0];
-                    dev = CloneDevice(test.Device);
+                    dev = test.Device;
                     dev.InactivityTimeout = 0;
                     dev.OnTrace = OnMessageTrace;
                     dev.Comm.LogFile = Path.Combine(test.Results, "Trace.txt");
@@ -585,6 +585,8 @@ namespace GXDLMSDirector
                     cl.CopyTo(dev.Comm.client);
                     test.Device = dev;
                     output = new GXOutput(Path.Combine(test.Results, "Results.html"), dev.Name);
+                    //Disable keep alive.
+                    dev.InactivityTimeout = 0;
                     tests.RemoveAt(0);
                 }
                 IGXMedia media = dev.Media;
@@ -683,47 +685,54 @@ namespace GXDLMSDirector
                             }
                         }
                     }
-                    GXDLMSData ldn = new GXDLMSData("0.0.42.0.0.255");
-                    try
+                    if (!settings.ExcludeMeterInfo)
                     {
-                        dev.Comm.ReadValue(ldn, 2);
-                        object v = ldn.Value;
-                        if (v is byte[])
+                        GXDLMSData ldn = new GXDLMSData("0.0.42.0.0.255");
+                        try
                         {
-                            v = ASCIIEncoding.ASCII.GetString((byte[])v);
+                            dev.Comm.ReadValue(ldn, 2);
+                            object v = ldn.Value;
+                            if (v is byte[])
+                            {
+                                v = ASCIIEncoding.ASCII.GetString((byte[])v);
+                            }
+                            output.PreInfo.Add("Logical Device Name is: " + Convert.ToString(v + "."));
                         }
-                        output.PreInfo.Add("Logical Device Name is: " + Convert.ToString(v + "."));
-                    }
-                    catch (Exception)
-                    {
-                        output.Errors.Add("Logical Device Name is not implemented.");
-                    }
-                    GXDLMSData firmware = new GXDLMSData("1.0.0.2.0.255");
-                    try
-                    {
-                        dev.Comm.ReadValue(firmware, 2);
-                        object v = firmware.Value;
-                        if (v is byte[])
+                        catch (Exception)
                         {
-                            v = ASCIIEncoding.ASCII.GetString((byte[])v);
+                            output.Errors.Add("Logical Device Name is not implemented.");
                         }
-                        output.PreInfo.Add("Firmware version is: " + Convert.ToString(v) + ".");
+                        GXDLMSData firmware = new GXDLMSData("1.0.0.2.0.255");
+                        try
+                        {
+                            dev.Comm.ReadValue(firmware, 2);
+                            object v = firmware.Value;
+                            if (v is byte[])
+                            {
+                                v = ASCIIEncoding.ASCII.GetString((byte[])v);
+                            }
+                            output.PreInfo.Add("Firmware version is: " + Convert.ToString(v) + ".");
+                        }
+                        catch (Exception)
+                        {
+                            output.Info.Add("Firmware version is not available.");
+                        }
+                        GXDLMSClock time = new GXDLMSClock("0.0.1.0.0.255");
+                        try
+                        {
+                            dev.Comm.ReadValue(time, 2);
+                            output.PreInfo.Add("Meter time: " + Convert.ToString(time.Time) + ".");
+                        }
+                        catch (Exception)
+                        {
+                            //It's OK if this fails.
+                        }
                     }
-                    catch (Exception)
+                    else
                     {
-                        output.Info.Add("Firmware version is not available.");
+                        test.OnTrace(test, "Meter information is not read.\r\n");
+                        output.PreInfo.Add("Meter information is not read.");
                     }
-                    GXDLMSClock time = new GXDLMSClock("0.0.1.0.0.255");
-                    try
-                    {
-                        dev.Comm.ReadValue(time, 2);
-                        output.PreInfo.Add("Meter time: " + Convert.ToString(time.Time) + ".");
-                    }
-                    catch (Exception)
-                    {
-                        //It's OK if this fails.
-                    }
-
                     //Read structures of Cosem objects.
                     List<KeyValuePair<GXDLMSObject, List<GXDLMSXmlPdu>>> cosemTests = new List<KeyValuePair<GXDLMSObject, List<GXDLMSXmlPdu>>>();
                     List<KeyValuePair<string, List<GXDLMSXmlPdu>>> externalTests = new List<KeyValuePair<string, List<GXDLMSXmlPdu>>>();
@@ -2182,30 +2191,7 @@ namespace GXDLMSDirector
                                 output.Errors.Insert(0, "Image transfer failed. Error code: " + reply.Error);
                                 return;
                             }
-                            reply.Clear();
-                            //Check ImageTransferredBlocksStatus.
-                            dev.Comm.ReadValue(img, 3);
-                            if (img.ImageTransferredBlocksStatus == null)
-                            {
-                                error = true;
-                                output.Errors.Add("Image Transferred blocks status is not implemented.");
-                            }
-                            else
-                            {
-                                if (img.ImageTransferredBlocksStatus.Length < pos)
-                                {
-                                    error = true;
-                                    output.Errors.Add("Image Transferred blocks status is wrong. Amount of bits is different than block size. (" + img.ImageTransferredBlocksStatus.Length + "/" + blocks.Length + ")");
-                                }
-                                else
-                                {
-                                    if (img.ImageTransferredBlocksStatus[pos] != '1')
-                                    {
-                                        error = true;
-                                        output.Errors.Add("Image transferred blocks status is wrong. It's " + img.ImageFirstNotTransferredBlockNumber + " and it shoud be " + blocks.Length + ".");
-                                    }
-                                }
-                            }
+                            reply.Clear();                            
                             test.OnProgress(test, "Image block transfer...", ++pos, cnt);
                         }
                         if (!error)
@@ -2242,7 +2228,8 @@ namespace GXDLMSDirector
                                 if (it != '1')
                                 {
                                     error = true;
-                                    output.Errors.Add("Image transferred blocks status is wrong. It's " + img.ImageFirstNotTransferredBlockNumber + " and it shoud be " + blocks.Length + ".");
+                                    output.Errors.Add("Image transferred blocks status is not set.");
+                                    break;
                                 }
                             }
                         }

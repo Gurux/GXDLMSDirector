@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10026 $,
-//                  $Date: 2018-04-11 12:17:59 +0300 (ke, 11 huhti 2018) $
+// Version:         $Revision: 10042 $,
+//                  $Date: 2018-04-17 09:57:56 +0300 (ti, 17 huhti 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -507,6 +507,7 @@ namespace GXDLMSDirector
             ve.Action = btn.Action;
 
             GXDlmsUi.UpdateAccessRights(btn.View, btn.Target, false);
+            dev.KeepAliveStop();
             try
             {
                 do
@@ -566,6 +567,7 @@ namespace GXDLMSDirector
             }
             finally
             {
+                dev.KeepAliveStart();
                 GXDlmsUi.UpdateAccessRights(btn.View, btn.Target, (dev.Status & DeviceState.Connected) != 0);
                 UpdateTransaction(false);
             }
@@ -590,9 +592,16 @@ namespace GXDLMSDirector
 
         delegate void ValueChangedEventHandler(IGXDLMSView view, int index, object value, bool changeByUser, bool connected);
 
-        static void OnValueChanged(IGXDLMSView view, int index, object value, bool changeByUser, bool connected)
+        void OnValueChanged(IGXDLMSView view, int index, object value, bool changeByUser, bool connected)
         {
-            view.OnValueChanged(index, value, changeByUser, connected);
+            try
+            {
+                view.OnValueChanged(index, value, changeByUser, connected);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message);
+            }
         }
 
         /// <summary>
@@ -2420,7 +2429,7 @@ namespace GXDLMSDirector
                     ((GXDLMSProfileGenericView)SelectedView).Target = parameters[0] as GXDLMSProfileGeneric;
                     if (InvokeRequired)
                     {
-                        ((Form)SelectedView).Invoke(new ValueChangedEventHandler(OnValueChanged), new object[] { SelectedView, 3, null, false, (dev.Status & DeviceState.Connected) != 0 });
+                        this.Invoke(new ValueChangedEventHandler(OnValueChanged), new object[] { SelectedView, 3, null, false, (dev.Status & DeviceState.Connected) != 0 });
                     }
                     else
                     {
@@ -3985,7 +3994,7 @@ namespace GXDLMSDirector
                     }
                 }
                 GXDLMSDeviceCollection devs = new GXDLMSDeviceCollection();
-                devs.Add(it);
+                devs.Add(GXConformanceTests.CloneDevice(it));
                 Save(Path.Combine(t.Results, "device.gxc"), devs);
                 tests.Add(t);
                 ListViewItem li = ConformanceTests.Items.Add(it.Name);
@@ -3997,6 +4006,14 @@ namespace GXDLMSDirector
             ProgressBar.Maximum = testcount;
             GXConformanceTests.Continue = true;
             TransactionWork = new GXAsyncWork(this, ConformanceStateChange, ConformanceExecute, ConformanceError, null, new object[] { tests, settings });
+            if (settings.WarningBeforeStart)
+            {
+                DialogResult ret = MessageBox.Show(this, Properties.Resources.CTTWarning, Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                if (ret != DialogResult.Yes)
+                {
+                    return false;
+                }
+            }
             TransactionWork.Start();
             return true;
         }

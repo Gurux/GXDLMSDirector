@@ -56,6 +56,7 @@ namespace GXDLMSDirector
             ImageVerifyWaitTime = new TimeSpan(0, 0, 10);
             ImageActivateWaitTime = new TimeSpan(0, 0, 10);
             DelayConnection = Delay = new TimeSpan(0, 0, 0);
+            WarningBeforeStart = true;
         }
 
         [Description("Are meters reading concurrently.")]
@@ -318,6 +319,24 @@ namespace GXDLMSDirector
         [DefaultValue(false)]
         [Category("Accessibility")]
         public bool ExcludeHdlcTests
+        {
+            get;
+            set;
+        }
+
+        [Description("Meter information is not read. Logical Device Name, Firmware version and time are not read from the meter.")]
+        [DefaultValue(false)]
+        [Category("Accessibility")]
+        public bool ExcludeMeterInfo
+        {
+            get;
+            set;
+        }
+
+        [Description("Warning is shown before tests are actual started.")]
+        [DefaultValue(true)]
+        [Category("Accessibility")]
+        public bool WarningBeforeStart
         {
             get;
             set;

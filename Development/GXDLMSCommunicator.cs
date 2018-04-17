@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10036 $,
-//                  $Date: 2018-04-12 17:18:06 +0300 (to, 12 huhti 2018) $
+// Version:         $Revision: 10042 $,
+//                  $Date: 2018-04-17 09:57:56 +0300 (ti, 17 huhti 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -144,9 +144,13 @@ namespace GXDLMSDirector
 
         byte[] ReleaseRequest()
         {
-            byte[] data = client.ReleaseRequest()[0];
-            GXLogWriter.WriteLog("Release request", data);
-            return data;
+            byte[][] data = client.ReleaseRequest();
+            if (data == null)
+            {
+                return null;
+            }
+            GXLogWriter.WriteLog("Release request", data[0]);
+            return data[0];
         }
 
         public byte[] DisconnectRequest()
@@ -169,7 +173,11 @@ namespace GXDLMSDirector
                         //Add meters are not supporting Release and it's causing problems.
                         if (client.Ciphering.Security != Security.None)
                         {
-                            ReadDataBlock(ReleaseRequest(), "Release request", reply);
+                            byte[] data = ReleaseRequest();
+                            if (data != null)
+                            {
+                                ReadDataBlock(data, "Release request", reply);
+                            }
                         }
                     }
                     catch (Exception)
@@ -850,7 +858,7 @@ namespace GXDLMSDirector
                         {
                             reply.Clear();
                             //Meter sends DisconnectMode if previous connection is not closed properly.
-                            if (e.ErrorCode != (int) ErrorCode.DisconnectMode)
+                            if (e.ErrorCode != (int)ErrorCode.DisconnectMode)
                             {
                                 ReadDataBlock(DisconnectRequest(), "Send Disconnect request.", reply);
                                 throw e;
@@ -1145,7 +1153,8 @@ namespace GXDLMSDirector
                                 ex.ErrorCode == (int)ErrorCode.UndefinedObject ||
                                 ex.ErrorCode == (int)ErrorCode.UnavailableObject ||
                                 //Actaris returns access violation error.
-                                ex.ErrorCode == (int)ErrorCode.AccessViolated)
+                                ex.ErrorCode == (int)ErrorCode.AccessViolated ||
+                                ex.ErrorCode == (int)ErrorCode.OtherReason)
                         {
                             obj.SetAccess(it, AccessMode.NoAccess);
                             if (OnAfterRead != null)

@@ -110,6 +110,15 @@ namespace GXDLMSDirector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You are going to perform conformational tests. This may take a very long time or harm your meter. Do you want to continue?.
+        /// </summary>
+        internal static string CTTWarning {
+            get {
+                return ResourceManager.GetString("CTTWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap DeleteMnu {

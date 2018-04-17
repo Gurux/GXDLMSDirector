@@ -221,3 +221,4 @@ Development/.vs/config/applicationhost.config
 *.ide
 *.ide-shm
 *.ide-wal
+*.db

@@ -610,7 +610,7 @@ namespace GXDLMSDirector
                             continue;
                         }
                     }
-                    dev.InitializeConnection();
+                    dev.Comm.InitializeConnection();
                     if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
                     {
                         if (dev.MaxInfoRX != 128 && dev.MaxInfoRX != dev.Comm.client.Limits.MaxInfoRX)

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10042 $,
-//                  $Date: 2018-04-17 09:57:56 +0300 (ti, 17 huhti 2018) $
+// Version:         $Revision: 10052 $,
+//                  $Date: 2018-04-26 10:11:27 +0300 (Thu, 26 Apr 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -296,7 +296,6 @@ namespace GXDLMSDirector
                     SaveAsTemplateBtn.Enabled = true;
                     GXDLMSDevice dev = (GXDLMSDevice)obj;
                     DeviceGb.Text = dev.Name;
-                    StatusValueLbl.Text = dev.Status.ToString();
                     ClientAddressValueLbl.Text = dev.ClientAddress.ToString();
                     LogicalAddressValueLbl.Text = dev.LogicalAddress.ToString();
                     PhysicalAddressValueLbl.Text = dev.PhysicalAddress.ToString();
@@ -304,6 +303,34 @@ namespace GXDLMSDirector
                     ConformanceTB.Text = dev.Comm.client.NegotiatedConformance.ToString();
                     UpdateDeviceUI(dev, dev.Status);
                     DeviceInfoView.BringToFront();
+                    ErrorsView.Items.Clear();
+                    foreach (GXDLMSObject it in dev.Objects)
+                    {
+                        SortedDictionary<int, Exception> errors = it.GetLastErrors();
+                        if (errors.Count != 0)
+                        {
+                            int count = (it as IGXDLMSBase).GetAttributeCount() + 1;
+                            int add = ErrorsView.Columns.Count;
+                            count -= add;
+                            for (int pos = 0; pos < count; ++pos)
+                            {
+                                ErrorsView.Columns.Add("Attribute " + (add + pos).ToString());
+                            }
+                            count = (it as IGXDLMSBase).GetAttributeCount();
+                            ListViewItem lv = new ListViewItem(it.LogicalName + " " + it.Description);
+                            lv.Tag = it;
+                            for (int pos = 0; pos < count; ++pos)
+                            {
+                                lv.SubItems.Add("");
+                            }
+                            foreach (var e in errors)
+                            {
+                                lv.SubItems[e.Key].Text = e.Value.Message;
+                            }
+                            ErrorsView.Items.Add(lv);
+                        }
+                    }
+                    ErrorLbl.Visible = ErrorsView.Visible = ErrorsView.Items.Count != 0;
                 }
                 else if (ObjectValueView.Visible)
                 {
@@ -567,9 +594,25 @@ namespace GXDLMSDirector
             }
             finally
             {
-                dev.KeepAliveStart();
-                GXDlmsUi.UpdateAccessRights(btn.View, btn.Target, (dev.Status & DeviceState.Connected) != 0);
-                UpdateTransaction(false);
+                if (ve.Rebooting)
+                {
+                    try
+                    {
+                        dev.Media.Close();
+                    }
+                    catch (Exception)
+                    {
+                        //It's ok if this fails.
+                    }
+                    OnStatusChanged(null, DeviceState.Initialized);
+                    GXDlmsUi.ObjectChanged(SelectedView, btn.Target, false);
+                }
+                else
+                {
+                    dev.KeepAliveStart();
+                    GXDlmsUi.UpdateAccessRights(btn.View, btn.Target, (dev.Status & DeviceState.Connected) != 0);
+                    UpdateTransaction(false);
+                }
             }
         }
 
@@ -950,6 +993,14 @@ namespace GXDLMSDirector
                         {
                             OnFirstConnection(dev);
                         }
+                        if (dev.PreEstablished)
+                        {
+                            traceTranslator.ServerSystemTitle = GXCommon.HexToBytes(dev.ServerSystemTitle);
+                        }
+                        else
+                        {
+                            traceTranslator.ServerSystemTitle = dev.Comm.client.ServerSystemTitle;
+                        }
                     }
                 }
                 else if (obj is GXDLMSObjectCollection)
@@ -978,6 +1029,14 @@ namespace GXDLMSDirector
                     if (!dev.Media.IsOpen)
                     {
                         dev.InitializeConnection();
+                    }
+                    if (dev.PreEstablished)
+                    {
+                        traceTranslator.ServerSystemTitle = GXCommon.HexToBytes(dev.ServerSystemTitle);
+                    }
+                    else
+                    {
+                        traceTranslator.ServerSystemTitle = dev.Comm.client.ServerSystemTitle;
                     }
                     GXDlmsUi.ObjectChanged(SelectedView, tmp as GXDLMSObject, true);
                 }
@@ -1436,7 +1495,7 @@ namespace GXDLMSDirector
                 foreach (GXDLMSObject it in dev.Objects)
                 {
                     OnProgress(dev, "Reading " + it.LogicalName + "...", ++pos, cnt);
-                    dev.Comm.Read(this, it, 0, ForceRefreshBtn.Checked);
+                    dev.Comm.Read(this, it, ForceRefreshBtn.Checked);
                     DLMSItemOnChange(it, false, 0, null);
                 }
             }
@@ -1475,10 +1534,10 @@ namespace GXDLMSDirector
                     {
                         GXByteBuffer pdu = new GXByteBuffer();
                         InterfaceType type = GXDLMSTranslator.GetDlmsFraming(receivedTraceData);
-                        if (traceTranslator.FindNextFrame(receivedTraceData, pdu, type))
+                        while (traceTranslator.FindNextFrame(receivedTraceData, pdu, type))
                         {
                             TraceView.AppendText(Environment.NewLine + DateTime.Now.ToString() + Environment.NewLine + traceTranslator.MessageToXml(receivedTraceData));
-                            receivedTraceData.Clear();
+                            receivedTraceData.Trim();
                         }
                     }
                     catch (Exception ex)
@@ -1571,10 +1630,9 @@ namespace GXDLMSDirector
                 {
                     UpdateValue(sender, index, lv);
                 }
-                if (ex != null)
+                if (ex != null && SelectedView != null)
                 {
                     GXDlmsUi.UpdateError(SelectedView, sender as GXDLMSObject, index, ex);
-
                 }
             }
             catch (Exception e)
@@ -1614,15 +1672,18 @@ namespace GXDLMSDirector
                         {
                             dev.Comm.OnBeforeRead += new ReadEventHandler(OnBeforeRead);
                             dev.Comm.OnAfterRead += new ReadEventHandler(OnAfterRead);
-                            dev.Comm.Read(this, obj, 0, ForceRefreshBtn.Checked);
+                            dev.Comm.Read(this, obj, ForceRefreshBtn.Checked);
                         }
                         finally
                         {
                             dev.Comm.OnBeforeRead -= new ReadEventHandler(OnBeforeRead);
                             dev.Comm.OnAfterRead -= new ReadEventHandler(OnAfterRead);
+                            if (dev.Comm.media.IsOpen)
+                            {
+                                DLMSItemOnChange(obj, false, 0, null);
+                                dev.KeepAliveStart();
+                            }
                         }
-                        DLMSItemOnChange(obj, false, 0, null);
-                        dev.KeepAliveStart();
                     }
                     else if (item is GXDLMSObjectCollection)
                     {
@@ -1637,7 +1698,7 @@ namespace GXDLMSDirector
                             {
                                 dev.Comm.OnBeforeRead += new ReadEventHandler(OnBeforeRead);
                                 dev.Comm.OnAfterRead += new ReadEventHandler(OnAfterRead);
-                                dev.Comm.Read(this, obj, 0, ForceRefreshBtn.Checked);
+                                dev.Comm.Read(this, obj, ForceRefreshBtn.Checked);
                             }
                             finally
                             {
@@ -1676,14 +1737,14 @@ namespace GXDLMSDirector
             catch (Exception Ex)
             {
                 GXDLMS.Common.Error.ShowError(sender as Form, Ex);
-                if (dev != null)
-                {
-                    dev.Disconnect();
-                }
             }
             finally
             {
-                if ((dev.Status & DeviceState.Connected) != 0)
+                if (!dev.Comm.media.IsOpen)
+                {
+                    dev.Disconnect();
+                }
+                else if ((dev.Status & DeviceState.Connected) != 0)
                 {
                     UpdateTransaction(false);
                 }
@@ -3349,7 +3410,14 @@ namespace GXDLMSDirector
                     traceTranslator.BlockCipherKey = GXCommon.HexToBytes(newDev.BlockCipherKey);
                     traceTranslator.AuthenticationKey = GXCommon.HexToBytes(newDev.AuthenticationKey);
                     traceTranslator.InvocationCounter = newDev.InvocationCounter;
-                    traceTranslator.ServerSystemTitle = GXCommon.HexToBytes(newDev.ServerSystemTitle);
+                    if (newDev.PreEstablished)
+                    {
+                        traceTranslator.ServerSystemTitle = GXCommon.HexToBytes(newDev.ServerSystemTitle);
+                    }
+                    else
+                    {
+                        traceTranslator.ServerSystemTitle = newDev.Comm.client.ServerSystemTitle;
+                    }
                 }
             }
         }
@@ -4221,6 +4289,16 @@ namespace GXDLMSDirector
             catch (Exception Ex)
             {
                 GXDLMS.Common.Error.ShowError(this, Ex);
+            }
+        }
+
+        private void ErrorsView_DoubleClick(object sender, EventArgs e)
+        {
+            if (ErrorsView.SelectedItems.Count == 1)
+            {
+                object target = ErrorsView.SelectedItems[0].Tag;
+                TreeNode node = ObjectTreeItems[target] as TreeNode;
+                ObjectTree.SelectedNode = node;
             }
         }
     }

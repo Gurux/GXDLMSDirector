@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10042 $,
-//                  $Date: 2018-04-17 09:57:56 +0300 (ti, 17 huhti 2018) $
+// Version:         $Revision: 10052 $,
+//                  $Date: 2018-04-26 10:11:27 +0300 (Thu, 26 Apr 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -155,7 +155,16 @@ namespace GXDLMSDirector
 
         public byte[] DisconnectRequest()
         {
-            byte[] data = client.DisconnectRequest();
+            return DisconnectRequest(false);
+        }
+
+            public byte[] DisconnectRequest(bool force)
+        {
+            byte[] data = client.DisconnectRequest(force);
+            if (data == null)
+            {
+                return null;
+            }
             GXLogWriter.WriteLog("Disconnect request");
             return data;
         }
@@ -189,7 +198,7 @@ namespace GXDLMSDirector
                         reply.Clear();
                         ReadDataBlock(DisconnectRequest(), "Disconnect request", reply);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         //All meters don't support release.
                     }
@@ -305,13 +314,16 @@ namespace GXDLMSDirector
                         }
                         if (!media.Receive(p))
                         {
+                            string err;
                             //Try to read again...
-                            if (++pos != tryCount)
+                            if (++pos <= tryCount)
                             {
-                                System.Diagnostics.Debug.WriteLine("Data send failed. Try to resend " + pos.ToString() + "/3");
+                                err = "Data send failed. ";
+                                System.Diagnostics.Debug.WriteLine(err + " Try to resend " + pos.ToString() + "/3");
+                                GXLogWriter.WriteLog(err, p.Reply);
                                 continue;
                             }
-                            string err = "Failed to receive reply from the device in given time.";
+                            err = "Failed to receive reply from the device in given time.";
                             GXLogWriter.WriteLog(err, p.Reply);
                             throw new TimeoutException(err);
                         }
@@ -319,7 +331,10 @@ namespace GXDLMSDirector
                 }
                 catch (Exception ex)
                 {
-                    GXLogWriter.WriteLog("Received data:", p.Reply);
+                    if (p.Reply != null)
+                    {
+                        GXLogWriter.WriteLog("Received data:", p.Reply);
+                    }
                     throw ex;
                 }
             }
@@ -603,7 +618,9 @@ namespace GXDLMSDirector
             {
                 client.Password = CryptHelper.Decrypt(this.parent.HexPassword, Password.Key);
             }
+            Conformance c = client.ProposedConformance;
             client.UseLogicalNameReferencing = this.parent.UseLogicalNameReferencing;
+            client.ProposedConformance = c;
             client.UtcTimeZone = parent.UtcTimeZone;
             //Show media verbose.
             if (this.parent.Verbose && media.Trace != System.Diagnostics.TraceLevel.Verbose)
@@ -847,57 +864,123 @@ namespace GXDLMSDirector
                 UpdateSettings();
                 if (!parent.PreEstablished)
                 {
-                    data = SNRMRequest();
-                    if (data != null)
+                    //Read frame counter if GeneralProtection is used.
+                    if (!string.IsNullOrEmpty(parent.FrameCounter) && client.Ciphering != null && client.Ciphering.Security != Security.None)
                     {
+                        reply.Clear();
+                        int add = client.ClientAddress;
+                        Authentication auth = client.Authentication;
+                        Security security = client.Ciphering.Security;
+                        byte[] challenge = client.CtoSChallenge;
                         try
                         {
-                            ReadDataBlock(data, "Send SNRM request.", reply);
-                        }
-                        catch (GXDLMSException e)
-                        {
-                            reply.Clear();
-                            //Meter sends DisconnectMode if previous connection is not closed properly.
-                            if (e.ErrorCode != (int)ErrorCode.DisconnectMode)
+                            client.ClientAddress = 16;
+                            client.Authentication = Authentication.None;
+                            client.Ciphering.Security = Security.None;
+
+                            data = SNRMRequest();
+                            if (data != null)
                             {
+                                try
+                                {
+                                    ReadDataBlock(data, "Send SNRM request.", 1, 1, reply);
+                                }
+                                catch (TimeoutException)
+                                {
+                                    reply.Clear();
+                                    ReadDataBlock(DisconnectRequest(true), "Send Disconnect request.", 1, 1, reply);
+                                    reply.Clear();
+                                    ReadDataBlock(data, "Send SNRM request.", 1, 1, reply);
+                                }
+                                catch (Exception e)
+                                {
+                                    reply.Clear();
+                                    ReadDataBlock(DisconnectRequest(), "Send Disconnect request.", 1, 1, reply);
+                                    throw e;
+                                }
+                                GXLogWriter.WriteLog("Parsing UA reply succeeded.");
+                                //Has server accepted client.
+                                ParseUAResponse(reply.Data);
+                            }
+                            ReadDataBlock(AARQRequest(), "Send AARQ request.", reply);
+                            try
+                            {
+                                //Parse reply.
+                                ParseAAREResponse(reply.Data);
+                                GXLogWriter.WriteLog("Parsing AARE reply succeeded.");
+                                reply.Clear();
+                                GXDLMSData d = new GXDLMSData(parent.FrameCounter);
+                                ReadDLMSPacket(Read(d, 2), reply);
+                                client.UpdateValue(d, 2, reply.Value);
+                                client.Ciphering.InvocationCounter = parent.InvocationCounter = Convert.ToUInt32(d.Value);
+                                reply.Clear();
+                                ReadDataBlock(DisconnectRequest(), "Disconnect request", reply);
+                            }
+                            catch (Exception Ex)
+                            {
+                                reply.Clear();
+                                ReadDataBlock(DisconnectRequest(), "Disconnect request", reply);
+                                throw Ex;
+                            }
+                        }
+                        finally
+                        {
+                            client.ClientAddress = add;
+                            client.Authentication = auth;
+                            client.Ciphering.Security = security;
+                            client.CtoSChallenge = challenge;
+                        }
+                    }
+                    if ((client.ProposedConformance & Conformance.GeneralProtection) == 0)
+                    {
+                        data = SNRMRequest();
+                        if (data != null)
+                        {
+                            try
+                            {
+                                ReadDataBlock(data, "Send SNRM request.", 1, 1, reply);
+                            }
+                            catch (TimeoutException)
+                            {
+                                reply.Clear();
+                                ReadDataBlock(DisconnectRequest(true), "Send Disconnect request.", 1, 1, reply);
+                                reply.Clear();
+                                ReadDataBlock(data, "Send SNRM request.", reply);
+                            }
+                            catch (Exception e)
+                            {
+                                reply.Clear();
                                 ReadDataBlock(DisconnectRequest(), "Send Disconnect request.", reply);
                                 throw e;
                             }
-                            ReadDataBlock(data, "Send SNRM request.", reply);
+                            GXLogWriter.WriteLog("Parsing UA reply succeeded.");
+                            //Has server accepted client.
+                            ParseUAResponse(reply.Data);
                         }
-                        catch (Exception e)
+                        //Generate AARQ request.
+                        //Split requests to multiple packets if needed.
+                        //If password is used all data might not fit to one packet.
+                        reply.Clear();
+                        ReadDataBlock(AARQRequest(), "Send AARQ request.", reply);
+                        try
+                        {
+                            //Parse reply.
+                            ParseAAREResponse(reply.Data);
+                            GXLogWriter.WriteLog("Parsing AARE reply succeeded.");
+                        }
+                        catch (Exception Ex)
                         {
                             reply.Clear();
-                            ReadDataBlock(DisconnectRequest(), "Send Disconnect request.", reply);
-                            throw e;
+                            ReadDLMSPacket(DisconnectRequest(), 1, reply);
+                            throw Ex;
                         }
-                        GXLogWriter.WriteLog("Parsing UA reply succeeded.");
-                        //Has server accepted client.
-                        ParseUAResponse(reply.Data);
-                    }
-                    //Generate AARQ request.
-                    //Split requests to multiple packets if needed.
-                    //If password is used all data might not fit to one packet.
-                    reply.Clear();
-                    ReadDataBlock(AARQRequest(), "Send AARQ request.", reply);
-                    try
-                    {
-                        //Parse reply.
-                        ParseAAREResponse(reply.Data);
-                        GXLogWriter.WriteLog("Parsing AARE reply succeeded.");
-                    }
-                    catch (Exception Ex)
-                    {
-                        reply.Clear();
-                        ReadDLMSPacket(DisconnectRequest(), 1, reply);
-                        throw Ex;
-                    }
-                    //If authentication is required.
-                    if (client.Authentication > Authentication.Low)
-                    {
-                        reply.Clear();
-                        ReadDataBlock(client.GetApplicationAssociationRequest(), "Authenticating.", reply);
-                        client.ParseApplicationAssociationResponse(reply.Data);
+                        //If authentication is required.
+                        if (client.Authentication > Authentication.Low)
+                        {
+                            reply.Clear();
+                            ReadDataBlock(client.GetApplicationAssociationRequest(), "Authenticating.", reply);
+                            client.ParseApplicationAssociationResponse(reply.Data);
+                        }
                     }
                 }
             }
@@ -982,6 +1065,10 @@ namespace GXDLMSDirector
         /// <returns>Received data.</returns>
         internal void ReadDataBlock(byte[] data, string text, int multiplier, GXReplyData reply)
         {
+            if (data == null)
+            {
+                return;
+            }
             ReadDataBlock(data, text, multiplier, 3, reply);
         }
 
@@ -1044,18 +1131,53 @@ namespace GXDLMSDirector
         public GXDLMSObjectCollection GetObjects()
         {
             GXLogWriter.WriteLog("--- Collecting objects. ---");
-            GXReplyData reply = new GXReplyData()
-            {
-            };
+            GXDLMSObjectCollection objs;
+            GXReplyData reply = new GXReplyData();
             try
             {
-                ReadDataBlock(client.GetObjectsRequest(), "Collecting objects", 3, reply);
+                ReadDataBlock(client.GetObjectsRequest(), "Collecting objects", 3, 1, reply);
             }
             catch (Exception Ex)
             {
-                throw new Exception("GetObjects failed. " + Ex.Message);
+                if (parent.Standard == Standard.Italian)
+                {
+                    objs = new GXDLMSObjectCollection();
+                    GXObisCode[] tmp = GXDLMSConverter.GetObjects(Standard.Italian);
+                    foreach (GXObisCode it in tmp)
+                    {
+                        try
+                        {
+                            GXDLMSObject obj = GXDLMSClient.CreateObject(it.ObjectType);
+                            obj.LogicalName = it.LogicalName;
+                            obj.Description = it.Description;
+                            ReadValue(obj, 1);
+                            if (string.IsNullOrEmpty(obj.LogicalName))
+                            {
+                                //Some meters are returning invalid data here.
+                            }
+                            else
+                            {
+                                objs.Add(obj);
+                            }
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            //Media is closed.
+                            break;
+                        }
+                        catch (Exception)
+                        {
+                            //This is not implemented read next.
+                        }
+                    }
+                    return objs;
+                }
+                else
+                {
+                    throw new Exception("GetObjects failed. " + Ex.Message);
+                }
             }
-            GXDLMSObjectCollection objs = client.ParseObjects(reply.Data, true);
+            objs = client.ParseObjects(reply.Data, true);
             GXLogWriter.WriteLog("--- Collecting " + objs.Count.ToString() + " objects. ---");
             return objs;
         }
@@ -1079,10 +1201,10 @@ namespace GXDLMSDirector
         /// </summary>
         /// <param name="InitialValues"></param>
         /// <param name="obj"></param>
-        /// <param name="attribute">Attribute index to read.</param>
         /// <param name="forceRead">Force all attributes read.</param>
-        public void Read(object sender, GXDLMSObject obj, int attribute, bool forceRead)
+        public void Read(object sender, GXDLMSObject obj, bool forceRead)
         {
+            obj.ClearStatus(0);
             GXReplyData reply = new GXReplyData();
             int[] indexes = (obj as IGXDLMSBase).GetAttributeIndexToRead(forceRead);
             foreach (int it in indexes)
@@ -1149,6 +1271,7 @@ namespace GXDLMSDirector
                     }
                     catch (GXDLMSException ex)
                     {
+                        obj.SetLastError(it, ex);
                         if (ex.ErrorCode == (int)ErrorCode.ReadWriteDenied ||
                                 ex.ErrorCode == (int)ErrorCode.UndefinedObject ||
                                 ex.ErrorCode == (int)ErrorCode.UnavailableObject ||
@@ -1187,11 +1310,6 @@ namespace GXDLMSDirector
                         OnAfterRead(obj, it, null);
                     }
                     obj.SetLastReadTime(it, DateTime.Now);
-                    //If only selected attribute is read.
-                    if (attribute != 0)
-                    {
-                        break;
-                    }
                 }
             }
         }
@@ -1242,7 +1360,6 @@ namespace GXDLMSDirector
                             }
                             throw ex;
                         }
-                        obj.ClearDirty(it);
                         //Read data once again to make sure it is updated.
                         reply.Clear();
                         byte[] data = client.Read(obj, it)[0];

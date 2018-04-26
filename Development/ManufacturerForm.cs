@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9754 $,
-//                  $Date: 2017-12-05 12:48:42 +0200 (ti, 05 joulu 2017) $
+// Version:         $Revision: 10052 $,
+//                  $Date: 2018-04-26 10:11:27 +0300 (Thu, 26 Apr 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -38,6 +38,7 @@ using System.Windows.Forms;
 using Gurux.DLMS.ManufacturerSettings;
 using Gurux.DLMS.Enums;
 using Gurux.Common;
+using Gurux.DLMS;
 
 namespace GXDLMSDirector
 {
@@ -70,6 +71,12 @@ namespace GXDLMSDirector
         public ManufacturerForm(GXManufacturerCollection manufacturers, GXManufacturer manufacturer)
         {
             InitializeComponent();
+            foreach (object it in Enum.GetValues(typeof(Standard)))
+            {
+                StandardCb.Items.Add(it);
+            }
+            StandardCb.SelectedItem = manufacturer.Standard;
+
             SecurityCB.Items.AddRange(new object[] { Security.None, Security.Authentication,
                                       Security.Encryption, Security.AuthenticationEncryption
                                                    });
@@ -189,6 +196,9 @@ namespace GXDLMSDirector
                 Manufacturer.UseLogicalNameReferencing = UseLNCB.Checked;
                 Manufacturer.UseIEC47 = UseIEC47CB.Checked;
                 Manufacturer.StartProtocol = (StartProtocolType)StartProtocolCB.SelectedItem;
+                Manufacturer.Standard = (Standard)StandardCb.SelectedItem;
+
+
                 GXAuthentication authentication = Manufacturer.GetActiveAuthentication();
                 authentication.ClientAddress = Convert.ToInt32(this.ClientAddTB.Value);
                 //Save server values.

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10042 $,
-//                  $Date: 2018-04-17 09:57:56 +0300 (ti, 17 huhti 2018) $
+// Version:         $Revision: 10052 $,
+//                  $Date: 2018-04-26 10:11:27 +0300 (Thu, 26 Apr 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -67,6 +67,10 @@ namespace GXDLMSDirector
                 ServerAddressSizeCb.Items.Add(1);
                 ServerAddressSizeCb.Items.Add(2);
                 ServerAddressSizeCb.Items.Add(4);
+                foreach (object it in Enum.GetValues(typeof(Standard)))
+                {
+                    StandardCb.Items.Add(it);
+                }
 
                 PriorityCb.Items.Add(Priority.Normal);
                 PriorityCb.Items.Add(Priority.High);
@@ -108,6 +112,7 @@ namespace GXDLMSDirector
                         ManufacturerCB.SelectedIndex = pos;
                     }
                     Device.Comm.client.ProposedConformance = GXDLMSClient.GetInitialConformance(UseLNCB.Checked);
+                    FrameCounterTb.ReadOnly = true;
                 }
                 else
                 {
@@ -119,6 +124,7 @@ namespace GXDLMSDirector
                             break;
                         }
                     }
+                    StandardCb.SelectedItem = Device.Standard;
                     if (IsAscii(GXCommon.HexToBytes(Device.SystemTitle)))
                     {
                         SystemTitleAsciiCb.CheckedChanged -= SystemTitleAsciiCb_CheckedChanged;
@@ -189,6 +195,9 @@ namespace GXDLMSDirector
                     WaitTimeTB.Value = Device.WaitTime;
                     SecurityCB.SelectedItem = Device.Security;
                     InvocationCounterTB.Text = Device.InvocationCounter.ToString();
+                    FrameCounterTb.Text = Device.FrameCounter;
+                    FrameCounterTb.ReadOnly = true;
+                    InvocationCounterCb.Checked = FrameCounterTb.Text != "";
                     ChallengeTB.Text = GXCommon.ToHex(GXCommon.HexToBytes(Device.Challenge), true);
                     UseUtcTimeZone.Checked = Device.UtcTimeZone;
                 }
@@ -781,8 +790,18 @@ namespace GXDLMSDirector
                 Device.PreEstablished = UsePreEstablishedApplicationAssociations.Checked;
 
                 Device.InvocationCounter = UInt32.Parse(InvocationCounterTB.Text);
+                if (InvocationCounterCb.Checked && FrameCounterTb.Text != "")
+                {
+                    GXDLMSConverter.LogicalNameToBytes(FrameCounterTb.Text);
+                    Device.FrameCounter = FrameCounterTb.Text;
+                }
+                else
+                {
+                    Device.FrameCounter = null;
+                }
                 Device.Challenge = GXCommon.ToHex(GXCommon.HexToBytes(ChallengeTB.Text), false);
                 UpdateConformance();
+                Device.Standard = (Standard)StandardCb.SelectedItem;
             }
             catch (Exception Ex)
             {
@@ -1002,6 +1021,7 @@ namespace GXDLMSDirector
                 {
                     type = man.GetActiveServer().HDLCAddress;
                     Device.UseWrapper = man.UseIEC47;
+                    StandardCb.SelectedItem = man.Standard;
                 }
                 foreach (GXServerAddress it in ((GXManufacturer)ManufacturerCB.SelectedItem).ServerSettings)
                 {
@@ -1393,5 +1413,17 @@ namespace GXDLMSDirector
                 MessageBox.Show(this, ex.Message);
             }
         }
+
+        private void UseWrapperCb_CheckedChanged(object sender, EventArgs e)
+        {
+            groupBox1.Enabled = !UseWrapperCb.Checked;
+        }
+
+        private void InvocationCounterCb_CheckedChanged(object sender, EventArgs e)
+        {
+            bool c = InvocationCounterCb.Checked;
+            InvocationCounterTB.ReadOnly = c;
+            FrameCounterTb.ReadOnly = !c;
+        }        
     }
 }

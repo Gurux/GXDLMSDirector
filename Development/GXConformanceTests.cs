@@ -1188,7 +1188,7 @@ namespace GXDLMSDirector
                     " MaxInfoLengthReceive: " + dev.Comm.client.Limits.MaxInfoRX + " WindowSizeTransmit: " +
                     dev.Comm.client.Limits.WindowSizeTX + " WindowSizeReceive: " + dev.Comm.client.Limits.WindowSizeRX);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 passed = false;
             }
@@ -1591,7 +1591,7 @@ namespace GXDLMSDirector
                         passed = false;
                         break;
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         //This should fail.
                     }
@@ -1837,7 +1837,7 @@ namespace GXDLMSDirector
                     passed = false;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 passed = false;
             }
@@ -2006,7 +2006,7 @@ namespace GXDLMSDirector
                     passed = false;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //This should happened.
             }
@@ -2026,7 +2026,7 @@ namespace GXDLMSDirector
                     passed = false;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 passed = false;
             }
@@ -2038,6 +2038,112 @@ namespace GXDLMSDirector
             {
                 test.OnTrace(test, "Failed.\r\n");
                 output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc10\">Test #10 failed.</a>");
+            }
+        }
+
+        /// <summary>
+        /// Send same HDLC packet twice and check that meter can hanle this. Then read next data.
+        /// </summary>
+        /// <param name="test"></param>
+        /// <param name="settings"></param>
+        /// <param name="dev"></param>
+        /// <param name="output"></param>
+        private static void Test11(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output, int tryCount)
+        {
+            GXReplyData reply = new GXReplyData();
+            bool passed = true;
+            test.OnTrace(test, "Starting HDLC tests #11.\r\n");
+            try
+            {
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(), "HDLC test #11. Disconnect request", 1, tryCount, reply);
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                {
+                    output.Info.Add("Meter returns DisconnectMode.");
+                }
+                else
+                {
+                    passed = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                passed = false;
+                output.Errors.Add("Disconnect request failed. " + ex.Message);
+            }
+            try
+            {
+                reply.Clear();
+                byte[] data = dev.Comm.client.SNRMRequest();
+                dev.Comm.ReadDataBlock(data, "HDLC test #11. SNRM", 1, tryCount, reply);
+                dev.Comm.ParseUAResponse(reply.Data);
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.client.AARQRequest(), "HDLC test #11. AARQ", 1, reply);
+                dev.Comm.ParseAAREResponse(reply.Data);
+                reply.Clear();
+                GXDLMSData ldn = new GXDLMSData("0.0.42.0.0.255");
+                data = dev.Comm.Read(ldn, 1);
+                dev.Comm.ReadDataBlock(data, "HDLC test #11. Read LDN #1", 1, reply);
+                reply.Clear();
+                //RR
+                dev.Comm.ReadDataBlock(data, "HDLC test #11. Read LDN #2", 1, reply);
+                if ((reply.FrameId & 0xC) != 0)
+                {
+                    output.Info.Add("Meter Don't return ReceiveReady.");
+                    passed = false;
+                }
+                reply.Clear();
+                //Read value again.
+                data = dev.Comm.Read(ldn, 1);
+                dev.Comm.ReadDataBlock(data, "HDLC test #11. Read LDN #3", 1, reply);
+                reply.Clear();
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.UnacceptableFrame)
+                {
+                    output.Info.Add("Meter returns Unacceptable Frame.");
+                }
+                else
+                {
+                    passed = false;
+                }
+            }
+            catch (Exception)
+            {
+                //This should happened.
+            }
+            try
+            {
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(), "HDLC test #11. Disconnect request", 1, tryCount, reply);
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                {
+                    output.Info.Add("Meter returns DisconnectMode.");
+                }
+                else
+                {
+                    passed = false;
+                }
+            }
+            catch (Exception)
+            {
+                passed = false;
+            }
+            if (passed)
+            {
+                test.OnTrace(test, "Passed.\r\n");
+            }
+            else
+            {
+                test.OnTrace(test, "Failed.\r\n");
+                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc10\">Test #11 failed.</a>");
             }
         }
 
@@ -2094,6 +2200,11 @@ namespace GXDLMSDirector
                 return;
             }
             Test10(test, settings, dev, output, tryCount);
+            if (!Continue)
+            {
+                return;
+            }   
+            Test11(test, settings, dev, output, tryCount);
         }
 
         /// <summary>
@@ -2191,7 +2302,7 @@ namespace GXDLMSDirector
                                 output.Errors.Insert(0, "Image transfer failed. Error code: " + reply.Error);
                                 return;
                             }
-                            reply.Clear();                            
+                            reply.Clear();
                             test.OnProgress(test, "Image block transfer...", ++pos, cnt);
                         }
                         if (!error)
@@ -2299,7 +2410,7 @@ namespace GXDLMSDirector
                         {
                             start = DateTime.Now;
                             //Step 7. BB: 4.4.6.4
-                            test.OnProgress(test, "Activating image...", 1, 1);                           
+                            test.OnProgress(test, "Activating image...", 1, 1);
                             try
                             {
                                 reply.Clear();

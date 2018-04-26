@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10026 $,
-//                  $Date: 2018-04-11 12:17:59 +0300 (ke, 11 huhti 2018) $
+// Version:         $Revision: 10052 $,
+//                  $Date: 2018-04-26 10:11:27 +0300 (Thu, 26 Apr 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -97,6 +97,8 @@ namespace GXDLMSDirector
             this.EventNotificationCB = new System.Windows.Forms.CheckBox();
             this.ActionCB = new System.Windows.Forms.CheckBox();
             this.CipheringTab = new System.Windows.Forms.TabPage();
+            this.FrameCounterTb = new System.Windows.Forms.TextBox();
+            this.FrameCounterLbl = new System.Windows.Forms.Label();
             this.ServerSystemTitleAsciiCb = new System.Windows.Forms.CheckBox();
             this.ServerSystemTitle = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -165,6 +167,10 @@ namespace GXDLMSDirector
             this.SerialPortCB = new System.Windows.Forms.ComboBox();
             this.DeviceTab = new System.Windows.Forms.TabControl();
             this.AdvancedTab = new System.Windows.Forms.TabPage();
+            this.StandardCb = new System.Windows.Forms.ComboBox();
+            this.StandardLbl = new System.Windows.Forms.Label();
+            this.ServerAddressSizeCb = new System.Windows.Forms.ComboBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.UserIdTb = new System.Windows.Forms.TextBox();
             this.UserIDLbl = new System.Windows.Forms.Label();
             this.MaxPduTb = new System.Windows.Forms.TextBox();
@@ -188,8 +194,8 @@ namespace GXDLMSDirector
             this.UseUtcTimeZone = new System.Windows.Forms.CheckBox();
             this.helpProvider1 = new System.Windows.Forms.HelpProvider();
             this.conformanceHelpProvider = new System.Windows.Forms.HelpProvider();
-            this.label5 = new System.Windows.Forms.Label();
-            this.ServerAddressSizeCb = new System.Windows.Forms.ComboBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.InvocationCounterCb = new System.Windows.Forms.CheckBox();
             this.SupportedServicesTab.SuspendLayout();
             this.SNSettings.SuspendLayout();
             this.LNSettings.SuspendLayout();
@@ -205,6 +211,7 @@ namespace GXDLMSDirector
             this.DeviceTab.SuspendLayout();
             this.AdvancedTab.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // CancelBtn
@@ -652,14 +659,13 @@ namespace GXDLMSDirector
             // 
             // CipheringTab
             // 
+            this.CipheringTab.Controls.Add(this.groupBox2);
             this.CipheringTab.Controls.Add(this.ServerSystemTitleAsciiCb);
             this.CipheringTab.Controls.Add(this.ServerSystemTitle);
             this.CipheringTab.Controls.Add(this.label4);
             this.CipheringTab.Controls.Add(this.UsePreEstablishedApplicationAssociations);
             this.CipheringTab.Controls.Add(this.ChallengeTB);
             this.CipheringTab.Controls.Add(this.ChallengeLbl);
-            this.CipheringTab.Controls.Add(this.InvocationCounterTB);
-            this.CipheringTab.Controls.Add(this.InvocationCounterLbl);
             this.CipheringTab.Controls.Add(this.BlockCipherKeyAsciiCb);
             this.CipheringTab.Controls.Add(this.AuthenticationKeyAsciiCb);
             this.CipheringTab.Controls.Add(this.SystemTitleAsciiCb);
@@ -678,10 +684,28 @@ namespace GXDLMSDirector
             this.CipheringTab.Text = "Secured Connections";
             this.CipheringTab.UseVisualStyleBackColor = true;
             // 
+            // FrameCounterTb
+            // 
+            this.FrameCounterTb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.FrameCounterTb.Location = new System.Drawing.Point(112, 68);
+            this.FrameCounterTb.Name = "FrameCounterTb";
+            this.FrameCounterTb.Size = new System.Drawing.Size(221, 20);
+            this.FrameCounterTb.TabIndex = 70;
+            // 
+            // FrameCounterLbl
+            // 
+            this.FrameCounterLbl.AutoSize = true;
+            this.FrameCounterLbl.Location = new System.Drawing.Point(7, 71);
+            this.FrameCounterLbl.Name = "FrameCounterLbl";
+            this.FrameCounterLbl.Size = new System.Drawing.Size(96, 13);
+            this.FrameCounterLbl.TabIndex = 71;
+            this.FrameCounterLbl.Text = "Frame Counter LN:";
+            // 
             // ServerSystemTitleAsciiCb
             // 
             this.ServerSystemTitleAsciiCb.AutoSize = true;
-            this.ServerSystemTitleAsciiCb.Location = new System.Drawing.Point(347, 184);
+            this.ServerSystemTitleAsciiCb.Location = new System.Drawing.Point(347, 262);
             this.ServerSystemTitleAsciiCb.Name = "ServerSystemTitleAsciiCb";
             this.ServerSystemTitleAsciiCb.Size = new System.Drawing.Size(53, 17);
             this.ServerSystemTitleAsciiCb.TabIndex = 69;
@@ -693,7 +717,7 @@ namespace GXDLMSDirector
             // 
             this.ServerSystemTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ServerSystemTitle.Location = new System.Drawing.Point(113, 182);
+            this.ServerSystemTitle.Location = new System.Drawing.Point(113, 260);
             this.ServerSystemTitle.Name = "ServerSystemTitle";
             this.ServerSystemTitle.ReadOnly = true;
             this.ServerSystemTitle.Size = new System.Drawing.Size(226, 20);
@@ -702,7 +726,7 @@ namespace GXDLMSDirector
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(8, 185);
+            this.label4.Location = new System.Drawing.Point(8, 263);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(63, 13);
             this.label4.TabIndex = 68;
@@ -711,7 +735,7 @@ namespace GXDLMSDirector
             // UsePreEstablishedApplicationAssociations
             // 
             this.UsePreEstablishedApplicationAssociations.AutoSize = true;
-            this.UsePreEstablishedApplicationAssociations.Location = new System.Drawing.Point(8, 159);
+            this.UsePreEstablishedApplicationAssociations.Location = new System.Drawing.Point(8, 237);
             this.UsePreEstablishedApplicationAssociations.Name = "UsePreEstablishedApplicationAssociations";
             this.UsePreEstablishedApplicationAssociations.Size = new System.Drawing.Size(218, 17);
             this.UsePreEstablishedApplicationAssociations.TabIndex = 66;
@@ -723,7 +747,7 @@ namespace GXDLMSDirector
             // 
             this.ChallengeTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ChallengeTB.Location = new System.Drawing.Point(113, 133);
+            this.ChallengeTB.Location = new System.Drawing.Point(113, 211);
             this.ChallengeTB.Name = "ChallengeTB";
             this.ChallengeTB.Size = new System.Drawing.Size(226, 20);
             this.ChallengeTB.TabIndex = 8;
@@ -731,7 +755,7 @@ namespace GXDLMSDirector
             // ChallengeLbl
             // 
             this.ChallengeLbl.AutoSize = true;
-            this.ChallengeLbl.Location = new System.Drawing.Point(8, 136);
+            this.ChallengeLbl.Location = new System.Drawing.Point(8, 214);
             this.ChallengeLbl.Name = "ChallengeLbl";
             this.ChallengeLbl.Size = new System.Drawing.Size(57, 13);
             this.ChallengeLbl.TabIndex = 65;
@@ -741,15 +765,15 @@ namespace GXDLMSDirector
             // 
             this.InvocationCounterTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.InvocationCounterTB.Location = new System.Drawing.Point(113, 107);
+            this.InvocationCounterTB.Location = new System.Drawing.Point(112, 42);
             this.InvocationCounterTB.Name = "InvocationCounterTB";
-            this.InvocationCounterTB.Size = new System.Drawing.Size(226, 20);
+            this.InvocationCounterTB.Size = new System.Drawing.Size(221, 20);
             this.InvocationCounterTB.TabIndex = 7;
             // 
             // InvocationCounterLbl
             // 
             this.InvocationCounterLbl.AutoSize = true;
-            this.InvocationCounterLbl.Location = new System.Drawing.Point(8, 110);
+            this.InvocationCounterLbl.Location = new System.Drawing.Point(7, 45);
             this.InvocationCounterLbl.Name = "InvocationCounterLbl";
             this.InvocationCounterLbl.Size = new System.Drawing.Size(100, 13);
             this.InvocationCounterLbl.TabIndex = 63;
@@ -1445,6 +1469,8 @@ namespace GXDLMSDirector
             // 
             // AdvancedTab
             // 
+            this.AdvancedTab.Controls.Add(this.StandardCb);
+            this.AdvancedTab.Controls.Add(this.StandardLbl);
             this.AdvancedTab.Controls.Add(this.ServerAddressSizeCb);
             this.AdvancedTab.Controls.Add(this.label5);
             this.AdvancedTab.Controls.Add(this.UserIdTb);
@@ -1464,6 +1490,46 @@ namespace GXDLMSDirector
             this.AdvancedTab.TabIndex = 3;
             this.AdvancedTab.Text = "Advanced";
             this.AdvancedTab.UseVisualStyleBackColor = true;
+            // 
+            // StandardCb
+            // 
+            this.StandardCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.helpProvider1.SetHelpKeyword(this.StandardCb, "Standard");
+            this.helpProvider1.SetHelpNavigator(this.StandardCb, System.Windows.Forms.HelpNavigator.Topic);
+            this.StandardCb.Location = new System.Drawing.Point(146, 348);
+            this.StandardCb.Name = "StandardCb";
+            this.helpProvider1.SetShowHelp(this.StandardCb, true);
+            this.StandardCb.Size = new System.Drawing.Size(93, 21);
+            this.StandardCb.TabIndex = 59;
+            // 
+            // StandardLbl
+            // 
+            this.StandardLbl.AutoSize = true;
+            this.StandardLbl.Location = new System.Drawing.Point(16, 352);
+            this.StandardLbl.Name = "StandardLbl";
+            this.StandardLbl.Size = new System.Drawing.Size(53, 13);
+            this.StandardLbl.TabIndex = 58;
+            this.StandardLbl.Text = "Standard:";
+            // 
+            // ServerAddressSizeCb
+            // 
+            this.ServerAddressSizeCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.helpProvider1.SetHelpKeyword(this.ServerAddressSizeCb, "ServiceClass");
+            this.helpProvider1.SetHelpNavigator(this.ServerAddressSizeCb, System.Windows.Forms.HelpNavigator.Topic);
+            this.ServerAddressSizeCb.Location = new System.Drawing.Point(146, 321);
+            this.ServerAddressSizeCb.Name = "ServerAddressSizeCb";
+            this.helpProvider1.SetShowHelp(this.ServerAddressSizeCb, true);
+            this.ServerAddressSizeCb.Size = new System.Drawing.Size(93, 21);
+            this.ServerAddressSizeCb.TabIndex = 57;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(16, 325);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(102, 13);
+            this.label5.TabIndex = 56;
+            this.label5.Text = "Server address size:";
             // 
             // UserIdTb
             // 
@@ -1515,6 +1581,7 @@ namespace GXDLMSDirector
             this.UseWrapperCb.TabIndex = 5;
             this.UseWrapperCb.Text = "Use WRAPPER";
             this.UseWrapperCb.UseVisualStyleBackColor = true;
+            this.UseWrapperCb.CheckedChanged += new System.EventHandler(this.UseWrapperCb_CheckedChanged);
             // 
             // groupBox1
             // 
@@ -1699,25 +1766,30 @@ namespace GXDLMSDirector
             // 
             this.conformanceHelpProvider.HelpNamespace = "https://www.gurux.fi/Gurux.DLMS.Conformance";
             // 
-            // label5
+            // groupBox2
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(16, 325);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(102, 13);
-            this.label5.TabIndex = 56;
-            this.label5.Text = "Server address size:";
+            this.groupBox2.Controls.Add(this.InvocationCounterCb);
+            this.groupBox2.Controls.Add(this.FrameCounterTb);
+            this.groupBox2.Controls.Add(this.FrameCounterLbl);
+            this.groupBox2.Controls.Add(this.InvocationCounterLbl);
+            this.groupBox2.Controls.Add(this.InvocationCounterTB);
+            this.groupBox2.Location = new System.Drawing.Point(0, 104);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(339, 97);
+            this.groupBox2.TabIndex = 73;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Invocation Counter:";
             // 
-            // ServerAddressSizeCb
+            // InvocationCounterCb
             // 
-            this.ServerAddressSizeCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.helpProvider1.SetHelpKeyword(this.ServerAddressSizeCb, "ServiceClass");
-            this.helpProvider1.SetHelpNavigator(this.ServerAddressSizeCb, System.Windows.Forms.HelpNavigator.Topic);
-            this.ServerAddressSizeCb.Location = new System.Drawing.Point(146, 321);
-            this.ServerAddressSizeCb.Name = "ServerAddressSizeCb";
-            this.helpProvider1.SetShowHelp(this.ServerAddressSizeCb, true);
-            this.ServerAddressSizeCb.Size = new System.Drawing.Size(93, 21);
-            this.ServerAddressSizeCb.TabIndex = 57;
+            this.InvocationCounterCb.AutoSize = true;
+            this.InvocationCounterCb.Location = new System.Drawing.Point(6, 19);
+            this.InvocationCounterCb.Name = "InvocationCounterCb";
+            this.InvocationCounterCb.Size = new System.Drawing.Size(117, 17);
+            this.InvocationCounterCb.TabIndex = 0;
+            this.InvocationCounterCb.Text = "Read Automatically";
+            this.InvocationCounterCb.UseVisualStyleBackColor = true;
+            this.InvocationCounterCb.CheckedChanged += new System.EventHandler(this.InvocationCounterCb_CheckedChanged);
             // 
             // DevicePropertiesForm
             // 
@@ -1763,6 +1835,8 @@ namespace GXDLMSDirector
             this.AdvancedTab.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1896,5 +1970,11 @@ namespace GXDLMSDirector
         private System.Windows.Forms.CheckBox ServerSystemTitleAsciiCb;
         private System.Windows.Forms.ComboBox ServerAddressSizeCb;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ComboBox StandardCb;
+        private System.Windows.Forms.Label StandardLbl;
+        private System.Windows.Forms.TextBox FrameCounterTb;
+        private System.Windows.Forms.Label FrameCounterLbl;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.CheckBox InvocationCounterCb;
     }
 }

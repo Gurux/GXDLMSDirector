@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9754 $,
-//                  $Date: 2017-12-05 12:48:42 +0200 (ti, 05 joulu 2017) $
+// Version:         $Revision: 10052 $,
+//                  $Date: 2018-04-26 10:11:27 +0300 (Thu, 26 Apr 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -77,6 +77,8 @@ namespace GXDLMSDirector
             this.ClientAddLbl = new System.Windows.Forms.Label();
             this.ClientAddTB = new System.Windows.Forms.NumericUpDown();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.SizeCb = new System.Windows.Forms.ComboBox();
+            this.SizeLbl = new System.Windows.Forms.Label();
             this.ServerAddressTypeCB = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.SerialNumberFormulaTB = new System.Windows.Forms.TextBox();
@@ -105,8 +107,8 @@ namespace GXDLMSDirector
             this.SecurityLbl = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.InfoTB = new System.Windows.Forms.TextBox();
-            this.SizeCb = new System.Windows.Forms.ComboBox();
-            this.SizeLbl = new System.Windows.Forms.Label();
+            this.StandardCb = new System.Windows.Forms.ComboBox();
+            this.StandardLbl = new System.Windows.Forms.Label();
             this.AddressingGB.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ClientAddTB)).BeginInit();
@@ -145,7 +147,7 @@ namespace GXDLMSDirector
             // UseIEC47CB
             // 
             this.UseIEC47CB.AutoSize = true;
-            this.UseIEC47CB.Location = new System.Drawing.Point(196, 54);
+            this.UseIEC47CB.Location = new System.Drawing.Point(196, 78);
             this.UseIEC47CB.Name = "UseIEC47CB";
             this.UseIEC47CB.Size = new System.Drawing.Size(103, 17);
             this.UseIEC47CB.TabIndex = 3;
@@ -155,7 +157,7 @@ namespace GXDLMSDirector
             // UseLNCB
             // 
             this.UseLNCB.AutoSize = true;
-            this.UseLNCB.Location = new System.Drawing.Point(10, 54);
+            this.UseLNCB.Location = new System.Drawing.Point(10, 78);
             this.UseLNCB.Name = "UseLNCB";
             this.UseLNCB.Size = new System.Drawing.Size(167, 17);
             this.UseLNCB.TabIndex = 2;
@@ -197,7 +199,7 @@ namespace GXDLMSDirector
             // StartProtocolLbl
             // 
             this.StartProtocolLbl.AutoSize = true;
-            this.StartProtocolLbl.Location = new System.Drawing.Point(10, 79);
+            this.StartProtocolLbl.Location = new System.Drawing.Point(10, 103);
             this.StartProtocolLbl.Name = "StartProtocolLbl";
             this.StartProtocolLbl.Size = new System.Drawing.Size(74, 13);
             this.StartProtocolLbl.TabIndex = 20;
@@ -207,7 +209,7 @@ namespace GXDLMSDirector
             // 
             this.StartProtocolCB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.StartProtocolCB.FormattingEnabled = true;
-            this.StartProtocolCB.Location = new System.Drawing.Point(119, 76);
+            this.StartProtocolCB.Location = new System.Drawing.Point(119, 100);
             this.StartProtocolCB.Name = "StartProtocolCB";
             this.StartProtocolCB.Size = new System.Drawing.Size(194, 21);
             this.StartProtocolCB.TabIndex = 4;
@@ -220,9 +222,9 @@ namespace GXDLMSDirector
             this.AddressingGB.Controls.Add(this.groupBox1);
             this.AddressingGB.Controls.Add(this.AuthenticationCB);
             this.AddressingGB.Controls.Add(this.AuthenticationLbl);
-            this.AddressingGB.Location = new System.Drawing.Point(3, 103);
+            this.AddressingGB.Location = new System.Drawing.Point(3, 124);
             this.AddressingGB.Name = "AddressingGB";
-            this.AddressingGB.Size = new System.Drawing.Size(395, 263);
+            this.AddressingGB.Size = new System.Drawing.Size(395, 246);
             this.AddressingGB.TabIndex = 5;
             this.AddressingGB.TabStop = false;
             this.AddressingGB.Text = "Addressing";
@@ -283,6 +285,24 @@ namespace GXDLMSDirector
             this.groupBox1.TabIndex = 13;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Server Address:";
+            // 
+            // SizeCb
+            // 
+            this.SizeCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SizeCb.FormattingEnabled = true;
+            this.SizeCb.Location = new System.Drawing.Point(63, 100);
+            this.SizeCb.Name = "SizeCb";
+            this.SizeCb.Size = new System.Drawing.Size(85, 21);
+            this.SizeCb.TabIndex = 11;
+            // 
+            // SizeLbl
+            // 
+            this.SizeLbl.AutoSize = true;
+            this.SizeLbl.Location = new System.Drawing.Point(9, 104);
+            this.SizeLbl.Name = "SizeLbl";
+            this.SizeLbl.Size = new System.Drawing.Size(30, 13);
+            this.SizeLbl.TabIndex = 49;
+            this.SizeLbl.Text = "Size:";
             // 
             // ServerAddressTypeCB
             // 
@@ -416,6 +436,8 @@ namespace GXDLMSDirector
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.StandardCb);
+            this.tabPage1.Controls.Add(this.StandardLbl);
             this.tabPage1.Controls.Add(this.AddressingGB);
             this.tabPage1.Controls.Add(this.WebAddressTB);
             this.tabPage1.Controls.Add(this.WebAddressLbl);
@@ -581,23 +603,23 @@ namespace GXDLMSDirector
             this.InfoTB.Size = new System.Drawing.Size(398, 366);
             this.InfoTB.TabIndex = 1;
             // 
-            // SizeCb
+            // StandardCb
             // 
-            this.SizeCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.SizeCb.FormattingEnabled = true;
-            this.SizeCb.Location = new System.Drawing.Point(63, 100);
-            this.SizeCb.Name = "SizeCb";
-            this.SizeCb.Size = new System.Drawing.Size(85, 21);
-            this.SizeCb.TabIndex = 11;
+            this.StandardCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.StandardCb.FormattingEnabled = true;
+            this.StandardCb.Location = new System.Drawing.Point(119, 55);
+            this.StandardCb.Name = "StandardCb";
+            this.StandardCb.Size = new System.Drawing.Size(194, 21);
+            this.StandardCb.TabIndex = 41;
             // 
-            // SizeLbl
+            // StandardLbl
             // 
-            this.SizeLbl.AutoSize = true;
-            this.SizeLbl.Location = new System.Drawing.Point(9, 104);
-            this.SizeLbl.Name = "SizeLbl";
-            this.SizeLbl.Size = new System.Drawing.Size(30, 13);
-            this.SizeLbl.TabIndex = 49;
-            this.SizeLbl.Text = "Size:";
+            this.StandardLbl.AutoSize = true;
+            this.StandardLbl.Location = new System.Drawing.Point(10, 58);
+            this.StandardLbl.Name = "StandardLbl";
+            this.StandardLbl.Size = new System.Drawing.Size(53, 13);
+            this.StandardLbl.TabIndex = 42;
+            this.StandardLbl.Text = "Standard:";
             // 
             // ManufacturerForm
             // 
@@ -681,5 +703,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label SecurityLbl;
         private System.Windows.Forms.ComboBox SizeCb;
         private System.Windows.Forms.Label SizeLbl;
+        private System.Windows.Forms.ComboBox StandardCb;
+        private System.Windows.Forms.Label StandardLbl;
     }
 }

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10008 $,
-//                  $Date: 2018-04-03 13:55:41 +0300 (ti, 03 huhti 2018) $
+// Version:         $Revision: 10052 $,
+//                  $Date: 2018-04-26 10:11:27 +0300 (Thu, 26 Apr 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -84,6 +84,7 @@ namespace GXDLMSDirector
             this.findNextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem16 = new System.Windows.Forms.ToolStripSeparator();
             this.CloneBtn = new System.Windows.Forms.ToolStripMenuItem();
+            this.AddObjectMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ViewToolbarMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.ViewStatusbarMnu = new System.Windows.Forms.ToolStripMenuItem();
@@ -228,9 +229,7 @@ namespace GXDLMSDirector
             this.ConformanceTB = new System.Windows.Forms.TextBox();
             this.ConformanceLbl = new System.Windows.Forms.Label();
             this.ManufacturerLbl = new System.Windows.Forms.Label();
-            this.StatusValueLbl = new System.Windows.Forms.Label();
             this.ManufacturerValueLbl = new System.Windows.Forms.Label();
-            this.DeviceStateLbl = new System.Windows.Forms.Label();
             this.PhysicalAddressLbl = new System.Windows.Forms.Label();
             this.ClientAddressValueLbl = new System.Windows.Forms.Label();
             this.PhysicalAddressValueLbl = new System.Windows.Forms.Label();
@@ -241,7 +240,9 @@ namespace GXDLMSDirector
             this.DeviceNameCH = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ObjectPanelFrame = new System.Windows.Forms.Panel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.AddObjectMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.ErrorsView = new System.Windows.Forms.ListView();
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ErrorLbl = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -404,7 +405,7 @@ namespace GXDLMSDirector
             // 
             this.findToolStripMenuItem.Name = "findToolStripMenuItem";
             this.findToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
-            this.findToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.findToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.findToolStripMenuItem.Text = "Find...";
             this.findToolStripMenuItem.ToolTipText = "Find COSEM object by logical name.";
             this.findToolStripMenuItem.Click += new System.EventHandler(this.findToolStripMenuItem_Click);
@@ -414,7 +415,7 @@ namespace GXDLMSDirector
             this.findNextToolStripMenuItem.Enabled = false;
             this.findNextToolStripMenuItem.Name = "findNextToolStripMenuItem";
             this.findNextToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.findNextToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.findNextToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.findNextToolStripMenuItem.Text = "Find Next";
             this.findNextToolStripMenuItem.ToolTipText = "Find next COSEM object.";
             this.findNextToolStripMenuItem.Click += new System.EventHandler(this.findNextToolStripMenuItem_Click);
@@ -422,15 +423,22 @@ namespace GXDLMSDirector
             // toolStripMenuItem16
             // 
             this.toolStripMenuItem16.Name = "toolStripMenuItem16";
-            this.toolStripMenuItem16.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem16.Size = new System.Drawing.Size(143, 6);
             // 
             // CloneBtn
             // 
             this.CloneBtn.Name = "CloneBtn";
-            this.CloneBtn.Size = new System.Drawing.Size(152, 22);
+            this.CloneBtn.Size = new System.Drawing.Size(146, 22);
             this.CloneBtn.Text = "Clone...";
             this.CloneBtn.ToolTipText = "Clone selected device.";
             this.CloneBtn.Click += new System.EventHandler(this.CloneBtn_Click);
+            // 
+            // AddObjectMenu
+            // 
+            this.AddObjectMenu.Name = "AddObjectMenu";
+            this.AddObjectMenu.Size = new System.Drawing.Size(146, 22);
+            this.AddObjectMenu.Text = "Add Object...";
+            this.AddObjectMenu.Click += new System.EventHandler(this.AddObjectMenu_Click);
             // 
             // viewToolStripMenuItem
             // 
@@ -1607,12 +1615,12 @@ namespace GXDLMSDirector
             // 
             // DeviceGb
             // 
+            this.DeviceGb.Controls.Add(this.ErrorLbl);
+            this.DeviceGb.Controls.Add(this.ErrorsView);
             this.DeviceGb.Controls.Add(this.ConformanceTB);
             this.DeviceGb.Controls.Add(this.ConformanceLbl);
             this.DeviceGb.Controls.Add(this.ManufacturerLbl);
-            this.DeviceGb.Controls.Add(this.StatusValueLbl);
             this.DeviceGb.Controls.Add(this.ManufacturerValueLbl);
-            this.DeviceGb.Controls.Add(this.DeviceStateLbl);
             this.DeviceGb.Controls.Add(this.PhysicalAddressLbl);
             this.DeviceGb.Controls.Add(this.ClientAddressValueLbl);
             this.DeviceGb.Controls.Add(this.PhysicalAddressValueLbl);
@@ -1629,17 +1637,17 @@ namespace GXDLMSDirector
             // ConformanceTB
             // 
             this.ConformanceTB.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.ConformanceTB.Location = new System.Drawing.Point(117, 143);
+            this.ConformanceTB.Location = new System.Drawing.Point(117, 120);
             this.ConformanceTB.Multiline = true;
             this.ConformanceTB.Name = "ConformanceTB";
             this.ConformanceTB.ReadOnly = true;
-            this.ConformanceTB.Size = new System.Drawing.Size(236, 117);
+            this.ConformanceTB.Size = new System.Drawing.Size(236, 60);
             this.ConformanceTB.TabIndex = 14;
             // 
             // ConformanceLbl
             // 
             this.ConformanceLbl.AutoSize = true;
-            this.ConformanceLbl.Location = new System.Drawing.Point(18, 143);
+            this.ConformanceLbl.Location = new System.Drawing.Point(18, 120);
             this.ConformanceLbl.Name = "ConformanceLbl";
             this.ConformanceLbl.Size = new System.Drawing.Size(73, 13);
             this.ConformanceLbl.TabIndex = 12;
@@ -1654,15 +1662,6 @@ namespace GXDLMSDirector
             this.ManufacturerLbl.TabIndex = 2;
             this.ManufacturerLbl.Text = "Manufacturer:";
             // 
-            // StatusValueLbl
-            // 
-            this.StatusValueLbl.AutoSize = true;
-            this.StatusValueLbl.Location = new System.Drawing.Point(114, 120);
-            this.StatusValueLbl.Name = "StatusValueLbl";
-            this.StatusValueLbl.Size = new System.Drawing.Size(78, 13);
-            this.StatusValueLbl.TabIndex = 11;
-            this.StatusValueLbl.Text = "StatusValueLbl";
-            // 
             // ManufacturerValueLbl
             // 
             this.ManufacturerValueLbl.AutoSize = true;
@@ -1671,15 +1670,6 @@ namespace GXDLMSDirector
             this.ManufacturerValueLbl.Size = new System.Drawing.Size(111, 13);
             this.ManufacturerValueLbl.TabIndex = 3;
             this.ManufacturerValueLbl.Text = "ManufacturerValueLbl";
-            // 
-            // DeviceStateLbl
-            // 
-            this.DeviceStateLbl.AutoSize = true;
-            this.DeviceStateLbl.Location = new System.Drawing.Point(18, 120);
-            this.DeviceStateLbl.Name = "DeviceStateLbl";
-            this.DeviceStateLbl.Size = new System.Drawing.Size(40, 13);
-            this.DeviceStateLbl.TabIndex = 10;
-            this.DeviceStateLbl.Text = "Status:";
             // 
             // PhysicalAddressLbl
             // 
@@ -1759,12 +1749,35 @@ namespace GXDLMSDirector
             this.ObjectPanelFrame.Size = new System.Drawing.Size(187, 142);
             this.ObjectPanelFrame.TabIndex = 32;
             // 
-            // AddObjectMenu
+            // ErrorsView
             // 
-            this.AddObjectMenu.Name = "AddObjectMenu";
-            this.AddObjectMenu.Size = new System.Drawing.Size(152, 22);
-            this.AddObjectMenu.Text = "Add Object...";
-            this.AddObjectMenu.Click += new System.EventHandler(this.AddObjectMenu_Click);
+            this.ErrorsView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ErrorsView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader2});
+            this.ErrorsView.Location = new System.Drawing.Point(6, 209);
+            this.ErrorsView.MultiSelect = false;
+            this.ErrorsView.Name = "ErrorsView";
+            this.ErrorsView.Size = new System.Drawing.Size(410, 51);
+            this.ErrorsView.TabIndex = 34;
+            this.ErrorsView.UseCompatibleStateImageBehavior = false;
+            this.ErrorsView.View = System.Windows.Forms.View.Details;
+            this.ErrorsView.DoubleClick += new System.EventHandler(this.ErrorsView_DoubleClick);
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Name";
+            this.columnHeader2.Width = 117;
+            // 
+            // ErrorLbl
+            // 
+            this.ErrorLbl.AutoSize = true;
+            this.ErrorLbl.Location = new System.Drawing.Point(18, 190);
+            this.ErrorLbl.Name = "ErrorLbl";
+            this.ErrorLbl.Size = new System.Drawing.Size(37, 13);
+            this.ErrorLbl.TabIndex = 35;
+            this.ErrorLbl.Text = "Errors:";
             // 
             // MainForm
             // 
@@ -1932,9 +1945,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.TextBox ConformanceTB;
         private System.Windows.Forms.Label ConformanceLbl;
         private System.Windows.Forms.Label ManufacturerLbl;
-        private System.Windows.Forms.Label StatusValueLbl;
         private System.Windows.Forms.Label ManufacturerValueLbl;
-        private System.Windows.Forms.Label DeviceStateLbl;
         private System.Windows.Forms.Label PhysicalAddressLbl;
         private System.Windows.Forms.Label ClientAddressValueLbl;
         private System.Windows.Forms.Label PhysicalAddressValueLbl;
@@ -1993,6 +2004,9 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ToolStripMenuItem TraceCommentsMenu;
         private System.Windows.Forms.ToolStripMenuItem NotificationsCommentsMenu;
         private System.Windows.Forms.ToolStripMenuItem AddObjectMenu;
+        private System.Windows.Forms.ListView ErrorsView;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.Label ErrorLbl;
     }
 }
 

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10008 $,
-//                  $Date: 2018-04-03 13:55:41 +0300 (ti, 03 huhti 2018) $
+// Version:         $Revision: 10052 $,
+//                  $Date: 2018-04-26 10:11:27 +0300 (Thu, 26 Apr 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -136,10 +136,10 @@ namespace GXDLMS.ManufacturerSettings
                 {
                     GXByteBuffer pdu = new GXByteBuffer();
                     InterfaceType type = GXDLMSTranslator.GetDlmsFraming(receivedTraceData);
-                    if (translator.FindNextFrame(receivedTraceData, pdu, type))
+                    while (translator.FindNextFrame(receivedTraceData, pdu, type))
                     {
                         System.Diagnostics.Trace.WriteLine(translator.MessageToXml(receivedTraceData));
-                        receivedTraceData.Clear();
+                        receivedTraceData.Trim();
                     }
                 }
                 catch (Exception)

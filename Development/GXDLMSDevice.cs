@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10042 $,
-//                  $Date: 2018-04-17 09:57:56 +0300 (ti, 17 huhti 2018) $
+// Version:         $Revision: 10052 $,
+//                  $Date: 2018-04-26 10:11:27 +0300 (Thu, 26 Apr 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -21,7 +21,7 @@
 // as published by the Free Software Foundation; version 2 of the License.
 // Gurux Device Framework is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// MERCgHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
 //
 // More information of Gurux DLMS/COSEM Director: http://www.gurux.org/GXDLMSDirector
@@ -114,7 +114,7 @@ namespace GXDLMSDirector
 
         public void KeepAliveStart()
         {
-            if (InactivityTimeout != 0)
+            if (InactivityTimeout != 0 && Media.IsOpen)
             {
                 KeepAlive.Interval = InactivityTimeout * 1000;
                 KeepAlive.Start();
@@ -156,6 +156,16 @@ namespace GXDLMSDirector
             set;
         }
 
+        /// <summary>
+        /// Used standard.
+        /// </summary>
+        [DefaultValue(Standard.DLMS)]
+        public Standard Standard
+        {
+            get;
+            set;
+        }
+        
         /// <summary>
         /// Password is used only if authentication is used.
         /// </summary>
@@ -215,7 +225,7 @@ namespace GXDLMSDirector
             get;
             set;
         }
-        
+
 
         /// <summary>
         /// Block cipher key.
@@ -246,6 +256,18 @@ namespace GXDLMSDirector
             get;
             set;
         }
+
+        /// <summary>
+        /// Frame counter is used to update InvocationCounter automatically.
+        /// </summary>
+        [DefaultValue(null)]
+        public string FrameCounter
+        {
+            get;
+            set;
+        }
+        
+
 
         /// <summary>
         /// Static challenge.
@@ -466,7 +488,7 @@ namespace GXDLMSDirector
             set;
         }
 
-        
+
         /// <summary>
         /// Server address size.
         /// </summary>
@@ -754,12 +776,15 @@ namespace GXDLMSDirector
         {
             try
             {
-                UpdateStatus(DeviceState.Disconnecting);
                 if (KeepAlive.Enabled)
                 {
                     KeepAlive.Stop();
                 }
-                communicator.Disconnect();
+                if (Comm.media.IsOpen && m_Status != DeviceState.Disconnecting)
+                {
+                    UpdateStatus(DeviceState.Disconnecting);
+                    communicator.Disconnect();
+                }
             }
             catch (Exception Ex)
             {

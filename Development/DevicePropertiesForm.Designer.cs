@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10052 $,
-//                  $Date: 2018-04-26 10:11:27 +0300 (Thu, 26 Apr 2018) $
+// Version:         $Revision: 10061 $,
+//                  $Date: 2018-04-27 11:52:02 +0300 (Fri, 27 Apr 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -97,16 +97,18 @@ namespace GXDLMSDirector
             this.EventNotificationCB = new System.Windows.Forms.CheckBox();
             this.ActionCB = new System.Windows.Forms.CheckBox();
             this.CipheringTab = new System.Windows.Forms.TabPage();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.InvocationCounterCb = new System.Windows.Forms.CheckBox();
             this.FrameCounterTb = new System.Windows.Forms.TextBox();
             this.FrameCounterLbl = new System.Windows.Forms.Label();
+            this.InvocationCounterLbl = new System.Windows.Forms.Label();
+            this.InvocationCounterTB = new System.Windows.Forms.TextBox();
             this.ServerSystemTitleAsciiCb = new System.Windows.Forms.CheckBox();
             this.ServerSystemTitle = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.UsePreEstablishedApplicationAssociations = new System.Windows.Forms.CheckBox();
             this.ChallengeTB = new System.Windows.Forms.TextBox();
             this.ChallengeLbl = new System.Windows.Forms.Label();
-            this.InvocationCounterTB = new System.Windows.Forms.TextBox();
-            this.InvocationCounterLbl = new System.Windows.Forms.Label();
             this.BlockCipherKeyAsciiCb = new System.Windows.Forms.CheckBox();
             this.AuthenticationKeyAsciiCb = new System.Windows.Forms.CheckBox();
             this.SystemTitleAsciiCb = new System.Windows.Forms.CheckBox();
@@ -192,14 +194,18 @@ namespace GXDLMSDirector
             this.MaxInfoTXTb = new System.Windows.Forms.TextBox();
             this.MaxInfoTXLbl = new System.Windows.Forms.Label();
             this.UseUtcTimeZone = new System.Windows.Forms.CheckBox();
+            this.XmlTab = new System.Windows.Forms.TabPage();
+            this.CopyBtn = new System.Windows.Forms.Button();
+            this.ApplyBtn = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.helpProvider1 = new System.Windows.Forms.HelpProvider();
             this.conformanceHelpProvider = new System.Windows.Forms.HelpProvider();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.InvocationCounterCb = new System.Windows.Forms.CheckBox();
+            this.PasteFromClipboardBtn = new System.Windows.Forms.Button();
             this.SupportedServicesTab.SuspendLayout();
             this.SNSettings.SuspendLayout();
             this.LNSettings.SuspendLayout();
             this.CipheringTab.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.DeviceSettingsTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ClientAddTB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LogicalServerAddressTB)).BeginInit();
@@ -211,14 +217,14 @@ namespace GXDLMSDirector
             this.DeviceTab.SuspendLayout();
             this.AdvancedTab.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
+            this.XmlTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // CancelBtn
             // 
             this.CancelBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelBtn.Location = new System.Drawing.Point(323, 422);
+            this.CancelBtn.Location = new System.Drawing.Point(331, 422);
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.Size = new System.Drawing.Size(75, 23);
             this.CancelBtn.TabIndex = 9;
@@ -230,7 +236,7 @@ namespace GXDLMSDirector
             // 
             this.OKBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.OKBtn.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.OKBtn.Location = new System.Drawing.Point(242, 422);
+            this.OKBtn.Location = new System.Drawing.Point(250, 422);
             this.OKBtn.Name = "OKBtn";
             this.OKBtn.Size = new System.Drawing.Size(75, 23);
             this.OKBtn.TabIndex = 8;
@@ -241,7 +247,7 @@ namespace GXDLMSDirector
             // InitialSettingsBtn
             // 
             this.InitialSettingsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.InitialSettingsBtn.Location = new System.Drawing.Point(10, 422);
+            this.InitialSettingsBtn.Location = new System.Drawing.Point(18, 422);
             this.InitialSettingsBtn.Name = "InitialSettingsBtn";
             this.InitialSettingsBtn.Size = new System.Drawing.Size(117, 23);
             this.InitialSettingsBtn.TabIndex = 7;
@@ -256,7 +262,7 @@ namespace GXDLMSDirector
             this.SupportedServicesTab.Location = new System.Drawing.Point(4, 22);
             this.SupportedServicesTab.Name = "SupportedServicesTab";
             this.SupportedServicesTab.Padding = new System.Windows.Forms.Padding(3);
-            this.SupportedServicesTab.Size = new System.Drawing.Size(403, 388);
+            this.SupportedServicesTab.Size = new System.Drawing.Size(411, 388);
             this.SupportedServicesTab.TabIndex = 1;
             this.SupportedServicesTab.Text = "Supported Services";
             this.SupportedServicesTab.UseVisualStyleBackColor = true;
@@ -679,10 +685,35 @@ namespace GXDLMSDirector
             this.CipheringTab.Controls.Add(this.SecurityLbl);
             this.CipheringTab.Location = new System.Drawing.Point(4, 22);
             this.CipheringTab.Name = "CipheringTab";
-            this.CipheringTab.Size = new System.Drawing.Size(403, 388);
+            this.CipheringTab.Size = new System.Drawing.Size(411, 388);
             this.CipheringTab.TabIndex = 2;
             this.CipheringTab.Text = "Secured Connections";
             this.CipheringTab.UseVisualStyleBackColor = true;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.InvocationCounterCb);
+            this.groupBox2.Controls.Add(this.FrameCounterTb);
+            this.groupBox2.Controls.Add(this.FrameCounterLbl);
+            this.groupBox2.Controls.Add(this.InvocationCounterLbl);
+            this.groupBox2.Controls.Add(this.InvocationCounterTB);
+            this.groupBox2.Location = new System.Drawing.Point(0, 104);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(339, 97);
+            this.groupBox2.TabIndex = 73;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Invocation Counter:";
+            // 
+            // InvocationCounterCb
+            // 
+            this.InvocationCounterCb.AutoSize = true;
+            this.InvocationCounterCb.Location = new System.Drawing.Point(6, 19);
+            this.InvocationCounterCb.Name = "InvocationCounterCb";
+            this.InvocationCounterCb.Size = new System.Drawing.Size(117, 17);
+            this.InvocationCounterCb.TabIndex = 0;
+            this.InvocationCounterCb.Text = "Read Automatically";
+            this.InvocationCounterCb.UseVisualStyleBackColor = true;
+            this.InvocationCounterCb.CheckedChanged += new System.EventHandler(this.InvocationCounterCb_CheckedChanged);
             // 
             // FrameCounterTb
             // 
@@ -701,6 +732,24 @@ namespace GXDLMSDirector
             this.FrameCounterLbl.Size = new System.Drawing.Size(96, 13);
             this.FrameCounterLbl.TabIndex = 71;
             this.FrameCounterLbl.Text = "Frame Counter LN:";
+            // 
+            // InvocationCounterLbl
+            // 
+            this.InvocationCounterLbl.AutoSize = true;
+            this.InvocationCounterLbl.Location = new System.Drawing.Point(7, 45);
+            this.InvocationCounterLbl.Name = "InvocationCounterLbl";
+            this.InvocationCounterLbl.Size = new System.Drawing.Size(100, 13);
+            this.InvocationCounterLbl.TabIndex = 63;
+            this.InvocationCounterLbl.Text = "Invocation Counter:";
+            // 
+            // InvocationCounterTB
+            // 
+            this.InvocationCounterTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.InvocationCounterTB.Location = new System.Drawing.Point(112, 42);
+            this.InvocationCounterTB.Name = "InvocationCounterTB";
+            this.InvocationCounterTB.Size = new System.Drawing.Size(221, 20);
+            this.InvocationCounterTB.TabIndex = 7;
             // 
             // ServerSystemTitleAsciiCb
             // 
@@ -760,24 +809,6 @@ namespace GXDLMSDirector
             this.ChallengeLbl.Size = new System.Drawing.Size(57, 13);
             this.ChallengeLbl.TabIndex = 65;
             this.ChallengeLbl.Text = "Challenge:";
-            // 
-            // InvocationCounterTB
-            // 
-            this.InvocationCounterTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.InvocationCounterTB.Location = new System.Drawing.Point(112, 42);
-            this.InvocationCounterTB.Name = "InvocationCounterTB";
-            this.InvocationCounterTB.Size = new System.Drawing.Size(221, 20);
-            this.InvocationCounterTB.TabIndex = 7;
-            // 
-            // InvocationCounterLbl
-            // 
-            this.InvocationCounterLbl.AutoSize = true;
-            this.InvocationCounterLbl.Location = new System.Drawing.Point(7, 45);
-            this.InvocationCounterLbl.Name = "InvocationCounterLbl";
-            this.InvocationCounterLbl.Size = new System.Drawing.Size(100, 13);
-            this.InvocationCounterLbl.TabIndex = 63;
-            this.InvocationCounterLbl.Text = "Invocation Counter:";
             // 
             // BlockCipherKeyAsciiCb
             // 
@@ -920,7 +951,7 @@ namespace GXDLMSDirector
             this.DeviceSettingsTab.Name = "DeviceSettingsTab";
             this.DeviceSettingsTab.Padding = new System.Windows.Forms.Padding(3);
             this.helpProvider1.SetShowHelp(this.DeviceSettingsTab, true);
-            this.DeviceSettingsTab.Size = new System.Drawing.Size(403, 388);
+            this.DeviceSettingsTab.Size = new System.Drawing.Size(411, 388);
             this.DeviceSettingsTab.TabIndex = 0;
             this.DeviceSettingsTab.Text = "Device Settings";
             this.DeviceSettingsTab.UseVisualStyleBackColor = true;
@@ -931,7 +962,7 @@ namespace GXDLMSDirector
             | System.Windows.Forms.AnchorStyles.Right)));
             this.CustomSettings.Location = new System.Drawing.Point(8, 275);
             this.CustomSettings.Name = "CustomSettings";
-            this.CustomSettings.Size = new System.Drawing.Size(388, 99);
+            this.CustomSettings.Size = new System.Drawing.Size(396, 99);
             this.CustomSettings.TabIndex = 50;
             this.CustomSettings.TabStop = false;
             this.CustomSettings.Text = "Settings";
@@ -973,6 +1004,7 @@ namespace GXDLMSDirector
             this.UseLNCB.TabIndex = 3;
             this.UseLNCB.Text = "Logical Name Referencing";
             this.UseLNCB.UseVisualStyleBackColor = true;
+            this.UseLNCB.CheckedChanged += new System.EventHandler(this.UseLNCB_CheckedChanged);
             // 
             // ServerAddressTypeCB
             // 
@@ -1263,7 +1295,7 @@ namespace GXDLMSDirector
             this.NetworkSettingsGB.Controls.Add(this.HostLbl);
             this.NetworkSettingsGB.Location = new System.Drawing.Point(6, 243);
             this.NetworkSettingsGB.Name = "NetworkSettingsGB";
-            this.NetworkSettingsGB.Size = new System.Drawing.Size(388, 99);
+            this.NetworkSettingsGB.Size = new System.Drawing.Size(396, 99);
             this.NetworkSettingsGB.TabIndex = 34;
             this.NetworkSettingsGB.TabStop = false;
             this.NetworkSettingsGB.Text = "Settings";
@@ -1339,7 +1371,7 @@ namespace GXDLMSDirector
             this.TerminalSettingsGB.Controls.Add(this.TerminalPhoneNumberLbl);
             this.TerminalSettingsGB.Location = new System.Drawing.Point(165, 240);
             this.TerminalSettingsGB.Name = "TerminalSettingsGB";
-            this.TerminalSettingsGB.Size = new System.Drawing.Size(362, 99);
+            this.TerminalSettingsGB.Size = new System.Drawing.Size(370, 99);
             this.TerminalSettingsGB.TabIndex = 46;
             this.TerminalSettingsGB.TabStop = false;
             this.TerminalSettingsGB.Text = "Settings";
@@ -1399,7 +1431,7 @@ namespace GXDLMSDirector
             this.SerialSettingsGB.Controls.Add(this.SerialPortCB);
             this.SerialSettingsGB.Location = new System.Drawing.Point(82, 240);
             this.SerialSettingsGB.Name = "SerialSettingsGB";
-            this.SerialSettingsGB.Size = new System.Drawing.Size(312, 89);
+            this.SerialSettingsGB.Size = new System.Drawing.Size(320, 89);
             this.SerialSettingsGB.TabIndex = 35;
             this.SerialSettingsGB.TabStop = false;
             this.SerialSettingsGB.Text = "Settings";
@@ -1461,11 +1493,13 @@ namespace GXDLMSDirector
             this.DeviceTab.Controls.Add(this.AdvancedTab);
             this.DeviceTab.Controls.Add(this.SupportedServicesTab);
             this.DeviceTab.Controls.Add(this.CipheringTab);
+            this.DeviceTab.Controls.Add(this.XmlTab);
             this.DeviceTab.Location = new System.Drawing.Point(0, 0);
             this.DeviceTab.Name = "DeviceTab";
             this.DeviceTab.SelectedIndex = 0;
-            this.DeviceTab.Size = new System.Drawing.Size(411, 414);
+            this.DeviceTab.Size = new System.Drawing.Size(419, 414);
             this.DeviceTab.TabIndex = 0;
+            this.DeviceTab.SelectedIndexChanged += new System.EventHandler(this.DeviceTab_SelectedIndexChanged);
             // 
             // AdvancedTab
             // 
@@ -1486,7 +1520,7 @@ namespace GXDLMSDirector
             this.AdvancedTab.Name = "AdvancedTab";
             this.AdvancedTab.Padding = new System.Windows.Forms.Padding(3);
             this.helpProvider1.SetShowHelp(this.AdvancedTab, true);
-            this.AdvancedTab.Size = new System.Drawing.Size(403, 388);
+            this.AdvancedTab.Size = new System.Drawing.Size(411, 388);
             this.AdvancedTab.TabIndex = 3;
             this.AdvancedTab.Text = "Advanced";
             this.AdvancedTab.UseVisualStyleBackColor = true;
@@ -1758,6 +1792,49 @@ namespace GXDLMSDirector
             this.UseUtcTimeZone.Text = "Use UTC time zone, not standard";
             this.UseUtcTimeZone.UseVisualStyleBackColor = true;
             // 
+            // XmlTab
+            // 
+            this.XmlTab.Controls.Add(this.PasteFromClipboardBtn);
+            this.XmlTab.Controls.Add(this.CopyBtn);
+            this.XmlTab.Controls.Add(this.ApplyBtn);
+            this.XmlTab.Controls.Add(this.textBox1);
+            this.XmlTab.Location = new System.Drawing.Point(4, 22);
+            this.XmlTab.Name = "XmlTab";
+            this.XmlTab.Size = new System.Drawing.Size(411, 388);
+            this.XmlTab.TabIndex = 4;
+            this.XmlTab.Text = "XML";
+            this.XmlTab.UseVisualStyleBackColor = true;
+            // 
+            // CopyBtn
+            // 
+            this.CopyBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.CopyBtn.Location = new System.Drawing.Point(14, 361);
+            this.CopyBtn.Name = "CopyBtn";
+            this.CopyBtn.Size = new System.Drawing.Size(117, 23);
+            this.CopyBtn.TabIndex = 9;
+            this.CopyBtn.Text = "Copy to Clipboard";
+            this.CopyBtn.UseVisualStyleBackColor = true;
+            this.CopyBtn.Click += new System.EventHandler(this.CopyBtn_Click);
+            // 
+            // ApplyBtn
+            // 
+            this.ApplyBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.ApplyBtn.Location = new System.Drawing.Point(319, 361);
+            this.ApplyBtn.Name = "ApplyBtn";
+            this.ApplyBtn.Size = new System.Drawing.Size(75, 23);
+            this.ApplyBtn.TabIndex = 8;
+            this.ApplyBtn.Text = "Apply";
+            this.ApplyBtn.UseVisualStyleBackColor = true;
+            this.ApplyBtn.Click += new System.EventHandler(this.ApplyBtn_Click);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(8, 3);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(386, 352);
+            this.textBox1.TabIndex = 0;
+            // 
             // helpProvider1
             // 
             this.helpProvider1.HelpNamespace = "https://www.gurux.fi/GXDLMSDirector.DeviceProperties";
@@ -1766,30 +1843,16 @@ namespace GXDLMSDirector
             // 
             this.conformanceHelpProvider.HelpNamespace = "https://www.gurux.fi/Gurux.DLMS.Conformance";
             // 
-            // groupBox2
+            // PasteFromClipboardBtn
             // 
-            this.groupBox2.Controls.Add(this.InvocationCounterCb);
-            this.groupBox2.Controls.Add(this.FrameCounterTb);
-            this.groupBox2.Controls.Add(this.FrameCounterLbl);
-            this.groupBox2.Controls.Add(this.InvocationCounterLbl);
-            this.groupBox2.Controls.Add(this.InvocationCounterTB);
-            this.groupBox2.Location = new System.Drawing.Point(0, 104);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(339, 97);
-            this.groupBox2.TabIndex = 73;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Invocation Counter:";
-            // 
-            // InvocationCounterCb
-            // 
-            this.InvocationCounterCb.AutoSize = true;
-            this.InvocationCounterCb.Location = new System.Drawing.Point(6, 19);
-            this.InvocationCounterCb.Name = "InvocationCounterCb";
-            this.InvocationCounterCb.Size = new System.Drawing.Size(117, 17);
-            this.InvocationCounterCb.TabIndex = 0;
-            this.InvocationCounterCb.Text = "Read Automatically";
-            this.InvocationCounterCb.UseVisualStyleBackColor = true;
-            this.InvocationCounterCb.CheckedChanged += new System.EventHandler(this.InvocationCounterCb_CheckedChanged);
+            this.PasteFromClipboardBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.PasteFromClipboardBtn.Location = new System.Drawing.Point(137, 361);
+            this.PasteFromClipboardBtn.Name = "PasteFromClipboardBtn";
+            this.PasteFromClipboardBtn.Size = new System.Drawing.Size(117, 23);
+            this.PasteFromClipboardBtn.TabIndex = 10;
+            this.PasteFromClipboardBtn.Text = "Paste from Clipboard";
+            this.PasteFromClipboardBtn.UseVisualStyleBackColor = true;
+            this.PasteFromClipboardBtn.Click += new System.EventHandler(this.PasteFromClipboardBtn_Click);
             // 
             // DevicePropertiesForm
             // 
@@ -1797,7 +1860,7 @@ namespace GXDLMSDirector
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.CancelBtn;
-            this.ClientSize = new System.Drawing.Size(410, 456);
+            this.ClientSize = new System.Drawing.Size(418, 456);
             this.Controls.Add(this.InitialSettingsBtn);
             this.Controls.Add(this.DeviceTab);
             this.Controls.Add(this.OKBtn);
@@ -1818,6 +1881,8 @@ namespace GXDLMSDirector
             this.LNSettings.PerformLayout();
             this.CipheringTab.ResumeLayout(false);
             this.CipheringTab.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.DeviceSettingsTab.ResumeLayout(false);
             this.DeviceSettingsTab.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ClientAddTB)).EndInit();
@@ -1835,8 +1900,8 @@ namespace GXDLMSDirector
             this.AdvancedTab.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
+            this.XmlTab.ResumeLayout(false);
+            this.XmlTab.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1976,5 +2041,10 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label FrameCounterLbl;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.CheckBox InvocationCounterCb;
+        private System.Windows.Forms.TabPage XmlTab;
+        private System.Windows.Forms.Button ApplyBtn;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Button CopyBtn;
+        private System.Windows.Forms.Button PasteFromClipboardBtn;
     }
 }

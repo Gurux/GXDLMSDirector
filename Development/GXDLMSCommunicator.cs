@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10052 $,
-//                  $Date: 2018-04-26 10:11:27 +0300 (Thu, 26 Apr 2018) $
+// Version:         $Revision: 10061 $,
+//                  $Date: 2018-04-27 11:52:02 +0300 (Fri, 27 Apr 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -158,7 +158,7 @@ namespace GXDLMSDirector
             return DisconnectRequest(false);
         }
 
-            public byte[] DisconnectRequest(bool force)
+        public byte[] DisconnectRequest(bool force)
         {
             byte[] data = client.DisconnectRequest(force);
             if (data == null)
@@ -862,77 +862,20 @@ namespace GXDLMSDirector
                 GXReplyData reply = new GXReplyData();
                 byte[] data;
                 UpdateSettings();
-                if (!parent.PreEstablished)
+                //Read frame counter if GeneralProtection is used.
+                if (!string.IsNullOrEmpty(parent.FrameCounter) && client.Ciphering != null && client.Ciphering.Security != Security.None)
                 {
-                    //Read frame counter if GeneralProtection is used.
-                    if (!string.IsNullOrEmpty(parent.FrameCounter) && client.Ciphering != null && client.Ciphering.Security != Security.None)
+                    reply.Clear();
+                    int add = client.ClientAddress;
+                    Authentication auth = client.Authentication;
+                    Security security = client.Ciphering.Security;
+                    byte[] challenge = client.CtoSChallenge;
+                    try
                     {
-                        reply.Clear();
-                        int add = client.ClientAddress;
-                        Authentication auth = client.Authentication;
-                        Security security = client.Ciphering.Security;
-                        byte[] challenge = client.CtoSChallenge;
-                        try
-                        {
-                            client.ClientAddress = 16;
-                            client.Authentication = Authentication.None;
-                            client.Ciphering.Security = Security.None;
+                        client.ClientAddress = 16;
+                        client.Authentication = Authentication.None;
+                        client.Ciphering.Security = Security.None;
 
-                            data = SNRMRequest();
-                            if (data != null)
-                            {
-                                try
-                                {
-                                    ReadDataBlock(data, "Send SNRM request.", 1, 1, reply);
-                                }
-                                catch (TimeoutException)
-                                {
-                                    reply.Clear();
-                                    ReadDataBlock(DisconnectRequest(true), "Send Disconnect request.", 1, 1, reply);
-                                    reply.Clear();
-                                    ReadDataBlock(data, "Send SNRM request.", 1, 1, reply);
-                                }
-                                catch (Exception e)
-                                {
-                                    reply.Clear();
-                                    ReadDataBlock(DisconnectRequest(), "Send Disconnect request.", 1, 1, reply);
-                                    throw e;
-                                }
-                                GXLogWriter.WriteLog("Parsing UA reply succeeded.");
-                                //Has server accepted client.
-                                ParseUAResponse(reply.Data);
-                            }
-                            ReadDataBlock(AARQRequest(), "Send AARQ request.", reply);
-                            try
-                            {
-                                //Parse reply.
-                                ParseAAREResponse(reply.Data);
-                                GXLogWriter.WriteLog("Parsing AARE reply succeeded.");
-                                reply.Clear();
-                                GXDLMSData d = new GXDLMSData(parent.FrameCounter);
-                                ReadDLMSPacket(Read(d, 2), reply);
-                                client.UpdateValue(d, 2, reply.Value);
-                                client.Ciphering.InvocationCounter = parent.InvocationCounter = Convert.ToUInt32(d.Value);
-                                reply.Clear();
-                                ReadDataBlock(DisconnectRequest(), "Disconnect request", reply);
-                            }
-                            catch (Exception Ex)
-                            {
-                                reply.Clear();
-                                ReadDataBlock(DisconnectRequest(), "Disconnect request", reply);
-                                throw Ex;
-                            }
-                        }
-                        finally
-                        {
-                            client.ClientAddress = add;
-                            client.Authentication = auth;
-                            client.Ciphering.Security = security;
-                            client.CtoSChallenge = challenge;
-                        }
-                    }
-                    if ((client.ProposedConformance & Conformance.GeneralProtection) == 0)
-                    {
                         data = SNRMRequest();
                         if (data != null)
                         {
@@ -945,42 +888,97 @@ namespace GXDLMSDirector
                                 reply.Clear();
                                 ReadDataBlock(DisconnectRequest(true), "Send Disconnect request.", 1, 1, reply);
                                 reply.Clear();
-                                ReadDataBlock(data, "Send SNRM request.", reply);
+                                ReadDataBlock(data, "Send SNRM request.", 1, 1, reply);
                             }
                             catch (Exception e)
                             {
                                 reply.Clear();
-                                ReadDataBlock(DisconnectRequest(), "Send Disconnect request.", reply);
+                                ReadDataBlock(DisconnectRequest(), "Send Disconnect request.", 1, 1, reply);
                                 throw e;
                             }
                             GXLogWriter.WriteLog("Parsing UA reply succeeded.");
                             //Has server accepted client.
                             ParseUAResponse(reply.Data);
                         }
-                        //Generate AARQ request.
-                        //Split requests to multiple packets if needed.
-                        //If password is used all data might not fit to one packet.
-                        reply.Clear();
                         ReadDataBlock(AARQRequest(), "Send AARQ request.", reply);
                         try
                         {
                             //Parse reply.
                             ParseAAREResponse(reply.Data);
                             GXLogWriter.WriteLog("Parsing AARE reply succeeded.");
+                            reply.Clear();
+                            GXDLMSData d = new GXDLMSData(parent.FrameCounter);
+                            ReadDLMSPacket(Read(d, 2), reply);
+                            client.UpdateValue(d, 2, reply.Value);
+                            client.Ciphering.InvocationCounter = parent.InvocationCounter = Convert.ToUInt32(d.Value);
+                            reply.Clear();
+                            ReadDataBlock(DisconnectRequest(), "Disconnect request", reply);
                         }
                         catch (Exception Ex)
                         {
                             reply.Clear();
-                            ReadDLMSPacket(DisconnectRequest(), 1, reply);
+                            ReadDataBlock(DisconnectRequest(), "Disconnect request", reply);
                             throw Ex;
                         }
-                        //If authentication is required.
-                        if (client.Authentication > Authentication.Low)
+                    }
+                    finally
+                    {
+                        client.ClientAddress = add;
+                        client.Authentication = auth;
+                        client.Ciphering.Security = security;
+                        client.CtoSChallenge = challenge;
+                    }
+                }
+                if (!parent.PreEstablished)
+                {
+                    data = SNRMRequest();
+                    if (data != null)
+                    {
+                        try
+                        {
+                            ReadDataBlock(data, "Send SNRM request.", 1, 1, reply);
+                        }
+                        catch (TimeoutException)
                         {
                             reply.Clear();
-                            ReadDataBlock(client.GetApplicationAssociationRequest(), "Authenticating.", reply);
-                            client.ParseApplicationAssociationResponse(reply.Data);
+                            ReadDataBlock(DisconnectRequest(true), "Send Disconnect request.", 1, 1, reply);
+                            reply.Clear();
+                            ReadDataBlock(data, "Send SNRM request.", reply);
                         }
+                        catch (Exception e)
+                        {
+                            reply.Clear();
+                            ReadDataBlock(DisconnectRequest(), "Send Disconnect request.", reply);
+                            throw e;
+                        }
+                        GXLogWriter.WriteLog("Parsing UA reply succeeded.");
+                        //Has server accepted client.
+                        ParseUAResponse(reply.Data);
+                    }
+                    //Generate AARQ request.
+                    //Split requests to multiple packets if needed.
+                    //If password is used all data might not fit to one packet.
+                    reply.Clear();
+                    ReadDataBlock(AARQRequest(), "Send AARQ request.", reply);
+                    try
+                    {
+                        //Parse reply.
+                        ParseAAREResponse(reply.Data);
+                        GXLogWriter.WriteLog("Parsing AARE reply succeeded.");
+                    }
+                    catch (Exception Ex)
+                    {
+                        reply.Clear();
+                        ReadDLMSPacket(DisconnectRequest(), 1, reply);
+                        throw Ex;
+                    }
+                    //If authentication is required.
+                    if (client.Authentication > Authentication.Low)
+                    {
+                        reply.Clear();
+                        //Mikko "0.0.40.0.1.255"
+                        ReadDataBlock(client.GetApplicationAssociationRequest(), "Authenticating.", reply);
+                        client.ParseApplicationAssociationResponse(reply.Data);
                     }
                 }
             }

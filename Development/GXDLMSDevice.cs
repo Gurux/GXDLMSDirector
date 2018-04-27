@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10052 $,
-//                  $Date: 2018-04-26 10:11:27 +0300 (Thu, 26 Apr 2018) $
+// Version:         $Revision: 10061 $,
+//                  $Date: 2018-04-27 11:52:02 +0300 (Fri, 27 Apr 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -165,7 +165,7 @@ namespace GXDLMSDirector
             get;
             set;
         }
-        
+
         /// <summary>
         /// Password is used only if authentication is used.
         /// </summary>
@@ -266,7 +266,7 @@ namespace GXDLMSDirector
             get;
             set;
         }
-        
+
 
 
         /// <summary>
@@ -295,7 +295,7 @@ namespace GXDLMSDirector
         /// <summary>
         /// Used logical address.
         /// </summary>
-        [DefaultValue(null)]
+        [DefaultValue(0)]
         public int LogicalAddress
         {
             get;
@@ -410,6 +410,7 @@ namespace GXDLMSDirector
         /// <remarks>
         /// DefaultValue is 1.
         /// </remarks>
+        [DefaultValue(1)]
         public byte WindowSizeTX
         {
             get;
@@ -422,6 +423,7 @@ namespace GXDLMSDirector
         /// <remarks>
         /// DefaultValue is 1.
         /// </remarks>
+        [DefaultValue(1)]
         public byte WindowSizeRX
         {
             get;
@@ -516,6 +518,7 @@ namespace GXDLMSDirector
         /// <summary>
         /// Is media verbose mode used.
         /// </summary>
+        [DefaultValue(false)]
         public bool Verbose
         {
             get;
@@ -673,11 +676,19 @@ namespace GXDLMSDirector
         {
             get
             {
+                if (communicator.media == null)
+                {
+                    return null;
+                }
                 return communicator.media.GetType().ToString();
             }
             set
             {
-                if (string.Compare(value, typeof(Gurux.Net.GXNet).FullName, true) == 0)
+                if (string.IsNullOrEmpty(value))
+                {
+                    communicator.media = null;
+                }
+                else if (string.Compare(value, typeof(Gurux.Net.GXNet).FullName, true) == 0)
                 {
                     communicator.media = new Gurux.Net.GXNet();
                 }
@@ -723,6 +734,10 @@ namespace GXDLMSDirector
         {
             get
             {
+                if (communicator.media == null)
+                {
+                    return null;
+                }
                 return communicator.media.Settings;
             }
             set

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10052 $,
-//                  $Date: 2018-04-26 10:11:27 +0300 (Thu, 26 Apr 2018) $
+// Version:         $Revision: 10061 $,
+//                  $Date: 2018-04-27 11:52:02 +0300 (Fri, 27 Apr 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -3417,6 +3417,15 @@ namespace GXDLMSDirector
                     else
                     {
                         traceTranslator.ServerSystemTitle = newDev.Comm.client.ServerSystemTitle;
+                    }
+                    if (newDev.Comm.client.Ciphering != null)
+                    {
+                        ClientSystemTitleTb.Text = GXCommon.ToHex(newDev.Comm.client.Ciphering.SystemTitle);
+                        ServerSystemTitleTb.Text = GXCommon.ToHex(traceTranslator.ServerSystemTitle);
+                    }
+                    else
+                    {
+                        ClientSystemTitleTb.Text = ServerSystemTitleTb.Text = "";
                     }
                 }
             }

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10052 $,
-//                  $Date: 2018-04-26 10:11:27 +0300 (Thu, 26 Apr 2018) $
+// Version:         $Revision: 10061 $,
+//                  $Date: 2018-04-27 11:52:02 +0300 (Fri, 27 Apr 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -31,7 +31,6 @@
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
-
 using System;
 using System.Drawing;
 using System.Text;
@@ -45,6 +44,10 @@ using Gurux.DLMS.ManufacturerSettings;
 using Gurux.Terminal;
 using Gurux.DLMS.Enums;
 using Gurux.Common;
+using System.IO;
+using System.Collections.Generic;
+using System.Xml.Serialization;
+using System.Xml;
 
 namespace GXDLMSDirector
 {
@@ -54,6 +57,7 @@ namespace GXDLMSDirector
         GXManufacturerCollection Manufacturers;
         IGXMedia SelectedMedia = null;
         public GXDLMSDevice Device = null;
+        public GXDLMSDevice CopyDevice = null;
         public DevicePropertiesForm(GXManufacturerCollection manufacturers, GXDLMSDevice dev2)
         {
             if (manufacturers.Count == 0)
@@ -64,9 +68,9 @@ namespace GXDLMSDirector
             {
                 InitializeComponent();
                 ServerAddressSizeCb.Items.Add("");
-                ServerAddressSizeCb.Items.Add(1);
-                ServerAddressSizeCb.Items.Add(2);
-                ServerAddressSizeCb.Items.Add(4);
+                ServerAddressSizeCb.Items.Add((byte)1);
+                ServerAddressSizeCb.Items.Add((byte)2);
+                ServerAddressSizeCb.Items.Add((byte)4);
                 foreach (object it in Enum.GetValues(typeof(Standard)))
                 {
                     StandardCb.Items.Add(it);
@@ -116,279 +120,305 @@ namespace GXDLMSDirector
                 }
                 else
                 {
-                    foreach (GXManufacturer it in this.ManufacturerCB.Items)
-                    {
-                        if (string.Compare(it.Identification, Device.Manufacturer, true) == 0)
-                        {
-                            this.ManufacturerCB.SelectedItem = it;
-                            break;
-                        }
-                    }
-                    StandardCb.SelectedItem = Device.Standard;
-                    if (IsAscii(GXCommon.HexToBytes(Device.SystemTitle)))
-                    {
-                        SystemTitleAsciiCb.CheckedChanged -= SystemTitleAsciiCb_CheckedChanged;
-                        SystemTitleAsciiCb.Checked = true;
-                        SystemTitleAsciiCb.CheckedChanged += SystemTitleAsciiCb_CheckedChanged;
-                        SystemTitleTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(Device.SystemTitle));
-                    }
-                    else
-                    {
-                        SystemTitleAsciiCb.CheckedChanged -= SystemTitleAsciiCb_CheckedChanged;
-                        SystemTitleAsciiCb.Checked = false;
-                        SystemTitleAsciiCb.CheckedChanged += SystemTitleAsciiCb_CheckedChanged;
-                        SystemTitleTB.Text = Device.SystemTitle;
-                    }
-                    if (IsAscii(GXCommon.HexToBytes(Device.BlockCipherKey)))
-                    {
-                        BlockCipherKeyAsciiCb.CheckedChanged -= BlockCipherKeyAsciiCb_CheckedChanged;
-                        BlockCipherKeyAsciiCb.Checked = true;
-                        BlockCipherKeyAsciiCb.CheckedChanged += BlockCipherKeyAsciiCb_CheckedChanged;
-                        BlockCipherKeyTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(Device.BlockCipherKey));
-                    }
-                    else
-                    {
-                        BlockCipherKeyAsciiCb.CheckedChanged -= BlockCipherKeyAsciiCb_CheckedChanged;
-                        BlockCipherKeyAsciiCb.Checked = false;
-                        BlockCipherKeyAsciiCb.CheckedChanged += BlockCipherKeyAsciiCb_CheckedChanged;
-                        BlockCipherKeyTB.Text = Device.BlockCipherKey;
-                    }
-                    if (IsAscii(GXCommon.HexToBytes(Device.AuthenticationKey)))
-                    {
-                        AuthenticationKeyAsciiCb.CheckedChanged -= AuthenticationKeyAsciiCb_CheckedChanged;
-                        AuthenticationKeyAsciiCb.Checked = true;
-                        AuthenticationKeyAsciiCb.CheckedChanged += AuthenticationKeyAsciiCb_CheckedChanged;
-                        AuthenticationKeyTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(Device.AuthenticationKey));
-                    }
-                    else
-                    {
-                        AuthenticationKeyAsciiCb.CheckedChanged -= AuthenticationKeyAsciiCb_CheckedChanged;
-                        AuthenticationKeyAsciiCb.Checked = false;
-                        AuthenticationKeyAsciiCb.CheckedChanged += AuthenticationKeyAsciiCb_CheckedChanged;
-                        AuthenticationKeyTB.Text = Device.AuthenticationKey;
-                    }
-
-                    if (IsAscii(GXCommon.HexToBytes(Device.ServerSystemTitle)))
-                    {
-                        ServerSystemTitleAsciiCb.CheckedChanged -= ServerSystemTitleAsciiCb_CheckedChanged;
-                        ServerSystemTitleAsciiCb.Checked = true;
-                        ServerSystemTitleAsciiCb.CheckedChanged += ServerSystemTitleAsciiCb_CheckedChanged;
-                        ServerSystemTitle.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(Device.ServerSystemTitle));
-                    }
-                    else
-                    {
-                        ServerSystemTitleAsciiCb.CheckedChanged -= ServerSystemTitleAsciiCb_CheckedChanged;
-                        ServerSystemTitleAsciiCb.Checked = false;
-                        ServerSystemTitleAsciiCb.CheckedChanged += ServerSystemTitleAsciiCb_CheckedChanged;
-                        ServerSystemTitle.Text = Device.ServerSystemTitle;
-                    }
-                    UsePreEstablishedApplicationAssociations.Checked = Device.PreEstablished;
-
-                    this.VerboseModeCB.Checked = Device.Verbose;
-                    this.NameTB.Text = Device.Name;
-                    SelectedMedia = Device.Media;
-                    UseRemoteSerialCB.Checked = Device.UseRemoteSerial;
-                    StartProtocolCB.SelectedItem = Device.StartProtocol;
-                    PhysicalServerAddressTB.Value = Convert.ToDecimal(Device.PhysicalAddress);
-                    LogicalServerAddressTB.Value = Convert.ToDecimal(Device.LogicalAddress);
-                    this.ClientAddTB.Value = Convert.ToDecimal(Convert.ToUInt32(Device.ClientAddress));
-                    WaitTimeTB.Value = Device.WaitTime;
-                    SecurityCB.SelectedItem = Device.Security;
-                    InvocationCounterTB.Text = Device.InvocationCounter.ToString();
-                    FrameCounterTb.Text = Device.FrameCounter;
-                    FrameCounterTb.ReadOnly = true;
-                    InvocationCounterCb.Checked = FrameCounterTb.Text != "";
-                    ChallengeTB.Text = GXCommon.ToHex(GXCommon.HexToBytes(Device.Challenge), true);
-                    UseUtcTimeZone.Checked = Device.UtcTimeZone;
+                    UpdateDeviceSettings(Device);
                 }
                 ManufacturerCB.DrawMode = MediasCB.DrawMode = DrawMode.OwnerDrawFixed;
-                Gurux.Net.GXNet net = new Gurux.Net.GXNet();
-                //Initialize network settings.
-                if (SelectedMedia is GXNet)
-                {
-                    this.MediasCB.Items.Add(SelectedMedia);
-                    net.Protocol = Gurux.Net.NetworkType.Tcp;
-                    this.HostNameTB.Text = ((GXNet)SelectedMedia).HostName;
-                    this.PortTB.Text = ((GXNet)SelectedMedia).Port.ToString();
-                    NetProtocolCB.SelectedItem = ((GXNet)SelectedMedia).Protocol;
-                }
-                else
-                {
-                    NetProtocolCB.SelectedItem = net.Protocol = Gurux.Net.NetworkType.Tcp;
-                    this.MediasCB.Items.Add(net);
-                }
-
-                //Set maximum baud rate.
-                GXSerial serial = new GXSerial();
-                foreach (int it in serial.GetAvailableBaudRates(""))
-                {
-                    if (it != 0)
-                    {
-                        MaximumBaudRateCB.Items.Add(it);
-                    }
-                }
-                if (Device.MaximumBaudRate == 0)
-                {
-                    UseMaximumBaudRateCB.Checked = false;
-                    UseMaximumBaudRateCB_CheckedChanged(null, null);
-                }
-                else
-                {
-                    UseMaximumBaudRateCB.Checked = true;
-                    this.MaximumBaudRateCB.SelectedItem = Device.MaximumBaudRate;
-                }
-
-                if (SelectedMedia is GXSerial)
-                {
-                    this.MediasCB.Items.Add(SelectedMedia);
-                    string[] ports = GXSerial.GetPortNames();
-                    this.SerialPortCB.Items.AddRange(ports);
-                    if (ports.Length != 0)
-                    {
-                        this.SerialPortCB.SelectedItem = ((GXSerial)SelectedMedia).PortName;
-                    }
-                }
-                else
-                {
-                    //Initialize serial settings.
-                    string[] ports = GXSerial.GetPortNames();
-                    this.SerialPortCB.Items.AddRange(ports);
-                    if (ports.Length != 0)
-                    {
-                        serial.PortName = ports[0];
-                    }
-                    if (ManufacturerCB.SelectedItem != null && ((GXManufacturer)ManufacturerCB.SelectedItem).StartProtocol == StartProtocolType.DLMS)
-                    {
-                        serial.BaudRate = 9600;
-                        serial.DataBits = 8;
-                        serial.Parity = Parity.None;
-                        serial.StopBits = StopBits.One;
-                    }
-                    else
-                    {
-                        serial.BaudRate = 300;
-                        serial.DataBits = 7;
-                        serial.Parity = Parity.Even;
-                        serial.StopBits = StopBits.One;
-                    }
-                    this.MediasCB.Items.Add(serial);
-                }
-                if (SelectedMedia is GXTerminal)
-                {
-                    this.MediasCB.Items.Add(SelectedMedia);
-                    string[] ports = GXTerminal.GetPortNames();
-                    this.TerminalPortCB.Items.AddRange(ports);
-                    if (ports.Length != 0)
-                    {
-                        this.TerminalPortCB.SelectedItem = ((GXTerminal)SelectedMedia).PortName;
-                    }
-                    this.TerminalPhoneNumberTB.Text = ((GXTerminal)SelectedMedia).PhoneNumber;
-                }
-                else
-                {
-                    //Initialize terminal settings.
-                    GXTerminal termial = new GXTerminal();
-                    string[] ports = GXTerminal.GetPortNames();
-                    this.TerminalPortCB.Items.AddRange(ports);
-                    if (ports.Length != 0)
-                    {
-                        termial.PortName = ports[0];
-                    }
-                    termial.BaudRate = 9600;
-                    termial.DataBits = 8;
-                    termial.Parity = Parity.None;
-                    termial.StopBits = StopBits.One;
-                    this.TerminalPhoneNumberTB.Text = termial.PhoneNumber;
-                    //termial.InitializeCommands = "AT+CBST=71,0,1\r\n";
-                    this.MediasCB.Items.Add(termial);
-                }
-
-                foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
-                {
-                    if (a != typeof(GXTerminal).Assembly &&
-                            a != typeof(GXSerial).Assembly &&
-                        a != typeof(GXNet).Assembly)
-                    {
-                        try
-                        {
-                            foreach (Type type in a.GetTypes())
-                            {
-                                if (!type.IsAbstract && type.IsClass && typeof(IGXMedia).IsAssignableFrom(type))
-                                {
-                                    if (SelectedMedia == null || SelectedMedia.GetType() != type)
-                                    {
-                                        MediasCB.Items.Add(a.CreateInstance(type.ToString()));
-                                    }
-                                    else
-                                    {
-                                        MediasCB.Items.Add(SelectedMedia);
-                                    }
-                                }
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            //It's OK if this fails.
-                        }
-                    }
-                }
-
-                //Select first media if medis is not selected.
-                if (SelectedMedia == null)
-                {
-                    SelectedMedia = (Gurux.Common.IGXMedia)this.MediasCB.Items[0];
-                }
-                this.MediasCB.SelectedItem = SelectedMedia;
-                if (!string.IsNullOrEmpty(Device.Password))
-                {
-                    PasswordTB.Text = ASCIIEncoding.ASCII.GetString(CryptHelper.Decrypt(Device.Password, Password.Key));
-                }
-                else if (Device.HexPassword != null)
-                {
-                    byte[] pw = CryptHelper.Decrypt(Device.HexPassword, Password.Key);
-                    PasswordAsciiCb.CheckedChanged -= PasswordAsciiCb_CheckedChanged;
-                    PasswordAsciiCb.Checked = false;
-                    PasswordAsciiCb.CheckedChanged += PasswordAsciiCb_CheckedChanged;
-                    PasswordTB.Text = GXDLMSTranslator.ToHex(pw);
-                }
-                this.UseLNCB.Checked = Device.UseLogicalNameReferencing;
-                ShowConformance(Device.Comm.client.ProposedConformance);
-                this.AuthenticationCB.SelectedIndexChanged += new System.EventHandler(this.AuthenticationCB_SelectedIndexChanged);
-                bool bConnected = Device.Media != null && Device.Media.IsOpen;
-                SerialPortCB.Enabled = AdvancedBtn.Enabled = ManufacturerCB.Enabled = MediasCB.Enabled =
-                                           AuthenticationCB.Enabled = UseRemoteSerialCB.Enabled = OKBtn.Enabled = !bConnected;
-                HostNameTB.ReadOnly = PortTB.ReadOnly = PasswordTB.ReadOnly = WaitTimeTB.ReadOnly = PhysicalServerAddressTB.ReadOnly = NameTB.ReadOnly = bConnected;
-                this.UseLNCB.CheckedChanged += new System.EventHandler(this.UseLNCB_CheckedChanged);
-
-                UseWrapperCb.Checked = Device.UseWrapper;
-                MaxInfoTXTb.Text = Device.MaxInfoTX.ToString();
-                MaxInfoRXTb.Text = Device.MaxInfoRX.ToString();
-                WindowSizeTXTb.Text = Device.WindowSizeTX.ToString();
-                WindowSizeRXTb.Text = Device.WindowSizeRX.ToString();
-                InactivityTimeoutTb.Text = Device.InactivityTimeout.ToString();
-                MaxPduTb.Text = Device.PduSize.ToString();
-                if (Device.UserId != -1)
-                {
-                    UserIdTb.Text = Device.UserId.ToString();
-                }
-                PriorityCb.SelectedItem = Device.Priority;
-                ServiceClassCb.SelectedItem = Device.ServiceClass;
-                if (Device.ServerAddressSize == 0)
-                {
-                    //If server address is not used.
-                    ServerAddressSizeCb.SelectedIndex = 0;
-                }
-                else
-                {
-                    //Forse to use server address size.
-                    ServerAddressSizeCb.SelectedItem = Device.ServerAddressSize;
-                }
+                UpdateMediaSettings();
             }
             catch (Exception Ex)
             {
                 GXDLMS.Common.Error.ShowError(this, Ex);
             }
         }
+
+        private void UpdateMediaSettings()
+        {
+            this.MediasCB.Items.Clear();
+            Gurux.Net.GXNet net = new Gurux.Net.GXNet();
+            //Initialize network settings.
+            if (SelectedMedia is GXNet)
+            {
+                this.MediasCB.Items.Add(SelectedMedia);
+                net.Protocol = Gurux.Net.NetworkType.Tcp;
+                this.HostNameTB.Text = ((GXNet)SelectedMedia).HostName;
+                this.PortTB.Text = ((GXNet)SelectedMedia).Port.ToString();
+                NetProtocolCB.SelectedItem = ((GXNet)SelectedMedia).Protocol;
+            }
+            else
+            {
+                NetProtocolCB.SelectedItem = net.Protocol = Gurux.Net.NetworkType.Tcp;
+                this.MediasCB.Items.Add(net);
+            }
+
+            //Set maximum baud rate.
+            GXSerial serial = new GXSerial();
+            foreach (int it in serial.GetAvailableBaudRates(""))
+            {
+                if (it != 0)
+                {
+                    MaximumBaudRateCB.Items.Add(it);
+                }
+            }
+            if (Device.MaximumBaudRate == 0)
+            {
+                UseMaximumBaudRateCB.Checked = false;
+                UseMaximumBaudRateCB_CheckedChanged(null, null);
+            }
+            else
+            {
+                UseMaximumBaudRateCB.Checked = true;
+                this.MaximumBaudRateCB.SelectedItem = Device.MaximumBaudRate;
+            }
+
+            if (SelectedMedia is GXSerial)
+            {
+                this.MediasCB.Items.Add(SelectedMedia);
+                string[] ports = GXSerial.GetPortNames();
+                this.SerialPortCB.Items.AddRange(ports);
+                if (ports.Length != 0)
+                {
+                    this.SerialPortCB.SelectedItem = ((GXSerial)SelectedMedia).PortName;
+                }
+            }
+            else
+            {
+                //Initialize serial settings.
+                string[] ports = GXSerial.GetPortNames();
+                this.SerialPortCB.Items.AddRange(ports);
+                if (ports.Length != 0)
+                {
+                    serial.PortName = ports[0];
+                }
+                if (ManufacturerCB.SelectedItem != null && ((GXManufacturer)ManufacturerCB.SelectedItem).StartProtocol == StartProtocolType.DLMS)
+                {
+                    serial.BaudRate = 9600;
+                    serial.DataBits = 8;
+                    serial.Parity = Parity.None;
+                    serial.StopBits = StopBits.One;
+                }
+                else
+                {
+                    serial.BaudRate = 300;
+                    serial.DataBits = 7;
+                    serial.Parity = Parity.Even;
+                    serial.StopBits = StopBits.One;
+                }
+                this.MediasCB.Items.Add(serial);
+            }
+            if (SelectedMedia is GXTerminal)
+            {
+                this.MediasCB.Items.Add(SelectedMedia);
+                string[] ports = GXTerminal.GetPortNames();
+                this.TerminalPortCB.Items.AddRange(ports);
+                if (ports.Length != 0)
+                {
+                    this.TerminalPortCB.SelectedItem = ((GXTerminal)SelectedMedia).PortName;
+                }
+                this.TerminalPhoneNumberTB.Text = ((GXTerminal)SelectedMedia).PhoneNumber;
+            }
+            else
+            {
+                //Initialize terminal settings.
+                GXTerminal termial = new GXTerminal();
+                string[] ports = GXTerminal.GetPortNames();
+                this.TerminalPortCB.Items.AddRange(ports);
+                if (ports.Length != 0)
+                {
+                    termial.PortName = ports[0];
+                }
+                termial.BaudRate = 9600;
+                termial.DataBits = 8;
+                termial.Parity = Parity.None;
+                termial.StopBits = StopBits.One;
+                this.TerminalPhoneNumberTB.Text = termial.PhoneNumber;
+                //termial.InitializeCommands = "AT+CBST=71,0,1\r\n";
+                this.MediasCB.Items.Add(termial);
+            }
+
+            foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                if (a != typeof(GXTerminal).Assembly &&
+                        a != typeof(GXSerial).Assembly &&
+                    a != typeof(GXNet).Assembly)
+                {
+                    try
+                    {
+                        foreach (Type type in a.GetTypes())
+                        {
+                            if (!type.IsAbstract && type.IsClass && typeof(IGXMedia).IsAssignableFrom(type))
+                            {
+                                if (SelectedMedia == null || SelectedMedia.GetType() != type)
+                                {
+                                    MediasCB.Items.Add(a.CreateInstance(type.ToString()));
+                                }
+                                else
+                                {
+                                    MediasCB.Items.Add(SelectedMedia);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        //It's OK if this fails.
+                    }
+                }
+            }
+
+            //Select first media if medis is not selected.
+            if (SelectedMedia == null)
+            {
+                SelectedMedia = (Gurux.Common.IGXMedia)this.MediasCB.Items[0];
+            }
+            this.MediasCB.SelectedItem = SelectedMedia;
+            bool bConnected = Device.Media != null && Device.Media.IsOpen;
+            SerialPortCB.Enabled = AdvancedBtn.Enabled = ManufacturerCB.Enabled = MediasCB.Enabled =
+                                       AuthenticationCB.Enabled = UseRemoteSerialCB.Enabled = OKBtn.Enabled = !bConnected;
+            HostNameTB.ReadOnly = PortTB.ReadOnly = PasswordTB.ReadOnly = WaitTimeTB.ReadOnly = PhysicalServerAddressTB.ReadOnly = NameTB.ReadOnly = bConnected;
+
+        }
+        private void UpdateDeviceSettings(GXDLMSDevice device)
+        {
+            this.ManufacturerCB.SelectedItem = null;
+            GXDLMSDevice old = Device;
+            try
+            {
+                Device = device;
+                foreach (GXManufacturer it in this.ManufacturerCB.Items)
+                {
+                    if (string.Compare(it.Identification, device.Manufacturer, true) == 0)
+                    {
+                        this.ManufacturerCB.SelectedItem = it;
+                        break;
+                    }
+                }
+            }
+            finally
+            {
+                Device = old;
+            }
+            if (this.ManufacturerCB.SelectedItem == null)
+            {
+                throw new Exception("Invalid manufacturer. " + device.Manufacturer);
+            }
+            StandardCb.SelectedItem = device.Standard;
+            if (IsAscii(GXCommon.HexToBytes(device.SystemTitle)))
+            {
+                SystemTitleAsciiCb.CheckedChanged -= SystemTitleAsciiCb_CheckedChanged;
+                SystemTitleAsciiCb.Checked = true;
+                SystemTitleAsciiCb.CheckedChanged += SystemTitleAsciiCb_CheckedChanged;
+                SystemTitleTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(device.SystemTitle));
+            }
+            else
+            {
+                SystemTitleAsciiCb.CheckedChanged -= SystemTitleAsciiCb_CheckedChanged;
+                SystemTitleAsciiCb.Checked = false;
+                SystemTitleAsciiCb.CheckedChanged += SystemTitleAsciiCb_CheckedChanged;
+                SystemTitleTB.Text = device.SystemTitle;
+            }
+            if (IsAscii(GXCommon.HexToBytes(device.BlockCipherKey)))
+            {
+                BlockCipherKeyAsciiCb.CheckedChanged -= BlockCipherKeyAsciiCb_CheckedChanged;
+                BlockCipherKeyAsciiCb.Checked = true;
+                BlockCipherKeyAsciiCb.CheckedChanged += BlockCipherKeyAsciiCb_CheckedChanged;
+                BlockCipherKeyTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(device.BlockCipherKey));
+            }
+            else
+            {
+                BlockCipherKeyAsciiCb.CheckedChanged -= BlockCipherKeyAsciiCb_CheckedChanged;
+                BlockCipherKeyAsciiCb.Checked = false;
+                BlockCipherKeyAsciiCb.CheckedChanged += BlockCipherKeyAsciiCb_CheckedChanged;
+                BlockCipherKeyTB.Text = device.BlockCipherKey;
+            }
+            if (IsAscii(GXCommon.HexToBytes(device.AuthenticationKey)))
+            {
+                AuthenticationKeyAsciiCb.CheckedChanged -= AuthenticationKeyAsciiCb_CheckedChanged;
+                AuthenticationKeyAsciiCb.Checked = true;
+                AuthenticationKeyAsciiCb.CheckedChanged += AuthenticationKeyAsciiCb_CheckedChanged;
+                AuthenticationKeyTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(device.AuthenticationKey));
+            }
+            else
+            {
+                AuthenticationKeyAsciiCb.CheckedChanged -= AuthenticationKeyAsciiCb_CheckedChanged;
+                AuthenticationKeyAsciiCb.Checked = false;
+                AuthenticationKeyAsciiCb.CheckedChanged += AuthenticationKeyAsciiCb_CheckedChanged;
+                AuthenticationKeyTB.Text = device.AuthenticationKey;
+            }
+
+            if (IsAscii(GXCommon.HexToBytes(device.ServerSystemTitle)))
+            {
+                ServerSystemTitleAsciiCb.CheckedChanged -= ServerSystemTitleAsciiCb_CheckedChanged;
+                ServerSystemTitleAsciiCb.Checked = true;
+                ServerSystemTitleAsciiCb.CheckedChanged += ServerSystemTitleAsciiCb_CheckedChanged;
+                ServerSystemTitle.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(device.ServerSystemTitle));
+            }
+            else
+            {
+                ServerSystemTitleAsciiCb.CheckedChanged -= ServerSystemTitleAsciiCb_CheckedChanged;
+                ServerSystemTitleAsciiCb.Checked = false;
+                ServerSystemTitleAsciiCb.CheckedChanged += ServerSystemTitleAsciiCb_CheckedChanged;
+                ServerSystemTitle.Text = device.ServerSystemTitle;
+            }
+            UsePreEstablishedApplicationAssociations.Checked = device.PreEstablished;
+
+            this.VerboseModeCB.Checked = device.Verbose;
+            this.NameTB.Text = device.Name;
+            SelectedMedia = device.Media;
+            UseRemoteSerialCB.Checked = device.UseRemoteSerial;
+            StartProtocolCB.SelectedItem = device.StartProtocol;
+            PhysicalServerAddressTB.Value = Convert.ToDecimal(device.PhysicalAddress);
+            LogicalServerAddressTB.Value = Convert.ToDecimal(device.LogicalAddress);
+            this.ClientAddTB.Value = Convert.ToDecimal(Convert.ToUInt32(device.ClientAddress));
+            WaitTimeTB.Value = device.WaitTime;
+            SecurityCB.SelectedItem = device.Security;
+            InvocationCounterTB.Text = device.InvocationCounter.ToString();
+            FrameCounterTb.Text = device.FrameCounter;
+            FrameCounterTb.ReadOnly = true;
+            InvocationCounterCb.Checked = FrameCounterTb.Text != "";
+            ChallengeTB.Text = GXCommon.ToHex(GXCommon.HexToBytes(device.Challenge), true);
+            UseUtcTimeZone.Checked = device.UtcTimeZone;
+            if (!string.IsNullOrEmpty(device.Password))
+            {
+                PasswordTB.Text = ASCIIEncoding.ASCII.GetString(CryptHelper.Decrypt(device.Password, Password.Key));
+            }
+            else if (device.HexPassword != null)
+            {
+                byte[] pw = CryptHelper.Decrypt(device.HexPassword, Password.Key);
+                PasswordAsciiCb.CheckedChanged -= PasswordAsciiCb_CheckedChanged;
+                PasswordAsciiCb.Checked = false;
+                PasswordAsciiCb.CheckedChanged += PasswordAsciiCb_CheckedChanged;
+                PasswordTB.Text = GXDLMSTranslator.ToHex(pw);
+            }
+            this.UseLNCB.CheckedChanged -= new System.EventHandler(this.UseLNCB_CheckedChanged);
+            this.UseLNCB.Checked = device.UseLogicalNameReferencing;
+            this.UseLNCB.CheckedChanged += new System.EventHandler(this.UseLNCB_CheckedChanged);
+            ShowConformance(device.Comm.client.ProposedConformance);
+
+            UseWrapperCb.Checked = device.UseWrapper;
+            MaxInfoTXTb.Text = device.MaxInfoTX.ToString();
+            MaxInfoRXTb.Text = device.MaxInfoRX.ToString();
+            WindowSizeTXTb.Text = device.WindowSizeTX.ToString();
+            WindowSizeRXTb.Text = device.WindowSizeRX.ToString();
+            InactivityTimeoutTb.Text = device.InactivityTimeout.ToString();
+            MaxPduTb.Text = device.PduSize.ToString();
+            if (device.UserId != -1)
+            {
+                UserIdTb.Text = device.UserId.ToString();
+            }
+            PriorityCb.SelectedItem = device.Priority;
+            ServiceClassCb.SelectedItem = device.ServiceClass;
+            if (device.ServerAddressSize == 0)
+            {
+                //If server address is not used.
+                ServerAddressSizeCb.SelectedIndex = 0;
+            }
+            else
+            {
+                //Forse to use server address size.
+                ServerAddressSizeCb.SelectedItem = device.ServerAddressSize;
+            }
+        }
+
         private void ShowConformance(Conformance c)
         {
             if (UseLNCB.Checked)
@@ -615,6 +645,256 @@ namespace GXDLMSDirector
             }
         }
 
+        private void UpdateSettings(GXDLMSDevice device, bool validate)
+        {
+            string name = NameTB.Text.Trim();
+            if (validate && name.Length == 0)
+            {
+                throw new Exception("Invalid name.");
+            }
+            //Check security settings.
+            if (validate && ((Security)SecurityCB.SelectedItem != Security.None ||
+                ((GXAuthentication)this.AuthenticationCB.SelectedItem).Type == Authentication.HighGMAC))
+            {
+                if (SystemTitleTB.Text.Trim().Length == 0)
+                {
+                    throw new ArgumentException("Invalid system title.");
+                }
+                if (AuthenticationKeyTB.Text.Trim().Length == 0)
+                {
+                    throw new ArgumentException("Invalid authentication key.");
+                }
+                if (BlockCipherKeyTB.Text.Trim().Length == 0)
+                {
+                    throw new ArgumentException("Invalid block cipher key.");
+                }
+
+                if (UsePreEstablishedApplicationAssociations.Checked)
+                {
+                    if (ServerSystemTitle.Text.Trim().Length == 0)
+                    {
+                        throw new ArgumentException("Invalid server system title.");
+                    }
+                }
+            }
+            GXServerAddress server = (GXServerAddress)ServerAddressTypeCB.SelectedItem;
+            if (validate && server.HDLCAddress == HDLCAddressType.SerialNumber && PhysicalServerAddressTB.Value == 0)
+            {
+                throw new Exception("Invalid Serial Number.");
+            }
+            GXManufacturer man = (GXManufacturer)ManufacturerCB.SelectedItem;
+            device.Authentication = ((GXAuthentication)this.AuthenticationCB.SelectedItem).Type;
+            if (device.Authentication != Authentication.None)
+            {
+                if (PasswordAsciiCb.Checked)
+                {
+                    device.Password = CryptHelper.Encrypt(PasswordTB.Text, Password.Key);
+                    device.HexPassword = null;
+                }
+                else
+                {
+                    device.Password = "";
+                    device.HexPassword = CryptHelper.Encrypt(GXDLMSTranslator.HexToBytes(this.PasswordTB.Text), Password.Key);
+                }
+            }
+            else
+            {
+                device.Password = "";
+            }
+            device.UseWrapper = UseWrapperCb.Checked;
+            if (MaxInfoTXTb.Text == "")
+            {
+                device.MaxInfoTX = 128;
+            }
+            else
+            {
+                device.MaxInfoTX = UInt16.Parse(MaxInfoTXTb.Text);
+            }
+            if (MaxInfoRXTb.Text == "")
+            {
+                device.MaxInfoRX = 128;
+            }
+            else
+            {
+                device.MaxInfoRX = UInt16.Parse(MaxInfoRXTb.Text);
+            }
+            if (WindowSizeTXTb.Text == "")
+            {
+                device.WindowSizeTX = 1;
+            }
+            else
+            {
+                device.WindowSizeTX = byte.Parse(WindowSizeTXTb.Text);
+            }
+            if (WindowSizeRXTb.Text == "")
+            {
+                device.WindowSizeRX = 1;
+            }
+            else
+            {
+                device.WindowSizeRX = byte.Parse(WindowSizeRXTb.Text);
+            }
+            if (InactivityTimeoutTb.Text == "")
+            {
+                device.InactivityTimeout = 110;
+            }
+            else
+            {
+                device.InactivityTimeout = int.Parse(InactivityTimeoutTb.Text);
+            }
+            if (MaxPduTb.Text == "")
+            {
+                device.PduSize = 0xFFFF;
+            }
+            else
+            {
+                device.PduSize = UInt16.Parse(MaxPduTb.Text);
+            }
+            byte v;
+            if (byte.TryParse(UserIdTb.Text, out v))
+            {
+                device.UserId = v;
+            }
+            else
+            {
+                device.UserId = -1;
+            }
+            if (PriorityCb.SelectedItem == null)
+            {
+                device.Priority = Priority.High;
+            }
+            else
+            {
+                device.Priority = (Priority)PriorityCb.SelectedItem;
+            }
+            if (ServiceClassCb.SelectedItem == null)
+            {
+                device.ServiceClass = ServiceClass.Confirmed;
+            }
+            else
+            {
+                device.ServiceClass = (ServiceClass)ServiceClassCb.SelectedItem;
+            }
+            if (ServerAddressSizeCb.SelectedItem is string)
+            {
+                device.ServerAddressSize = 0;
+            }
+            else
+            {
+                device.ServerAddressSize = Convert.ToByte(ServerAddressSizeCb.SelectedItem);
+            }
+
+            device.Name = name;
+            device.Media = SelectedMedia;
+            device.Manufacturer = man.Identification;
+            device.WaitTime = Convert.ToInt32(WaitTimeTB.Value);
+            device.Verbose = VerboseModeCB.Checked;
+            device.MaximumBaudRate = 0;
+            device.UtcTimeZone = UseUtcTimeZone.Checked;
+
+            if (SelectedMedia is GXSerial)
+            {
+                device.UseRemoteSerial = false;
+                if (validate && this.SerialPortCB.Text.Length == 0)
+                {
+                    throw new Exception("Invalid serial port.");
+                }
+                ((GXSerial)SelectedMedia).PortName = this.SerialPortCB.Text;
+                if (UseMaximumBaudRateCB.Checked)
+                {
+                    device.MaximumBaudRate = (int)MaximumBaudRateCB.SelectedItem;
+                }
+            }
+            else if (SelectedMedia is GXNet)
+            {
+                if (validate && this.HostNameTB.Text.Length == 0)
+                {
+                    throw new Exception("Invalid host name.");
+                }
+                ((GXNet)SelectedMedia).HostName = this.HostNameTB.Text;
+                int port;
+                if (!Int32.TryParse(this.PortTB.Text, out port))
+                {
+                    if (validate)
+                    {
+                        port = 0;
+                    }
+                    else
+                    {
+                        throw new Exception("Invalid port number.");
+                    }
+                }
+                ((GXNet)SelectedMedia).Port = port;
+                device.UseRemoteSerial = UseRemoteSerialCB.Checked;
+                ((GXNet)SelectedMedia).Protocol = (NetworkType)NetProtocolCB.SelectedItem;
+            }
+            else if (SelectedMedia is Gurux.Terminal.GXTerminal)
+            {
+                if (validate && this.TerminalPortCB.Text.Length == 0)
+                {
+                    throw new Exception("Invalid serial port.");
+                }
+                if (validate && this.TerminalPhoneNumberTB.Text.Length == 0)
+                {
+                    throw new Exception("Invalid phone number.");
+                }
+                Gurux.Terminal.GXTerminal terminal = SelectedMedia as Gurux.Terminal.GXTerminal;
+                terminal.ConfigurableSettings = Gurux.Terminal.AvailableMediaSettings.All & ~Gurux.Terminal.AvailableMediaSettings.Server;
+                device.UseRemoteSerial = false;
+                terminal.PortName = this.TerminalPortCB.Text;
+                terminal.PhoneNumber = this.TerminalPhoneNumberTB.Text;
+            }
+            else
+            {
+                if (validate && (MediaPropertiesForm as IGXPropertyPage).Dirty)
+                {
+                    (MediaPropertiesForm as IGXPropertyPage).Apply();
+                }
+            }
+            GXAuthentication authentication = (GXAuthentication)AuthenticationCB.SelectedItem;
+            device.HDLCAddressing = ((GXServerAddress)ServerAddressTypeCB.SelectedItem).HDLCAddress;
+            device.ClientAddress = Convert.ToInt32(ClientAddTB.Value);
+            if (device.HDLCAddressing == HDLCAddressType.SerialNumber)
+            {
+                device.PhysicalAddress = PhysicalServerAddressTB.Value;
+            }
+            else
+            {
+                device.PhysicalAddress = Convert.ChangeType(PhysicalServerAddressTB.Value, server.PhysicalAddress.GetType());
+            }
+            device.UseLogicalNameReferencing = this.UseLNCB.Checked;
+            device.LogicalAddress = Convert.ToInt32(LogicalServerAddressTB.Value);
+            device.StartProtocol = (StartProtocolType)this.StartProtocolCB.SelectedItem;
+            GXDLMSDirector.Properties.Settings.Default.SelectedManufacturer = man.Name;
+
+            device.Security = (Security)SecurityCB.SelectedItem;
+            device.SystemTitle = GetAsHex(SystemTitleTB.Text, SystemTitleAsciiCb.Checked);
+            device.BlockCipherKey = GetAsHex(BlockCipherKeyTB.Text, BlockCipherKeyAsciiCb.Checked);
+            device.AuthenticationKey = GetAsHex(AuthenticationKeyTB.Text, AuthenticationKeyAsciiCb.Checked);
+            device.ServerSystemTitle = GetAsHex(ServerSystemTitle.Text, ServerSystemTitleAsciiCb.Checked);
+            device.PreEstablished = UsePreEstablishedApplicationAssociations.Checked;
+            if (InvocationCounterTB.Text != "")
+            {
+                device.InvocationCounter = UInt32.Parse(InvocationCounterTB.Text);
+            }
+            else
+            {
+                device.InvocationCounter = 0;
+            }
+            if (InvocationCounterCb.Checked && FrameCounterTb.Text != "")
+            {
+                GXDLMSConverter.LogicalNameToBytes(FrameCounterTb.Text);
+                device.FrameCounter = FrameCounterTb.Text;
+            }
+            else
+            {
+                device.FrameCounter = null;
+            }
+            device.Challenge = GXCommon.ToHex(GXCommon.HexToBytes(ChallengeTB.Text), false);
+            UpdateConformance();
+            device.Standard = (Standard)StandardCb.SelectedItem;
+        }
+
         /// <summary>
         /// Apply new settings from property pages.
         /// </summary>
@@ -624,184 +904,7 @@ namespace GXDLMSDirector
         {
             try
             {
-                string name = NameTB.Text.Trim();
-                if (name.Length == 0)
-                {
-                    throw new Exception("Invalid name.");
-                }
-                //Check security settings.
-                if ((Security)SecurityCB.SelectedItem != Security.None ||
-                    Device.Authentication == Authentication.HighGMAC)
-                {
-                    if (SystemTitleTB.Text.Trim().Length == 0)
-                    {
-                        throw new ArgumentException("Invalid system title.");
-                    }
-                    if (AuthenticationKeyTB.Text.Trim().Length == 0)
-                    {
-                        throw new ArgumentException("Invalid authentication key.");
-                    }
-                    if (BlockCipherKeyTB.Text.Trim().Length == 0)
-                    {
-                        throw new ArgumentException("Invalid block cipher key.");
-                    }
-
-                    if (UsePreEstablishedApplicationAssociations.Checked)
-                    {
-                        if (ServerSystemTitle.Text.Trim().Length == 0)
-                        {
-                            throw new ArgumentException("Invalid server system title.");
-                        }
-                    }
-                }
-                GXServerAddress server = (GXServerAddress)ServerAddressTypeCB.SelectedItem;
-                if (server.HDLCAddress == HDLCAddressType.SerialNumber && PhysicalServerAddressTB.Value == 0)
-                {
-                    throw new Exception("Invalid Serial Number.");
-                }
-                GXManufacturer man = (GXManufacturer)ManufacturerCB.SelectedItem;
-                Device.Authentication = ((GXAuthentication)this.AuthenticationCB.SelectedItem).Type;
-                if (Device.Authentication != Authentication.None)
-                {
-                    if (PasswordAsciiCb.Checked)
-                    {
-                        Device.Password = CryptHelper.Encrypt(PasswordTB.Text, Password.Key);
-                        Device.HexPassword = null;
-                    }
-                    else
-                    {
-                        Device.Password = "";
-                        Device.HexPassword = CryptHelper.Encrypt(GXDLMSTranslator.HexToBytes(this.PasswordTB.Text), Password.Key);
-                    }
-                }
-                else
-                {
-                    Device.Password = "";
-                }
-                Device.UseWrapper = UseWrapperCb.Checked;
-                Device.MaxInfoTX = UInt16.Parse(MaxInfoTXTb.Text);
-                Device.MaxInfoRX = UInt16.Parse(MaxInfoRXTb.Text);
-                Device.WindowSizeTX = byte.Parse(WindowSizeTXTb.Text);
-                Device.WindowSizeRX = byte.Parse(WindowSizeRXTb.Text);
-                Device.InactivityTimeout = int.Parse(InactivityTimeoutTb.Text);
-                Device.PduSize = UInt16.Parse(MaxPduTb.Text);
-                byte v;
-                if (byte.TryParse(UserIdTb.Text, out v))
-                {
-                    Device.UserId = v;
-                }
-                else
-                {
-                    Device.UserId = -1;
-                }
-                Device.Priority = (Priority)PriorityCb.SelectedItem;
-                Device.ServiceClass = (ServiceClass)ServiceClassCb.SelectedItem;
-                if (ServerAddressSizeCb.SelectedItem is string)
-                {
-                    Device.ServerAddressSize = 0;
-                }
-                else
-                {
-                    Device.ServerAddressSize = Convert.ToByte(ServerAddressSizeCb.SelectedItem);
-                }
-
-                Device.Name = name;
-                Device.Media = SelectedMedia;
-                Device.Manufacturer = man.Identification;
-                Device.WaitTime = Convert.ToInt32(WaitTimeTB.Value);
-                Device.Verbose = VerboseModeCB.Checked;
-                Device.MaximumBaudRate = 0;
-                Device.UtcTimeZone = UseUtcTimeZone.Checked;
-
-                if (SelectedMedia is GXSerial)
-                {
-                    Device.UseRemoteSerial = false;
-
-                    if (this.SerialPortCB.Text.Length == 0)
-                    {
-                        throw new Exception("Invalid serial port.");
-                    }
-                    ((GXSerial)SelectedMedia).PortName = this.SerialPortCB.Text;
-                    if (UseMaximumBaudRateCB.Checked)
-                    {
-                        Device.MaximumBaudRate = (int)MaximumBaudRateCB.SelectedItem;
-                    }
-                }
-                else if (SelectedMedia is GXNet)
-                {
-                    if (this.HostNameTB.Text.Length == 0)
-                    {
-                        throw new Exception("Invalid host name.");
-                    }
-                    ((GXNet)SelectedMedia).HostName = this.HostNameTB.Text;
-                    int port;
-                    if (!Int32.TryParse(this.PortTB.Text, out port))
-                    {
-                        throw new Exception("Invalid port number.");
-                    }
-                    ((GXNet)SelectedMedia).Port = port;
-                    Device.UseRemoteSerial = UseRemoteSerialCB.Checked;
-                    ((GXNet)SelectedMedia).Protocol = (NetworkType)NetProtocolCB.SelectedItem;
-                }
-                else if (SelectedMedia is Gurux.Terminal.GXTerminal)
-                {
-                    if (this.TerminalPortCB.Text.Length == 0)
-                    {
-                        throw new Exception("Invalid serial port.");
-                    }
-                    if (this.TerminalPhoneNumberTB.Text.Length == 0)
-                    {
-                        throw new Exception("Invalid phone number.");
-                    }
-                    Gurux.Terminal.GXTerminal terminal = SelectedMedia as Gurux.Terminal.GXTerminal;
-                    terminal.ConfigurableSettings = Gurux.Terminal.AvailableMediaSettings.All & ~Gurux.Terminal.AvailableMediaSettings.Server;
-                    Device.UseRemoteSerial = false;
-                    terminal.PortName = this.TerminalPortCB.Text;
-                    terminal.PhoneNumber = this.TerminalPhoneNumberTB.Text;
-                }
-                else
-                {
-                    if ((MediaPropertiesForm as IGXPropertyPage).Dirty)
-                    {
-                        (MediaPropertiesForm as IGXPropertyPage).Apply();
-                    }
-                }
-                GXAuthentication authentication = (GXAuthentication)AuthenticationCB.SelectedItem;
-                Device.HDLCAddressing = ((GXServerAddress)ServerAddressTypeCB.SelectedItem).HDLCAddress;
-                Device.ClientAddress = Convert.ToInt32(ClientAddTB.Value);
-                if (Device.HDLCAddressing == HDLCAddressType.SerialNumber)
-                {
-                    Device.PhysicalAddress = PhysicalServerAddressTB.Value;
-                }
-                else
-                {
-                    Device.PhysicalAddress = Convert.ChangeType(PhysicalServerAddressTB.Value, server.PhysicalAddress.GetType());
-                }
-                Device.UseLogicalNameReferencing = this.UseLNCB.Checked;
-                Device.LogicalAddress = Convert.ToInt32(LogicalServerAddressTB.Value);
-                Device.StartProtocol = (StartProtocolType)this.StartProtocolCB.SelectedItem;
-                GXDLMSDirector.Properties.Settings.Default.SelectedManufacturer = man.Name;
-
-                Device.Security = (Security)SecurityCB.SelectedItem;
-                Device.SystemTitle = GetAsHex(SystemTitleTB.Text, SystemTitleAsciiCb.Checked);
-                Device.BlockCipherKey = GetAsHex(BlockCipherKeyTB.Text, BlockCipherKeyAsciiCb.Checked);
-                Device.AuthenticationKey = GetAsHex(AuthenticationKeyTB.Text, AuthenticationKeyAsciiCb.Checked);
-                Device.ServerSystemTitle = GetAsHex(ServerSystemTitle.Text, ServerSystemTitleAsciiCb.Checked);
-                Device.PreEstablished = UsePreEstablishedApplicationAssociations.Checked;
-
-                Device.InvocationCounter = UInt32.Parse(InvocationCounterTB.Text);
-                if (InvocationCounterCb.Checked && FrameCounterTb.Text != "")
-                {
-                    GXDLMSConverter.LogicalNameToBytes(FrameCounterTb.Text);
-                    Device.FrameCounter = FrameCounterTb.Text;
-                }
-                else
-                {
-                    Device.FrameCounter = null;
-                }
-                Device.Challenge = GXCommon.ToHex(GXCommon.HexToBytes(ChallengeTB.Text), false);
-                UpdateConformance();
-                Device.Standard = (Standard)StandardCb.SelectedItem;
+                UpdateSettings(Device, true);
             }
             catch (Exception Ex)
             {
@@ -1003,92 +1106,95 @@ namespace GXDLMSDirector
             try
             {
                 GXManufacturer man = (GXManufacturer)ManufacturerCB.SelectedItem;
-                StartProtocolCB.SelectedItem = man.StartProtocol;
-                this.ClientAddTB.Value = man.GetActiveAuthentication().ClientAddress;
-                AuthenticationCB.Items.Clear();
-                foreach (GXAuthentication it in man.Settings)
+                if (man != null)
                 {
-                    int pos = AuthenticationCB.Items.Add(it);
-                    if (it.Type == Device.Authentication)
+                    StartProtocolCB.SelectedItem = man.StartProtocol;
+                    this.ClientAddTB.Value = man.GetActiveAuthentication().ClientAddress;
+                    AuthenticationCB.Items.Clear();
+                    foreach (GXAuthentication it in man.Settings)
                     {
-                        this.AuthenticationCB.SelectedIndex = pos;
+                        int pos = AuthenticationCB.Items.Add(it);
+                        if (it.Type == Device.Authentication)
+                        {
+                            this.AuthenticationCB.SelectedIndex = pos;
+                        }
                     }
-                }
-                ServerAddressTypeCB.Items.Clear();
-                HDLCAddressType type = Device.HDLCAddressing;
-                //If we are creating new device.
-                if (Device.Name == null)
-                {
-                    type = man.GetActiveServer().HDLCAddress;
-                    Device.UseWrapper = man.UseIEC47;
-                    StandardCb.SelectedItem = man.Standard;
-                }
-                foreach (GXServerAddress it in ((GXManufacturer)ManufacturerCB.SelectedItem).ServerSettings)
-                {
-                    ServerAddressTypeCB.Items.Add(it);
-                    if (it.HDLCAddress == type)
+                    ServerAddressTypeCB.Items.Clear();
+                    HDLCAddressType type = Device.HDLCAddressing;
+                    //If we are creating new device.
+                    if (Device.Name == null)
                     {
-                        ServerAddressTypeCB.SelectedItem = it;
+                        type = man.GetActiveServer().HDLCAddress;
+                        Device.UseWrapper = man.UseIEC47;
+                        StandardCb.SelectedItem = man.Standard;
                     }
-                }
-                UpdateStartProtocol();
-                SecurityCB.SelectedItem = man.Security;
-                SystemTitleAsciiCb.CheckedChanged -= SystemTitleAsciiCb_CheckedChanged;
-                BlockCipherKeyAsciiCb.CheckedChanged -= BlockCipherKeyAsciiCb_CheckedChanged;
-                AuthenticationKeyAsciiCb.CheckedChanged -= AuthenticationKeyAsciiCb_CheckedChanged;
-
-                SystemTitleAsciiCb.Checked = IsAscii(man.SystemTitle);
-                if (SystemTitleAsciiCb.Checked)
-                {
-                    SystemTitleTB.Text = ASCIIEncoding.ASCII.GetString(man.SystemTitle);
-                }
-                else
-                {
-                    SystemTitleTB.Text = GXCommon.ToHex(man.SystemTitle, true);
-                }
-
-                BlockCipherKeyAsciiCb.Checked = IsAscii(man.BlockCipherKey);
-                if (BlockCipherKeyAsciiCb.Checked)
-                {
-                    BlockCipherKeyTB.Text = ASCIIEncoding.ASCII.GetString(man.BlockCipherKey);
-                }
-                else
-                {
-                    BlockCipherKeyTB.Text = GXCommon.ToHex(man.BlockCipherKey, true);
-                }
-
-                AuthenticationKeyAsciiCb.Checked = man.AuthenticationKey == null || IsAscii(man.AuthenticationKey);
-                if (AuthenticationKeyAsciiCb.Checked)
-                {
-                    if (man.AuthenticationKey == null)
+                    foreach (GXServerAddress it in ((GXManufacturer)ManufacturerCB.SelectedItem).ServerSettings)
                     {
-                        AuthenticationKeyTB.Text = "";
+                        ServerAddressTypeCB.Items.Add(it);
+                        if (it.HDLCAddress == type)
+                        {
+                            ServerAddressTypeCB.SelectedItem = it;
+                        }
+                    }
+                    UpdateStartProtocol();
+                    SecurityCB.SelectedItem = man.Security;
+                    SystemTitleAsciiCb.CheckedChanged -= SystemTitleAsciiCb_CheckedChanged;
+                    BlockCipherKeyAsciiCb.CheckedChanged -= BlockCipherKeyAsciiCb_CheckedChanged;
+                    AuthenticationKeyAsciiCb.CheckedChanged -= AuthenticationKeyAsciiCb_CheckedChanged;
+
+                    SystemTitleAsciiCb.Checked = IsAscii(man.SystemTitle);
+                    if (SystemTitleAsciiCb.Checked)
+                    {
+                        SystemTitleTB.Text = ASCIIEncoding.ASCII.GetString(man.SystemTitle);
                     }
                     else
                     {
-                        AuthenticationKeyTB.Text = ASCIIEncoding.ASCII.GetString(man.AuthenticationKey);
+                        SystemTitleTB.Text = GXCommon.ToHex(man.SystemTitle, true);
                     }
-                }
-                else
-                {
-                    AuthenticationKeyTB.Text = GXCommon.ToHex(man.AuthenticationKey, true);
-                }
-                ServerSystemTitleAsciiCb.Checked = IsAscii(man.ServerSystemTitle);
-                if (ServerSystemTitleAsciiCb.Checked)
-                {
-                    ServerSystemTitle.Text = ASCIIEncoding.ASCII.GetString(man.ServerSystemTitle);
-                }
-                else
-                {
-                    ServerSystemTitle.Text = GXCommon.ToHex(man.ServerSystemTitle, true);
-                }
 
-                InvocationCounterTB.Text = "0";
-                ChallengeTB.Text = "";
+                    BlockCipherKeyAsciiCb.Checked = IsAscii(man.BlockCipherKey);
+                    if (BlockCipherKeyAsciiCb.Checked)
+                    {
+                        BlockCipherKeyTB.Text = ASCIIEncoding.ASCII.GetString(man.BlockCipherKey);
+                    }
+                    else
+                    {
+                        BlockCipherKeyTB.Text = GXCommon.ToHex(man.BlockCipherKey, true);
+                    }
 
-                SystemTitleAsciiCb.CheckedChanged += SystemTitleAsciiCb_CheckedChanged;
-                BlockCipherKeyAsciiCb.CheckedChanged += BlockCipherKeyAsciiCb_CheckedChanged;
-                AuthenticationKeyAsciiCb.CheckedChanged += AuthenticationKeyAsciiCb_CheckedChanged;
+                    AuthenticationKeyAsciiCb.Checked = man.AuthenticationKey == null || IsAscii(man.AuthenticationKey);
+                    if (AuthenticationKeyAsciiCb.Checked)
+                    {
+                        if (man.AuthenticationKey == null)
+                        {
+                            AuthenticationKeyTB.Text = "";
+                        }
+                        else
+                        {
+                            AuthenticationKeyTB.Text = ASCIIEncoding.ASCII.GetString(man.AuthenticationKey);
+                        }
+                    }
+                    else
+                    {
+                        AuthenticationKeyTB.Text = GXCommon.ToHex(man.AuthenticationKey, true);
+                    }
+                    ServerSystemTitleAsciiCb.Checked = IsAscii(man.ServerSystemTitle);
+                    if (ServerSystemTitleAsciiCb.Checked)
+                    {
+                        ServerSystemTitle.Text = ASCIIEncoding.ASCII.GetString(man.ServerSystemTitle);
+                    }
+                    else
+                    {
+                        ServerSystemTitle.Text = GXCommon.ToHex(man.ServerSystemTitle, true);
+                    }
+
+                    InvocationCounterTB.Text = "0";
+                    ChallengeTB.Text = "";
+
+                    SystemTitleAsciiCb.CheckedChanged += SystemTitleAsciiCb_CheckedChanged;
+                    BlockCipherKeyAsciiCb.CheckedChanged += BlockCipherKeyAsciiCb_CheckedChanged;
+                    AuthenticationKeyAsciiCb.CheckedChanged += AuthenticationKeyAsciiCb_CheckedChanged;
+                }
             }
             catch (Exception Ex)
             {
@@ -1424,6 +1530,130 @@ namespace GXDLMSDirector
             bool c = InvocationCounterCb.Checked;
             InvocationCounterTB.ReadOnly = c;
             FrameCounterTb.ReadOnly = !c;
-        }        
+        }
+
+        private void DeviceTab_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (DeviceTab.SelectedTab == XmlTab)
+            {
+                try
+                {
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        List<Type> types = new List<Type>();
+                        types.Add(typeof(GXDLMSAttributeSettings));
+                        types.Add(typeof(GXDLMSAttribute));
+                        XmlAttributeOverrides overrides = new XmlAttributeOverrides();
+                        XmlAttributes attribs = new XmlAttributes
+                        {
+                            XmlIgnore = true
+                        };
+                        overrides.Add(typeof(GXDLMSDevice), "ObsoleteObjects", attribs);
+                        overrides.Add(typeof(GXDLMSAttributeSettings), attribs);
+                        overrides.Add(typeof(GXDLMSDevice), "Objects", attribs);
+                        XmlSerializer x = new XmlSerializer(typeof(GXDLMSDevice), overrides, types.ToArray(), null, "Gurux1");
+                        using (TextWriter writer = new StreamWriter(ms))
+                        {
+                            using (TextReader reader = new StreamReader(ms))
+                            {
+                                if (CopyDevice == null)
+                                {
+                                    x.Serialize(writer, Device);
+                                    ms.Position = 0;
+                                    CopyDevice = (GXDLMSDevice)x.Deserialize(reader);
+                                    ms.Position = 0;
+                                }
+                                UpdateSettings(CopyDevice, false);
+                                x.Serialize(writer, CopyDevice);
+                                ms.Position = 0;
+                                textBox1.Text = reader.ReadToEnd();
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, ex.Message);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Apply xml settings.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ApplyBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                List<Type> types = new List<Type>();
+                types.Add(typeof(GXDLMSAttributeSettings));
+                types.Add(typeof(GXDLMSAttribute));
+                XmlAttributeOverrides overrides = new XmlAttributeOverrides();
+                XmlAttributes attribs = new XmlAttributes
+                {
+                    XmlIgnore = true
+                };
+                overrides.Add(typeof(GXDLMSDevice), "ObsoleteObjects", attribs);
+                overrides.Add(typeof(GXDLMSAttributeSettings), attribs);
+                overrides.Add(typeof(GXDLMSDevice), "Objects", attribs);
+                //Version is added to namespace.
+                XmlSerializer x = new XmlSerializer(typeof(GXDLMSDevice), overrides, types.ToArray(), null, "Gurux1");
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (TextWriter writer = new StreamWriter(ms))
+                    {
+                        writer.Write(textBox1.Text);
+                        writer.Flush();
+                        ms.Position = 0;
+                        using (XmlReader reader = XmlReader.Create(ms))
+                        {
+                            CopyDevice = (GXDLMSDevice)x.Deserialize(reader);
+                            UpdateDeviceSettings(CopyDevice);
+                            UpdateMediaSettings();
+                        }
+                    }
+                }
+                MessageBox.Show(this, Properties.Resources.ReadyTxt);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Copy xml to clipboard.
+        /// </summary>
+        private void CopyBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Clipboard.SetText(textBox1.Text);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Paste xml from Clipboard.
+        /// </summary>
+        private void PasteFromClipboardBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (Clipboard.ContainsText())
+                {
+                    textBox1.Text = Clipboard.GetText();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message);
+            }
+        }
     }
 }

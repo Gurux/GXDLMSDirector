@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10052 $,
-//                  $Date: 2018-04-26 10:11:27 +0300 (Thu, 26 Apr 2018) $
+// Version:         $Revision: 10061 $,
+//                  $Date: 2018-04-27 11:52:02 +0300 (Fri, 27 Apr 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -226,6 +226,9 @@ namespace GXDLMSDirector
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.DeviceInfoView = new System.Windows.Forms.Panel();
             this.DeviceGb = new System.Windows.Forms.GroupBox();
+            this.ErrorLbl = new System.Windows.Forms.Label();
+            this.ErrorsView = new System.Windows.Forms.ListView();
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ConformanceTB = new System.Windows.Forms.TextBox();
             this.ConformanceLbl = new System.Windows.Forms.Label();
             this.ManufacturerLbl = new System.Windows.Forms.Label();
@@ -240,9 +243,10 @@ namespace GXDLMSDirector
             this.DeviceNameCH = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ObjectPanelFrame = new System.Windows.Forms.Panel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.ErrorsView = new System.Windows.Forms.ListView();
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.ErrorLbl = new System.Windows.Forms.Label();
+            this.ClientSystemTitleLbl = new System.Windows.Forms.Label();
+            this.ClientSystemTitleTb = new System.Windows.Forms.TextBox();
+            this.ServerSystemTitleTb = new System.Windows.Forms.TextBox();
+            this.ServerSystemTitleLbl = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -1615,6 +1619,10 @@ namespace GXDLMSDirector
             // 
             // DeviceGb
             // 
+            this.DeviceGb.Controls.Add(this.ServerSystemTitleLbl);
+            this.DeviceGb.Controls.Add(this.ServerSystemTitleTb);
+            this.DeviceGb.Controls.Add(this.ClientSystemTitleTb);
+            this.DeviceGb.Controls.Add(this.ClientSystemTitleLbl);
             this.DeviceGb.Controls.Add(this.ErrorLbl);
             this.DeviceGb.Controls.Add(this.ErrorsView);
             this.DeviceGb.Controls.Add(this.ConformanceTB);
@@ -1634,20 +1642,50 @@ namespace GXDLMSDirector
             this.DeviceGb.TabIndex = 12;
             this.DeviceGb.TabStop = false;
             // 
+            // ErrorLbl
+            // 
+            this.ErrorLbl.AutoSize = true;
+            this.ErrorLbl.Location = new System.Drawing.Point(18, 213);
+            this.ErrorLbl.Name = "ErrorLbl";
+            this.ErrorLbl.Size = new System.Drawing.Size(37, 13);
+            this.ErrorLbl.TabIndex = 35;
+            this.ErrorLbl.Text = "Errors:";
+            // 
+            // ErrorsView
+            // 
+            this.ErrorsView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ErrorsView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader2});
+            this.ErrorsView.Location = new System.Drawing.Point(6, 232);
+            this.ErrorsView.MultiSelect = false;
+            this.ErrorsView.Name = "ErrorsView";
+            this.ErrorsView.Size = new System.Drawing.Size(410, 28);
+            this.ErrorsView.TabIndex = 34;
+            this.ErrorsView.UseCompatibleStateImageBehavior = false;
+            this.ErrorsView.View = System.Windows.Forms.View.Details;
+            this.ErrorsView.DoubleClick += new System.EventHandler(this.ErrorsView_DoubleClick);
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Name";
+            this.columnHeader2.Width = 117;
+            // 
             // ConformanceTB
             // 
             this.ConformanceTB.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.ConformanceTB.Location = new System.Drawing.Point(117, 120);
+            this.ConformanceTB.Location = new System.Drawing.Point(117, 172);
             this.ConformanceTB.Multiline = true;
             this.ConformanceTB.Name = "ConformanceTB";
             this.ConformanceTB.ReadOnly = true;
-            this.ConformanceTB.Size = new System.Drawing.Size(236, 60);
+            this.ConformanceTB.Size = new System.Drawing.Size(236, 55);
             this.ConformanceTB.TabIndex = 14;
             // 
             // ConformanceLbl
             // 
             this.ConformanceLbl.AutoSize = true;
-            this.ConformanceLbl.Location = new System.Drawing.Point(18, 120);
+            this.ConformanceLbl.Location = new System.Drawing.Point(18, 172);
             this.ConformanceLbl.Name = "ConformanceLbl";
             this.ConformanceLbl.Size = new System.Drawing.Size(73, 13);
             this.ConformanceLbl.TabIndex = 12;
@@ -1749,35 +1787,39 @@ namespace GXDLMSDirector
             this.ObjectPanelFrame.Size = new System.Drawing.Size(187, 142);
             this.ObjectPanelFrame.TabIndex = 32;
             // 
-            // ErrorsView
+            // ClientSystemTitleLbl
             // 
-            this.ErrorsView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ErrorsView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader2});
-            this.ErrorsView.Location = new System.Drawing.Point(6, 209);
-            this.ErrorsView.MultiSelect = false;
-            this.ErrorsView.Name = "ErrorsView";
-            this.ErrorsView.Size = new System.Drawing.Size(410, 51);
-            this.ErrorsView.TabIndex = 34;
-            this.ErrorsView.UseCompatibleStateImageBehavior = false;
-            this.ErrorsView.View = System.Windows.Forms.View.Details;
-            this.ErrorsView.DoubleClick += new System.EventHandler(this.ErrorsView_DoubleClick);
+            this.ClientSystemTitleLbl.AutoSize = true;
+            this.ClientSystemTitleLbl.Location = new System.Drawing.Point(18, 121);
+            this.ClientSystemTitleLbl.Name = "ClientSystemTitleLbl";
+            this.ClientSystemTitleLbl.Size = new System.Drawing.Size(96, 13);
+            this.ClientSystemTitleLbl.TabIndex = 36;
+            this.ClientSystemTitleLbl.Text = "Client System Title:";
             // 
-            // columnHeader2
+            // ClientSystemTitleTb
             // 
-            this.columnHeader2.Text = "Name";
-            this.columnHeader2.Width = 117;
+            this.ClientSystemTitleTb.Location = new System.Drawing.Point(123, 119);
+            this.ClientSystemTitleTb.Name = "ClientSystemTitleTb";
+            this.ClientSystemTitleTb.ReadOnly = true;
+            this.ClientSystemTitleTb.Size = new System.Drawing.Size(220, 20);
+            this.ClientSystemTitleTb.TabIndex = 37;
             // 
-            // ErrorLbl
+            // ServerSystemTitleTb
             // 
-            this.ErrorLbl.AutoSize = true;
-            this.ErrorLbl.Location = new System.Drawing.Point(18, 190);
-            this.ErrorLbl.Name = "ErrorLbl";
-            this.ErrorLbl.Size = new System.Drawing.Size(37, 13);
-            this.ErrorLbl.TabIndex = 35;
-            this.ErrorLbl.Text = "Errors:";
+            this.ServerSystemTitleTb.Location = new System.Drawing.Point(123, 145);
+            this.ServerSystemTitleTb.Name = "ServerSystemTitleTb";
+            this.ServerSystemTitleTb.ReadOnly = true;
+            this.ServerSystemTitleTb.Size = new System.Drawing.Size(220, 20);
+            this.ServerSystemTitleTb.TabIndex = 38;
+            // 
+            // ServerSystemTitleLbl
+            // 
+            this.ServerSystemTitleLbl.AutoSize = true;
+            this.ServerSystemTitleLbl.Location = new System.Drawing.Point(18, 148);
+            this.ServerSystemTitleLbl.Name = "ServerSystemTitleLbl";
+            this.ServerSystemTitleLbl.Size = new System.Drawing.Size(101, 13);
+            this.ServerSystemTitleLbl.TabIndex = 39;
+            this.ServerSystemTitleLbl.Text = "Server System Title:";
             // 
             // MainForm
             // 
@@ -2007,6 +2049,10 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ListView ErrorsView;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.Label ErrorLbl;
+        private System.Windows.Forms.Label ServerSystemTitleLbl;
+        private System.Windows.Forms.TextBox ServerSystemTitleTb;
+        private System.Windows.Forms.TextBox ClientSystemTitleTb;
+        private System.Windows.Forms.Label ClientSystemTitleLbl;
     }
 }
 

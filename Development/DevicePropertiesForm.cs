@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10061 $,
-//                  $Date: 2018-04-27 11:52:02 +0300 (Fri, 27 Apr 2018) $
+// Version:         $Revision: 10070 $,
+//                  $Date: 2018-05-04 15:46:43 +0300 (Fri, 04 May 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -117,10 +117,11 @@ namespace GXDLMSDirector
                     }
                     Device.Comm.client.ProposedConformance = GXDLMSClient.GetInitialConformance(UseLNCB.Checked);
                     FrameCounterTb.ReadOnly = true;
+                    UpdateDeviceSettings(Device, true);
                 }
                 else
                 {
-                    UpdateDeviceSettings(Device);
+                    UpdateDeviceSettings(Device, false);
                 }
                 ManufacturerCB.DrawMode = MediasCB.DrawMode = DrawMode.OwnerDrawFixed;
                 UpdateMediaSettings();
@@ -277,29 +278,36 @@ namespace GXDLMSDirector
             HostNameTB.ReadOnly = PortTB.ReadOnly = PasswordTB.ReadOnly = WaitTimeTB.ReadOnly = PhysicalServerAddressTB.ReadOnly = NameTB.ReadOnly = bConnected;
 
         }
-        private void UpdateDeviceSettings(GXDLMSDevice device)
+        private void UpdateDeviceSettings(GXDLMSDevice device, bool first)
         {
             this.ManufacturerCB.SelectedItem = null;
             GXDLMSDevice old = Device;
-            try
+            if (first)
             {
-                Device = device;
-                foreach (GXManufacturer it in this.ManufacturerCB.Items)
+                this.ManufacturerCB.SelectedIndex = 0;
+            }
+            else
+            {
+                try
                 {
-                    if (string.Compare(it.Identification, device.Manufacturer, true) == 0)
+                    Device = device;
+                    foreach (GXManufacturer it in this.ManufacturerCB.Items)
                     {
-                        this.ManufacturerCB.SelectedItem = it;
-                        break;
+                        if (string.Compare(it.Identification, device.Manufacturer, true) == 0)
+                        {
+                            this.ManufacturerCB.SelectedItem = it;
+                            break;
+                        }
                     }
                 }
-            }
-            finally
-            {
-                Device = old;
-            }
-            if (this.ManufacturerCB.SelectedItem == null)
-            {
-                throw new Exception("Invalid manufacturer. " + device.Manufacturer);
+                finally
+                {
+                    Device = old;
+                }
+                if (this.ManufacturerCB.SelectedItem == null)
+                {
+                    throw new Exception("Invalid manufacturer. " + device.Manufacturer);
+                }
             }
             StandardCb.SelectedItem = device.Standard;
             if (IsAscii(GXCommon.HexToBytes(device.SystemTitle)))
@@ -1610,7 +1618,7 @@ namespace GXDLMSDirector
                         using (XmlReader reader = XmlReader.Create(ms))
                         {
                             CopyDevice = (GXDLMSDevice)x.Deserialize(reader);
-                            UpdateDeviceSettings(CopyDevice);
+                            UpdateDeviceSettings(CopyDevice, true);
                             UpdateMediaSettings();
                         }
                     }

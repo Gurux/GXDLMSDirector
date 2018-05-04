@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10061 $,
-//                  $Date: 2018-04-27 11:52:02 +0300 (Fri, 27 Apr 2018) $
+// Version:         $Revision: 10069 $,
+//                  $Date: 2018-05-04 12:55:22 +0300 (Fri, 04 May 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -47,6 +47,7 @@ using Gurux.DLMS.Objects;
 using Gurux.DLMS.Enums;
 using Gurux.Common;
 using System.Reflection;
+using Gurux.DLMS.Objects.Italy;
 
 namespace GXDLMSDirector
 {
@@ -862,13 +863,96 @@ namespace GXDLMSDirector
                 }
                 if (cols == null)
                 {
-                    Comm.GetProfileGenericColumns(item);
+                    try
+                    {
+                        Comm.GetProfileGenericColumns(item);
+                    }
+                    catch (GXDLMSException ex)
+                    {
+                        if (Standard == Standard.Italian)
+                        {
+                            cols = GetColumns(item.LogicalName);
+                            item.CaptureObjects.Clear();
+                            GXDLMSConverter c = new GXDLMSConverter(Standard);
+                            foreach (var it in cols)
+                            {
+                                c.UpdateOBISCodeInformation(it.Key);
+                            }
+                            item.CaptureObjects.AddRange(cols);
+                        }
+                        if (cols == null || cols.Count == 0)
+                        {
+                            throw ex;
+                        }
+                    }
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private static List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> GetColumns(string ln)
+        {
+            List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> list = new List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>>();
+            if (ln == "7.0.99.98.0.255")
+            {
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.96.15.2.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.96.11.2.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("7.1.96.5.1.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSAssociationLogicalName("0.0.40.0.0.255"), new GXDLMSCaptureObject(11, 0)));
+            }
+            else if (ln == "7.0.99.99.3.255")
+            {
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("7.1.96.5.1.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSRegister("7.0.13.2.0.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSRegister("7.0.12.2.0.255"), new GXDLMSCaptureObject(2, 0)));
+            }
+            else if (ln == "7.0.99.98.1.255")
+            {
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.96.11.1.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.96.15.1.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSAssociationLogicalName("0.0.40.0.0.255"), new GXDLMSCaptureObject(11, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSRegister("7.0.13.2.0.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("7.1.96.5.1.255"), new GXDLMSCaptureObject(2, 0)));
+            }
+            else if (ln == "7.0.99.98.6.255")
+            {
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.96.15.3.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("7.0.96.5.1.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.96.5.4.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSMacAddressSetup("0.1.25.2.0.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.24.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.23.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.13.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.15.255"), new GXDLMSCaptureObject(2, 0)));
+            }
+            else if (ln == "7.0.99.16.0.255")
+            {
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.96.15.1.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSParameterMonitor("0.0.16.2.0.255"), new GXDLMSCaptureObject(2, 0)));
+            }
+            else if (ln == "7.0.98.11.0.255")
+            {
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("7.0.96.5.1.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("7.0.96.10.2.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("7.0.0.1.0.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSRegister("7.0.13.2.0.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSRegister("7.0.13.2.1.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSRegister("7.0.13.2.2.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSRegister("7.0.13.2.3.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSRegister("7.0.12.2.0.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSExtendedRegister("7.0.43.45.0.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSExtendedRegister("7.0.43.45.0.255"), new GXDLMSCaptureObject(5, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSTariffPlan("0.0.94.39.21.255"), new GXDLMSCaptureObject(2, 0)));
+            }
+            return list;
         }
 
         private static void UpdateError(GXDLMSObject it, int attributeIndex, Exception ex)
@@ -925,7 +1009,7 @@ namespace GXDLMSDirector
                         catch (Exception ex)
                         {
                             GXLogWriter.WriteLog(ex.Message);
-                            UpdateError(it, 3, ex);
+                            it.SetAccess(3, AccessMode.NoAccess);
                             if (ex is GXDLMSException)
                             {
                                 continue;
@@ -935,19 +1019,45 @@ namespace GXDLMSDirector
                     }
                     if (it is GXDLMSDemandRegister)
                     {
+                        //Read scaler first.
                         try
                         {
-                            //Read scaler first.
                             Comm.ReadValue(it, 4);
-                            //Read Period
+                        }
+                        catch (Exception ex)
+                        {
+                            GXLogWriter.WriteLog(ex.Message);
+                            UpdateError(it, 4, ex);
+                            if (ex is GXDLMSException)
+                            {
+                                continue;
+                            }
+                            throw ex;
+                        }
+                        //Read Period
+                        try
+                        {
                             Comm.ReadValue(it, 8);
-                            //Read number of periods
+                        }
+                        catch (Exception ex)
+                        {
+                            GXLogWriter.WriteLog(ex.Message);
+                            UpdateError(it, 8, ex);
+                            if (ex is GXDLMSException)
+                            {
+                                continue;
+                            }
+                            throw ex;
+                        }
+                        //Read number of periods
+                        try
+                        {
                             Comm.ReadValue(it, 9);
                         }
                         catch (Exception ex)
                         {
                             GXLogWriter.WriteLog(ex.Message);
-                            UpdateError(it, 3, ex);
+                            UpdateError(it, 9, ex);
                             if (ex is GXDLMSException)
                             {
                                 continue;

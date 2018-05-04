@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10061 $,
-//                  $Date: 2018-04-27 11:52:02 +0300 (Fri, 27 Apr 2018) $
+// Version:         $Revision: 10069 $,
+//                  $Date: 2018-05-04 12:55:22 +0300 (Fri, 04 May 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -224,12 +224,33 @@ namespace GXDLMSDirector
             this.splitter2 = new System.Windows.Forms.Splitter();
             this.ObjectValueView = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.DeviceInfoView = new System.Windows.Forms.Panel();
+            this.DeviceList = new System.Windows.Forms.ListView();
+            this.DeviceNameCH = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ObjectPanelFrame = new System.Windows.Forms.Panel();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.tabControl2 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.PropertyErrorView = new System.Windows.Forms.DataGridView();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.Accessrights = new System.Windows.Forms.DataGridView();
+            this.DeviceInfoView = new System.Windows.Forms.TabControl();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
             this.DeviceGb = new System.Windows.Forms.GroupBox();
-            this.ErrorLbl = new System.Windows.Forms.Label();
-            this.ErrorsView = new System.Windows.Forms.ListView();
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.ConformanceTB = new System.Windows.Forms.TextBox();
+            this.AuthenticationTb = new System.Windows.Forms.Label();
+            this.AuthenticationLbl = new System.Windows.Forms.Label();
+            this.Ciphering = new System.Windows.Forms.GroupBox();
+            this.AuthenticationKeyTb = new System.Windows.Forms.TextBox();
+            this.BlockCipherKeyTb = new System.Windows.Forms.TextBox();
+            this.ServerSystemTitleLbl = new System.Windows.Forms.Label();
+            this.ServerSystemTitleTb = new System.Windows.Forms.TextBox();
+            this.ClientSystemTitleTb = new System.Windows.Forms.TextBox();
+            this.ClientSystemTitleLbl = new System.Windows.Forms.Label();
+            this.SecurityTb = new System.Windows.Forms.Label();
+            this.AuthenticationKeyLbl = new System.Windows.Forms.Label();
+            this.BlockCipherKeyLbl = new System.Windows.Forms.Label();
+            this.SecurityLbl = new System.Windows.Forms.Label();
+            this.NegotiatedConformanceTB = new System.Windows.Forms.TextBox();
             this.ConformanceLbl = new System.Windows.Forms.Label();
             this.ManufacturerLbl = new System.Windows.Forms.Label();
             this.ManufacturerValueLbl = new System.Windows.Forms.Label();
@@ -239,14 +260,9 @@ namespace GXDLMSDirector
             this.ClientAddressLbl = new System.Windows.Forms.Label();
             this.LogicalAddressLbl = new System.Windows.Forms.Label();
             this.LogicalAddressValueLbl = new System.Windows.Forms.Label();
-            this.DeviceList = new System.Windows.Forms.ListView();
-            this.DeviceNameCH = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.ObjectPanelFrame = new System.Windows.Forms.Panel();
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.ClientSystemTitleLbl = new System.Windows.Forms.Label();
-            this.ClientSystemTitleTb = new System.Windows.Forms.TextBox();
-            this.ServerSystemTitleTb = new System.Windows.Forms.TextBox();
-            this.ServerSystemTitleLbl = new System.Windows.Forms.Label();
+            this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.ErrorsView = new System.Windows.Forms.ListView();
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -258,8 +274,17 @@ namespace GXDLMSDirector
             this.contextMenuStrip2.SuspendLayout();
             this.NotificationMnu.SuspendLayout();
             this.TraceMenu.SuspendLayout();
+            this.tabControl2.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.PropertyErrorView)).BeginInit();
+            this.tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.Accessrights)).BeginInit();
             this.DeviceInfoView.SuspendLayout();
+            this.tabPage4.SuspendLayout();
             this.DeviceGb.SuspendLayout();
+            this.Ciphering.SuspendLayout();
+            this.tabPage5.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -1609,160 +1634,6 @@ namespace GXDLMSDirector
             this.columnHeader1.Text = "Name";
             this.columnHeader1.Width = 117;
             // 
-            // DeviceInfoView
-            // 
-            this.DeviceInfoView.Controls.Add(this.DeviceGb);
-            this.DeviceInfoView.Location = new System.Drawing.Point(291, 53);
-            this.DeviceInfoView.Name = "DeviceInfoView";
-            this.DeviceInfoView.Size = new System.Drawing.Size(422, 266);
-            this.DeviceInfoView.TabIndex = 34;
-            // 
-            // DeviceGb
-            // 
-            this.DeviceGb.Controls.Add(this.ServerSystemTitleLbl);
-            this.DeviceGb.Controls.Add(this.ServerSystemTitleTb);
-            this.DeviceGb.Controls.Add(this.ClientSystemTitleTb);
-            this.DeviceGb.Controls.Add(this.ClientSystemTitleLbl);
-            this.DeviceGb.Controls.Add(this.ErrorLbl);
-            this.DeviceGb.Controls.Add(this.ErrorsView);
-            this.DeviceGb.Controls.Add(this.ConformanceTB);
-            this.DeviceGb.Controls.Add(this.ConformanceLbl);
-            this.DeviceGb.Controls.Add(this.ManufacturerLbl);
-            this.DeviceGb.Controls.Add(this.ManufacturerValueLbl);
-            this.DeviceGb.Controls.Add(this.PhysicalAddressLbl);
-            this.DeviceGb.Controls.Add(this.ClientAddressValueLbl);
-            this.DeviceGb.Controls.Add(this.PhysicalAddressValueLbl);
-            this.DeviceGb.Controls.Add(this.ClientAddressLbl);
-            this.DeviceGb.Controls.Add(this.LogicalAddressLbl);
-            this.DeviceGb.Controls.Add(this.LogicalAddressValueLbl);
-            this.DeviceGb.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.DeviceGb.Location = new System.Drawing.Point(0, 0);
-            this.DeviceGb.Name = "DeviceGb";
-            this.DeviceGb.Size = new System.Drawing.Size(422, 266);
-            this.DeviceGb.TabIndex = 12;
-            this.DeviceGb.TabStop = false;
-            // 
-            // ErrorLbl
-            // 
-            this.ErrorLbl.AutoSize = true;
-            this.ErrorLbl.Location = new System.Drawing.Point(18, 213);
-            this.ErrorLbl.Name = "ErrorLbl";
-            this.ErrorLbl.Size = new System.Drawing.Size(37, 13);
-            this.ErrorLbl.TabIndex = 35;
-            this.ErrorLbl.Text = "Errors:";
-            // 
-            // ErrorsView
-            // 
-            this.ErrorsView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ErrorsView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader2});
-            this.ErrorsView.Location = new System.Drawing.Point(6, 232);
-            this.ErrorsView.MultiSelect = false;
-            this.ErrorsView.Name = "ErrorsView";
-            this.ErrorsView.Size = new System.Drawing.Size(410, 28);
-            this.ErrorsView.TabIndex = 34;
-            this.ErrorsView.UseCompatibleStateImageBehavior = false;
-            this.ErrorsView.View = System.Windows.Forms.View.Details;
-            this.ErrorsView.DoubleClick += new System.EventHandler(this.ErrorsView_DoubleClick);
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "Name";
-            this.columnHeader2.Width = 117;
-            // 
-            // ConformanceTB
-            // 
-            this.ConformanceTB.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.ConformanceTB.Location = new System.Drawing.Point(117, 172);
-            this.ConformanceTB.Multiline = true;
-            this.ConformanceTB.Name = "ConformanceTB";
-            this.ConformanceTB.ReadOnly = true;
-            this.ConformanceTB.Size = new System.Drawing.Size(236, 55);
-            this.ConformanceTB.TabIndex = 14;
-            // 
-            // ConformanceLbl
-            // 
-            this.ConformanceLbl.AutoSize = true;
-            this.ConformanceLbl.Location = new System.Drawing.Point(18, 172);
-            this.ConformanceLbl.Name = "ConformanceLbl";
-            this.ConformanceLbl.Size = new System.Drawing.Size(73, 13);
-            this.ConformanceLbl.TabIndex = 12;
-            this.ConformanceLbl.Text = "Conformance:";
-            // 
-            // ManufacturerLbl
-            // 
-            this.ManufacturerLbl.AutoSize = true;
-            this.ManufacturerLbl.Location = new System.Drawing.Point(18, 28);
-            this.ManufacturerLbl.Name = "ManufacturerLbl";
-            this.ManufacturerLbl.Size = new System.Drawing.Size(73, 13);
-            this.ManufacturerLbl.TabIndex = 2;
-            this.ManufacturerLbl.Text = "Manufacturer:";
-            // 
-            // ManufacturerValueLbl
-            // 
-            this.ManufacturerValueLbl.AutoSize = true;
-            this.ManufacturerValueLbl.Location = new System.Drawing.Point(114, 28);
-            this.ManufacturerValueLbl.Name = "ManufacturerValueLbl";
-            this.ManufacturerValueLbl.Size = new System.Drawing.Size(111, 13);
-            this.ManufacturerValueLbl.TabIndex = 3;
-            this.ManufacturerValueLbl.Text = "ManufacturerValueLbl";
-            // 
-            // PhysicalAddressLbl
-            // 
-            this.PhysicalAddressLbl.AutoSize = true;
-            this.PhysicalAddressLbl.Location = new System.Drawing.Point(18, 51);
-            this.PhysicalAddressLbl.Name = "PhysicalAddressLbl";
-            this.PhysicalAddressLbl.Size = new System.Drawing.Size(90, 13);
-            this.PhysicalAddressLbl.TabIndex = 4;
-            this.PhysicalAddressLbl.Text = "Physical Address:";
-            // 
-            // ClientAddressValueLbl
-            // 
-            this.ClientAddressValueLbl.AutoSize = true;
-            this.ClientAddressValueLbl.Location = new System.Drawing.Point(114, 97);
-            this.ClientAddressValueLbl.Name = "ClientAddressValueLbl";
-            this.ClientAddressValueLbl.Size = new System.Drawing.Size(112, 13);
-            this.ClientAddressValueLbl.TabIndex = 9;
-            this.ClientAddressValueLbl.Text = "ClientAddressValueLbl";
-            // 
-            // PhysicalAddressValueLbl
-            // 
-            this.PhysicalAddressValueLbl.AutoSize = true;
-            this.PhysicalAddressValueLbl.Location = new System.Drawing.Point(114, 51);
-            this.PhysicalAddressValueLbl.Name = "PhysicalAddressValueLbl";
-            this.PhysicalAddressValueLbl.Size = new System.Drawing.Size(125, 13);
-            this.PhysicalAddressValueLbl.TabIndex = 5;
-            this.PhysicalAddressValueLbl.Text = "PhysicalAddressValueLbl";
-            // 
-            // ClientAddressLbl
-            // 
-            this.ClientAddressLbl.AutoSize = true;
-            this.ClientAddressLbl.Location = new System.Drawing.Point(18, 97);
-            this.ClientAddressLbl.Name = "ClientAddressLbl";
-            this.ClientAddressLbl.Size = new System.Drawing.Size(77, 13);
-            this.ClientAddressLbl.TabIndex = 8;
-            this.ClientAddressLbl.Text = "Client Address:";
-            // 
-            // LogicalAddressLbl
-            // 
-            this.LogicalAddressLbl.AutoSize = true;
-            this.LogicalAddressLbl.Location = new System.Drawing.Point(18, 74);
-            this.LogicalAddressLbl.Name = "LogicalAddressLbl";
-            this.LogicalAddressLbl.Size = new System.Drawing.Size(85, 13);
-            this.LogicalAddressLbl.TabIndex = 6;
-            this.LogicalAddressLbl.Text = "Logical Address:";
-            // 
-            // LogicalAddressValueLbl
-            // 
-            this.LogicalAddressValueLbl.AutoSize = true;
-            this.LogicalAddressValueLbl.Location = new System.Drawing.Point(114, 74);
-            this.LogicalAddressValueLbl.Name = "LogicalAddressValueLbl";
-            this.LogicalAddressValueLbl.Size = new System.Drawing.Size(120, 13);
-            this.LogicalAddressValueLbl.TabIndex = 7;
-            this.LogicalAddressValueLbl.Text = "LogicalAddressValueLbl";
-            // 
             // DeviceList
             // 
             this.DeviceList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -1782,54 +1653,373 @@ namespace GXDLMSDirector
             // 
             // ObjectPanelFrame
             // 
-            this.ObjectPanelFrame.Location = new System.Drawing.Point(242, 262);
+            this.ObjectPanelFrame.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ObjectPanelFrame.Location = new System.Drawing.Point(3, 3);
             this.ObjectPanelFrame.Name = "ObjectPanelFrame";
-            this.ObjectPanelFrame.Size = new System.Drawing.Size(187, 142);
+            this.ObjectPanelFrame.Size = new System.Drawing.Size(207, 74);
             this.ObjectPanelFrame.TabIndex = 32;
+            this.ObjectPanelFrame.Paint += new System.Windows.Forms.PaintEventHandler(this.ObjectPanelFrame_Paint);
             // 
-            // ClientSystemTitleLbl
+            // tabControl2
             // 
-            this.ClientSystemTitleLbl.AutoSize = true;
-            this.ClientSystemTitleLbl.Location = new System.Drawing.Point(18, 121);
-            this.ClientSystemTitleLbl.Name = "ClientSystemTitleLbl";
-            this.ClientSystemTitleLbl.Size = new System.Drawing.Size(96, 13);
-            this.ClientSystemTitleLbl.TabIndex = 36;
-            this.ClientSystemTitleLbl.Text = "Client System Title:";
+            this.tabControl2.Controls.Add(this.tabPage1);
+            this.tabControl2.Controls.Add(this.tabPage3);
+            this.tabControl2.Controls.Add(this.tabPage2);
+            this.tabControl2.Location = new System.Drawing.Point(207, 299);
+            this.tabControl2.Name = "tabControl2";
+            this.tabControl2.SelectedIndex = 0;
+            this.tabControl2.Size = new System.Drawing.Size(221, 106);
+            this.tabControl2.TabIndex = 36;
             // 
-            // ClientSystemTitleTb
+            // tabPage1
             // 
-            this.ClientSystemTitleTb.Location = new System.Drawing.Point(123, 119);
-            this.ClientSystemTitleTb.Name = "ClientSystemTitleTb";
-            this.ClientSystemTitleTb.ReadOnly = true;
-            this.ClientSystemTitleTb.Size = new System.Drawing.Size(220, 20);
-            this.ClientSystemTitleTb.TabIndex = 37;
+            this.tabPage1.Controls.Add(this.ObjectPanelFrame);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(213, 80);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Data";
+            this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // ServerSystemTitleTb
+            // tabPage3
             // 
-            this.ServerSystemTitleTb.Location = new System.Drawing.Point(123, 145);
-            this.ServerSystemTitleTb.Name = "ServerSystemTitleTb";
-            this.ServerSystemTitleTb.ReadOnly = true;
-            this.ServerSystemTitleTb.Size = new System.Drawing.Size(220, 20);
-            this.ServerSystemTitleTb.TabIndex = 38;
+            this.tabPage3.Controls.Add(this.PropertyErrorView);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(213, 80);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Last errors";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // PropertyErrorView
+            // 
+            this.PropertyErrorView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.PropertyErrorView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.PropertyErrorView.Location = new System.Drawing.Point(0, 0);
+            this.PropertyErrorView.Name = "PropertyErrorView";
+            this.PropertyErrorView.Size = new System.Drawing.Size(213, 80);
+            this.PropertyErrorView.TabIndex = 1;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.Accessrights);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(213, 80);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Access rights";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // Accessrights
+            // 
+            this.Accessrights.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.Accessrights.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Accessrights.Location = new System.Drawing.Point(3, 3);
+            this.Accessrights.Name = "Accessrights";
+            this.Accessrights.Size = new System.Drawing.Size(207, 74);
+            this.Accessrights.TabIndex = 0;
+            // 
+            // DeviceInfoView
+            // 
+            this.DeviceInfoView.Controls.Add(this.tabPage4);
+            this.DeviceInfoView.Controls.Add(this.tabPage5);
+            this.DeviceInfoView.Location = new System.Drawing.Point(202, 52);
+            this.DeviceInfoView.Name = "DeviceInfoView";
+            this.DeviceInfoView.SelectedIndex = 0;
+            this.DeviceInfoView.Size = new System.Drawing.Size(499, 376);
+            this.DeviceInfoView.TabIndex = 37;
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.DeviceGb);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(491, 350);
+            this.tabPage4.TabIndex = 0;
+            this.tabPage4.Text = "General";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // DeviceGb
+            // 
+            this.DeviceGb.Controls.Add(this.AuthenticationTb);
+            this.DeviceGb.Controls.Add(this.AuthenticationLbl);
+            this.DeviceGb.Controls.Add(this.Ciphering);
+            this.DeviceGb.Controls.Add(this.NegotiatedConformanceTB);
+            this.DeviceGb.Controls.Add(this.ConformanceLbl);
+            this.DeviceGb.Controls.Add(this.ManufacturerLbl);
+            this.DeviceGb.Controls.Add(this.ManufacturerValueLbl);
+            this.DeviceGb.Controls.Add(this.PhysicalAddressLbl);
+            this.DeviceGb.Controls.Add(this.ClientAddressValueLbl);
+            this.DeviceGb.Controls.Add(this.PhysicalAddressValueLbl);
+            this.DeviceGb.Controls.Add(this.ClientAddressLbl);
+            this.DeviceGb.Controls.Add(this.LogicalAddressLbl);
+            this.DeviceGb.Controls.Add(this.LogicalAddressValueLbl);
+            this.DeviceGb.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DeviceGb.Location = new System.Drawing.Point(3, 3);
+            this.DeviceGb.Name = "DeviceGb";
+            this.DeviceGb.Size = new System.Drawing.Size(485, 344);
+            this.DeviceGb.TabIndex = 13;
+            this.DeviceGb.TabStop = false;
+            // 
+            // AuthenticationTb
+            // 
+            this.AuthenticationTb.AutoSize = true;
+            this.AuthenticationTb.Location = new System.Drawing.Point(111, 108);
+            this.AuthenticationTb.Name = "AuthenticationTb";
+            this.AuthenticationTb.Size = new System.Drawing.Size(35, 13);
+            this.AuthenticationTb.TabIndex = 70;
+            this.AuthenticationTb.Text = "label1";
+            // 
+            // AuthenticationLbl
+            // 
+            this.AuthenticationLbl.AutoSize = true;
+            this.AuthenticationLbl.Location = new System.Drawing.Point(6, 108);
+            this.AuthenticationLbl.Name = "AuthenticationLbl";
+            this.AuthenticationLbl.Size = new System.Drawing.Size(78, 13);
+            this.AuthenticationLbl.TabIndex = 69;
+            this.AuthenticationLbl.Text = "Authentication:";
+            // 
+            // Ciphering
+            // 
+            this.Ciphering.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.Ciphering.Controls.Add(this.AuthenticationKeyTb);
+            this.Ciphering.Controls.Add(this.BlockCipherKeyTb);
+            this.Ciphering.Controls.Add(this.ServerSystemTitleLbl);
+            this.Ciphering.Controls.Add(this.ServerSystemTitleTb);
+            this.Ciphering.Controls.Add(this.ClientSystemTitleTb);
+            this.Ciphering.Controls.Add(this.ClientSystemTitleLbl);
+            this.Ciphering.Controls.Add(this.SecurityTb);
+            this.Ciphering.Controls.Add(this.AuthenticationKeyLbl);
+            this.Ciphering.Controls.Add(this.BlockCipherKeyLbl);
+            this.Ciphering.Controls.Add(this.SecurityLbl);
+            this.Ciphering.Location = new System.Drawing.Point(0, 165);
+            this.Ciphering.Name = "Ciphering";
+            this.Ciphering.Size = new System.Drawing.Size(488, 147);
+            this.Ciphering.TabIndex = 68;
+            this.Ciphering.TabStop = false;
+            this.Ciphering.Text = "Ciphering";
+            // 
+            // AuthenticationKeyTb
+            // 
+            this.AuthenticationKeyTb.Location = new System.Drawing.Point(114, 119);
+            this.AuthenticationKeyTb.Name = "AuthenticationKeyTb";
+            this.AuthenticationKeyTb.ReadOnly = true;
+            this.AuthenticationKeyTb.Size = new System.Drawing.Size(289, 20);
+            this.AuthenticationKeyTb.TabIndex = 73;
+            // 
+            // BlockCipherKeyTb
+            // 
+            this.BlockCipherKeyTb.Location = new System.Drawing.Point(114, 93);
+            this.BlockCipherKeyTb.Name = "BlockCipherKeyTb";
+            this.BlockCipherKeyTb.ReadOnly = true;
+            this.BlockCipherKeyTb.Size = new System.Drawing.Size(289, 20);
+            this.BlockCipherKeyTb.TabIndex = 72;
             // 
             // ServerSystemTitleLbl
             // 
             this.ServerSystemTitleLbl.AutoSize = true;
-            this.ServerSystemTitleLbl.Location = new System.Drawing.Point(18, 148);
+            this.ServerSystemTitleLbl.Location = new System.Drawing.Point(10, 72);
             this.ServerSystemTitleLbl.Name = "ServerSystemTitleLbl";
             this.ServerSystemTitleLbl.Size = new System.Drawing.Size(101, 13);
-            this.ServerSystemTitleLbl.TabIndex = 39;
+            this.ServerSystemTitleLbl.TabIndex = 71;
             this.ServerSystemTitleLbl.Text = "Server System Title:";
+            // 
+            // ServerSystemTitleTb
+            // 
+            this.ServerSystemTitleTb.Location = new System.Drawing.Point(114, 69);
+            this.ServerSystemTitleTb.Name = "ServerSystemTitleTb";
+            this.ServerSystemTitleTb.ReadOnly = true;
+            this.ServerSystemTitleTb.Size = new System.Drawing.Size(289, 20);
+            this.ServerSystemTitleTb.TabIndex = 70;
+            // 
+            // ClientSystemTitleTb
+            // 
+            this.ClientSystemTitleTb.Location = new System.Drawing.Point(114, 43);
+            this.ClientSystemTitleTb.Name = "ClientSystemTitleTb";
+            this.ClientSystemTitleTb.ReadOnly = true;
+            this.ClientSystemTitleTb.Size = new System.Drawing.Size(289, 20);
+            this.ClientSystemTitleTb.TabIndex = 69;
+            // 
+            // ClientSystemTitleLbl
+            // 
+            this.ClientSystemTitleLbl.AutoSize = true;
+            this.ClientSystemTitleLbl.Location = new System.Drawing.Point(10, 45);
+            this.ClientSystemTitleLbl.Name = "ClientSystemTitleLbl";
+            this.ClientSystemTitleLbl.Size = new System.Drawing.Size(96, 13);
+            this.ClientSystemTitleLbl.TabIndex = 68;
+            this.ClientSystemTitleLbl.Text = "Client System Title:";
+            // 
+            // SecurityTb
+            // 
+            this.SecurityTb.AutoSize = true;
+            this.SecurityTb.Location = new System.Drawing.Point(115, 22);
+            this.SecurityTb.Name = "SecurityTb";
+            this.SecurityTb.Size = new System.Drawing.Size(45, 13);
+            this.SecurityTb.TabIndex = 56;
+            this.SecurityTb.Text = "Security";
+            // 
+            // AuthenticationKeyLbl
+            // 
+            this.AuthenticationKeyLbl.AutoSize = true;
+            this.AuthenticationKeyLbl.Location = new System.Drawing.Point(10, 120);
+            this.AuthenticationKeyLbl.Name = "AuthenticationKeyLbl";
+            this.AuthenticationKeyLbl.Size = new System.Drawing.Size(99, 13);
+            this.AuthenticationKeyLbl.TabIndex = 48;
+            this.AuthenticationKeyLbl.Text = "Authentication Key:";
+            // 
+            // BlockCipherKeyLbl
+            // 
+            this.BlockCipherKeyLbl.AutoSize = true;
+            this.BlockCipherKeyLbl.Location = new System.Drawing.Point(10, 93);
+            this.BlockCipherKeyLbl.Name = "BlockCipherKeyLbl";
+            this.BlockCipherKeyLbl.Size = new System.Drawing.Size(91, 13);
+            this.BlockCipherKeyLbl.TabIndex = 47;
+            this.BlockCipherKeyLbl.Text = "Block Cipher Key:";
+            // 
+            // SecurityLbl
+            // 
+            this.SecurityLbl.AutoSize = true;
+            this.SecurityLbl.Location = new System.Drawing.Point(10, 22);
+            this.SecurityLbl.Name = "SecurityLbl";
+            this.SecurityLbl.Size = new System.Drawing.Size(48, 13);
+            this.SecurityLbl.TabIndex = 46;
+            this.SecurityLbl.Text = "Security:";
+            // 
+            // NegotiatedConformanceTB
+            // 
+            this.NegotiatedConformanceTB.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.NegotiatedConformanceTB.Location = new System.Drawing.Point(111, 127);
+            this.NegotiatedConformanceTB.Multiline = true;
+            this.NegotiatedConformanceTB.Name = "NegotiatedConformanceTB";
+            this.NegotiatedConformanceTB.ReadOnly = true;
+            this.NegotiatedConformanceTB.Size = new System.Drawing.Size(292, 36);
+            this.NegotiatedConformanceTB.TabIndex = 63;
+            // 
+            // ConformanceLbl
+            // 
+            this.ConformanceLbl.AutoSize = true;
+            this.ConformanceLbl.Location = new System.Drawing.Point(6, 127);
+            this.ConformanceLbl.Name = "ConformanceLbl";
+            this.ConformanceLbl.Size = new System.Drawing.Size(73, 13);
+            this.ConformanceLbl.TabIndex = 62;
+            this.ConformanceLbl.Text = "Conformance:";
+            // 
+            // ManufacturerLbl
+            // 
+            this.ManufacturerLbl.AutoSize = true;
+            this.ManufacturerLbl.Location = new System.Drawing.Point(6, 16);
+            this.ManufacturerLbl.Name = "ManufacturerLbl";
+            this.ManufacturerLbl.Size = new System.Drawing.Size(73, 13);
+            this.ManufacturerLbl.TabIndex = 54;
+            this.ManufacturerLbl.Text = "Manufacturer:";
+            // 
+            // ManufacturerValueLbl
+            // 
+            this.ManufacturerValueLbl.AutoSize = true;
+            this.ManufacturerValueLbl.Location = new System.Drawing.Point(111, 16);
+            this.ManufacturerValueLbl.Name = "ManufacturerValueLbl";
+            this.ManufacturerValueLbl.Size = new System.Drawing.Size(111, 13);
+            this.ManufacturerValueLbl.TabIndex = 55;
+            this.ManufacturerValueLbl.Text = "ManufacturerValueLbl";
+            // 
+            // PhysicalAddressLbl
+            // 
+            this.PhysicalAddressLbl.AutoSize = true;
+            this.PhysicalAddressLbl.Location = new System.Drawing.Point(6, 39);
+            this.PhysicalAddressLbl.Name = "PhysicalAddressLbl";
+            this.PhysicalAddressLbl.Size = new System.Drawing.Size(90, 13);
+            this.PhysicalAddressLbl.TabIndex = 56;
+            this.PhysicalAddressLbl.Text = "Physical Address:";
+            // 
+            // ClientAddressValueLbl
+            // 
+            this.ClientAddressValueLbl.AutoSize = true;
+            this.ClientAddressValueLbl.Location = new System.Drawing.Point(111, 85);
+            this.ClientAddressValueLbl.Name = "ClientAddressValueLbl";
+            this.ClientAddressValueLbl.Size = new System.Drawing.Size(112, 13);
+            this.ClientAddressValueLbl.TabIndex = 61;
+            this.ClientAddressValueLbl.Text = "ClientAddressValueLbl";
+            // 
+            // PhysicalAddressValueLbl
+            // 
+            this.PhysicalAddressValueLbl.AutoSize = true;
+            this.PhysicalAddressValueLbl.Location = new System.Drawing.Point(111, 39);
+            this.PhysicalAddressValueLbl.Name = "PhysicalAddressValueLbl";
+            this.PhysicalAddressValueLbl.Size = new System.Drawing.Size(125, 13);
+            this.PhysicalAddressValueLbl.TabIndex = 57;
+            this.PhysicalAddressValueLbl.Text = "PhysicalAddressValueLbl";
+            // 
+            // ClientAddressLbl
+            // 
+            this.ClientAddressLbl.AutoSize = true;
+            this.ClientAddressLbl.Location = new System.Drawing.Point(6, 85);
+            this.ClientAddressLbl.Name = "ClientAddressLbl";
+            this.ClientAddressLbl.Size = new System.Drawing.Size(77, 13);
+            this.ClientAddressLbl.TabIndex = 60;
+            this.ClientAddressLbl.Text = "Client Address:";
+            // 
+            // LogicalAddressLbl
+            // 
+            this.LogicalAddressLbl.AutoSize = true;
+            this.LogicalAddressLbl.Location = new System.Drawing.Point(6, 62);
+            this.LogicalAddressLbl.Name = "LogicalAddressLbl";
+            this.LogicalAddressLbl.Size = new System.Drawing.Size(85, 13);
+            this.LogicalAddressLbl.TabIndex = 58;
+            this.LogicalAddressLbl.Text = "Logical Address:";
+            // 
+            // LogicalAddressValueLbl
+            // 
+            this.LogicalAddressValueLbl.AutoSize = true;
+            this.LogicalAddressValueLbl.Location = new System.Drawing.Point(111, 62);
+            this.LogicalAddressValueLbl.Name = "LogicalAddressValueLbl";
+            this.LogicalAddressValueLbl.Size = new System.Drawing.Size(120, 13);
+            this.LogicalAddressValueLbl.TabIndex = 59;
+            this.LogicalAddressValueLbl.Text = "LogicalAddressValueLbl";
+            // 
+            // tabPage5
+            // 
+            this.tabPage5.Controls.Add(this.ErrorsView);
+            this.tabPage5.Location = new System.Drawing.Point(4, 22);
+            this.tabPage5.Name = "tabPage5";
+            this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage5.Size = new System.Drawing.Size(491, 350);
+            this.tabPage5.TabIndex = 1;
+            this.tabPage5.Text = "Last errors";
+            this.tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // ErrorsView
+            // 
+            this.ErrorsView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader2});
+            this.ErrorsView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ErrorsView.Location = new System.Drawing.Point(3, 3);
+            this.ErrorsView.MultiSelect = false;
+            this.ErrorsView.Name = "ErrorsView";
+            this.ErrorsView.Size = new System.Drawing.Size(485, 344);
+            this.ErrorsView.TabIndex = 35;
+            this.ErrorsView.UseCompatibleStateImageBehavior = false;
+            this.ErrorsView.View = System.Windows.Forms.View.Details;
+            this.ErrorsView.DoubleClick += new System.EventHandler(this.ErrorsView_DoubleClick);
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Name";
+            this.columnHeader2.Width = 117;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(725, 536);
-            this.Controls.Add(this.ObjectValueView);
             this.Controls.Add(this.DeviceInfoView);
+            this.Controls.Add(this.tabControl2);
+            this.Controls.Add(this.ObjectValueView);
             this.Controls.Add(this.DeviceList);
-            this.Controls.Add(this.ObjectPanelFrame);
             this.Controls.Add(this.splitter2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.splitter1);
@@ -1858,9 +2048,19 @@ namespace GXDLMSDirector
             this.contextMenuStrip2.ResumeLayout(false);
             this.NotificationMnu.ResumeLayout(false);
             this.TraceMenu.ResumeLayout(false);
+            this.tabControl2.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.PropertyErrorView)).EndInit();
+            this.tabPage2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.Accessrights)).EndInit();
             this.DeviceInfoView.ResumeLayout(false);
+            this.tabPage4.ResumeLayout(false);
             this.DeviceGb.ResumeLayout(false);
             this.DeviceGb.PerformLayout();
+            this.Ciphering.ResumeLayout(false);
+            this.Ciphering.PerformLayout();
+            this.tabPage5.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1982,18 +2182,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Splitter splitter2;
         private System.Windows.Forms.ListView ObjectValueView;
         private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.Panel DeviceInfoView;
-        private System.Windows.Forms.GroupBox DeviceGb;
-        private System.Windows.Forms.TextBox ConformanceTB;
-        private System.Windows.Forms.Label ConformanceLbl;
-        private System.Windows.Forms.Label ManufacturerLbl;
-        private System.Windows.Forms.Label ManufacturerValueLbl;
-        private System.Windows.Forms.Label PhysicalAddressLbl;
-        private System.Windows.Forms.Label ClientAddressValueLbl;
-        private System.Windows.Forms.Label PhysicalAddressValueLbl;
-        private System.Windows.Forms.Label ClientAddressLbl;
-        private System.Windows.Forms.Label LogicalAddressLbl;
-        private System.Windows.Forms.Label LogicalAddressValueLbl;
         private System.Windows.Forms.ListView DeviceList;
         private System.Windows.Forms.ColumnHeader DeviceNameCH;
         private System.Windows.Forms.Panel ObjectPanelFrame;
@@ -2046,13 +2234,41 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ToolStripMenuItem TraceCommentsMenu;
         private System.Windows.Forms.ToolStripMenuItem NotificationsCommentsMenu;
         private System.Windows.Forms.ToolStripMenuItem AddObjectMenu;
+        private System.Windows.Forms.TabControl tabControl2;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.DataGridView Accessrights;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.DataGridView PropertyErrorView;
+        private System.Windows.Forms.TabControl DeviceInfoView;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.TabPage tabPage5;
         private System.Windows.Forms.ListView ErrorsView;
         private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.Label ErrorLbl;
+        private System.Windows.Forms.GroupBox DeviceGb;
+        private System.Windows.Forms.TextBox NegotiatedConformanceTB;
+        private System.Windows.Forms.Label ConformanceLbl;
+        private System.Windows.Forms.Label ManufacturerLbl;
+        private System.Windows.Forms.Label ManufacturerValueLbl;
+        private System.Windows.Forms.Label PhysicalAddressLbl;
+        private System.Windows.Forms.Label ClientAddressValueLbl;
+        private System.Windows.Forms.Label PhysicalAddressValueLbl;
+        private System.Windows.Forms.Label ClientAddressLbl;
+        private System.Windows.Forms.Label LogicalAddressLbl;
+        private System.Windows.Forms.Label LogicalAddressValueLbl;
+        private System.Windows.Forms.GroupBox Ciphering;
         private System.Windows.Forms.Label ServerSystemTitleLbl;
         private System.Windows.Forms.TextBox ServerSystemTitleTb;
         private System.Windows.Forms.TextBox ClientSystemTitleTb;
         private System.Windows.Forms.Label ClientSystemTitleLbl;
+        private System.Windows.Forms.Label SecurityTb;
+        private System.Windows.Forms.Label AuthenticationKeyLbl;
+        private System.Windows.Forms.Label BlockCipherKeyLbl;
+        private System.Windows.Forms.Label SecurityLbl;
+        private System.Windows.Forms.TextBox AuthenticationKeyTb;
+        private System.Windows.Forms.TextBox BlockCipherKeyTb;
+        private System.Windows.Forms.Label AuthenticationTb;
+        private System.Windows.Forms.Label AuthenticationLbl;
     }
 }
 

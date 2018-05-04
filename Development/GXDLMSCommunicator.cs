@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10061 $,
-//                  $Date: 2018-04-27 11:52:02 +0300 (Fri, 27 Apr 2018) $
+// Version:         $Revision: 10069 $,
+//                  $Date: 2018-05-04 12:55:22 +0300 (Fri, 04 May 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -196,7 +196,7 @@ namespace GXDLMSDirector
                     try
                     {
                         reply.Clear();
-                        ReadDataBlock(DisconnectRequest(), "Disconnect request", reply);
+                        ReadDataBlock(DisconnectRequest(true), "Disconnect request", reply);
                     }
                     catch (Exception)
                     {
@@ -936,6 +936,7 @@ namespace GXDLMSDirector
                     {
                         try
                         {
+                            reply.Clear();
                             ReadDataBlock(data, "Send SNRM request.", 1, 1, reply);
                         }
                         catch (TimeoutException)
@@ -976,7 +977,6 @@ namespace GXDLMSDirector
                     if (client.Authentication > Authentication.Low)
                     {
                         reply.Clear();
-                        //Mikko "0.0.40.0.1.255"
                         ReadDataBlock(client.GetApplicationAssociationRequest(), "Authenticating.", reply);
                         client.ParseApplicationAssociationResponse(reply.Data);
                     }
@@ -1139,21 +1139,23 @@ namespace GXDLMSDirector
             {
                 if (parent.Standard == Standard.Italian)
                 {
+                    GXDLMSObject obj;
                     objs = new GXDLMSObjectCollection();
                     GXObisCode[] tmp = GXDLMSConverter.GetObjects(Standard.Italian);
                     foreach (GXObisCode it in tmp)
                     {
                         try
                         {
-                            GXDLMSObject obj = GXDLMSClient.CreateObject(it.ObjectType);
+                            obj = GXDLMSClient.CreateObject(it.ObjectType);
                             obj.LogicalName = it.LogicalName;
                             obj.Description = it.Description;
+                            obj.Version = it.Version;
                             ReadValue(obj, 1);
                             if (string.IsNullOrEmpty(obj.LogicalName))
                             {
                                 //Some meters are returning invalid data here.
                             }
-                            else
+                            else if (obj.GetAccess(1) != AccessMode.NoAccess)
                             {
                                 objs.Add(obj);
                             }
@@ -1168,6 +1170,11 @@ namespace GXDLMSDirector
                             //This is not implemented read next.
                         }
                     }
+                    obj = objs.FindByLN(ObjectType.AssociationLogicalName, "0.0.40.0.0.255");
+                    if (obj != null)
+                    {
+                        obj.SetAccess(2, AccessMode.NoAccess);
+                    }
                     return objs;
                 }
                 else
@@ -1175,7 +1182,7 @@ namespace GXDLMSDirector
                     throw new Exception("GetObjects failed. " + Ex.Message);
                 }
             }
-            objs = client.ParseObjects(reply.Data, true);
+            objs = client.ParseObjects(reply.Data, true, parent.Standard);
             GXLogWriter.WriteLog("--- Collecting " + objs.Count.ToString() + " objects. ---");
             return objs;
         }
@@ -1202,11 +1209,23 @@ namespace GXDLMSDirector
         /// <param name="forceRead">Force all attributes read.</param>
         public void Read(object sender, GXDLMSObject obj, bool forceRead)
         {
-            obj.ClearStatus(0);
             GXReplyData reply = new GXReplyData();
             int[] indexes = (obj as IGXDLMSBase).GetAttributeIndexToRead(forceRead);
             foreach (int it in indexes)
             {
+                //If reading is not allowed.
+                if ((obj.GetAccess(it) & AccessMode.Read) == 0)
+                {
+                    obj.ClearStatus(it);
+                    continue;
+                }
+
+                //If object is static and it's already read.
+                if (!forceRead && obj.GetStatic(it) && obj.GetLastReadTime(it) != DateTime.MinValue)
+                {
+                    continue;
+                }
+                obj.ClearStatus(it);
                 reply.Clear();
                 if (obj is GXDLMSProfileGeneric && it == 2)
                 {
@@ -1245,6 +1264,33 @@ namespace GXDLMSDirector
                             tmp = client.Read(CurrentProfileGeneric, 2);
                             ReadDataBlock(tmp, "Reading profile generic data " + CurrentProfileGeneric.Name, 1, reply);
                         }
+                    }
+                    catch (GXDLMSException ex)
+                    {
+                        obj.SetLastError(it, ex);
+                        if (ex.ErrorCode == (int)ErrorCode.ReadWriteDenied ||
+                                ex.ErrorCode == (int)ErrorCode.UndefinedObject ||
+                                ex.ErrorCode == (int)ErrorCode.UnavailableObject ||
+                                //Actaris returns access violation error.
+                                ex.ErrorCode == (int)ErrorCode.AccessViolated ||
+                                ex.ErrorCode == (int)ErrorCode.OtherReason)
+                        {
+                            obj.SetAccess(it, AccessMode.NoAccess);
+                            if (OnAfterRead != null)
+                            {
+                                OnAfterRead(obj, it, ex);
+                            }
+                            continue;
+                        }
+                        else
+                        {
+                            throw ex;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        obj.SetLastError(it, ex);
+                        throw ex;
                     }
                     finally
                     {
@@ -1288,6 +1334,11 @@ namespace GXDLMSDirector
                         {
                             throw ex;
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        obj.SetLastError(it, ex);
+                        throw ex;
                     }
                     if (obj is IGXDLMSBase)
                     {

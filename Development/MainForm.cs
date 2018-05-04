@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10061 $,
-//                  $Date: 2018-04-27 11:52:02 +0300 (Fri, 27 Apr 2018) $
+// Version:         $Revision: 10069 $,
+//                  $Date: 2018-05-04 12:55:22 +0300 (Fri, 04 May 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -65,6 +65,7 @@ namespace GXDLMSDirector
         /// </summary>
         GXDLMSTranslator eventsTranslator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
         GXByteBuffer eventsData = new GXByteBuffer();
+        delegate void ShowLastErrorsEventHandler(GXDLMSObject target);
 
         /// <summary>
         /// Log translator.
@@ -169,12 +170,55 @@ namespace GXDLMSDirector
 
             Devices = new GXDLMSDeviceCollection();
             ObjectValueView.Visible = DeviceInfoView.Visible = DeviceList.Visible = false;
-            ObjectValueView.Dock = ObjectPanelFrame.Dock = DeviceList.Dock = DeviceInfoView.Dock = DockStyle.Fill;
+            ObjectValueView.Dock = tabControl2.Dock = DeviceList.Dock = DeviceInfoView.Dock = DockStyle.Fill;
             ProgressBar.Visible = false;
             UpdateDeviceUI(null, DeviceState.None);
             NewMnu_Click(null, null);
             mruManager = new MRUManager(RecentFilesMnu);
             mruManager.OnOpenMRUFile += new OpenMRUFileEventHandler(this.OnOpenMRUFile);
+            //Add access right view.
+            Accessrights.AutoGenerateColumns = false;
+            Accessrights.AutoSize = true;
+            Accessrights.Columns.Clear();
+            DataGridViewColumn column = new DataGridViewTextBoxColumn();
+            column.DataPropertyName = "Index";
+            column.Name = "Attribute Index";
+            column.ReadOnly = true;
+            Accessrights.Columns.Add(column);
+            column = new DataGridViewTextBoxColumn();
+            column.DataPropertyName = "Name";
+            column.Name = "Description";
+            column.ReadOnly = true;
+            Accessrights.Columns.Add(column);
+            Accessrights.Columns.Add(CreateAccessRightColumns());
+            Accessrights.Columns.Add(CreateStaticColumns());
+            Accessrights.CellValueChanged += Accessrights_CellValueChanged;
+            Accessrights.AllowUserToAddRows = false;
+            Accessrights.AllowUserToDeleteRows = false;
+            Accessrights.AutoSize = true;
+
+            //Add property error view.
+            PropertyErrorView.AutoGenerateColumns = false;
+            PropertyErrorView.AutoSize = true;
+            PropertyErrorView.Columns.Clear();
+            column = new DataGridViewTextBoxColumn();
+            column.DataPropertyName = "Index";
+            column.Name = "Attribute Index";
+            column.ReadOnly = true;
+            PropertyErrorView.Columns.Add(column);
+            column = new DataGridViewTextBoxColumn();
+            column.DataPropertyName = "Name";
+            column.Name = "Description";
+            column.ReadOnly = true;
+            PropertyErrorView.Columns.Add(column);
+            column = new DataGridViewTextBoxColumn();
+            column.DataPropertyName = "Error";
+            column.Name = "Last error";
+            column.ReadOnly = true;
+            PropertyErrorView.Columns.Add(column);
+            PropertyErrorView.AllowUserToAddRows = false;
+            PropertyErrorView.AllowUserToDeleteRows = false;
+            PropertyErrorView.AutoSize = true;
         }
 
         public void OnProgress(object sender, string description, int current, int maximium)
@@ -281,7 +325,7 @@ namespace GXDLMSDirector
                 DeviceList.Visible = obj is GXDLMSDeviceCollection;
                 //If device is selected.
                 DeviceInfoView.Visible = obj is GXDLMSDevice;
-                ObjectPanelFrame.Visible = obj is GXDLMSObject;
+                tabControl2.Visible = obj is GXDLMSObject;
                 ObjectValueView.Visible = obj is GXDLMSObjectCollection;
                 if (DeviceList.Visible)
                 {
@@ -300,7 +344,7 @@ namespace GXDLMSDirector
                     LogicalAddressValueLbl.Text = dev.LogicalAddress.ToString();
                     PhysicalAddressValueLbl.Text = dev.PhysicalAddress.ToString();
                     ManufacturerValueLbl.Text = dev.Manufacturers.FindByIdentification(dev.Manufacturer).Name;
-                    ConformanceTB.Text = dev.Comm.client.NegotiatedConformance.ToString();
+                    NegotiatedConformanceTB.Text = dev.Comm.client.NegotiatedConformance.ToString();
                     UpdateDeviceUI(dev, dev.Status);
                     DeviceInfoView.BringToFront();
                     ErrorsView.Items.Clear();
@@ -330,7 +374,6 @@ namespace GXDLMSDirector
                             ErrorsView.Items.Add(lv);
                         }
                     }
-                    ErrorLbl.Visible = ErrorsView.Visible = ErrorsView.Items.Count != 0;
                 }
                 else if (ObjectValueView.Visible)
                 {
@@ -403,7 +446,7 @@ namespace GXDLMSDirector
                 }
                 else
                 {
-                    ObjectPanelFrame.BringToFront();
+                    tabControl2.BringToFront();
                     SaveAsTemplateBtn.Enabled = true;
                     SelectedView = GXDlmsUi.GetView(Views, (GXDLMSObject)obj);
                     foreach (Control it in ObjectPanelFrame.Controls)
@@ -417,12 +460,145 @@ namespace GXDLMSDirector
                     ObjectPanelFrame.Controls.Add((Form)SelectedView);
                     ((Form)SelectedView).Show();
                     UpdateDeviceUI(GetDevice(SelectedView.Target), GetDevice((GXDLMSObject)obj).Status);
+                    try
+                    {
+                        //Show access levels of COSEM object.
+                        bindingSource1.Clear();
+                        //All meters don't implement association view. 
+                        SortedList<int, GXDLMSAttributeSettings> list = new SortedList<int, GXDLMSAttributeSettings>();
+                        foreach (GXDLMSAttributeSettings it in (obj as GXDLMSObject).Attributes)
+                        {
+                            list.Add(it.Index, it);
+                        }
+                        //Add all attributes.
+                        string[] names = (obj as IGXDLMSBase).GetNames();
+                        for (int pos = 0; pos != (obj as IGXDLMSBase).GetAttributeCount(); ++pos)
+                        {
+                            if (!list.ContainsKey(pos + 1))
+                            {
+                                list.Add(pos + 1, new GXDLMSAttributeSettings() { Index = pos + 1, Name = names[pos] });
+                            }
+                            else
+                            {
+                                GXDLMSAttributeSettings a = list[pos + 1];
+                                if (string.IsNullOrEmpty(a.Name))
+                                {
+                                    a.Name = names[pos];
+                                }
+                            }
+                        }
+                        foreach (var it in list)
+                        {
+                            bindingSource1.Add(it.Value);
+                        }
+                        Accessrights.DataSource = bindingSource1;
+                        ShowLastErrors(obj as GXDLMSObject);
+                    }
+                    catch (Exception)
+                    {
+                        //Skip error if this fails.
+                        Accessrights.DataSource = null;
+                    }
                 }
             }
             catch (Exception Ex)
             {
                 GXDLMS.Common.Error.ShowError(this, Ex);
             }
+        }
+
+        /// <summary>
+        /// Show property errors.
+        /// </summary>
+        /// <param name="target">Target</param>
+        private void ShowLastErrors(GXDLMSObject target)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new ShowLastErrorsEventHandler(ShowLastErrors), target);
+            }
+            else if (SelectedView.Target == target)
+            {
+                bindingSource2.Clear();
+                string[] names = (target as IGXDLMSBase).GetNames();
+                foreach (var it in (target as GXDLMSObject).GetLastErrors())
+                {
+                    bindingSource2.Add(new GXLastError() { Index = it.Key, Name = names[it.Key - 1], Error = it.Value.Message });
+                }
+                if (bindingSource2.Count == 0)
+                {
+                    PropertyErrorView.DataSource = null;
+                }
+                else
+                {
+                    PropertyErrorView.DataSource = bindingSource2;
+                }
+            }
+        }
+
+        class GXLastError
+        {
+            /// <summary>
+            /// Attribute index.
+            /// </summary>
+            public int Index
+            {
+                get;
+                set;
+            }
+            /// <summary>
+            /// Attribute name.
+            /// </summary>
+            public string Name
+            {
+                get;
+                set;
+            }
+            /// <summary>
+            /// Attribute exception.
+            /// </summary>
+            public string Error
+            {
+                get;
+                set;
+            }
+        }
+
+        private void Accessrights_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                GXDLMSAttributeSettings a = (GXDLMSAttributeSettings)bindingSource1[e.RowIndex];
+                if (!SelectedView.Target.Attributes.Contains(a))
+                {
+                    SelectedView.Target.Attributes.Add(a);
+                }
+            }
+            catch (Exception)
+            {
+                //Skip error if this fails.
+            }
+            SetDirty(true);
+        }
+
+        BindingSource bindingSource1 = new BindingSource();
+        BindingSource bindingSource2 = new BindingSource();
+
+        DataGridViewComboBoxColumn CreateAccessRightColumns()
+        {
+            DataGridViewComboBoxColumn combo = new DataGridViewComboBoxColumn();
+            combo.DataSource = Enum.GetValues(typeof(AccessMode));
+            combo.DataPropertyName = "Access";
+            combo.Name = "Access";
+            return combo;
+        }
+
+        DataGridViewCheckBoxColumn CreateStaticColumns()
+        {
+            DataGridViewCheckBoxColumn combo = new DataGridViewCheckBoxColumn();
+            combo.DataPropertyName = "Static";
+            combo.Name = "Static";
+            return combo;
         }
 
         private void ObjectTree_AfterSelect(object sender, TreeViewEventArgs e)
@@ -568,15 +744,27 @@ namespace GXDLMSDirector
                             }
                             else if (ve.Action == ActionType.Read)
                             {
-                                dev.Comm.ReadValue(ve.Target, ve.Index);
+                                //Is reading allowed.
+                                if ((ve.Target.GetAccess(ve.Index) & AccessMode.Read) != 0)
+                                {
+                                    dev.Comm.ReadValue(ve.Target, ve.Index);
+                                }
                             }
                             else if (ve.Action == ActionType.Write)
                             {
-                                dev.Comm.Write(ve.Target, ve.Index);
+                                //Is writing allowed.
+                                if ((ve.Target.GetAccess(ve.Index) & AccessMode.Read) != 0)
+                                {
+                                    dev.Comm.Write(ve.Target, ve.Index);
+                                }
                             }
                             else if (ve.Action == ActionType.Action)
                             {
-                                dev.Comm.MethodRequest(ve.Target, ve.Index, ve.Value, ve.Text, reply);
+                                //Is action allowed.
+                                if (ve.Target.GetMethodAccess(ve.Index) != MethodAccessMode.NoAccess)
+                                {
+                                    dev.Comm.MethodRequest(ve.Target, ve.Index, ve.Value, ve.Text, reply);
+                                }
                             }
                         }
                         catch (Exception ex)
@@ -591,6 +779,7 @@ namespace GXDLMSDirector
                         ve.Value = null;
                     }
                 } while (ve.Action != ActionType.None);
+                ShowLastErrors(ve.Target as GXDLMSObject);
             }
             finally
             {
@@ -924,7 +1113,7 @@ namespace GXDLMSDirector
 
         void OnUpdateConformance(GXDLMSDevice device)
         {
-            ConformanceTB.Text = device.Comm.client.NegotiatedConformance.ToString();
+            NegotiatedConformanceTB.Text = device.Comm.client.NegotiatedConformance.ToString();
 
         }
 
@@ -1684,6 +1873,7 @@ namespace GXDLMSDirector
                                 dev.KeepAliveStart();
                             }
                         }
+                        ShowLastErrors(obj);
                     }
                     else if (item is GXDLMSObjectCollection)
                     {
@@ -1812,6 +2002,7 @@ namespace GXDLMSDirector
                             {
                                 dev.Comm.Write(obj, 0);
                                 GXDlmsUi.UpdateProperty(obj as GXDLMSObject, 0, SelectedView, true, false);
+                                ShowLastErrors(obj);
                             }
                         }
                         finally
@@ -1831,6 +2022,7 @@ namespace GXDLMSDirector
                             OnProgress(dev, "Writing...", 0, 1);
                             dev.Comm.Write(obj, 0);
                             GXDlmsUi.UpdateProperty(obj as GXDLMSObject, 0, SelectedView, true, false);
+                            ShowLastErrors(obj);
                         }
                         finally
                         {
@@ -3410,6 +3602,7 @@ namespace GXDLMSDirector
                     traceTranslator.BlockCipherKey = GXCommon.HexToBytes(newDev.BlockCipherKey);
                     traceTranslator.AuthenticationKey = GXCommon.HexToBytes(newDev.AuthenticationKey);
                     traceTranslator.InvocationCounter = newDev.InvocationCounter;
+                    AuthenticationTb.Text = newDev.Authentication.ToString();
                     if (newDev.PreEstablished)
                     {
                         traceTranslator.ServerSystemTitle = GXCommon.HexToBytes(newDev.ServerSystemTitle);
@@ -3418,14 +3611,18 @@ namespace GXDLMSDirector
                     {
                         traceTranslator.ServerSystemTitle = newDev.Comm.client.ServerSystemTitle;
                     }
-                    if (newDev.Comm.client.Ciphering != null)
+                    if (newDev.Security != Security.None || newDev.Authentication == Authentication.HighGMAC ||
+                        newDev.Authentication == Authentication.HighECDSA)
                     {
-                        ClientSystemTitleTb.Text = GXCommon.ToHex(newDev.Comm.client.Ciphering.SystemTitle);
+                        ClientSystemTitleTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.SystemTitle));
                         ServerSystemTitleTb.Text = GXCommon.ToHex(traceTranslator.ServerSystemTitle);
+                        SecurityTb.Text = newDev.Security.ToString();
+                        AuthenticationKeyTb.Text = newDev.AuthenticationKey;
+                        BlockCipherKeyTb.Text = newDev.BlockCipherKey;
                     }
                     else
                     {
-                        ClientSystemTitleTb.Text = ServerSystemTitleTb.Text = "";
+                        AuthenticationKeyTb.Text = BlockCipherKeyTb.Text = SecurityTb.Text = ClientSystemTitleTb.Text = ServerSystemTitleTb.Text = "";
                     }
                 }
             }
@@ -4309,6 +4506,11 @@ namespace GXDLMSDirector
                 TreeNode node = ObjectTreeItems[target] as TreeNode;
                 ObjectTree.SelectedNode = node;
             }
+        }
+
+        private void ObjectPanelFrame_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

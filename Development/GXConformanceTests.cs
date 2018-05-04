@@ -380,9 +380,21 @@ namespace GXDLMSDirector
                         }
                         else
                         {
-                            e.Value = reply.Value;
-                            (obj as IGXDLMSBase).SetValue(test.Device.Comm.client.Settings, e);
-                            value = obj.GetValues()[index - 1];
+                            try
+                            {
+                                e.Value = reply.Value;
+                                (obj as IGXDLMSBase).SetValue(test.Device.Comm.client.Settings, e);
+                                value = obj.GetValues()[index - 1];
+                            }
+                            catch (Exception ex)
+                            {
+                                output.Errors.Add("<a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " <div class=\"tooltip\">failed:" + ex.Message);
+                                output.Errors.Add("<span class=\"tooltiptext\">");
+                                output.Errors.Add(ex.ToString());
+                                output.Errors.Add("</span></div>");
+                                test.OnTrace(test, ex.Message + "\r\n");
+                                continue;
+                            }
                         }
                         string str;
                         if (value is byte[])
@@ -560,12 +572,12 @@ namespace GXDLMSDirector
         /// </summary>
         public static void ReadXmlMeter(object data)
         {
+            GXDLMSConverter converter;
             object[] tmp2 = (object[])data;
             List<GXConformanceTest> tests = (List<GXConformanceTest>)tmp2[0];
             GXConformanceSettings settings = (GXConformanceSettings)tmp2[1];
             GXConformanceTest test;
             GXDLMSDevice dev = null;
-            GXDLMSConverter converter = new GXDLMSConverter();
             GXOutput output;
             while (Continue)
             {
@@ -581,6 +593,7 @@ namespace GXDLMSDirector
                     dev.OnTrace = OnMessageTrace;
                     dev.Comm.LogFile = Path.Combine(test.Results, "Trace.txt");
                     GXDLMSClient cl = dev.Comm.client;
+                    converter = new GXDLMSConverter(dev.Standard);
                     dev.Comm.client = new GXDLMSXmlClient(TranslatorOutputType.SimpleXml);
                     cl.CopyTo(dev.Comm.client);
                     test.Device = dev;
@@ -611,6 +624,10 @@ namespace GXDLMSDirector
                         }
                     }
                     dev.Comm.InitializeConnection();
+                    if (client.Ciphering.InvocationCounter != 0)
+                    {
+                        output.PreInfo.Add("InvocationCounter: " + client.Ciphering.InvocationCounter);
+                    }
                     if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
                     {
                         if (dev.MaxInfoRX != 128 && dev.MaxInfoRX != dev.Comm.client.Limits.MaxInfoRX)
@@ -929,7 +946,7 @@ namespace GXDLMSDirector
 
                     if (dev.Comm.Framesize != 0)
                     {
-                        output.Errors.Insert(0, "HDLC frame size is is too high. There are " + dev.Comm.Framesize + " bytes. Max size should be max " + dev.Comm.client.Limits.MaxInfoRX + " bytes.");
+                        output.Errors.Insert(0, "HDLC frame size is is too high. There are " + dev.Comm.Framesize + " bytes. Max size is " + dev.Comm.client.Limits.MaxInfoRX + " bytes.");
                     }
                     if (output.Errors.Count != 0)
                     {
@@ -2203,7 +2220,7 @@ namespace GXDLMSDirector
             if (!Continue)
             {
                 return;
-            }   
+            }
             Test11(test, settings, dev, output, tryCount);
         }
 
@@ -2243,6 +2260,10 @@ namespace GXDLMSDirector
                         {
                             image = File.ReadAllBytes(settings.ImageFile);
                         }
+                        if (!Continue)
+                        {
+                            return;
+                        }
                         //Step 2. BB: 4.4.6.4
                         bool error = false;
                         GXReplyData reply = new GXReplyData();
@@ -2264,6 +2285,10 @@ namespace GXDLMSDirector
                         }
 
                         //Check ImageTransferStatus.
+                        if (!Continue)
+                        {
+                            return;
+                        }
                         dev.Comm.ReadValue(img, 6);
                         if (img.ImageTransferStatus != ImageTransferStatus.TransferInitiated)
                         {
@@ -2271,6 +2296,10 @@ namespace GXDLMSDirector
                             output.Errors.Add("Image transfer status is wrong. It's " + img.ImageTransferStatus + " and it shoud be TransferInitiated.");
                         }
                         //Check ImageFirstNotTransferredBlockNumber.
+                        if (!Continue)
+                        {
+                            return;
+                        }
                         dev.Comm.ReadValue(img, 4);
                         if (img.ImageFirstNotTransferredBlockNumber != 0)
                         {
@@ -2278,6 +2307,10 @@ namespace GXDLMSDirector
                             output.Errors.Add("Image first not transferred block number wrong. It's " + img.ImageFirstNotTransferredBlockNumber + " and it shoud be 0.");
                         }
                         //Check ImageActivateInfo.
+                        if (!Continue)
+                        {
+                            return;
+                        }
                         dev.Comm.ReadValue(img, 7);
                         if (img.ImageActivateInfo != null && img.ImageActivateInfo.Length != 0)
                         {
@@ -2296,6 +2329,10 @@ namespace GXDLMSDirector
                         reply.Clear();
                         foreach (byte[] b in blocks)
                         {
+                            if (!Continue)
+                            {
+                                return;
+                            }
                             dev.Comm.ReadDataBlock(dev.Comm.client.Method(img, 2, b, DataType.Array), "", 1, reply);
                             if (reply.Error != 0)
                             {
@@ -2314,6 +2351,10 @@ namespace GXDLMSDirector
                         error = false;
                         test.OnProgress(test, "Checing completeness of the Image...", 1, 1);
                         //Check ImageFirstNotTransferredBlockNumber.
+                        if (!Continue)
+                        {
+                            return;
+                        }
                         dev.Comm.ReadValue(img, 4);
                         if (img.ImageFirstNotTransferredBlockNumber != blocks.Length)
                         {
@@ -2321,6 +2362,10 @@ namespace GXDLMSDirector
                             output.Errors.Add("Image first not transferred block number wrong. It's " + img.ImageFirstNotTransferredBlockNumber + " and it shoud be " + blocks.Length + ".");
                         }
                         //Check ImageTransferredBlocksStatus.
+                        if (!Continue)
+                        {
+                            return;
+                        }
                         dev.Comm.ReadValue(img, 3);
                         if (img.ImageTransferredBlocksStatus == null)
                         {
@@ -2351,6 +2396,10 @@ namespace GXDLMSDirector
 
                         if (settings.ImageVerify)
                         {
+                            if (!Continue)
+                            {
+                                return;
+                            }
                             start = DateTime.Now;
                             //Step 5. BB: 4.4.6.4
                             reply.Clear();
@@ -2408,6 +2457,10 @@ namespace GXDLMSDirector
                         reply.Clear();
                         if (settings.ImageActivate)
                         {
+                            if (!Continue)
+                            {
+                                return;
+                            }
                             start = DateTime.Now;
                             //Step 7. BB: 4.4.6.4
                             test.OnProgress(test, "Activating image...", 1, 1);

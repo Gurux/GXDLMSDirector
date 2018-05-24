@@ -40,7 +40,7 @@ namespace GXDLMS.Common
 {
     class GXHelpers
     {
-        static public object ConvertFromDLMS(object data, DataType from, DataType type, bool arrayAsString)
+        static public object ConvertFromDLMS(object data, DataType from, DataType type, bool arrayAsString, bool useUtc)
         {
             if (type == DataType.Array)
             {
@@ -95,9 +95,9 @@ namespace GXDLMS.Common
                 {
                     if (((byte[])data).Length == 5)
                     {
-                        return GXDLMSClient.ChangeType((byte[])data, DataType.Date);
+                        return GXDLMSClient.ChangeType((byte[])data, DataType.Date, useUtc);
                     }
-                    return GXDLMSClient.ChangeType((byte[])data, DataType.DateTime);
+                    return GXDLMSClient.ChangeType((byte[])data, DataType.DateTime, useUtc);
                 }
                 return data;
             }
@@ -116,14 +116,14 @@ namespace GXDLMS.Common
                 {
                     throw new Exception("DateTime conversion failed. Invalid DLMS format.");
                 }
-                return GXDLMSClient.ChangeType((byte[])data, DataType.Date);
+                return GXDLMSClient.ChangeType((byte[])data, DataType.Date, useUtc);
             }
             //Convert DLMS date time to Windows Time.
             else if (type == DataType.Time)
             {
                 if (data is byte[])
                 {
-                    return GXDLMSClient.ChangeType((byte[])data, type);
+                    return GXDLMSClient.ChangeType((byte[])data, type, useUtc);
                 }
                 return data;
             }

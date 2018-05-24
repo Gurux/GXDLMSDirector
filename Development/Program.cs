@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9981 $,
-//                  $Date: 2018-03-21 20:07:23 +0200 (Wed, 21 Mar 2018) $
+// Version:         $Revision: 10082 $,
+//                  $Date: 2018-05-24 16:17:54 +0300 (to, 24 touko 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -163,6 +163,9 @@ namespace GXDLMSDirector
                 try
                 {
                     //Update previous installed settings.
+                    //If file is corrupted it's found from:
+                    //%USERPROFILE%\AppData\Local\Gurux_Ltd\
+                    //This might happen if Windows is not closed correctly.
                     if (Properties.Settings.Default.UpdateSettings)
                     {
                         Properties.Settings.Default.Upgrade();

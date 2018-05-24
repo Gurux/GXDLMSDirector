@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10069 $,
-//                  $Date: 2018-05-04 12:55:22 +0300 (Fri, 04 May 2018) $
+// Version:         $Revision: 10082 $,
+//                  $Date: 2018-05-24 16:17:54 +0300 (to, 24 touko 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -45,6 +45,7 @@ using Gurux.DLMS.Enums;
 using Gurux.DLMS.Objects.Enums;
 using System.Threading;
 using Gurux.DLMS.Secure;
+using System.Collections.Generic;
 
 namespace GXDLMSDirector
 {
@@ -1275,7 +1276,11 @@ namespace GXDLMSDirector
                                 ex.ErrorCode == (int)ErrorCode.AccessViolated ||
                                 ex.ErrorCode == (int)ErrorCode.OtherReason)
                         {
-                            obj.SetAccess(it, AccessMode.NoAccess);
+                            //Some meters return OtherReason if Profile Generic buffer is try to read with selective access.
+                            if (!(obj is GXDLMSProfileGeneric && it == 2 && ex.ErrorCode == (int)ErrorCode.OtherReason))
+                            {
+                                obj.SetAccess(it, AccessMode.NoAccess);
+                            }
                             if (OnAfterRead != null)
                             {
                                 OnAfterRead(obj, it, ex);
@@ -1429,6 +1434,35 @@ namespace GXDLMSDirector
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Read list of attributes.
+        /// </summary>
+        public void ReadList(List<KeyValuePair<GXDLMSObject, int>> list)
+        {
+            byte[][] data = client.ReadList(list);
+            GXReplyData reply = new GXReplyData();
+            List<object> values = new List<object>();
+            foreach (byte[] it in data)
+            {
+                ReadDataBlock(it, "", 1, 1, reply);
+                if (list.Count != 1 && reply.Value is object[])
+                {
+                    values.AddRange((object[])reply.Value);
+                }
+                else if (reply.Value != null)
+                {
+                    //Value is null if data is send in multiple frames.
+                    values.Add(reply.Value);
+                }
+                reply.Clear();
+            }
+            if (values.Count != list.Count)
+            {
+                throw new Exception("Invalid reply. Read items count do not match.");
+            }
+            client.UpdateValues(list, values);
         }
 
         public void ReadValue(GXDLMSObject it, int attributeOrdinal)

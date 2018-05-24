@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10069 $,
-//                  $Date: 2018-05-04 12:55:22 +0300 (Fri, 04 May 2018) $
+// Version:         $Revision: 10082 $,
+//                  $Date: 2018-05-24 16:17:54 +0300 (to, 24 touko 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -866,6 +866,16 @@ namespace GXDLMSDirector
                     try
                     {
                         Comm.GetProfileGenericColumns(item);
+                        if (Standard == Standard.Italian && item.CaptureObjects.Count == 0)
+                        {
+                            cols = GetColumns(item.LogicalName);
+                            GXDLMSConverter c = new GXDLMSConverter(Standard);
+                            foreach (var it in cols)
+                            {
+                                c.UpdateOBISCodeInformation(it.Key);
+                            }
+                            item.CaptureObjects.AddRange(cols);
+                        }
                     }
                     catch (GXDLMSException ex)
                     {
@@ -898,18 +908,35 @@ namespace GXDLMSDirector
             List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> list = new List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>>();
             if (ln == "7.0.99.98.0.255")
             {
+                /*
+                //If meter.
                 list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
                 list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.96.15.2.255"), new GXDLMSCaptureObject(2, 0)));
                 list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.96.11.2.255"), new GXDLMSCaptureObject(2, 0)));
                 list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("7.1.96.5.1.255"), new GXDLMSCaptureObject(2, 0)));
                 list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSAssociationLogicalName("0.0.40.0.0.255"), new GXDLMSCaptureObject(11, 0)));
+    */            
+                //If concentrator.
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.96.15.2.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.96.11.2.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSAssociationLogicalName("0.0.40.0.0.255"), new GXDLMSCaptureObject(11, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSGSMDiagnostic("0.0.25.6.0.255"), new GXDLMSCaptureObject(5, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSGSMDiagnostic("0.0.25.6.0.255"), new GXDLMSCaptureObject(6, 0)));
+                
             }
             else if (ln == "7.0.99.99.3.255")
             {
+                /*
+                //If meter.
                 list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
                 list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("7.1.96.5.1.255"), new GXDLMSCaptureObject(2, 0)));
                 list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSRegister("7.0.13.2.0.255"), new GXDLMSCaptureObject(2, 0)));
                 list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSRegister("7.0.12.2.0.255"), new GXDLMSCaptureObject(2, 0)));
+*/
+                //If concentrator.
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("7.1.96.5.1.255"), new GXDLMSCaptureObject(2, 0)));
             }
             else if (ln == "7.0.99.98.1.255")
             {
@@ -951,6 +978,24 @@ namespace GXDLMSDirector
                 list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSExtendedRegister("7.0.43.45.0.255"), new GXDLMSCaptureObject(2, 0)));
                 list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSExtendedRegister("7.0.43.45.0.255"), new GXDLMSCaptureObject(5, 0)));
                 list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSTariffPlan("0.0.94.39.21.255"), new GXDLMSCaptureObject(2, 0)));
+            }
+            else if (ln == "0.0.21.0.1.255" ||
+                ln == "0.1.21.0.1.255")
+            {
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
+                GXDLMSData d = new GXDLMSData("0.0.94.39.36.255");
+                d.SetUIDataType(2, DataType.DateTime);
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(d, new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSMacAddressSetup("0.1.25.2.0.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.35.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.35.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.35.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.35.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.35.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.35.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.23.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.34.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.38.255"), new GXDLMSCaptureObject(2, 0)));
             }
             return list;
         }
@@ -1065,7 +1110,7 @@ namespace GXDLMSDirector
                             throw ex;
                         }
                     }
-                }
+                }                
                 GXLogWriter.WriteLog("--- Reading scalers and units end. ---");
                 if (!UseLogicalNameReferencing)
                 {

@@ -193,6 +193,7 @@ namespace GXDLMSDirector
             {
                 obj = target as GXDLMSObject;
             }
+            GXDLMSException lastExternalException = null;
             foreach (GXDLMSXmlPdu it in actions)
             {
                 if (!Continue)
@@ -212,6 +213,7 @@ namespace GXDLMSDirector
                 string indexStr = " attribute ";
                 if (it.IsRequest())
                 {
+                    lastExternalException = null;
                     if (settings.Delay.TotalSeconds != 0)
                     {
                         Thread.Sleep((int)settings.Delay.TotalMilliseconds);
@@ -311,6 +313,7 @@ namespace GXDLMSDirector
                         {
                             //Don't check result for external tests.
                             //External test might that it fails.
+                            lastExternalException = ex;
                         }
                     }
                     catch (Exception ex)
@@ -354,13 +357,23 @@ namespace GXDLMSDirector
                         }
                         else
                         {
-                            output.Errors.Add(" <a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " " + indexStr + " " + index + " is <div class=\"tooltip\">invalid.");
-                            output.Errors.Add("<span class=\"tooltiptext\">");
-                            output.Errors.Add("Expected:</b><br/>");
-                            output.Errors.Add(it.PduAsXml.Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
-                            output.Errors.Add("<br/><b>Actual:</b><br/>");
-                            output.Errors.Add(reply.ToString().Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
-                            output.Errors.Add("</span></div>");
+                            if (lastExternalException != null)
+                            {
+                                ErrorCode e = (ErrorCode)lastExternalException.ErrorCode;
+                                output.Errors.Add("<a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " failed: <a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.ErrorCodes?" + e + ">" + e + "</a>)");
+                                test.OnTrace(test, e + "\r\n");
+                                lastExternalException = null;
+                            }
+                            else
+                            {
+                                output.Errors.Add(" <a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " " + indexStr + " " + index + " is <div class=\"tooltip\">invalid.");
+                                output.Errors.Add("<span class=\"tooltiptext\">");
+                                output.Errors.Add("Expected:</b><br/>");
+                                output.Errors.Add(it.PduAsXml.Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
+                                output.Errors.Add("<br/><b>Actual:</b><br/>");
+                                output.Errors.Add(reply.ToString().Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
+                                output.Errors.Add("</span></div>");
+                            }
                         }
                     }
                     else if (it.Command == Command.GetResponse)

@@ -75,12 +75,12 @@ namespace Extensions
                 for (int pos = 0; pos < info.Length - 2; pos += 2)
                 {
                     obj = new GXDLMSData();
-                    obj.LogicalName = Convert.ToString(GXDLMSClient.ChangeType((byte[])info.GetValue(pos), DataType.OctetString));
+                    obj.LogicalName = Convert.ToString(GXDLMSClient.ChangeType((byte[])info.GetValue(pos), DataType.OctetString, false));
                     object scalerUnit = info.GetValue(pos + 1);
                     obj.Description = "";
                     items.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(obj, new GXDLMSCaptureObject(++cnt, 0)));
                 }
-                LastDateTime = (GXDateTime)GXDLMSClient.ChangeType((byte[]) info.GetValue(info.Length - 1), DataType.DateTime);
+                LastDateTime = (GXDateTime)GXDLMSClient.ChangeType((byte[]) info.GetValue(info.Length - 1), DataType.DateTime, false);
                 return items;
             }             
             return null;

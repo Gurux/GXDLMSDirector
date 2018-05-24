@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10069 $,
-//                  $Date: 2018-05-04 12:55:22 +0300 (Fri, 04 May 2018) $
+// Version:         $Revision: 10082 $,
+//                  $Date: 2018-05-24 16:17:54 +0300 (to, 24 touko 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1791,7 +1791,7 @@ namespace GXDLMSDirector
                 string str;
                 if (value != null && value.GetType().IsArray)
                 {
-                    str = Convert.ToString(GXDLMS.Common.GXHelpers.ConvertFromDLMS(value, DataType.None, DataType.None, true));
+                    str = Convert.ToString(GXDLMS.Common.GXHelpers.ConvertFromDLMS(value, DataType.None, DataType.None, true, false));
                 }
                 else
                 {

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10082 $,
-//                  $Date: 2018-05-24 16:17:54 +0300 (to, 24 touko 2018) $
+// Version:         $Revision: 10094 $,
+//                  $Date: 2018-05-30 15:15:40 +0300 (ke, 30 touko 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -212,6 +212,16 @@ namespace GXDLMSDirector
         /// </summary>
         [DefaultValue("")]
         public string ServerSystemTitle
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Dedicated Key.
+        /// </summary>
+        [DefaultValue("")]
+        public string DedicatedKey
         {
             get;
             set;

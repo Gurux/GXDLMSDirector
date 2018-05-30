@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10069 $,
-//                  $Date: 2018-05-04 12:55:22 +0300 (Fri, 04 May 2018) $
+// Version:         $Revision: 10094 $,
+//                  $Date: 2018-05-30 15:15:40 +0300 (ke, 30 touko 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -263,6 +263,8 @@ namespace GXDLMSDirector
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.ErrorsView = new System.Windows.Forms.ListView();
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.DedicatedKeyTb = new System.Windows.Forms.TextBox();
+            this.DedicatedKeyLbl = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -1787,6 +1789,8 @@ namespace GXDLMSDirector
             this.Ciphering.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.Ciphering.Controls.Add(this.DedicatedKeyTb);
+            this.Ciphering.Controls.Add(this.DedicatedKeyLbl);
             this.Ciphering.Controls.Add(this.AuthenticationKeyTb);
             this.Ciphering.Controls.Add(this.BlockCipherKeyTb);
             this.Ciphering.Controls.Add(this.ServerSystemTitleLbl);
@@ -1799,7 +1803,7 @@ namespace GXDLMSDirector
             this.Ciphering.Controls.Add(this.SecurityLbl);
             this.Ciphering.Location = new System.Drawing.Point(0, 165);
             this.Ciphering.Name = "Ciphering";
-            this.Ciphering.Size = new System.Drawing.Size(488, 147);
+            this.Ciphering.Size = new System.Drawing.Size(488, 163);
             this.Ciphering.TabIndex = 68;
             this.Ciphering.TabStop = false;
             this.Ciphering.Text = "Ciphering";
@@ -2010,6 +2014,23 @@ namespace GXDLMSDirector
             // 
             this.columnHeader2.Text = "Name";
             this.columnHeader2.Width = 117;
+            // 
+            // DedicatedKeyTb
+            // 
+            this.DedicatedKeyTb.Location = new System.Drawing.Point(114, 143);
+            this.DedicatedKeyTb.Name = "DedicatedKeyTb";
+            this.DedicatedKeyTb.ReadOnly = true;
+            this.DedicatedKeyTb.Size = new System.Drawing.Size(289, 20);
+            this.DedicatedKeyTb.TabIndex = 75;
+            // 
+            // DedicatedKeyLbl
+            // 
+            this.DedicatedKeyLbl.AutoSize = true;
+            this.DedicatedKeyLbl.Location = new System.Drawing.Point(10, 144);
+            this.DedicatedKeyLbl.Name = "DedicatedKeyLbl";
+            this.DedicatedKeyLbl.Size = new System.Drawing.Size(80, 13);
+            this.DedicatedKeyLbl.TabIndex = 74;
+            this.DedicatedKeyLbl.Text = "Dedicated Key:";
             // 
             // MainForm
             // 
@@ -2269,6 +2290,8 @@ namespace GXDLMSDirector
         private System.Windows.Forms.TextBox BlockCipherKeyTb;
         private System.Windows.Forms.Label AuthenticationTb;
         private System.Windows.Forms.Label AuthenticationLbl;
+        private System.Windows.Forms.TextBox DedicatedKeyTb;
+        private System.Windows.Forms.Label DedicatedKeyLbl;
     }
 }
 

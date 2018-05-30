@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10082 $,
-//                  $Date: 2018-05-24 16:17:54 +0300 (to, 24 touko 2018) $
+// Version:         $Revision: 10094 $,
+//                  $Date: 2018-05-30 15:15:40 +0300 (ke, 30 touko 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1190,6 +1190,7 @@ namespace GXDLMSDirector
                         {
                             traceTranslator.ServerSystemTitle = dev.Comm.client.ServerSystemTitle;
                         }
+                        traceTranslator.DedicatedKey = dev.Comm.client.DedicatedKey;
                     }
                 }
                 else if (obj is GXDLMSObjectCollection)
@@ -1215,10 +1216,7 @@ namespace GXDLMSDirector
                     this.OnProgress(null, "Connecting", 0, 1);
                     GXDLMSObject tmp = obj as GXDLMSObject;
                     GXDLMSDevice dev = tmp.Parent.Tag as GXDLMSDevice;
-                    if (!dev.Media.IsOpen)
-                    {
-                        dev.InitializeConnection();
-                    }
+                    dev.InitializeConnection();
                     if (dev.PreEstablished)
                     {
                         traceTranslator.ServerSystemTitle = GXCommon.HexToBytes(dev.ServerSystemTitle);
@@ -1227,6 +1225,7 @@ namespace GXDLMSDirector
                     {
                         traceTranslator.ServerSystemTitle = dev.Comm.client.ServerSystemTitle;
                     }
+                    traceTranslator.DedicatedKey = dev.Comm.client.DedicatedKey;
                     GXDlmsUi.ObjectChanged(SelectedView, tmp as GXDLMSObject, true);
                 }
             }

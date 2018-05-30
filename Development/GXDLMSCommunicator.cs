@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10082 $,
-//                  $Date: 2018-05-24 16:17:54 +0300 (to, 24 touko 2018) $
+// Version:         $Revision: 10094 $,
+//                  $Date: 2018-05-30 15:15:40 +0300 (ke, 30 touko 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -814,7 +814,14 @@ namespace GXDLMSDirector
             {
                 client.CtoSChallenge = null;
             }
-
+            if (!string.IsNullOrEmpty(parent.DedicatedKey))
+            {
+                client.DedicatedKey = GXCommon.HexToBytes(parent.DedicatedKey);
+            }
+            else
+            {
+                client.DedicatedKey = null;
+            }
             client.Limits.WindowSizeRX = parent.WindowSizeRX;
             client.Limits.WindowSizeTX = parent.WindowSizeTX;
             client.Limits.MaxInfoRX = parent.MaxInfoRX;
@@ -827,7 +834,6 @@ namespace GXDLMSDirector
             {
                 client.ServerSystemTitle = GXCommon.HexToBytes(parent.ServerSystemTitle);
             }
-
         }
 
         public void InitializeConnection()

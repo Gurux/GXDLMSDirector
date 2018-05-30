@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10070 $,
-//                  $Date: 2018-05-04 15:46:43 +0300 (Fri, 04 May 2018) $
+// Version:         $Revision: 10094 $,
+//                  $Date: 2018-05-30 15:15:40 +0300 (ke, 30 touko 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -351,6 +351,21 @@ namespace GXDLMSDirector
                 AuthenticationKeyAsciiCb.Checked = false;
                 AuthenticationKeyAsciiCb.CheckedChanged += AuthenticationKeyAsciiCb_CheckedChanged;
                 AuthenticationKeyTB.Text = device.AuthenticationKey;
+            }
+
+            if (IsAscii(GXCommon.HexToBytes(device.DedicatedKey)))
+            {
+                DedicatedKeyAsciiCb.CheckedChanged -= DedicatedKeyAsciiCb_CheckedChanged;
+                DedicatedKeyAsciiCb.Checked = true;
+                DedicatedKeyAsciiCb.CheckedChanged += DedicatedKeyAsciiCb_CheckedChanged;
+                DedicatedKeyTb.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(device.DedicatedKey));
+            }
+            else
+            {
+                DedicatedKeyAsciiCb.CheckedChanged -= DedicatedKeyAsciiCb_CheckedChanged;
+                DedicatedKeyAsciiCb.Checked = false;
+                DedicatedKeyAsciiCb.CheckedChanged += DedicatedKeyAsciiCb_CheckedChanged;
+                DedicatedKeyTb.Text = device.DedicatedKey;
             }
 
             if (IsAscii(GXCommon.HexToBytes(device.ServerSystemTitle)))
@@ -880,7 +895,9 @@ namespace GXDLMSDirector
             device.BlockCipherKey = GetAsHex(BlockCipherKeyTB.Text, BlockCipherKeyAsciiCb.Checked);
             device.AuthenticationKey = GetAsHex(AuthenticationKeyTB.Text, AuthenticationKeyAsciiCb.Checked);
             device.ServerSystemTitle = GetAsHex(ServerSystemTitle.Text, ServerSystemTitleAsciiCb.Checked);
+            device.DedicatedKey = GetAsHex(DedicatedKeyTb.Text, DedicatedKeyAsciiCb.Checked);
             device.PreEstablished = UsePreEstablishedApplicationAssociations.Checked;
+
             if (InvocationCounterTB.Text != "")
             {
                 device.InvocationCounter = UInt32.Parse(InvocationCounterTB.Text);
@@ -1656,6 +1673,32 @@ namespace GXDLMSDirector
                 if (Clipboard.ContainsText())
                 {
                     textBox1.Text = Clipboard.GetText();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message);
+            }
+        }
+
+        private void DedicatedKeyAsciiCb_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (DedicatedKeyAsciiCb.Checked)
+                {
+                    if (!IsAscii(GXCommon.HexToBytes(DedicatedKeyTb.Text)))
+                    {
+                        DedicatedKeyAsciiCb.CheckedChanged -= DedicatedKeyAsciiCb_CheckedChanged;
+                        DedicatedKeyAsciiCb.Checked = !DedicatedKeyAsciiCb.Checked;
+                        DedicatedKeyAsciiCb.CheckedChanged += DedicatedKeyAsciiCb_CheckedChanged;
+                        throw new ArgumentOutOfRangeException(Properties.Resources.InvalidASCII);
+                    }
+                    DedicatedKeyTb.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(DedicatedKeyTb.Text));
+                }
+                else
+                {
+                    DedicatedKeyTb.Text = GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(DedicatedKeyTb.Text), true);
                 }
             }
             catch (Exception ex)

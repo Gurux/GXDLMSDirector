@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10094 $,
-//                  $Date: 2018-05-30 15:15:40 +0300 (ke, 30 touko 2018) $
+// Version:         $Revision: 10112 $,
+//                  $Date: 2018-06-06 17:36:02 +0300 (Wed, 06 Jun 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1190,7 +1190,7 @@ namespace GXDLMSDirector
                         {
                             traceTranslator.ServerSystemTitle = dev.Comm.client.ServerSystemTitle;
                         }
-                        traceTranslator.DedicatedKey = dev.Comm.client.DedicatedKey;
+                        traceTranslator.DedicatedKey = dev.Comm.client.Ciphering.DedicatedKey;
                     }
                 }
                 else if (obj is GXDLMSObjectCollection)
@@ -1225,7 +1225,7 @@ namespace GXDLMSDirector
                     {
                         traceTranslator.ServerSystemTitle = dev.Comm.client.ServerSystemTitle;
                     }
-                    traceTranslator.DedicatedKey = dev.Comm.client.DedicatedKey;
+                    traceTranslator.DedicatedKey = dev.Comm.client.Ciphering.DedicatedKey;
                     GXDlmsUi.ObjectChanged(SelectedView, tmp as GXDLMSObject, true);
                 }
             }
@@ -4469,6 +4469,12 @@ namespace GXDLMSDirector
                         obj.LogicalName = item.LogicalName;
                         obj.Version = item.Version;
                         obj.Description = item.Description;
+                        if (string.IsNullOrEmpty(obj.Description))
+                        {
+                            GXDLMSConverter c = new GXDLMSConverter(dev.Standard);
+                            obj.Description = c.GetDescription(obj.LogicalName, obj.ObjectType)[0];
+                        }
+
                         UpdateAttributes(obj, item);
                         dev.Objects.Add(obj);
                         TreeNode deviceNode = (TreeNode)ObjectTreeItems[dev];

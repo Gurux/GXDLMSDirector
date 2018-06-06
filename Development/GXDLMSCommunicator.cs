@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10094 $,
-//                  $Date: 2018-05-30 15:15:40 +0300 (ke, 30 touko 2018) $
+// Version:         $Revision: 10112 $,
+//                  $Date: 2018-06-06 17:36:02 +0300 (Wed, 06 Jun 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -172,9 +172,9 @@ namespace GXDLMSDirector
 
         public void Disconnect()
         {
-            if (media != null && media.IsOpen)
+            try
             {
-                try
+                if (media != null && media.IsOpen)
                 {
                     GXReplyData reply = new GXReplyData();
                     try
@@ -204,19 +204,19 @@ namespace GXDLMSDirector
                         //All meters don't support release.
                     }
                 }
-                finally
+            }
+            finally
+            {
+                if (media != null)
                 {
-                    if (media != null)
+                    media.Close();
+                    //Restore old settings.
+                    if (media is GXSerial)
                     {
-                        media.Close();
-                        //Restore old settings.
-                        if (media is GXSerial)
-                        {
-                            media.Settings = parent.StartMediaSettings;
-                        }
+                        media.Settings = parent.StartMediaSettings;
                     }
                 }
-            }
+            }            
         }
 
         public void ReadDLMSPacket(byte[] data, GXReplyData reply)
@@ -280,12 +280,21 @@ namespace GXDLMSDirector
                             {
                                 p.Count = 1;
                             }
-                            System.Diagnostics.Debug.WriteLine("Data send failed. Try to resend " + pos.ToString() + "/3");
+                            string log = "Data send failed. Try to resend " + pos.ToString() + "/3";
+                            GXLogWriter.WriteLog(log);
+                            if (parent.OnTrace != null)
+                            {
+                                parent.OnTrace(parent, log, p.Reply, 0, LogFile);
+                            }
                             media.Send(data, null);
                             continue;
                         }
                         string err = "Failed to receive reply from the device in given time.";
                         GXLogWriter.WriteLog(err, p.Reply);
+                        if (parent.OnTrace != null)
+                        {
+                            parent.OnTrace(parent, err, p.Reply, 0, LogFile);
+                        }
                         throw new TimeoutException(err);
                     }
                 }
@@ -319,13 +328,22 @@ namespace GXDLMSDirector
                             //Try to read again...
                             if (++pos <= tryCount)
                             {
-                                err = "Data send failed. ";
-                                System.Diagnostics.Debug.WriteLine(err + " Try to resend " + pos.ToString() + "/3");
-                                GXLogWriter.WriteLog(err, p.Reply);
+                                err = "Data send failed. Try to resend " + pos.ToString() + "/3";
+                                System.Diagnostics.Debug.WriteLine(err);
+                                GXLogWriter.WriteLog(err, data);
+                                if (parent.OnTrace != null)
+                                {
+                                    parent.OnTrace(parent, err, p.Reply, 0, LogFile);
+                                }
                                 continue;
                             }
                             err = "Failed to receive reply from the device in given time.";
                             GXLogWriter.WriteLog(err, p.Reply);
+                            if (parent.OnTrace != null)
+                            {
+                                parent.OnTrace(parent, err, p.Reply, 0, LogFile);
+                            }
+
                             throw new TimeoutException(err);
                         }
                     }
@@ -552,6 +570,10 @@ namespace GXDLMSDirector
         void Media_OnTrace(object sender, TraceEventArgs e)
         {
             GXLogWriter.WriteLog(e.ToString());
+            if (parent.OnTrace != null)
+            {
+                parent.OnTrace(parent, e.ToString(), null, 0, LogFile);
+            }
         }
 
         /// <summary>
@@ -609,6 +631,7 @@ namespace GXDLMSDirector
                 throw new Exception("Unknown manufacturer " + id);
             }
             this.parent.Manufacturer = manufacturer.Identification;
+            client.Standard = this.parent.Standard;
             client.Authentication = this.parent.Authentication;
             client.InterfaceType = InterfaceType.HDLC;
             if (!string.IsNullOrEmpty(this.parent.Password))
@@ -816,11 +839,11 @@ namespace GXDLMSDirector
             }
             if (!string.IsNullOrEmpty(parent.DedicatedKey))
             {
-                client.DedicatedKey = GXCommon.HexToBytes(parent.DedicatedKey);
+                client.Ciphering.DedicatedKey = GXCommon.HexToBytes(parent.DedicatedKey);
             }
             else
             {
-                client.DedicatedKey = null;
+                client.Ciphering.DedicatedKey = null;
             }
             client.Limits.WindowSizeRX = parent.WindowSizeRX;
             client.Limits.WindowSizeTX = parent.WindowSizeTX;

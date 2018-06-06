@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10094 $,
-//                  $Date: 2018-05-30 15:15:40 +0300 (ke, 30 touko 2018) $
+// Version:         $Revision: 10112 $,
+//                  $Date: 2018-06-06 17:36:02 +0300 (Wed, 06 Jun 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1649,7 +1649,7 @@ namespace GXDLMSDirector
             // ServerAddressSizeCb
             // 
             this.ServerAddressSizeCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.helpProvider1.SetHelpKeyword(this.ServerAddressSizeCb, "ServiceClass");
+            this.helpProvider1.SetHelpKeyword(this.ServerAddressSizeCb, "AddressSize");
             this.helpProvider1.SetHelpNavigator(this.ServerAddressSizeCb, System.Windows.Forms.HelpNavigator.Topic);
             this.ServerAddressSizeCb.Location = new System.Drawing.Point(146, 321);
             this.ServerAddressSizeCb.Name = "ServerAddressSizeCb";
@@ -1668,7 +1668,7 @@ namespace GXDLMSDirector
             // 
             // UserIdTb
             // 
-            this.helpProvider1.SetHelpKeyword(this.UserIdTb, "UseId");
+            this.helpProvider1.SetHelpKeyword(this.UserIdTb, "UserId");
             this.helpProvider1.SetHelpNavigator(this.UserIdTb, System.Windows.Forms.HelpNavigator.Topic);
             this.UserIdTb.Location = new System.Drawing.Point(146, 295);
             this.UserIdTb.Name = "UserIdTb";

@@ -57,6 +57,11 @@ namespace GXDLMSDirector
     public class GXConformanceTests
     {
         /// <summary>
+        /// Only one trace can write for a log at the time.
+        /// </summary>
+        static readonly object traceLock = new object();
+
+        /// <summary>
         /// Continue conformance tests.
         /// </summary>
         public static bool Continue = true;
@@ -523,11 +528,14 @@ namespace GXDLMSDirector
             }
             if (path != null)
             {
-                using (FileStream fs = File.Open(path, FileMode.Append))
+                lock (traceLock)
                 {
-                    using (TextWriter writer = new StreamWriter(fs))
+                    using (FileStream fs = File.Open(path, FileMode.Append))
                     {
-                        writer.WriteLine(trace + " " + GXCommon.ToHex(data));
+                        using (TextWriter writer = new StreamWriter(fs))
+                        {
+                            writer.WriteLine(trace + " " + GXCommon.ToHex(data));
+                        }
                     }
                 }
             }
@@ -554,12 +562,12 @@ namespace GXDLMSDirector
                     //Update logical name.
                     foreach (GXDLMSObject obj in dev.Objects.GetObjects(ot))
                     {
-                        if (name.StartsWith("v0.") ||
-                            name.StartsWith("v1.") ||
-                            name.StartsWith("v2.") ||
-                            name.StartsWith("v3."))
+                        if (name.StartsWith("DLMS.v0.") ||
+                            name.StartsWith("DLMS.v1.") ||
+                            name.StartsWith("DLMS.v2.") ||
+                            name.StartsWith("DLMS.v3."))
                         {
-                            if (!name.StartsWith("v" + obj.Version + "."))
+                            if (!name.StartsWith("DLMS.v" + obj.Version + "."))
                             {
                                 break;
                             }
@@ -572,7 +580,22 @@ namespace GXDLMSDirector
                         }
                         if (tests != null)
                         {
-                            tests.Add(new KeyValuePair<GXDLMSObject, List<GXDLMSXmlPdu>>(obj, (dev.Comm.client as GXDLMSXmlClient).LoadXml(doc.InnerXml)));
+                            string standard = dev.Standard.ToString();
+                            //Check if there is contry spesific test available.
+                            foreach (var it in tests)
+                            {
+                                if (it.Key == obj)
+                                {
+                                    //Remove DLMS standard test and replace it with country spesific test.
+                                    if (name.StartsWith(standard))
+                                    {
+                                        tests.Remove(it);
+                                    }
+                                    break;
+                                }
+                            }
+                            KeyValuePair<GXDLMSObject, List<GXDLMSXmlPdu>> tmp2 = new KeyValuePair<GXDLMSObject, List<GXDLMSXmlPdu>>(obj, (dev.Comm.client as GXDLMSXmlClient).LoadXml(doc.InnerXml));
+                            tests.Add(tmp2);
                         }
                     }
                     break;

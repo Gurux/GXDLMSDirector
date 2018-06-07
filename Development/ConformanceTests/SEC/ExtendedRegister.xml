@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Messages>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="193"/>
+      <AttributeDescriptor>
+        <ClassId Value="4"/>
+        <InstanceId Value="0100010600FF"/>
+        <AttributeId Value="2"/>
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="193"/>
+      <Result>
+        <Data>
+          <None Value="*"/>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="193"/>
+      <AttributeDescriptor>
+        <ClassId Value="4"/>
+        <InstanceId Value="0100010600FF"/>
+        <AttributeId Value="3"/>
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="193"/>
+      <Result>
+        <Data>
+          <Structure Qty="2">
+            <Int8 Value="*"/>
+            <Enum Value="*"/>
+          </Structure>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="193"/>
+      <AttributeDescriptor>
+        <ClassId Value="4"/>
+        <InstanceId Value="0100010600FF"/>
+        <AttributeId Value="4"/>
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="193"/>
+      <Result>
+        <Data>
+          <None Value="*"/>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="193"/>
+      <AttributeDescriptor>
+        <ClassId Value="4"/>
+        <InstanceId Value="0100010600FF"/>
+        <AttributeId Value="5"/>
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="193"/>
+      <Result>
+        <Data>
+          <DateTime Value="*"/>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+</Messages>

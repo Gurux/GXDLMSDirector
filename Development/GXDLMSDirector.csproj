@@ -132,11 +132,11 @@
     <Reference Include="Gurux.Common, Version=8.1.1801.1201, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Common.8.1.1801.1201\lib\portable-win+net40\Gurux.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=8.5.1806.601, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.8.5.1806.601\lib\portable-win+net35\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=8.5.1806.701, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.8.5.1806.701\lib\portable-win+net35\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=8.5.1806.601, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.8.5.1806.601\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=8.5.1806.701, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.8.5.1806.701\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.Net, Version=8.1.1806.401, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Net.8.1.1806.401\lib\portable-win+net40\Gurux.Net.dll</HintPath>
@@ -340,49 +340,53 @@
     <None Include="Resources\ConnectMnu.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ConformanceTests\ActionSchedule.xml">
+    <EmbeddedResource Include="ConformanceTests\DLMS\ActionSchedule.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ConformanceTests\ActivityCalendar.xml">
+    <EmbeddedResource Include="ConformanceTests\DLMS\ActivityCalendar.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ConformanceTests\AssociationLogicalName.xml" />
-    <EmbeddedResource Include="ConformanceTests\AutoAnswer.xml" />
-    <EmbeddedResource Include="ConformanceTests\AutoConnect.xml" />
-    <EmbeddedResource Include="ConformanceTests\Clock.xml" />
-    <EmbeddedResource Include="ConformanceTests\Data.xml" />
-    <EmbeddedResource Include="ConformanceTests\DemandRegister.xml" />
-    <EmbeddedResource Include="ConformanceTests\DisconnectControl.xml" />
-    <EmbeddedResource Include="ConformanceTests\ExtendedRegister.xml" />
-    <EmbeddedResource Include="ConformanceTests\GprsSetup.xml" />
-    <EmbeddedResource Include="ConformanceTests\IecLocalPortSetup.xml" />
-    <EmbeddedResource Include="ConformanceTests\ImageTransfer.xml" />
-    <EmbeddedResource Include="ConformanceTests\IP4Setup.xml" />
-    <EmbeddedResource Include="ConformanceTests\Limiter.xml" />
-    <EmbeddedResource Include="ConformanceTests\MacAddressSetup.xml" />
-    <EmbeddedResource Include="ConformanceTests\MBusClient.xml" />
-    <EmbeddedResource Include="ConformanceTests\MBusMasterPortSetup.xml" />
-    <EmbeddedResource Include="ConformanceTests\ModemConfiguration.xml" />
-    <EmbeddedResource Include="ConformanceTests\PPPSetup.xml" />
-    <EmbeddedResource Include="ConformanceTests\ProfileGeneric.xml" />
-    <EmbeddedResource Include="ConformanceTests\PushSetup.xml" />
-    <EmbeddedResource Include="ConformanceTests\Register.xml" />
-    <EmbeddedResource Include="ConformanceTests\RegisterActivation.xml" />
-    <EmbeddedResource Include="ConformanceTests\RegisterMonitor.xml" />
-    <EmbeddedResource Include="ConformanceTests\SapAssignment.xml" />
-    <EmbeddedResource Include="ConformanceTests\ScriptTable.xml" />
-    <EmbeddedResource Include="ConformanceTests\SecuritySetup.xml" />
-    <EmbeddedResource Include="ConformanceTests\SpecialDaysTable.xml" />
-    <EmbeddedResource Include="ConformanceTests\TcpUdpSetup.xml" />
-    <EmbeddedResource Include="ConformanceTests\Ip6Setup.xml" />
-    <EmbeddedResource Include="ConformanceTests\Account.xml" />
-    <EmbeddedResource Include="ConformanceTests\Credit.xml" />
-    <EmbeddedResource Include="ConformanceTests\Charge.xml" />
-    <EmbeddedResource Include="ConformanceTests\TokenGateway.xml" />
-    <EmbeddedResource Include="ConformanceTests\v0\IecHdlcSetup.xml" />
-    <EmbeddedResource Include="ConformanceTests\v1\IecHdlcSetup.xml" />
-    <EmbeddedResource Include="ConformanceTests\ParameterMonitor.xml" />
-    <EmbeddedResource Include="ConformanceTests\WirelessModeQchannel.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\AssociationLogicalName.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\AutoAnswer.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\AutoConnect.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\Clock.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\Data.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\DemandRegister.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\DisconnectControl.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\ExtendedRegister.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\GprsSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\IecLocalPortSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\ImageTransfer.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\IP4Setup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\Limiter.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\MacAddressSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\MBusClient.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\MBusMasterPortSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\ModemConfiguration.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\PPPSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\ProfileGeneric.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\PushSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\Register.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\RegisterActivation.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\RegisterMonitor.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\SapAssignment.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\ScriptTable.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\SecuritySetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\SpecialDaysTable.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\TcpUdpSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\Ip6Setup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\Account.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\Credit.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\Charge.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\TokenGateway.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\v0\IecHdlcSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\v1\IecHdlcSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\ParameterMonitor.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\WirelessModeQchannel.xml" />
+    <EmbeddedResource Include="ConformanceTests\SEC\ActivityCalendar.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ConformanceTests\SEC\ExtendedRegister.xml" />
     <Content Include="GXDLMSDirector.ico" />
     <None Include="Resources\NotifyMnu.bmp" />
     <None Include="Resources\cct.png" />
@@ -412,6 +416,10 @@
       <Progid>GXDLMSDirector</Progid>
       <DefaultIcon>GXDLMSDirector.ico</DefaultIcon>
     </FileAssociation>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ConformanceTests\Indian\" />
+    <Folder Include="ConformanceTests\Italian\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

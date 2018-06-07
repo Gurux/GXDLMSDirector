@@ -4,9 +4,7 @@
     <GetRequestNormal>
       <InvokeIdAndPriority Value="*" />
       <AttributeDescriptor>
-        <!--EXTENDED_REGISTER-->
         <ClassId Value="4" />
-        <!--0.1.24.2.1.255-->
         <InstanceId Value="0001180201FF" />
         <AttributeId Value="2" />
       </AttributeDescriptor>
@@ -24,11 +22,32 @@
   </GetResponse>
   <GetRequest>
     <GetRequestNormal>
+      <InvokeIdAndPriority Value="193"/>
+      <AttributeDescriptor>
+        <ClassId Value="4"/>
+        <InstanceId Value="0100010600FF"/>
+        <AttributeId Value="3"/>
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="193"/>
+      <Result>
+        <Data>
+          <Structure Qty="2">
+            <Int8 Value="*"/>
+            <Enum Value="*"/>
+          </Structure>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
       <InvokeIdAndPriority Value="*" />
       <AttributeDescriptor>
-        <!--EXTENDED_REGISTER-->
         <ClassId Value="4" />
-        <!--0.1.24.2.1.255-->
         <InstanceId Value="0001180201FF" />
         <AttributeId Value="4" />
       </AttributeDescriptor>
@@ -48,9 +67,7 @@
     <GetRequestNormal>
       <InvokeIdAndPriority Value="*" />
       <AttributeDescriptor>
-        <!--EXTENDED_REGISTER-->
         <ClassId Value="4" />
-        <!--0.1.24.2.1.255-->
         <InstanceId Value="0001180201FF" />
         <AttributeId Value="5" />
       </AttributeDescriptor>

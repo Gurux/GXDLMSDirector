@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10094 $,
-//                  $Date: 2018-05-30 15:15:40 +0300 (ke, 30 touko 2018) $
+// Version:         $Revision: 10132 $,
+//                  $Date: 2018-06-13 12:54:36 +0300 (Wed, 13 Jun 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -439,6 +439,30 @@ namespace GXDLMSDirector
             {
                 //Forse to use server address size.
                 ServerAddressSizeCb.SelectedItem = device.ServerAddressSize;
+            }
+            if (device.PhysicalDeviceAddress != null)
+            {
+                UseGatewayCb.Checked = true;
+                NetworkIDTb.Text = device.NetworkId.ToString();
+                if (IsAscii(GXCommon.HexToBytes(device.PhysicalDeviceAddress)))
+                {
+                    PhysicalDeviceAddressAsciiCb.CheckedChanged -= PhysicalDeviceAddressAsciiCb_CheckedChanged;
+                    PhysicalDeviceAddressAsciiCb.Checked = true;
+                    PhysicalDeviceAddressAsciiCb.CheckedChanged += PhysicalDeviceAddressAsciiCb_CheckedChanged;
+                    PhysicalDeviceAddressTb.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(device.PhysicalDeviceAddress));
+                }
+                else
+                {
+                    PhysicalDeviceAddressAsciiCb.CheckedChanged -= PhysicalDeviceAddressAsciiCb_CheckedChanged;
+                    PhysicalDeviceAddressAsciiCb.Checked = false;
+                    PhysicalDeviceAddressAsciiCb.CheckedChanged += PhysicalDeviceAddressAsciiCb_CheckedChanged;
+                    PhysicalDeviceAddressTb.Text = device.PhysicalDeviceAddress;
+                }
+            }
+            else
+            {
+                UseGatewayCb.Checked = false;
+                NetworkIDTb.Text = "0";
             }
         }
 
@@ -918,6 +942,17 @@ namespace GXDLMSDirector
             device.Challenge = GXCommon.ToHex(GXCommon.HexToBytes(ChallengeTB.Text), false);
             UpdateConformance();
             device.Standard = (Standard)StandardCb.SelectedItem;
+
+            if (UseGatewayCb.Checked)
+            {
+                device.NetworkId = byte.Parse(NetworkIDTb.Text);
+                device.PhysicalDeviceAddress = GetAsHex(PhysicalDeviceAddressTb.Text, PhysicalDeviceAddressAsciiCb.Checked);
+            }
+            else
+            {
+                device.NetworkId = 0;
+                device.PhysicalDeviceAddress = null;
+            }
         }
 
         /// <summary>
@@ -1705,6 +1740,40 @@ namespace GXDLMSDirector
             {
                 MessageBox.Show(this, ex.Message);
             }
+        }
+
+        private void PhysicalDeviceAddressAsciiCb_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (PhysicalDeviceAddressAsciiCb.Checked)
+                {
+                    if (!IsAscii(GXCommon.HexToBytes(PhysicalDeviceAddressTb.Text)))
+                    {
+                        PhysicalDeviceAddressAsciiCb.CheckedChanged -= PhysicalDeviceAddressAsciiCb_CheckedChanged;
+                        PhysicalDeviceAddressAsciiCb.Checked = !PhysicalDeviceAddressAsciiCb.Checked;
+                        PhysicalDeviceAddressAsciiCb.CheckedChanged += PhysicalDeviceAddressAsciiCb_CheckedChanged;
+                        throw new ArgumentOutOfRangeException(Properties.Resources.InvalidASCII);
+                    }
+                    PhysicalDeviceAddressTb.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(PhysicalDeviceAddressTb.Text));
+                }
+                else
+                {
+                    PhysicalDeviceAddressTb.Text = GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(PhysicalDeviceAddressTb.Text), true);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message);
+            }
+        }      
+
+        /// <summary>
+        /// Is gateway used.
+        /// </summary>
+        private void UseGatewayCb_CheckedChanged(object sender, EventArgs e)
+        {
+            NetworkIDTb.ReadOnly = PhysicalDeviceAddressTb.ReadOnly = !UseGatewayCb.Checked;
         }
     }
 }

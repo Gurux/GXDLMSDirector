@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10112 $,
-//                  $Date: 2018-06-06 17:36:02 +0300 (Wed, 06 Jun 2018) $
+// Version:         $Revision: 10132 $,
+//                  $Date: 2018-06-13 12:54:36 +0300 (Wed, 13 Jun 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -197,6 +197,13 @@ namespace GXDLMSDirector
             this.MaxInfoTXTb = new System.Windows.Forms.TextBox();
             this.MaxInfoTXLbl = new System.Windows.Forms.Label();
             this.UseUtcTimeZone = new System.Windows.Forms.CheckBox();
+            this.GatewayTab = new System.Windows.Forms.TabPage();
+            this.UseGatewayCb = new System.Windows.Forms.CheckBox();
+            this.PhysicalDeviceAddressAsciiCb = new System.Windows.Forms.CheckBox();
+            this.PhysicalDeviceAddressTb = new System.Windows.Forms.TextBox();
+            this.PhysicalDeviceAddressLbl = new System.Windows.Forms.Label();
+            this.NetworkIDTb = new System.Windows.Forms.TextBox();
+            this.NetworkIDLbl = new System.Windows.Forms.Label();
             this.XmlTab = new System.Windows.Forms.TabPage();
             this.PasteFromClipboardBtn = new System.Windows.Forms.Button();
             this.CopyBtn = new System.Windows.Forms.Button();
@@ -220,6 +227,7 @@ namespace GXDLMSDirector
             this.DeviceTab.SuspendLayout();
             this.AdvancedTab.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.GatewayTab.SuspendLayout();
             this.XmlTab.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -227,7 +235,7 @@ namespace GXDLMSDirector
             // 
             this.CancelBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelBtn.Location = new System.Drawing.Point(331, 422);
+            this.CancelBtn.Location = new System.Drawing.Point(392, 422);
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.Size = new System.Drawing.Size(75, 23);
             this.CancelBtn.TabIndex = 17;
@@ -239,7 +247,7 @@ namespace GXDLMSDirector
             // 
             this.OKBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.OKBtn.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.OKBtn.Location = new System.Drawing.Point(250, 422);
+            this.OKBtn.Location = new System.Drawing.Point(311, 422);
             this.OKBtn.Name = "OKBtn";
             this.OKBtn.Size = new System.Drawing.Size(75, 23);
             this.OKBtn.TabIndex = 16;
@@ -250,7 +258,7 @@ namespace GXDLMSDirector
             // InitialSettingsBtn
             // 
             this.InitialSettingsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.InitialSettingsBtn.Location = new System.Drawing.Point(18, 422);
+            this.InitialSettingsBtn.Location = new System.Drawing.Point(79, 422);
             this.InitialSettingsBtn.Name = "InitialSettingsBtn";
             this.InitialSettingsBtn.Size = new System.Drawing.Size(117, 23);
             this.InitialSettingsBtn.TabIndex = 15;
@@ -986,7 +994,7 @@ namespace GXDLMSDirector
             this.DeviceSettingsTab.Name = "DeviceSettingsTab";
             this.DeviceSettingsTab.Padding = new System.Windows.Forms.Padding(3);
             this.helpProvider1.SetShowHelp(this.DeviceSettingsTab, true);
-            this.DeviceSettingsTab.Size = new System.Drawing.Size(411, 388);
+            this.DeviceSettingsTab.Size = new System.Drawing.Size(472, 388);
             this.DeviceSettingsTab.TabIndex = 0;
             this.DeviceSettingsTab.Text = "Device Settings";
             this.DeviceSettingsTab.UseVisualStyleBackColor = true;
@@ -997,7 +1005,7 @@ namespace GXDLMSDirector
             | System.Windows.Forms.AnchorStyles.Right)));
             this.CustomSettings.Location = new System.Drawing.Point(8, 275);
             this.CustomSettings.Name = "CustomSettings";
-            this.CustomSettings.Size = new System.Drawing.Size(396, 99);
+            this.CustomSettings.Size = new System.Drawing.Size(457, 99);
             this.CustomSettings.TabIndex = 50;
             this.CustomSettings.TabStop = false;
             this.CustomSettings.Text = "Settings";
@@ -1330,7 +1338,7 @@ namespace GXDLMSDirector
             this.NetworkSettingsGB.Controls.Add(this.HostLbl);
             this.NetworkSettingsGB.Location = new System.Drawing.Point(6, 243);
             this.NetworkSettingsGB.Name = "NetworkSettingsGB";
-            this.NetworkSettingsGB.Size = new System.Drawing.Size(396, 99);
+            this.NetworkSettingsGB.Size = new System.Drawing.Size(457, 99);
             this.NetworkSettingsGB.TabIndex = 34;
             this.NetworkSettingsGB.TabStop = false;
             this.NetworkSettingsGB.Text = "Settings";
@@ -1406,7 +1414,7 @@ namespace GXDLMSDirector
             this.TerminalSettingsGB.Controls.Add(this.TerminalPhoneNumberLbl);
             this.TerminalSettingsGB.Location = new System.Drawing.Point(165, 240);
             this.TerminalSettingsGB.Name = "TerminalSettingsGB";
-            this.TerminalSettingsGB.Size = new System.Drawing.Size(370, 99);
+            this.TerminalSettingsGB.Size = new System.Drawing.Size(431, 99);
             this.TerminalSettingsGB.TabIndex = 46;
             this.TerminalSettingsGB.TabStop = false;
             this.TerminalSettingsGB.Text = "Settings";
@@ -1466,7 +1474,7 @@ namespace GXDLMSDirector
             this.SerialSettingsGB.Controls.Add(this.SerialPortCB);
             this.SerialSettingsGB.Location = new System.Drawing.Point(82, 240);
             this.SerialSettingsGB.Name = "SerialSettingsGB";
-            this.SerialSettingsGB.Size = new System.Drawing.Size(320, 89);
+            this.SerialSettingsGB.Size = new System.Drawing.Size(381, 89);
             this.SerialSettingsGB.TabIndex = 35;
             this.SerialSettingsGB.TabStop = false;
             this.SerialSettingsGB.Text = "Settings";
@@ -1528,11 +1536,12 @@ namespace GXDLMSDirector
             this.DeviceTab.Controls.Add(this.AdvancedTab);
             this.DeviceTab.Controls.Add(this.SupportedServicesTab);
             this.DeviceTab.Controls.Add(this.CipheringTab);
+            this.DeviceTab.Controls.Add(this.GatewayTab);
             this.DeviceTab.Controls.Add(this.XmlTab);
             this.DeviceTab.Location = new System.Drawing.Point(0, 0);
             this.DeviceTab.Name = "DeviceTab";
             this.DeviceTab.SelectedIndex = 0;
-            this.DeviceTab.Size = new System.Drawing.Size(419, 414);
+            this.DeviceTab.Size = new System.Drawing.Size(480, 414);
             this.DeviceTab.TabIndex = 0;
             this.DeviceTab.SelectedIndexChanged += new System.EventHandler(this.DeviceTab_SelectedIndexChanged);
             // 
@@ -1827,6 +1836,82 @@ namespace GXDLMSDirector
             this.UseUtcTimeZone.Text = "Use UTC time zone, not standard";
             this.UseUtcTimeZone.UseVisualStyleBackColor = true;
             // 
+            // GatewayTab
+            // 
+            this.GatewayTab.Controls.Add(this.UseGatewayCb);
+            this.GatewayTab.Controls.Add(this.PhysicalDeviceAddressAsciiCb);
+            this.GatewayTab.Controls.Add(this.PhysicalDeviceAddressTb);
+            this.GatewayTab.Controls.Add(this.PhysicalDeviceAddressLbl);
+            this.GatewayTab.Controls.Add(this.NetworkIDTb);
+            this.GatewayTab.Controls.Add(this.NetworkIDLbl);
+            this.GatewayTab.Location = new System.Drawing.Point(4, 22);
+            this.GatewayTab.Name = "GatewayTab";
+            this.GatewayTab.Size = new System.Drawing.Size(411, 388);
+            this.GatewayTab.TabIndex = 5;
+            this.GatewayTab.Text = "Gateway";
+            this.GatewayTab.UseVisualStyleBackColor = true;
+            // 
+            // UseGatewayCb
+            // 
+            this.UseGatewayCb.AutoSize = true;
+            this.UseGatewayCb.Checked = true;
+            this.UseGatewayCb.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.UseGatewayCb.Location = new System.Drawing.Point(14, 12);
+            this.UseGatewayCb.Name = "UseGatewayCb";
+            this.UseGatewayCb.Size = new System.Drawing.Size(90, 17);
+            this.UseGatewayCb.TabIndex = 47;
+            this.UseGatewayCb.Text = "Use Gateway";
+            this.UseGatewayCb.UseVisualStyleBackColor = true;
+            this.UseGatewayCb.CheckedChanged += new System.EventHandler(this.UseGatewayCb_CheckedChanged);
+            // 
+            // PhysicalDeviceAddressAsciiCb
+            // 
+            this.PhysicalDeviceAddressAsciiCb.AutoSize = true;
+            this.PhysicalDeviceAddressAsciiCb.Location = new System.Drawing.Point(349, 63);
+            this.PhysicalDeviceAddressAsciiCb.Name = "PhysicalDeviceAddressAsciiCb";
+            this.PhysicalDeviceAddressAsciiCb.Size = new System.Drawing.Size(53, 17);
+            this.PhysicalDeviceAddressAsciiCb.TabIndex = 45;
+            this.PhysicalDeviceAddressAsciiCb.Text = "ASCII";
+            this.PhysicalDeviceAddressAsciiCb.UseVisualStyleBackColor = true;
+            this.PhysicalDeviceAddressAsciiCb.CheckedChanged += new System.EventHandler(this.PhysicalDeviceAddressAsciiCb_CheckedChanged);
+            // 
+            // PhysicalDeviceAddressTb
+            // 
+            this.PhysicalDeviceAddressTb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.PhysicalDeviceAddressTb.Location = new System.Drawing.Point(141, 61);
+            this.PhysicalDeviceAddressTb.Name = "PhysicalDeviceAddressTb";
+            this.PhysicalDeviceAddressTb.Size = new System.Drawing.Size(200, 20);
+            this.PhysicalDeviceAddressTb.TabIndex = 44;
+            // 
+            // PhysicalDeviceAddressLbl
+            // 
+            this.PhysicalDeviceAddressLbl.AutoSize = true;
+            this.PhysicalDeviceAddressLbl.Location = new System.Drawing.Point(10, 65);
+            this.PhysicalDeviceAddressLbl.Name = "PhysicalDeviceAddressLbl";
+            this.PhysicalDeviceAddressLbl.Size = new System.Drawing.Size(124, 13);
+            this.PhysicalDeviceAddressLbl.TabIndex = 46;
+            this.PhysicalDeviceAddressLbl.Text = "Physical device address:";
+            // 
+            // NetworkIDTb
+            // 
+            this.helpProvider1.SetHelpKeyword(this.NetworkIDTb, "MaxInfoTX");
+            this.helpProvider1.SetHelpNavigator(this.NetworkIDTb, System.Windows.Forms.HelpNavigator.Topic);
+            this.NetworkIDTb.Location = new System.Drawing.Point(141, 35);
+            this.NetworkIDTb.Name = "NetworkIDTb";
+            this.helpProvider1.SetShowHelp(this.NetworkIDTb, true);
+            this.NetworkIDTb.Size = new System.Drawing.Size(93, 20);
+            this.NetworkIDTb.TabIndex = 39;
+            // 
+            // NetworkIDLbl
+            // 
+            this.NetworkIDLbl.AutoSize = true;
+            this.NetworkIDLbl.Location = new System.Drawing.Point(11, 39);
+            this.NetworkIDLbl.Name = "NetworkIDLbl";
+            this.NetworkIDLbl.Size = new System.Drawing.Size(64, 13);
+            this.NetworkIDLbl.TabIndex = 40;
+            this.NetworkIDLbl.Text = "Network ID:";
+            // 
             // XmlTab
             // 
             this.XmlTab.Controls.Add(this.PasteFromClipboardBtn);
@@ -1895,7 +1980,7 @@ namespace GXDLMSDirector
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.CancelBtn;
-            this.ClientSize = new System.Drawing.Size(418, 456);
+            this.ClientSize = new System.Drawing.Size(479, 456);
             this.Controls.Add(this.InitialSettingsBtn);
             this.Controls.Add(this.DeviceTab);
             this.Controls.Add(this.OKBtn);
@@ -1935,6 +2020,8 @@ namespace GXDLMSDirector
             this.AdvancedTab.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.GatewayTab.ResumeLayout(false);
+            this.GatewayTab.PerformLayout();
             this.XmlTab.ResumeLayout(false);
             this.XmlTab.PerformLayout();
             this.ResumeLayout(false);
@@ -2084,5 +2171,12 @@ namespace GXDLMSDirector
         private System.Windows.Forms.CheckBox DedicatedKeyAsciiCb;
         private System.Windows.Forms.TextBox DedicatedKeyTb;
         private System.Windows.Forms.Label DedicatedKeyLbl;
+        private System.Windows.Forms.TabPage GatewayTab;
+        private System.Windows.Forms.CheckBox PhysicalDeviceAddressAsciiCb;
+        private System.Windows.Forms.TextBox PhysicalDeviceAddressTb;
+        private System.Windows.Forms.TextBox NetworkIDTb;
+        private System.Windows.Forms.Label NetworkIDLbl;
+        private System.Windows.Forms.Label PhysicalDeviceAddressLbl;
+        private System.Windows.Forms.CheckBox UseGatewayCb;
     }
 }

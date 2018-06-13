@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10094 $,
-//                  $Date: 2018-05-30 15:15:40 +0300 (ke, 30 touko 2018) $
+// Version:         $Revision: 10132 $,
+//                  $Date: 2018-06-13 12:54:36 +0300 (Wed, 13 Jun 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -240,6 +240,8 @@ namespace GXDLMSDirector
             this.AuthenticationTb = new System.Windows.Forms.Label();
             this.AuthenticationLbl = new System.Windows.Forms.Label();
             this.Ciphering = new System.Windows.Forms.GroupBox();
+            this.DedicatedKeyTb = new System.Windows.Forms.TextBox();
+            this.DedicatedKeyLbl = new System.Windows.Forms.Label();
             this.AuthenticationKeyTb = new System.Windows.Forms.TextBox();
             this.BlockCipherKeyTb = new System.Windows.Forms.TextBox();
             this.ServerSystemTitleLbl = new System.Windows.Forms.Label();
@@ -263,8 +265,11 @@ namespace GXDLMSDirector
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.ErrorsView = new System.Windows.Forms.ListView();
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.DedicatedKeyTb = new System.Windows.Forms.TextBox();
-            this.DedicatedKeyLbl = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.PhysicalDeviceAddressLbl = new System.Windows.Forms.Label();
+            this.PhysicalDeviceAddressTb = new System.Windows.Forms.TextBox();
+            this.NetworkIDTb = new System.Windows.Forms.TextBox();
+            this.NetworkIDLbl = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -287,6 +292,7 @@ namespace GXDLMSDirector
             this.DeviceGb.SuspendLayout();
             this.Ciphering.SuspendLayout();
             this.tabPage5.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -1730,16 +1736,17 @@ namespace GXDLMSDirector
             this.DeviceInfoView.Location = new System.Drawing.Point(202, 52);
             this.DeviceInfoView.Name = "DeviceInfoView";
             this.DeviceInfoView.SelectedIndex = 0;
-            this.DeviceInfoView.Size = new System.Drawing.Size(499, 376);
+            this.DeviceInfoView.Size = new System.Drawing.Size(523, 462);
             this.DeviceInfoView.TabIndex = 37;
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.groupBox1);
             this.tabPage4.Controls.Add(this.DeviceGb);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(491, 350);
+            this.tabPage4.Size = new System.Drawing.Size(515, 436);
             this.tabPage4.TabIndex = 0;
             this.tabPage4.Text = "General";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -1762,7 +1769,7 @@ namespace GXDLMSDirector
             this.DeviceGb.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DeviceGb.Location = new System.Drawing.Point(3, 3);
             this.DeviceGb.Name = "DeviceGb";
-            this.DeviceGb.Size = new System.Drawing.Size(485, 344);
+            this.DeviceGb.Size = new System.Drawing.Size(509, 430);
             this.DeviceGb.TabIndex = 13;
             this.DeviceGb.TabStop = false;
             // 
@@ -1803,10 +1810,27 @@ namespace GXDLMSDirector
             this.Ciphering.Controls.Add(this.SecurityLbl);
             this.Ciphering.Location = new System.Drawing.Point(0, 165);
             this.Ciphering.Name = "Ciphering";
-            this.Ciphering.Size = new System.Drawing.Size(488, 163);
+            this.Ciphering.Size = new System.Drawing.Size(512, 172);
             this.Ciphering.TabIndex = 68;
             this.Ciphering.TabStop = false;
             this.Ciphering.Text = "Ciphering";
+            // 
+            // DedicatedKeyTb
+            // 
+            this.DedicatedKeyTb.Location = new System.Drawing.Point(114, 143);
+            this.DedicatedKeyTb.Name = "DedicatedKeyTb";
+            this.DedicatedKeyTb.ReadOnly = true;
+            this.DedicatedKeyTb.Size = new System.Drawing.Size(289, 20);
+            this.DedicatedKeyTb.TabIndex = 75;
+            // 
+            // DedicatedKeyLbl
+            // 
+            this.DedicatedKeyLbl.AutoSize = true;
+            this.DedicatedKeyLbl.Location = new System.Drawing.Point(10, 144);
+            this.DedicatedKeyLbl.Name = "DedicatedKeyLbl";
+            this.DedicatedKeyLbl.Size = new System.Drawing.Size(80, 13);
+            this.DedicatedKeyLbl.TabIndex = 74;
+            this.DedicatedKeyLbl.Text = "Dedicated Key:";
             // 
             // AuthenticationKeyTb
             // 
@@ -2015,22 +2039,55 @@ namespace GXDLMSDirector
             this.columnHeader2.Text = "Name";
             this.columnHeader2.Width = 117;
             // 
-            // DedicatedKeyTb
+            // groupBox1
             // 
-            this.DedicatedKeyTb.Location = new System.Drawing.Point(114, 143);
-            this.DedicatedKeyTb.Name = "DedicatedKeyTb";
-            this.DedicatedKeyTb.ReadOnly = true;
-            this.DedicatedKeyTb.Size = new System.Drawing.Size(289, 20);
-            this.DedicatedKeyTb.TabIndex = 75;
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.PhysicalDeviceAddressLbl);
+            this.groupBox1.Controls.Add(this.PhysicalDeviceAddressTb);
+            this.groupBox1.Controls.Add(this.NetworkIDTb);
+            this.groupBox1.Controls.Add(this.NetworkIDLbl);
+            this.groupBox1.Location = new System.Drawing.Point(2, 339);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(512, 53);
+            this.groupBox1.TabIndex = 71;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Gateway";
             // 
-            // DedicatedKeyLbl
+            // PhysicalDeviceAddressLbl
             // 
-            this.DedicatedKeyLbl.AutoSize = true;
-            this.DedicatedKeyLbl.Location = new System.Drawing.Point(10, 144);
-            this.DedicatedKeyLbl.Name = "DedicatedKeyLbl";
-            this.DedicatedKeyLbl.Size = new System.Drawing.Size(80, 13);
-            this.DedicatedKeyLbl.TabIndex = 74;
-            this.DedicatedKeyLbl.Text = "Dedicated Key:";
+            this.PhysicalDeviceAddressLbl.AutoSize = true;
+            this.PhysicalDeviceAddressLbl.Location = new System.Drawing.Point(173, 21);
+            this.PhysicalDeviceAddressLbl.Name = "PhysicalDeviceAddressLbl";
+            this.PhysicalDeviceAddressLbl.Size = new System.Drawing.Size(85, 13);
+            this.PhysicalDeviceAddressLbl.TabIndex = 71;
+            this.PhysicalDeviceAddressLbl.Text = "Device Address:";
+            // 
+            // PhysicalDeviceAddressTb
+            // 
+            this.PhysicalDeviceAddressTb.Location = new System.Drawing.Point(277, 18);
+            this.PhysicalDeviceAddressTb.Name = "PhysicalDeviceAddressTb";
+            this.PhysicalDeviceAddressTb.ReadOnly = true;
+            this.PhysicalDeviceAddressTb.Size = new System.Drawing.Size(127, 20);
+            this.PhysicalDeviceAddressTb.TabIndex = 70;
+            // 
+            // NetworkIDTb
+            // 
+            this.NetworkIDTb.Location = new System.Drawing.Point(115, 19);
+            this.NetworkIDTb.Name = "NetworkIDTb";
+            this.NetworkIDTb.ReadOnly = true;
+            this.NetworkIDTb.Size = new System.Drawing.Size(46, 20);
+            this.NetworkIDTb.TabIndex = 69;
+            // 
+            // NetworkIDLbl
+            // 
+            this.NetworkIDLbl.AutoSize = true;
+            this.NetworkIDLbl.Location = new System.Drawing.Point(11, 21);
+            this.NetworkIDLbl.Name = "NetworkIDLbl";
+            this.NetworkIDLbl.Size = new System.Drawing.Size(64, 13);
+            this.NetworkIDLbl.TabIndex = 68;
+            this.NetworkIDLbl.Text = "Network ID:";
             // 
             // MainForm
             // 
@@ -2082,6 +2139,8 @@ namespace GXDLMSDirector
             this.Ciphering.ResumeLayout(false);
             this.Ciphering.PerformLayout();
             this.tabPage5.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2292,6 +2351,11 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label AuthenticationLbl;
         private System.Windows.Forms.TextBox DedicatedKeyTb;
         private System.Windows.Forms.Label DedicatedKeyLbl;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label PhysicalDeviceAddressLbl;
+        private System.Windows.Forms.TextBox PhysicalDeviceAddressTb;
+        private System.Windows.Forms.TextBox NetworkIDTb;
+        private System.Windows.Forms.Label NetworkIDLbl;
     }
 }
 

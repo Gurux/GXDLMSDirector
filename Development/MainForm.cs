@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10112 $,
-//                  $Date: 2018-06-06 17:36:02 +0300 (Wed, 06 Jun 2018) $
+// Version:         $Revision: 10132 $,
+//                  $Date: 2018-06-13 12:54:36 +0300 (Wed, 13 Jun 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -3623,6 +3623,8 @@ namespace GXDLMSDirector
                     {
                         AuthenticationKeyTb.Text = BlockCipherKeyTb.Text = SecurityTb.Text = ClientSystemTitleTb.Text = ServerSystemTitleTb.Text = "";
                     }
+                    NetworkIDTb.Text = newDev.NetworkId.ToString();
+                    PhysicalDeviceAddressTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.PhysicalDeviceAddress));
                 }
             }
         }

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10112 $,
-//                  $Date: 2018-06-06 17:36:02 +0300 (Wed, 06 Jun 2018) $
+// Version:         $Revision: 10132 $,
+//                  $Date: 2018-06-13 12:54:36 +0300 (Wed, 13 Jun 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -712,6 +712,17 @@ namespace GXDLMSDirector
             {
                 client.CtoSChallenge = null;
             }
+
+            if (!string.IsNullOrEmpty(parent.PhysicalDeviceAddress))
+            {
+                client.Gateway = new GXDLMSGateway();
+                client.Gateway.NetworkId = parent.NetworkId;
+                client.Gateway.PhysicalDeviceAddress = GXCommon.HexToBytes(parent.PhysicalDeviceAddress);
+            }
+            else
+            {
+                client.Gateway = null;
+            }
         }
 
         /// <summary>
@@ -1167,11 +1178,11 @@ namespace GXDLMSDirector
             }
             catch (Exception Ex)
             {
-                if (parent.Standard == Standard.Italian)
+                if (parent.Standard == Standard.Italy)
                 {
                     GXDLMSObject obj;
                     objs = new GXDLMSObjectCollection();
-                    GXObisCode[] tmp = GXDLMSConverter.GetObjects(Standard.Italian);
+                    GXObisCode[] tmp = GXDLMSConverter.GetObjects(Standard.Italy);
                     foreach (GXObisCode it in tmp)
                     {
                         try
@@ -1212,7 +1223,7 @@ namespace GXDLMSDirector
                     throw new Exception("GetObjects failed. " + Ex.Message);
                 }
             }
-            objs = client.ParseObjects(reply.Data, true, parent.Standard);
+            objs = client.ParseObjects(reply.Data, true);
             GXLogWriter.WriteLog("--- Collecting " + objs.Count.ToString() + " objects. ---");
             return objs;
         }

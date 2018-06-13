@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10112 $,
-//                  $Date: 2018-06-06 17:36:02 +0300 (Wed, 06 Jun 2018) $
+// Version:         $Revision: 10132 $,
+//                  $Date: 2018-06-13 12:54:36 +0300 (Wed, 13 Jun 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -468,6 +468,25 @@ namespace GXDLMSDirector
             set;
         }
 
+        /// <summary>
+        /// Network ID.
+        /// </summary>
+        [DefaultValue(0)]
+        public byte NetworkId
+        {
+            get;
+            set;
+        }
+        /// <summary>
+        /// Physical device address.
+        /// </summary>
+        [DefaultValue(null)]
+        public string PhysicalDeviceAddress
+        {
+            get;
+            set;
+        }
+        
 
         /// <summary>
         ///Inactivity timeout.
@@ -880,7 +899,7 @@ namespace GXDLMSDirector
                     try
                     {
                         Comm.GetProfileGenericColumns(item);
-                        if (Standard == Standard.Italian && item.CaptureObjects.Count == 0)
+                        if (Standard == Standard.Italy && item.CaptureObjects.Count == 0)
                         {
                             cols = GetColumns(item.LogicalName);
                             GXDLMSConverter c = new GXDLMSConverter(Standard);
@@ -893,7 +912,7 @@ namespace GXDLMSDirector
                     }
                     catch (GXDLMSException ex)
                     {
-                        if (Standard == Standard.Italian)
+                        if (Standard == Standard.Italy)
                         {
                             cols = GetColumns(item.LogicalName);
                             item.CaptureObjects.Clear();

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10132 $,
-//                  $Date: 2018-06-13 12:54:36 +0300 (Wed, 13 Jun 2018) $
+// Version:         $Revision: 10148 $,
+//                  $Date: 2018-06-26 12:51:01 +0300 (Tue, 26 Jun 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -3601,6 +3601,7 @@ namespace GXDLMSDirector
                     traceTranslator.BlockCipherKey = GXCommon.HexToBytes(newDev.BlockCipherKey);
                     traceTranslator.AuthenticationKey = GXCommon.HexToBytes(newDev.AuthenticationKey);
                     traceTranslator.InvocationCounter = newDev.InvocationCounter;
+                    DedicatedKeyTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.DedicatedKey));
                     AuthenticationTb.Text = newDev.Authentication.ToString();
                     if (newDev.PreEstablished)
                     {
@@ -3616,8 +3617,8 @@ namespace GXDLMSDirector
                         ClientSystemTitleTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.SystemTitle));
                         ServerSystemTitleTb.Text = GXCommon.ToHex(traceTranslator.ServerSystemTitle);
                         SecurityTb.Text = newDev.Security.ToString();
-                        AuthenticationKeyTb.Text = newDev.AuthenticationKey;
-                        BlockCipherKeyTb.Text = newDev.BlockCipherKey;
+                        AuthenticationKeyTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.AuthenticationKey));
+                        BlockCipherKeyTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.BlockCipherKey));
                     }
                     else
                     {
@@ -3927,7 +3928,7 @@ namespace GXDLMSDirector
                 {
                     str = "http://www.gurux.fi/GXDLMSDirector.Menu";
                 }
-                else if (ctl == ObjectPanelFrame && SelectedView != null)
+                else if (ctl == tabControl2 && tabControl2.SelectedTab == tabPage1 && SelectedView != null)
                 {
                     GXDLMSViewAttribute[] att = (GXDLMSViewAttribute[])SelectedView.GetType().GetCustomAttributes(typeof(GXDLMSViewAttribute), true);
                     str = "http://www.gurux.fi/index.php?q=" + att[0].DLMSType.ToString();

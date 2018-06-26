@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10132 $,
-//                  $Date: 2018-06-13 12:54:36 +0300 (Wed, 13 Jun 2018) $
+// Version:         $Revision: 10148 $,
+//                  $Date: 2018-06-26 12:51:01 +0300 (Tue, 26 Jun 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -258,7 +258,7 @@ namespace GXDLMSDirector
             // InitialSettingsBtn
             // 
             this.InitialSettingsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.InitialSettingsBtn.Location = new System.Drawing.Point(79, 422);
+            this.InitialSettingsBtn.Location = new System.Drawing.Point(10, 422);
             this.InitialSettingsBtn.Name = "InitialSettingsBtn";
             this.InitialSettingsBtn.Size = new System.Drawing.Size(117, 23);
             this.InitialSettingsBtn.TabIndex = 15;
@@ -273,7 +273,7 @@ namespace GXDLMSDirector
             this.SupportedServicesTab.Location = new System.Drawing.Point(4, 22);
             this.SupportedServicesTab.Name = "SupportedServicesTab";
             this.SupportedServicesTab.Padding = new System.Windows.Forms.Padding(3);
-            this.SupportedServicesTab.Size = new System.Drawing.Size(411, 388);
+            this.SupportedServicesTab.Size = new System.Drawing.Size(472, 388);
             this.SupportedServicesTab.TabIndex = 1;
             this.SupportedServicesTab.Text = "Supported Services";
             this.SupportedServicesTab.UseVisualStyleBackColor = true;
@@ -699,7 +699,7 @@ namespace GXDLMSDirector
             this.CipheringTab.Controls.Add(this.SecurityLbl);
             this.CipheringTab.Location = new System.Drawing.Point(4, 22);
             this.CipheringTab.Name = "CipheringTab";
-            this.CipheringTab.Size = new System.Drawing.Size(411, 388);
+            this.CipheringTab.Size = new System.Drawing.Size(472, 388);
             this.CipheringTab.TabIndex = 2;
             this.CipheringTab.Text = "Secured Connections";
             this.CipheringTab.UseVisualStyleBackColor = true;
@@ -717,8 +717,6 @@ namespace GXDLMSDirector
             // 
             // DedicatedKeyTb
             // 
-            this.DedicatedKeyTb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.DedicatedKeyTb.Location = new System.Drawing.Point(113, 108);
             this.DedicatedKeyTb.Name = "DedicatedKeyTb";
             this.DedicatedKeyTb.Size = new System.Drawing.Size(226, 20);
@@ -807,8 +805,6 @@ namespace GXDLMSDirector
             // 
             // ServerSystemTitle
             // 
-            this.ServerSystemTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.ServerSystemTitle.Location = new System.Drawing.Point(113, 307);
             this.ServerSystemTitle.Name = "ServerSystemTitle";
             this.ServerSystemTitle.ReadOnly = true;
@@ -897,8 +893,6 @@ namespace GXDLMSDirector
             // 
             // AuthenticationKeyTB
             // 
-            this.AuthenticationKeyTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.AuthenticationKeyTB.Location = new System.Drawing.Point(113, 81);
             this.AuthenticationKeyTB.Name = "AuthenticationKeyTB";
             this.AuthenticationKeyTB.Size = new System.Drawing.Size(226, 20);
@@ -906,8 +900,6 @@ namespace GXDLMSDirector
             // 
             // BlockCipherKeyTB
             // 
-            this.BlockCipherKeyTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.BlockCipherKeyTB.Location = new System.Drawing.Point(113, 55);
             this.BlockCipherKeyTB.Name = "BlockCipherKeyTB";
             this.BlockCipherKeyTB.Size = new System.Drawing.Size(226, 20);
@@ -915,8 +907,6 @@ namespace GXDLMSDirector
             // 
             // SystemTitleTB
             // 
-            this.SystemTitleTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.SystemTitleTB.Location = new System.Drawing.Point(113, 28);
             this.SystemTitleTB.Name = "SystemTitleTB";
             this.SystemTitleTB.Size = new System.Drawing.Size(226, 20);
@@ -1555,8 +1545,6 @@ namespace GXDLMSDirector
             this.AdvancedTab.Controls.Add(this.ServiceClassLbl);
             this.AdvancedTab.Controls.Add(this.StandardLbl);
             this.AdvancedTab.Controls.Add(this.PriorityLbl);
-            this.AdvancedTab.Controls.Add(this.ServerAddressSizeCb);
-            this.AdvancedTab.Controls.Add(this.label5);
             this.AdvancedTab.Controls.Add(this.UserIdTb);
             this.AdvancedTab.Controls.Add(this.UserIDLbl);
             this.AdvancedTab.Controls.Add(this.MaxPduTb);
@@ -1570,7 +1558,7 @@ namespace GXDLMSDirector
             this.AdvancedTab.Name = "AdvancedTab";
             this.AdvancedTab.Padding = new System.Windows.Forms.Padding(3);
             this.helpProvider1.SetShowHelp(this.AdvancedTab, true);
-            this.AdvancedTab.Size = new System.Drawing.Size(411, 388);
+            this.AdvancedTab.Size = new System.Drawing.Size(472, 388);
             this.AdvancedTab.TabIndex = 3;
             this.AdvancedTab.Text = "Advanced";
             this.AdvancedTab.UseVisualStyleBackColor = true;
@@ -1579,7 +1567,7 @@ namespace GXDLMSDirector
             // 
             this.helpProvider1.SetHelpKeyword(this.InactivityTimeoutTb, "InactivityTimeout");
             this.helpProvider1.SetHelpNavigator(this.InactivityTimeoutTb, System.Windows.Forms.HelpNavigator.Topic);
-            this.InactivityTimeoutTb.Location = new System.Drawing.Point(146, 134);
+            this.InactivityTimeoutTb.Location = new System.Drawing.Point(146, 161);
             this.InactivityTimeoutTb.Name = "InactivityTimeoutTb";
             this.helpProvider1.SetShowHelp(this.InactivityTimeoutTb, true);
             this.InactivityTimeoutTb.Size = new System.Drawing.Size(93, 20);
@@ -1589,7 +1577,7 @@ namespace GXDLMSDirector
             // InactivityTimeoutLbl
             // 
             this.InactivityTimeoutLbl.AutoSize = true;
-            this.InactivityTimeoutLbl.Location = new System.Drawing.Point(16, 138);
+            this.InactivityTimeoutLbl.Location = new System.Drawing.Point(16, 165);
             this.InactivityTimeoutLbl.Name = "InactivityTimeoutLbl";
             this.InactivityTimeoutLbl.Size = new System.Drawing.Size(86, 13);
             this.InactivityTimeoutLbl.TabIndex = 46;
@@ -1600,7 +1588,7 @@ namespace GXDLMSDirector
             this.ServiceClassCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.helpProvider1.SetHelpKeyword(this.ServiceClassCb, "ServiceClass");
             this.helpProvider1.SetHelpNavigator(this.ServiceClassCb, System.Windows.Forms.HelpNavigator.Topic);
-            this.ServiceClassCb.Location = new System.Drawing.Point(146, 190);
+            this.ServiceClassCb.Location = new System.Drawing.Point(146, 217);
             this.ServiceClassCb.Name = "ServiceClassCb";
             this.helpProvider1.SetShowHelp(this.ServiceClassCb, true);
             this.ServiceClassCb.Size = new System.Drawing.Size(93, 21);
@@ -1622,7 +1610,7 @@ namespace GXDLMSDirector
             this.PriorityCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.helpProvider1.SetHelpKeyword(this.PriorityCb, "Priority");
             this.helpProvider1.SetHelpNavigator(this.PriorityCb, System.Windows.Forms.HelpNavigator.Topic);
-            this.PriorityCb.Location = new System.Drawing.Point(146, 160);
+            this.PriorityCb.Location = new System.Drawing.Point(146, 187);
             this.PriorityCb.Name = "PriorityCb";
             this.helpProvider1.SetShowHelp(this.PriorityCb, true);
             this.PriorityCb.Size = new System.Drawing.Size(93, 21);
@@ -1631,7 +1619,7 @@ namespace GXDLMSDirector
             // ServiceClassLbl
             // 
             this.ServiceClassLbl.AutoSize = true;
-            this.ServiceClassLbl.Location = new System.Drawing.Point(16, 190);
+            this.ServiceClassLbl.Location = new System.Drawing.Point(16, 217);
             this.ServiceClassLbl.Name = "ServiceClassLbl";
             this.ServiceClassLbl.Size = new System.Drawing.Size(74, 13);
             this.ServiceClassLbl.TabIndex = 50;
@@ -1649,7 +1637,7 @@ namespace GXDLMSDirector
             // PriorityLbl
             // 
             this.PriorityLbl.AutoSize = true;
-            this.PriorityLbl.Location = new System.Drawing.Point(16, 164);
+            this.PriorityLbl.Location = new System.Drawing.Point(16, 191);
             this.PriorityLbl.Name = "PriorityLbl";
             this.PriorityLbl.Size = new System.Drawing.Size(41, 13);
             this.PriorityLbl.TabIndex = 48;
@@ -1660,7 +1648,7 @@ namespace GXDLMSDirector
             this.ServerAddressSizeCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.helpProvider1.SetHelpKeyword(this.ServerAddressSizeCb, "AddressSize");
             this.helpProvider1.SetHelpNavigator(this.ServerAddressSizeCb, System.Windows.Forms.HelpNavigator.Topic);
-            this.ServerAddressSizeCb.Location = new System.Drawing.Point(146, 321);
+            this.ServerAddressSizeCb.Location = new System.Drawing.Point(140, 122);
             this.ServerAddressSizeCb.Name = "ServerAddressSizeCb";
             this.helpProvider1.SetShowHelp(this.ServerAddressSizeCb, true);
             this.ServerAddressSizeCb.Size = new System.Drawing.Size(93, 21);
@@ -1669,7 +1657,7 @@ namespace GXDLMSDirector
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(16, 325);
+            this.label5.Location = new System.Drawing.Point(10, 126);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(102, 13);
             this.label5.TabIndex = 56;
@@ -1679,7 +1667,7 @@ namespace GXDLMSDirector
             // 
             this.helpProvider1.SetHelpKeyword(this.UserIdTb, "UserId");
             this.helpProvider1.SetHelpNavigator(this.UserIdTb, System.Windows.Forms.HelpNavigator.Topic);
-            this.UserIdTb.Location = new System.Drawing.Point(146, 295);
+            this.UserIdTb.Location = new System.Drawing.Point(146, 322);
             this.UserIdTb.Name = "UserIdTb";
             this.helpProvider1.SetShowHelp(this.UserIdTb, true);
             this.UserIdTb.Size = new System.Drawing.Size(93, 20);
@@ -1688,7 +1676,7 @@ namespace GXDLMSDirector
             // UserIDLbl
             // 
             this.UserIDLbl.AutoSize = true;
-            this.UserIDLbl.Location = new System.Drawing.Point(16, 299);
+            this.UserIDLbl.Location = new System.Drawing.Point(16, 326);
             this.UserIDLbl.Name = "UserIDLbl";
             this.UserIDLbl.Size = new System.Drawing.Size(46, 13);
             this.UserIDLbl.TabIndex = 54;
@@ -1698,7 +1686,7 @@ namespace GXDLMSDirector
             // 
             this.helpProvider1.SetHelpKeyword(this.MaxPduTb, "MaxPdu");
             this.helpProvider1.SetHelpNavigator(this.MaxPduTb, System.Windows.Forms.HelpNavigator.Topic);
-            this.MaxPduTb.Location = new System.Drawing.Point(146, 269);
+            this.MaxPduTb.Location = new System.Drawing.Point(146, 296);
             this.MaxPduTb.Name = "MaxPduTb";
             this.helpProvider1.SetShowHelp(this.MaxPduTb, true);
             this.MaxPduTb.Size = new System.Drawing.Size(93, 20);
@@ -1707,7 +1695,7 @@ namespace GXDLMSDirector
             // MaxPduLbl
             // 
             this.MaxPduLbl.AutoSize = true;
-            this.MaxPduLbl.Location = new System.Drawing.Point(16, 273);
+            this.MaxPduLbl.Location = new System.Drawing.Point(16, 300);
             this.MaxPduLbl.Name = "MaxPduLbl";
             this.MaxPduLbl.Size = new System.Drawing.Size(77, 13);
             this.MaxPduLbl.TabIndex = 48;
@@ -1718,7 +1706,7 @@ namespace GXDLMSDirector
             this.UseWrapperCb.AutoSize = true;
             this.helpProvider1.SetHelpKeyword(this.UseWrapperCb, "UseWrapper");
             this.helpProvider1.SetHelpNavigator(this.UseWrapperCb, System.Windows.Forms.HelpNavigator.Topic);
-            this.UseWrapperCb.Location = new System.Drawing.Point(20, 223);
+            this.UseWrapperCb.Location = new System.Drawing.Point(20, 250);
             this.UseWrapperCb.Name = "UseWrapperCb";
             this.helpProvider1.SetShowHelp(this.UseWrapperCb, true);
             this.UseWrapperCb.Size = new System.Drawing.Size(103, 17);
@@ -1737,12 +1725,14 @@ namespace GXDLMSDirector
             this.groupBox1.Controls.Add(this.MaxInfoRXLbl);
             this.groupBox1.Controls.Add(this.MaxInfoTXTb);
             this.groupBox1.Controls.Add(this.MaxInfoTXLbl);
+            this.groupBox1.Controls.Add(this.ServerAddressSizeCb);
+            this.groupBox1.Controls.Add(this.label5);
             this.helpProvider1.SetHelpKeyword(this.groupBox1, "advanced");
             this.helpProvider1.SetHelpNavigator(this.groupBox1, System.Windows.Forms.HelpNavigator.TopicId);
             this.groupBox1.Location = new System.Drawing.Point(6, 6);
             this.groupBox1.Name = "groupBox1";
             this.helpProvider1.SetShowHelp(this.groupBox1, true);
-            this.groupBox1.Size = new System.Drawing.Size(375, 123);
+            this.groupBox1.Size = new System.Drawing.Size(375, 149);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "HDLC settings";
@@ -1828,7 +1818,7 @@ namespace GXDLMSDirector
             this.UseUtcTimeZone.AutoSize = true;
             this.helpProvider1.SetHelpKeyword(this.UseUtcTimeZone, "UseUTC");
             this.helpProvider1.SetHelpNavigator(this.UseUtcTimeZone, System.Windows.Forms.HelpNavigator.Topic);
-            this.UseUtcTimeZone.Location = new System.Drawing.Point(20, 246);
+            this.UseUtcTimeZone.Location = new System.Drawing.Point(20, 273);
             this.UseUtcTimeZone.Name = "UseUtcTimeZone";
             this.helpProvider1.SetShowHelp(this.UseUtcTimeZone, true);
             this.UseUtcTimeZone.Size = new System.Drawing.Size(183, 17);
@@ -1846,7 +1836,7 @@ namespace GXDLMSDirector
             this.GatewayTab.Controls.Add(this.NetworkIDLbl);
             this.GatewayTab.Location = new System.Drawing.Point(4, 22);
             this.GatewayTab.Name = "GatewayTab";
-            this.GatewayTab.Size = new System.Drawing.Size(411, 388);
+            this.GatewayTab.Size = new System.Drawing.Size(472, 388);
             this.GatewayTab.TabIndex = 5;
             this.GatewayTab.Text = "Gateway";
             this.GatewayTab.UseVisualStyleBackColor = true;
@@ -1877,8 +1867,6 @@ namespace GXDLMSDirector
             // 
             // PhysicalDeviceAddressTb
             // 
-            this.PhysicalDeviceAddressTb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.PhysicalDeviceAddressTb.Location = new System.Drawing.Point(141, 61);
             this.PhysicalDeviceAddressTb.Name = "PhysicalDeviceAddressTb";
             this.PhysicalDeviceAddressTb.Size = new System.Drawing.Size(200, 20);
@@ -1920,7 +1908,7 @@ namespace GXDLMSDirector
             this.XmlTab.Controls.Add(this.textBox1);
             this.XmlTab.Location = new System.Drawing.Point(4, 22);
             this.XmlTab.Name = "XmlTab";
-            this.XmlTab.Size = new System.Drawing.Size(411, 388);
+            this.XmlTab.Size = new System.Drawing.Size(472, 388);
             this.XmlTab.TabIndex = 4;
             this.XmlTab.Text = "XML";
             this.XmlTab.UseVisualStyleBackColor = true;
@@ -1950,7 +1938,7 @@ namespace GXDLMSDirector
             // ApplyBtn
             // 
             this.ApplyBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ApplyBtn.Location = new System.Drawing.Point(319, 361);
+            this.ApplyBtn.Location = new System.Drawing.Point(388, 361);
             this.ApplyBtn.Name = "ApplyBtn";
             this.ApplyBtn.Size = new System.Drawing.Size(75, 23);
             this.ApplyBtn.TabIndex = 8;
@@ -1963,7 +1951,7 @@ namespace GXDLMSDirector
             this.textBox1.Location = new System.Drawing.Point(8, 3);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(386, 352);
+            this.textBox1.Size = new System.Drawing.Size(455, 352);
             this.textBox1.TabIndex = 0;
             // 
             // helpProvider1

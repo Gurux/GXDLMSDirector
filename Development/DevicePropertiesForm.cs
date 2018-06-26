@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10132 $,
-//                  $Date: 2018-06-13 12:54:36 +0300 (Wed, 13 Jun 2018) $
+// Version:         $Revision: 10148 $,
+//                  $Date: 2018-06-26 12:51:01 +0300 (Tue, 26 Jun 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -387,6 +387,10 @@ namespace GXDLMSDirector
             this.VerboseModeCB.Checked = device.Verbose;
             this.NameTB.Text = device.Name;
             SelectedMedia = device.Media;
+            if (SelectedMedia != null)
+            {
+                SelectedMedia.Settings = device.MediaSettings;
+            }
             UseRemoteSerialCB.Checked = device.UseRemoteSerial;
             StartProtocolCB.SelectedItem = device.StartProtocol;
             PhysicalServerAddressTB.Value = Convert.ToDecimal(device.PhysicalAddress);

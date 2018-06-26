@@ -186,7 +186,8 @@ namespace GXDLMSDirector
             object target,
             List<GXDLMSXmlPdu> actions,
             GXOutput output,
-            GXConformanceSettings settings)
+            GXConformanceSettings settings,
+            bool external)
         {
             GXReplyData reply = new GXReplyData();
             string ln = null;
@@ -284,7 +285,7 @@ namespace GXDLMSDirector
                     //Skip association view and profile generic buffer.
                     if (obj != null)
                     {
-                        if ((obj.ObjectType == ObjectType.AssociationLogicalName || obj.ObjectType == ObjectType.ProfileGeneric) && index == 2)
+                        if ((!external && (obj.ObjectType == ObjectType.AssociationLogicalName || obj.ObjectType == ObjectType.ProfileGeneric) && index == 2))
                         {
                             continue;
                         }
@@ -433,10 +434,12 @@ namespace GXDLMSDirector
                         }
                         else if (value is Object[])
                         {
+                            //TODO: str = GXDLMSTranslator.ValueToXml(value); Profile Generic capture objects causes problem at the moment.
                             str = GXHelpers.GetArrayAsString(value);
                         }
                         else if (value is System.Collections.IList)
                         {
+                            //TODO: str = GXDLMSTranslator.ValueToXml(value);
                             str = GXHelpers.GetArrayAsString(value);
                         }
                         else
@@ -659,6 +662,20 @@ namespace GXDLMSDirector
                             continue;
                         }
                     }
+                    if (!settings.ExcludeApplicationTests)
+                    {
+                        if (!dev.Comm.media.IsOpen)
+                        {
+                            dev.Comm.UpdateSettings();
+                            dev.Comm.media.Open();
+                        }
+                        CosemApplicationLayerTests(test, settings, dev, output);
+                        if (!Continue)
+                        {
+                            continue;
+                        }
+                    }
+
                     dev.Comm.InitializeConnection();
                     if (client.Ciphering.InvocationCounter != 0)
                     {
@@ -862,7 +879,7 @@ namespace GXDLMSDirector
                             try
                             {
                                 test.OnProgress(test, "Testing " + it.Key.LogicalName, ++i, cnt);
-                                Execute(converter, test, it.Key, it.Value, output, settings);
+                                Execute(converter, test, it.Key, it.Value, output, settings, false);
                             }
                             catch (Exception ex)
                             {
@@ -880,7 +897,7 @@ namespace GXDLMSDirector
                             try
                             {
                                 test.OnProgress(test, "Testing " + it.Key, ++i, cnt);
-                                Execute(converter, test, it.Key, it.Value, output, settings);
+                                Execute(converter, test, it.Key, it.Value, output, settings, true);
                             }
                             catch (Exception ex)
                             {
@@ -1232,6 +1249,7 @@ namespace GXDLMSDirector
             {
                 passed = false;
             }
+            //SubTest 1: Move the IUT to NRM
             try
             {
                 reply.Clear();
@@ -1245,6 +1263,7 @@ namespace GXDLMSDirector
             {
                 passed = false;
             }
+            //SubTest 2: Check that the IUT is in NRM
             //Check that meter is Normal Response Mode. 
             if (passed)
             {
@@ -1274,6 +1293,7 @@ namespace GXDLMSDirector
                     output.Errors.Add("Receiver Ready failed.");
                 }
             }
+            //SubTest 3: Move the IUT to NDM
             //Send disc.
             if (passed)
             {
@@ -1296,7 +1316,29 @@ namespace GXDLMSDirector
                     passed = false;
                 }
             }
-
+            //SubTest 4: Check that the IUT is in NDM
+            try
+            {
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(), "HDLC test 1. Disconnect request", 1, tryCount, reply);
+                dev.Comm.ParseUAResponse(reply.Data);
+                passed = false;
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                {
+                    output.Info.Add("Meter returns DisconnectMode.");
+                }
+                else
+                {
+                    passed = false;
+                }
+            }
+            catch (Exception)
+            {
+                passed = false;
+            }
             if (passed)
             {
                 test.OnTrace(test, "Passed.\r\n");
@@ -1350,6 +1392,7 @@ namespace GXDLMSDirector
             {
                 output.Info.Add("Illegal frame succeeded.");
             }
+            Thread.Sleep(1000);
             //Check that meter is Normal Response Mode. 
             try
             {
@@ -2258,6 +2301,168 @@ namespace GXDLMSDirector
                 return;
             }
             Test11(test, settings, dev, output, tryCount);
+        }
+
+
+        /// <summary>
+        /// Appl_01: Connection establishment : Protocol-version
+        /// </summary>
+        /// <param name="test"></param>
+        /// <param name="settings"></param>
+        /// <param name="dev"></param>
+        /// <param name="output"></param>
+        private static void AppTest1(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output, int tryCount)
+        {
+            GXReplyData reply = new GXReplyData();
+            bool passed = true;
+            test.OnTrace(test, "Starting COSEM Application tests #1.\r\n");
+            try
+            {
+                reply.Clear();
+                byte[] data = dev.Comm.client.SNRMRequest();
+                dev.Comm.ReadDataBlock(data, "COSEM Application test #1. SNRM", 1, tryCount, reply);
+                dev.Comm.ParseUAResponse(reply.Data);
+                reply.Clear();
+                GXDLMSAssociationLogicalName av = new GXDLMSAssociationLogicalName("0.0.40.0.0.255");
+                data = dev.Comm.Read(av, 1);
+                dev.Comm.ReadDataBlock(data, "COSEM Application test #1. Read logical name", 1, reply);
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(), "COSEM Application test #1. Disconnect request", 1, tryCount, reply);
+                dev.Comm.ParseUAResponse(reply.Data);
+                Thread.Sleep(1000);
+            }
+            catch (Exception ex)
+            {
+                passed = false;
+                output.Errors.Add("COSEM Application tests #1 failed. " + ex.Message);
+            }
+            try
+            {
+                reply.Clear();
+                byte[] data = dev.Comm.client.SNRMRequest();
+                dev.Comm.ReadDataBlock(data, "COSEM Application test #1. SNRM", 1, tryCount, reply);
+                dev.Comm.ParseUAResponse(reply.Data);
+                reply.Clear();
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                {
+                    output.Info.Add("Meter returns DisconnectMode.");
+                }
+                else
+                {
+                    passed = false;
+                }
+            }
+            catch (Exception)
+            {
+                passed = false;
+            }
+            //SubTest 1.Establish an AA using the parameters declared
+            try
+            {
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.client.AARQRequest(), "COSEM Application test #1. AARQ", 1, reply);
+                dev.Comm.ParseAAREResponse(reply.Data);
+                reply.Clear();
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                {
+                    output.Info.Add("Meter returns DisconnectMode.");
+                }
+                passed = false;
+            }
+            if (passed)
+            {
+                test.OnTrace(test, "Passed.\r\n");
+                output.Info.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app1\">COSEM Application test #1 passed.</a>");
+            }
+            else
+            {
+                test.OnTrace(test, "Failed.\r\n");
+                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app1\">COSEM Application test #1 failed.</a>");
+            }
+        }
+
+        /// <summary>
+        /// Appl_04: Connection establishment : Protocol-version
+        /// </summary>
+        /// <param name="test"></param>
+        /// <param name="settings"></param>
+        /// <param name="dev"></param>
+        /// <param name="output"></param>
+        private static void AppTest4(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output, int tryCount)
+        {
+            GXReplyData reply = new GXReplyData();
+            bool passed = true;
+            test.OnTrace(test, "Starting COSEM Application tests #4.\r\n");
+            try
+            {
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(), "HDLC test #4. Disconnect request", 1, tryCount, reply);
+                dev.Comm.ParseUAResponse(reply.Data);
+                reply.Clear();
+                byte[] data = dev.Comm.client.SNRMRequest();
+                dev.Comm.ReadDataBlock(data, "COSEM Application test #4. SNRM", 1, tryCount, reply);
+                dev.Comm.ParseUAResponse(reply.Data);
+                reply.Clear();
+                try
+                {
+                    dev.Comm.client.ProtocolVersion = "100001";
+                    dev.Comm.ReadDataBlock(dev.Comm.client.AARQRequest(), "COSEM Application test #4. AARQ", 1, reply);
+                    dev.Comm.client.ProtocolVersion = null;
+                    dev.Comm.ParseAAREResponse(reply.Data);
+                    reply.Clear();
+                    if (dev.Comm.client.ProtocolVersion != "100001")
+                    {
+                        throw new Exception("Protocol-version test failed.");
+                    }
+                }
+                finally
+                {
+                    dev.Comm.client.ProtocolVersion = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                passed = false;
+                output.Info.Add("COSEM Application tests #4 failed. " + ex.Message);
+            }
+
+            if (passed)
+            {
+                test.OnTrace(test, "Passed.\r\n");
+                output.Info.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app4\">COSEM Application test #4 passed.</a>");
+            }
+            else
+            {
+                test.OnTrace(test, "Failed.\r\n");
+                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app4\">COSEM Application test #4 failed.</a>");
+            }
+        }
+
+        /// <summary>
+        /// COSEM application layer tests 
+        /// </summary>
+        private static void CosemApplicationLayerTests(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output)
+        {
+            int tryCount = 1;
+            if (!Continue)
+            {
+                return;
+            }
+            //AppTest1(test, settings, dev, output, tryCount);
+            if (!Continue)
+            {
+                return;
+            }
+            AppTest4(test, settings, dev, output, tryCount);
+            if (!Continue)
+            {
+                return;
+            }
         }
 
         /// <summary>

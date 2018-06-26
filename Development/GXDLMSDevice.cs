@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10132 $,
-//                  $Date: 2018-06-13 12:54:36 +0300 (Wed, 13 Jun 2018) $
+// Version:         $Revision: 10148 $,
+//                  $Date: 2018-06-26 12:51:01 +0300 (Tue, 26 Jun 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -584,10 +584,6 @@ namespace GXDLMSDirector
                 if (Media != null)
                 {
                     Media.Close();
-                    if (Media is GXSerial)
-                    {
-                        Media.Settings = StartMediaSettings;
-                    }
                 }
                 throw Ex;
             }
@@ -762,24 +758,9 @@ namespace GXDLMSDirector
         /// </summary>
         public string MediaSettings
         {
-            get
-            {
-                if (communicator.media == null)
-                {
-                    return null;
-                }
-                return communicator.media.Settings;
-            }
-            set
-            {
-                communicator.media.Settings = value;
-            }
+            get;
+            set;
         }
-
-        /// <summary>
-        /// Media settings are changed for serial port connection.
-        /// </summary>
-        public string StartMediaSettings;
 
         /// <summary>
         /// Is Logical name referencing used.

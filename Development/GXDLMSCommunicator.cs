@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10132 $,
-//                  $Date: 2018-06-13 12:54:36 +0300 (Wed, 13 Jun 2018) $
+// Version:         $Revision: 10148 $,
+//                  $Date: 2018-06-26 12:51:01 +0300 (Tue, 26 Jun 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -210,11 +210,6 @@ namespace GXDLMSDirector
                 if (media != null)
                 {
                     media.Close();
-                    //Restore old settings.
-                    if (media is GXSerial)
-                    {
-                        media.Settings = parent.StartMediaSettings;
-                    }
                 }
             }            
         }
@@ -430,7 +425,6 @@ namespace GXDLMSDirector
             //Query device information.
             if (serial != null && parent.StartProtocol == StartProtocolType.IEC)
             {
-                parent.StartMediaSettings = media.Settings;
                 string data = "/?!\r\n";
                 if (this.parent.HDLCAddressing == HDLCAddressType.SerialNumber)
                 {
@@ -621,6 +615,10 @@ namespace GXDLMSDirector
 
         public void UpdateManufactureSettings(string id)
         {
+            if (!media.IsOpen)
+            {
+                media.Settings = parent.MediaSettings;
+            }
             if (!string.IsNullOrEmpty(this.parent.Manufacturer) && string.Compare(this.parent.Manufacturer, id, true) != 0)
             {
                 throw new Exception(string.Format("Manufacturer type does not match. Manufacturer is {0} and it should be {1}.", id, this.parent.Manufacturer));
@@ -740,8 +738,6 @@ namespace GXDLMSDirector
                 if (media != null)
                 {
                     media.Close();
-                    //Restore old settings.
-                    media.Settings = parent.StartMediaSettings;
                 }
                 throw Ex;
             }
@@ -769,6 +765,10 @@ namespace GXDLMSDirector
 
         public void UpdateSettings()
         {
+            if (!media.IsOpen)
+            {
+                media.Settings = parent.MediaSettings;
+            }
             client.Authentication = this.parent.Authentication;
             client.InterfaceType = InterfaceType.HDLC;
             if (!string.IsNullOrEmpty(this.parent.Password))
@@ -1263,6 +1263,11 @@ namespace GXDLMSDirector
 
                 //If object is static and it's already read.
                 if (!forceRead && obj.GetStatic(it) && obj.GetLastReadTime(it) != DateTime.MinValue)
+                {
+                    continue;
+                }
+                //Profile generic capture objects is not read here.
+                if (forceRead && obj is GXDLMSProfileGeneric && it == 3)
                 {
                     continue;
                 }

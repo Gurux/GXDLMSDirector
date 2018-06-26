@@ -324,6 +324,16 @@ namespace GXDLMSDirector
             set;
         }
 
+        [Description("Exclude COSEM application layer tests.")]
+        [DefaultValue(false)]
+        [Category("Accessibility")]
+        public bool ExcludeApplicationTests
+        {
+            get;
+            set;
+        }
+        
+
         [Description("Meter information is not read. Logical Device Name, Firmware version and time are not read from the meter.")]
         [DefaultValue(false)]
         [Category("Accessibility")]

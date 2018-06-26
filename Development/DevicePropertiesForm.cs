@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10148 $,
-//                  $Date: 2018-06-26 12:51:01 +0300 (Tue, 26 Jun 2018) $
+// Version:         $Revision: 10149 $,
+//                  $Date: 2018-06-26 14:17:33 +0300 (Tue, 26 Jun 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -901,6 +901,10 @@ namespace GXDLMSDirector
                 {
                     (MediaPropertiesForm as IGXPropertyPage).Apply();
                 }
+            }
+            if (SelectedMedia != null)
+            {
+                device.MediaSettings = SelectedMedia.Settings;
             }
             GXAuthentication authentication = (GXAuthentication)AuthenticationCB.SelectedItem;
             device.HDLCAddressing = ((GXServerAddress)ServerAddressTypeCB.SelectedItem).HDLCAddress;

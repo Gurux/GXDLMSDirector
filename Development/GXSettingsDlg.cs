@@ -122,13 +122,14 @@ namespace GXDLMSDirector
 
         private void AddMedia(string it)
         {
+            string initDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
             Assembly asm = null;
             ListViewItem li;
             if (GXExternalMediaForm.IsDownloaded(it))
             {
                 //If file is downloaded from the web.
                 asm = Assembly.GetExecutingAssembly();
-                string path = Path.Combine(Path.GetDirectoryName(asm.Location), "Medias");
+                string path = Path.Combine(initDir, "Medias");
                 path = Path.Combine(path, Path.GetFileName(it));
                 li = MediaList.Items.Add(Path.GetFileName(it));
                 asm = Assembly.LoadFile(path);

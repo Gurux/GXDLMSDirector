@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10082 $,
-//                  $Date: 2018-05-24 16:17:54 +0300 (Thu, 24 May 2018) $
+// Version:         $Revision: 10163 $,
+//                  $Date: 2018-07-10 19:19:33 +0300 (Tue, 10 Jul 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -89,7 +89,8 @@ namespace GXDLMSDirector
         static void DownloadMedias(object sender, GXAsyncWork work, object[] parameters)
         {
             string[] list = (string[])parameters[0];
-            string medias = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Medias");
+            string initDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
+            string medias = Path.Combine(initDir, "Medias");
             foreach (string it in list)
             {
                 IGXUpdater updater = null;
@@ -174,9 +175,13 @@ namespace GXDLMSDirector
                         Gurux.DLMS.UI.GXDlmsUi.Upgrade();
                     }
 
-                    Assembly asm = Assembly.GetExecutingAssembly();
-                    string updates = Path.Combine(Path.GetDirectoryName(asm.Location), "Updates");
-                    string medias = Path.Combine(Path.GetDirectoryName(asm.Location), "Medias");
+                    string initDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
+                    if (!Directory.Exists(initDir))
+                    {
+                        Directory.CreateDirectory(initDir);
+                    }
+                    string updates = Path.Combine(initDir, "Updates");
+                    string medias = Path.Combine(initDir, "Medias");
                     if (Directory.Exists(updates))
                     {
                         if (!Directory.Exists(medias))
@@ -198,13 +203,8 @@ namespace GXDLMSDirector
                         }
                     }
 
-                    string initDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
                     try
                     {
-                        if (!Directory.Exists(initDir))
-                        {
-                            Directory.CreateDirectory(initDir);
-                        }
                         SetAddRemoveProgramsIcon();
                         Directory.SetCurrentDirectory(initDir);
                         LoadMedias(new DirectoryInfo(medias));

@@ -169,8 +169,8 @@ namespace GXDLMSDirector
                     {
                         return false;
                     }
-                    asm = System.Reflection.Assembly.GetExecutingAssembly();
-                    string path = Path.Combine(Path.GetDirectoryName(asm.Location), "Updates");
+                    string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
+                    path = Path.Combine(path, "Updates");
                     if (!Directory.Exists(path))
                     {
                         Directory.CreateDirectory(path);
@@ -217,8 +217,8 @@ namespace GXDLMSDirector
                     read = stream.BeginRead(buffer, 0, buffer.Length, null, null);
                 }
                 ms.Position = 0;
-                Assembly asm = Assembly.GetExecutingAssembly();
-                string path = Path.Combine(Path.GetDirectoryName(asm.Location), "Medias");
+                string initDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
+                string path = Path.Combine(initDir, "Medias");
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
@@ -236,7 +236,7 @@ namespace GXDLMSDirector
                 catch (Exception)
                 {
                     //If file is in use.
-                    path = Path.Combine(Path.GetDirectoryName(asm.Location), "Updates");
+                    path = Path.Combine(initDir, "Updates");
                     if (!Directory.Exists(path))
                     {
                         Directory.CreateDirectory(path);

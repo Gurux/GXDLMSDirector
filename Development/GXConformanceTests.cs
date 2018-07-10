@@ -594,6 +594,10 @@ namespace GXDLMSDirector
                                     {
                                         tests.Remove(it);
                                     }
+                                    else
+                                    {
+                                        return;
+                                    }
                                     break;
                                 }
                             }
@@ -1062,7 +1066,7 @@ namespace GXDLMSDirector
                 }
                 if (ln == null)
                 {
-                    ln = new GXDLMSAssociationLogicalName("0.0.40.0.0.255");
+                    return;
                 }
             }
             //Read values if not read yet.

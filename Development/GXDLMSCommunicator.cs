@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10148 $,
-//                  $Date: 2018-06-26 12:51:01 +0300 (Tue, 26 Jun 2018) $
+// Version:         $Revision: 10173 $,
+//                  $Date: 2018-07-16 23:32:46 +0300 (Mon, 16 Jul 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -295,6 +295,7 @@ namespace GXDLMSDirector
                 }
                 try
                 {
+                    pos = 0;
                     //Loop until whole COSEM packet is received.
                     while (!client.GetData(p.Reply, reply) || reply.IsNotify)
                     {
@@ -330,6 +331,7 @@ namespace GXDLMSDirector
                                 {
                                     parent.OnTrace(parent, err, p.Reply, 0, LogFile);
                                 }
+                                media.Send(data, null);
                                 continue;
                             }
                             err = "Failed to receive reply from the device in given time.";
@@ -338,7 +340,6 @@ namespace GXDLMSDirector
                             {
                                 parent.OnTrace(parent, err, p.Reply, 0, LogFile);
                             }
-
                             throw new TimeoutException(err);
                         }
                     }

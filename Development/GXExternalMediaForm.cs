@@ -157,13 +157,14 @@ namespace GXDLMSDirector
                         read = stream.BeginRead(buffer, 0, buffer.Length, null, null);
                     }
                     ms.Position = 0;
-                    using (FileStream w = File.Create(target.FileName, length))
+                    string name = Path.Combine(Path.GetTempPath(), target.FileName);
+                    using (FileStream w = File.Create(name, length))
                     {
                         w.Write(ms.GetBuffer(), 0, length);
                         w.Close();
                     }
                     AssemblyName current = asm.GetName();
-                    AssemblyName updated = AssemblyName.GetAssemblyName(target.FileName);
+                    AssemblyName updated = AssemblyName.GetAssemblyName(name);
                     // Compare both versions
                     if (updated.Version.CompareTo(current.Version) <= 0)
                     {
@@ -175,7 +176,7 @@ namespace GXDLMSDirector
                     {
                         Directory.CreateDirectory(path);
                     }
-                    File.Copy(target.FileName, Path.Combine(path, target.FileName), true);
+                    File.Copy(name, Path.Combine(path, target.FileName), true);
                 }
             }
             return true;

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10148 $,
-//                  $Date: 2018-06-26 12:51:01 +0300 (Tue, 26 Jun 2018) $
+// Version:         $Revision: 10210 $,
+//                  $Date: 2018-08-13 14:41:15 +0300 (Mon, 13 Aug 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -180,8 +180,6 @@ namespace GXDLMSDirector
             this.ServiceClassLbl = new System.Windows.Forms.Label();
             this.StandardLbl = new System.Windows.Forms.Label();
             this.PriorityLbl = new System.Windows.Forms.Label();
-            this.ServerAddressSizeCb = new System.Windows.Forms.ComboBox();
-            this.label5 = new System.Windows.Forms.Label();
             this.UserIdTb = new System.Windows.Forms.TextBox();
             this.UserIDLbl = new System.Windows.Forms.Label();
             this.MaxPduTb = new System.Windows.Forms.TextBox();
@@ -196,6 +194,8 @@ namespace GXDLMSDirector
             this.MaxInfoRXLbl = new System.Windows.Forms.Label();
             this.MaxInfoTXTb = new System.Windows.Forms.TextBox();
             this.MaxInfoTXLbl = new System.Windows.Forms.Label();
+            this.ServerAddressSizeCb = new System.Windows.Forms.ComboBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.UseUtcTimeZone = new System.Windows.Forms.CheckBox();
             this.GatewayTab = new System.Windows.Forms.TabPage();
             this.UseGatewayCb = new System.Windows.Forms.CheckBox();
@@ -1567,7 +1567,7 @@ namespace GXDLMSDirector
             // 
             this.helpProvider1.SetHelpKeyword(this.InactivityTimeoutTb, "InactivityTimeout");
             this.helpProvider1.SetHelpNavigator(this.InactivityTimeoutTb, System.Windows.Forms.HelpNavigator.Topic);
-            this.InactivityTimeoutTb.Location = new System.Drawing.Point(146, 161);
+            this.InactivityTimeoutTb.Location = new System.Drawing.Point(159, 161);
             this.InactivityTimeoutTb.Name = "InactivityTimeoutTb";
             this.helpProvider1.SetShowHelp(this.InactivityTimeoutTb, true);
             this.InactivityTimeoutTb.Size = new System.Drawing.Size(93, 20);
@@ -1588,7 +1588,7 @@ namespace GXDLMSDirector
             this.ServiceClassCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.helpProvider1.SetHelpKeyword(this.ServiceClassCb, "ServiceClass");
             this.helpProvider1.SetHelpNavigator(this.ServiceClassCb, System.Windows.Forms.HelpNavigator.Topic);
-            this.ServiceClassCb.Location = new System.Drawing.Point(146, 217);
+            this.ServiceClassCb.Location = new System.Drawing.Point(159, 217);
             this.ServiceClassCb.Name = "ServiceClassCb";
             this.helpProvider1.SetShowHelp(this.ServiceClassCb, true);
             this.ServiceClassCb.Size = new System.Drawing.Size(93, 21);
@@ -1599,7 +1599,7 @@ namespace GXDLMSDirector
             this.StandardCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.helpProvider1.SetHelpKeyword(this.StandardCb, "Standard");
             this.helpProvider1.SetHelpNavigator(this.StandardCb, System.Windows.Forms.HelpNavigator.Topic);
-            this.StandardCb.Location = new System.Drawing.Point(146, 348);
+            this.StandardCb.Location = new System.Drawing.Point(159, 348);
             this.StandardCb.Name = "StandardCb";
             this.helpProvider1.SetShowHelp(this.StandardCb, true);
             this.StandardCb.Size = new System.Drawing.Size(93, 21);
@@ -1610,7 +1610,7 @@ namespace GXDLMSDirector
             this.PriorityCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.helpProvider1.SetHelpKeyword(this.PriorityCb, "Priority");
             this.helpProvider1.SetHelpNavigator(this.PriorityCb, System.Windows.Forms.HelpNavigator.Topic);
-            this.PriorityCb.Location = new System.Drawing.Point(146, 187);
+            this.PriorityCb.Location = new System.Drawing.Point(159, 187);
             this.PriorityCb.Name = "PriorityCb";
             this.helpProvider1.SetShowHelp(this.PriorityCb, true);
             this.PriorityCb.Size = new System.Drawing.Size(93, 21);
@@ -1643,31 +1643,11 @@ namespace GXDLMSDirector
             this.PriorityLbl.TabIndex = 48;
             this.PriorityLbl.Text = "Priority:";
             // 
-            // ServerAddressSizeCb
-            // 
-            this.ServerAddressSizeCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.helpProvider1.SetHelpKeyword(this.ServerAddressSizeCb, "AddressSize");
-            this.helpProvider1.SetHelpNavigator(this.ServerAddressSizeCb, System.Windows.Forms.HelpNavigator.Topic);
-            this.ServerAddressSizeCb.Location = new System.Drawing.Point(140, 122);
-            this.ServerAddressSizeCb.Name = "ServerAddressSizeCb";
-            this.helpProvider1.SetShowHelp(this.ServerAddressSizeCb, true);
-            this.ServerAddressSizeCb.Size = new System.Drawing.Size(93, 21);
-            this.ServerAddressSizeCb.TabIndex = 57;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(10, 126);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(102, 13);
-            this.label5.TabIndex = 56;
-            this.label5.Text = "Server address size:";
-            // 
             // UserIdTb
             // 
             this.helpProvider1.SetHelpKeyword(this.UserIdTb, "UserId");
             this.helpProvider1.SetHelpNavigator(this.UserIdTb, System.Windows.Forms.HelpNavigator.Topic);
-            this.UserIdTb.Location = new System.Drawing.Point(146, 322);
+            this.UserIdTb.Location = new System.Drawing.Point(159, 322);
             this.UserIdTb.Name = "UserIdTb";
             this.helpProvider1.SetShowHelp(this.UserIdTb, true);
             this.UserIdTb.Size = new System.Drawing.Size(93, 20);
@@ -1686,7 +1666,7 @@ namespace GXDLMSDirector
             // 
             this.helpProvider1.SetHelpKeyword(this.MaxPduTb, "MaxPdu");
             this.helpProvider1.SetHelpNavigator(this.MaxPduTb, System.Windows.Forms.HelpNavigator.Topic);
-            this.MaxPduTb.Location = new System.Drawing.Point(146, 296);
+            this.MaxPduTb.Location = new System.Drawing.Point(159, 296);
             this.MaxPduTb.Name = "MaxPduTb";
             this.helpProvider1.SetShowHelp(this.MaxPduTb, true);
             this.MaxPduTb.Size = new System.Drawing.Size(93, 20);
@@ -1741,7 +1721,7 @@ namespace GXDLMSDirector
             // 
             this.helpProvider1.SetHelpKeyword(this.WindowSizeRXTb, "WindowSizeRX");
             this.helpProvider1.SetHelpNavigator(this.WindowSizeRXTb, System.Windows.Forms.HelpNavigator.Topic);
-            this.WindowSizeRXTb.Location = new System.Drawing.Point(140, 97);
+            this.WindowSizeRXTb.Location = new System.Drawing.Point(153, 97);
             this.WindowSizeRXTb.Name = "WindowSizeRXTb";
             this.helpProvider1.SetShowHelp(this.WindowSizeRXTb, true);
             this.WindowSizeRXTb.Size = new System.Drawing.Size(93, 20);
@@ -1760,7 +1740,7 @@ namespace GXDLMSDirector
             // 
             this.helpProvider1.SetHelpKeyword(this.WindowSizeTXTb, "WindowSizeTX");
             this.helpProvider1.SetHelpNavigator(this.WindowSizeTXTb, System.Windows.Forms.HelpNavigator.Topic);
-            this.WindowSizeTXTb.Location = new System.Drawing.Point(140, 71);
+            this.WindowSizeTXTb.Location = new System.Drawing.Point(153, 71);
             this.WindowSizeTXTb.Name = "WindowSizeTXTb";
             this.helpProvider1.SetShowHelp(this.WindowSizeTXTb, true);
             this.WindowSizeTXTb.Size = new System.Drawing.Size(93, 20);
@@ -1779,7 +1759,7 @@ namespace GXDLMSDirector
             // 
             this.helpProvider1.SetHelpKeyword(this.MaxInfoRXTb, "MaxInfoRX");
             this.helpProvider1.SetHelpNavigator(this.MaxInfoRXTb, System.Windows.Forms.HelpNavigator.Topic);
-            this.MaxInfoRXTb.Location = new System.Drawing.Point(140, 45);
+            this.MaxInfoRXTb.Location = new System.Drawing.Point(153, 45);
             this.MaxInfoRXTb.Name = "MaxInfoRXTb";
             this.helpProvider1.SetShowHelp(this.MaxInfoRXTb, true);
             this.MaxInfoRXTb.Size = new System.Drawing.Size(93, 20);
@@ -1790,15 +1770,15 @@ namespace GXDLMSDirector
             this.MaxInfoRXLbl.AutoSize = true;
             this.MaxInfoRXLbl.Location = new System.Drawing.Point(10, 48);
             this.MaxInfoRXLbl.Name = "MaxInfoRXLbl";
-            this.MaxInfoRXLbl.Size = new System.Drawing.Size(126, 13);
+            this.MaxInfoRXLbl.Size = new System.Drawing.Size(137, 13);
             this.MaxInfoRXLbl.TabIndex = 40;
-            this.MaxInfoRXLbl.Text = "Max frame size in receive";
+            this.MaxInfoRXLbl.Text = "Max payload size in receive";
             // 
             // MaxInfoTXTb
             // 
             this.helpProvider1.SetHelpKeyword(this.MaxInfoTXTb, "MaxInfoTX");
             this.helpProvider1.SetHelpNavigator(this.MaxInfoTXTb, System.Windows.Forms.HelpNavigator.Topic);
-            this.MaxInfoTXTb.Location = new System.Drawing.Point(140, 19);
+            this.MaxInfoTXTb.Location = new System.Drawing.Point(153, 19);
             this.MaxInfoTXTb.Name = "MaxInfoTXTb";
             this.helpProvider1.SetShowHelp(this.MaxInfoTXTb, true);
             this.MaxInfoTXTb.Size = new System.Drawing.Size(93, 20);
@@ -1809,9 +1789,29 @@ namespace GXDLMSDirector
             this.MaxInfoTXLbl.AutoSize = true;
             this.MaxInfoTXLbl.Location = new System.Drawing.Point(10, 23);
             this.MaxInfoTXLbl.Name = "MaxInfoTXLbl";
-            this.MaxInfoTXLbl.Size = new System.Drawing.Size(127, 13);
+            this.MaxInfoTXLbl.Size = new System.Drawing.Size(138, 13);
             this.MaxInfoTXLbl.TabIndex = 38;
-            this.MaxInfoTXLbl.Text = "Max frame size in transmit";
+            this.MaxInfoTXLbl.Text = "Max payload size in transmit";
+            // 
+            // ServerAddressSizeCb
+            // 
+            this.ServerAddressSizeCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.helpProvider1.SetHelpKeyword(this.ServerAddressSizeCb, "AddressSize");
+            this.helpProvider1.SetHelpNavigator(this.ServerAddressSizeCb, System.Windows.Forms.HelpNavigator.Topic);
+            this.ServerAddressSizeCb.Location = new System.Drawing.Point(153, 122);
+            this.ServerAddressSizeCb.Name = "ServerAddressSizeCb";
+            this.helpProvider1.SetShowHelp(this.ServerAddressSizeCb, true);
+            this.ServerAddressSizeCb.Size = new System.Drawing.Size(93, 21);
+            this.ServerAddressSizeCb.TabIndex = 57;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(10, 126);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(102, 13);
+            this.label5.TabIndex = 56;
+            this.label5.Text = "Server address size:";
             // 
             // UseUtcTimeZone
             // 

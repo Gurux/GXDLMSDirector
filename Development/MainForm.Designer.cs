@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10148 $,
-//                  $Date: 2018-06-26 12:51:01 +0300 (Tue, 26 Jun 2018) $
+// Version:         $Revision: 10210 $,
+//                  $Date: 2018-08-13 14:41:15 +0300 (Mon, 13 Aug 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -99,6 +99,9 @@ namespace GXDLMSDirector
             this.LogXmlBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.LogCommentsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem10 = new System.Windows.Forms.ToolStripSeparator();
+            this.LogTimeMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.LogDuration = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem25 = new System.Windows.Forms.ToolStripSeparator();
             this.LogMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.ClearLogMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.TraceMnu = new System.Windows.Forms.ToolStripMenuItem();
@@ -108,6 +111,9 @@ namespace GXDLMSDirector
             this.pDUToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TraceCommentsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem20 = new System.Windows.Forms.ToolStripSeparator();
+            this.TraceTimeMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.TraceDuration = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem24 = new System.Windows.Forms.ToolStripSeparator();
             this.clearTraceMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem15 = new System.Windows.Forms.ToolStripMenuItem();
             this.NotificationNone = new System.Windows.Forms.ToolStripMenuItem();
@@ -116,6 +122,8 @@ namespace GXDLMSDirector
             this.NotificationPdu = new System.Windows.Forms.ToolStripMenuItem();
             this.NotificationsCommentsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem21 = new System.Windows.Forms.ToolStripSeparator();
+            this.NotificationTimeMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem23 = new System.Windows.Forms.ToolStripSeparator();
             this.ClearNotifications = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.ForceReadMnu = new System.Windows.Forms.ToolStripMenuItem();
@@ -197,18 +205,36 @@ namespace GXDLMSDirector
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.tabControl3 = new System.Windows.Forms.TabControl();
+            this.tabPage6 = new System.Windows.Forms.TabPage();
             this.ConformanceTests = new System.Windows.Forms.ListView();
             this.DeviceCh = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ResultCh = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ConformanceMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ShowReportBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.ShowLogBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.showValuesBtn = new System.Windows.Forms.ToolStripMenuItem();
+            this.ShowDurationsMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenContainingFolderBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem19 = new System.Windows.Forms.ToolStripSeparator();
-            this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.reRunToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.RunMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.RunAllTestsMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.RunSelectedTestsMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.RunFailedTestsMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.imageList2 = new System.Windows.Forms.ImageList(this.components);
+            this.tabPage7 = new System.Windows.Forms.TabPage();
+            this.ConformanceHistoryTests = new System.Windows.Forms.ListView();
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ConformanceHistoryMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItem26 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem27 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem28 = new System.Windows.Forms.ToolStripMenuItem();
+            this.showVisualizedValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem29 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem30 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+            this.ConformanceDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.splitter4 = new System.Windows.Forms.Splitter();
             this.EventsView = new System.Windows.Forms.TextBox();
             this.NotificationMnu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -242,6 +268,9 @@ namespace GXDLMSDirector
             this.NetworkIDTb = new System.Windows.Forms.TextBox();
             this.NetworkIDLbl = new System.Windows.Forms.Label();
             this.DeviceGb = new System.Windows.Forms.GroupBox();
+            this.Negotiated = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.ProposedConformanceTB = new System.Windows.Forms.TextBox();
             this.AuthenticationTb = new System.Windows.Forms.Label();
             this.AuthenticationLbl = new System.Windows.Forms.Label();
             this.Ciphering = new System.Windows.Forms.GroupBox();
@@ -278,7 +307,11 @@ namespace GXDLMSDirector
             this.TreeView.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.panel1.SuspendLayout();
-            this.contextMenuStrip2.SuspendLayout();
+            this.tabControl3.SuspendLayout();
+            this.tabPage6.SuspendLayout();
+            this.ConformanceMenu.SuspendLayout();
+            this.tabPage7.SuspendLayout();
+            this.ConformanceHistoryMenu.SuspendLayout();
             this.NotificationMnu.SuspendLayout();
             this.TraceMenu.SuspendLayout();
             this.tabControl2.SuspendLayout();
@@ -307,7 +340,7 @@ namespace GXDLMSDirector
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(725, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(786, 24);
             this.menuStrip1.TabIndex = 3;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -442,7 +475,7 @@ namespace GXDLMSDirector
             // 
             this.findToolStripMenuItem.Name = "findToolStripMenuItem";
             this.findToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
-            this.findToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.findToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.findToolStripMenuItem.Text = "Find...";
             this.findToolStripMenuItem.ToolTipText = "Find COSEM object by logical name.";
             this.findToolStripMenuItem.Click += new System.EventHandler(this.findToolStripMenuItem_Click);
@@ -452,7 +485,7 @@ namespace GXDLMSDirector
             this.findNextToolStripMenuItem.Enabled = false;
             this.findNextToolStripMenuItem.Name = "findNextToolStripMenuItem";
             this.findNextToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.findNextToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.findNextToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.findNextToolStripMenuItem.Text = "Find Next";
             this.findNextToolStripMenuItem.ToolTipText = "Find next COSEM object.";
             this.findNextToolStripMenuItem.Click += new System.EventHandler(this.findNextToolStripMenuItem_Click);
@@ -460,12 +493,12 @@ namespace GXDLMSDirector
             // toolStripMenuItem16
             // 
             this.toolStripMenuItem16.Name = "toolStripMenuItem16";
-            this.toolStripMenuItem16.Size = new System.Drawing.Size(143, 6);
+            this.toolStripMenuItem16.Size = new System.Drawing.Size(149, 6);
             // 
             // CloneBtn
             // 
             this.CloneBtn.Name = "CloneBtn";
-            this.CloneBtn.Size = new System.Drawing.Size(146, 22);
+            this.CloneBtn.Size = new System.Drawing.Size(152, 22);
             this.CloneBtn.Text = "Clone...";
             this.CloneBtn.ToolTipText = "Clone selected device.";
             this.CloneBtn.Click += new System.EventHandler(this.CloneBtn_Click);
@@ -473,7 +506,7 @@ namespace GXDLMSDirector
             // AddObjectMenu
             // 
             this.AddObjectMenu.Name = "AddObjectMenu";
-            this.AddObjectMenu.Size = new System.Drawing.Size(146, 22);
+            this.AddObjectMenu.Size = new System.Drawing.Size(152, 22);
             this.AddObjectMenu.Text = "Add Object...";
             this.AddObjectMenu.Click += new System.EventHandler(this.AddObjectMenu_Click);
             // 
@@ -562,6 +595,9 @@ namespace GXDLMSDirector
             this.LogXmlBtn,
             this.LogCommentsMenu,
             this.toolStripMenuItem10,
+            this.LogTimeMnu,
+            this.LogDuration,
+            this.toolStripMenuItem25,
             this.LogMnu,
             this.ClearLogMnu});
             this.toolStripMenuItem17.Name = "toolStripMenuItem17";
@@ -596,6 +632,25 @@ namespace GXDLMSDirector
             this.toolStripMenuItem10.Name = "toolStripMenuItem10";
             this.toolStripMenuItem10.Size = new System.Drawing.Size(168, 6);
             // 
+            // LogTimeMnu
+            // 
+            this.LogTimeMnu.Name = "LogTimeMnu";
+            this.LogTimeMnu.Size = new System.Drawing.Size(171, 22);
+            this.LogTimeMnu.Text = "&Time";
+            this.LogTimeMnu.Click += new System.EventHandler(this.LogTimeMnu_Click);
+            // 
+            // LogDuration
+            // 
+            this.LogDuration.Name = "LogDuration";
+            this.LogDuration.Size = new System.Drawing.Size(171, 22);
+            this.LogDuration.Text = "&Duration";
+            this.LogDuration.Click += new System.EventHandler(this.LogDuration_Click);
+            // 
+            // toolStripMenuItem25
+            // 
+            this.toolStripMenuItem25.Name = "toolStripMenuItem25";
+            this.toolStripMenuItem25.Size = new System.Drawing.Size(168, 6);
+            // 
             // LogMnu
             // 
             this.LogMnu.Name = "LogMnu";
@@ -623,6 +678,9 @@ namespace GXDLMSDirector
             this.pDUToolStripMenuItem,
             this.TraceCommentsMenu,
             this.toolStripMenuItem20,
+            this.TraceTimeMnu,
+            this.TraceDuration,
+            this.toolStripMenuItem24,
             this.clearTraceMnu});
             this.TraceMnu.Name = "TraceMnu";
             this.TraceMnu.Size = new System.Drawing.Size(176, 22);
@@ -672,6 +730,25 @@ namespace GXDLMSDirector
             this.toolStripMenuItem20.Name = "toolStripMenuItem20";
             this.toolStripMenuItem20.Size = new System.Drawing.Size(135, 6);
             // 
+            // TraceTimeMnu
+            // 
+            this.TraceTimeMnu.Name = "TraceTimeMnu";
+            this.TraceTimeMnu.Size = new System.Drawing.Size(138, 22);
+            this.TraceTimeMnu.Text = "&Time";
+            this.TraceTimeMnu.Click += new System.EventHandler(this.TraceTimeMnu_Click);
+            // 
+            // TraceDuration
+            // 
+            this.TraceDuration.Name = "TraceDuration";
+            this.TraceDuration.Size = new System.Drawing.Size(138, 22);
+            this.TraceDuration.Text = "&Duration";
+            this.TraceDuration.Click += new System.EventHandler(this.TraceDuration_Click);
+            // 
+            // toolStripMenuItem24
+            // 
+            this.toolStripMenuItem24.Name = "toolStripMenuItem24";
+            this.toolStripMenuItem24.Size = new System.Drawing.Size(135, 6);
+            // 
             // clearTraceMnu
             // 
             this.clearTraceMnu.Name = "clearTraceMnu";
@@ -689,6 +766,8 @@ namespace GXDLMSDirector
             this.NotificationPdu,
             this.NotificationsCommentsMenu,
             this.toolStripMenuItem21,
+            this.NotificationTimeMnu,
+            this.toolStripMenuItem23,
             this.ClearNotifications});
             this.toolStripMenuItem15.Name = "toolStripMenuItem15";
             this.toolStripMenuItem15.Size = new System.Drawing.Size(176, 22);
@@ -737,6 +816,18 @@ namespace GXDLMSDirector
             // 
             this.toolStripMenuItem21.Name = "toolStripMenuItem21";
             this.toolStripMenuItem21.Size = new System.Drawing.Size(137, 6);
+            // 
+            // NotificationTimeMnu
+            // 
+            this.NotificationTimeMnu.Name = "NotificationTimeMnu";
+            this.NotificationTimeMnu.Size = new System.Drawing.Size(140, 22);
+            this.NotificationTimeMnu.Text = "&Time";
+            this.NotificationTimeMnu.Click += new System.EventHandler(this.NotificationTimeMnu_Click);
+            // 
+            // toolStripMenuItem23
+            // 
+            this.toolStripMenuItem23.Name = "toolStripMenuItem23";
+            this.toolStripMenuItem23.Size = new System.Drawing.Size(137, 6);
             // 
             // ClearNotifications
             // 
@@ -989,14 +1080,14 @@ namespace GXDLMSDirector
             this.ProgressBar});
             this.statusStrip1.Location = new System.Drawing.Point(0, 514);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(725, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(786, 22);
             this.statusStrip1.TabIndex = 5;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // StatusLbl
             // 
             this.StatusLbl.Name = "StatusLbl";
-            this.StatusLbl.Size = new System.Drawing.Size(608, 17);
+            this.StatusLbl.Size = new System.Drawing.Size(669, 17);
             this.StatusLbl.Spring = true;
             this.StatusLbl.Text = "Ready";
             this.StatusLbl.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1119,7 +1210,7 @@ namespace GXDLMSDirector
             this.toolStripButton1});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(725, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(786, 25);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -1407,7 +1498,7 @@ namespace GXDLMSDirector
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.ConformanceTests);
+            this.panel1.Controls.Add(this.tabControl3);
             this.panel1.Controls.Add(this.splitter4);
             this.panel1.Controls.Add(this.EventsView);
             this.panel1.Controls.Add(this.splitter3);
@@ -1415,20 +1506,42 @@ namespace GXDLMSDirector
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel1.Location = new System.Drawing.Point(201, 414);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(524, 100);
+            this.panel1.Size = new System.Drawing.Size(585, 100);
             this.panel1.TabIndex = 30;
+            // 
+            // tabControl3
+            // 
+            this.tabControl3.Controls.Add(this.tabPage6);
+            this.tabControl3.Controls.Add(this.tabPage7);
+            this.tabControl3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl3.Location = new System.Drawing.Point(241, 0);
+            this.tabControl3.Name = "tabControl3";
+            this.tabControl3.SelectedIndex = 0;
+            this.tabControl3.Size = new System.Drawing.Size(344, 100);
+            this.tabControl3.TabIndex = 47;
+            // 
+            // tabPage6
+            // 
+            this.tabPage6.Controls.Add(this.ConformanceTests);
+            this.tabPage6.Location = new System.Drawing.Point(4, 22);
+            this.tabPage6.Name = "tabPage6";
+            this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage6.Size = new System.Drawing.Size(336, 74);
+            this.tabPage6.TabIndex = 0;
+            this.tabPage6.Text = "Conformace Tests";
+            this.tabPage6.UseVisualStyleBackColor = true;
             // 
             // ConformanceTests
             // 
             this.ConformanceTests.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.DeviceCh,
             this.ResultCh});
-            this.ConformanceTests.ContextMenuStrip = this.contextMenuStrip2;
+            this.ConformanceTests.ContextMenuStrip = this.ConformanceMenu;
             this.ConformanceTests.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ConformanceTests.FullRowSelect = true;
-            this.ConformanceTests.Location = new System.Drawing.Point(241, 0);
+            this.ConformanceTests.Location = new System.Drawing.Point(3, 3);
             this.ConformanceTests.Name = "ConformanceTests";
-            this.ConformanceTests.Size = new System.Drawing.Size(283, 100);
+            this.ConformanceTests.Size = new System.Drawing.Size(330, 68);
             this.ConformanceTests.SmallImageList = this.imageList2;
             this.ConformanceTests.TabIndex = 46;
             this.toolTip1.SetToolTip(this.ConformanceTests, "Conformance Tests shows executed conformance tests.");
@@ -1446,19 +1559,19 @@ namespace GXDLMSDirector
             this.ResultCh.Text = "Result:";
             this.ResultCh.Width = 213;
             // 
-            // contextMenuStrip2
+            // ConformanceMenu
             // 
-            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ConformanceMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ShowReportBtn,
             this.ShowLogBtn,
             this.showValuesBtn,
+            this.ShowDurationsMnu,
             this.OpenContainingFolderBtn,
             this.toolStripMenuItem19,
-            this.runToolStripMenuItem,
-            this.reRunToolStripMenuItem});
-            this.contextMenuStrip2.Name = "contextMenuStrip1";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(202, 142);
-            this.contextMenuStrip2.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip2_Opening);
+            this.RunMnu});
+            this.ConformanceMenu.Name = "contextMenuStrip1";
+            this.ConformanceMenu.Size = new System.Drawing.Size(202, 164);
+            this.ConformanceMenu.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip2_Opening);
             // 
             // ShowReportBtn
             // 
@@ -1481,6 +1594,13 @@ namespace GXDLMSDirector
             this.showValuesBtn.Text = "Show Values...";
             this.showValuesBtn.Click += new System.EventHandler(this.showValuesBtn_Click);
             // 
+            // ShowDurationsMnu
+            // 
+            this.ShowDurationsMnu.Name = "ShowDurationsMnu";
+            this.ShowDurationsMnu.Size = new System.Drawing.Size(201, 22);
+            this.ShowDurationsMnu.Text = "Show Durations...";
+            this.ShowDurationsMnu.Click += new System.EventHandler(this.ShowDurationsMnu_Click);
+            // 
             // OpenContainingFolderBtn
             // 
             this.OpenContainingFolderBtn.Name = "OpenContainingFolderBtn";
@@ -1493,19 +1613,38 @@ namespace GXDLMSDirector
             this.toolStripMenuItem19.Name = "toolStripMenuItem19";
             this.toolStripMenuItem19.Size = new System.Drawing.Size(198, 6);
             // 
-            // runToolStripMenuItem
+            // RunMnu
             // 
-            this.runToolStripMenuItem.Name = "runToolStripMenuItem";
-            this.runToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
-            this.runToolStripMenuItem.Text = "&Run";
-            this.runToolStripMenuItem.Click += new System.EventHandler(this.runToolStripMenuItem_Click);
+            this.RunMnu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.RunAllTestsMnu,
+            this.RunSelectedTestsMnu,
+            this.RunFailedTestsMnu});
+            this.RunMnu.Name = "RunMnu";
+            this.RunMnu.Size = new System.Drawing.Size(201, 22);
+            this.RunMnu.Text = "&Run";
             // 
-            // reRunToolStripMenuItem
+            // RunAllTestsMnu
             // 
-            this.reRunToolStripMenuItem.Name = "reRunToolStripMenuItem";
-            this.reRunToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
-            this.reRunToolStripMenuItem.Text = "Re-Run";
-            this.reRunToolStripMenuItem.Click += new System.EventHandler(this.reRunToolStripMenuItem_Click);
+            this.RunAllTestsMnu.Name = "RunAllTestsMnu";
+            this.RunAllTestsMnu.Size = new System.Drawing.Size(187, 22);
+            this.RunAllTestsMnu.Text = "All Devices";
+            this.RunAllTestsMnu.Click += new System.EventHandler(this.RunAllTestsMnu_Click);
+            // 
+            // RunSelectedTestsMnu
+            // 
+            this.RunSelectedTestsMnu.Name = "RunSelectedTestsMnu";
+            this.RunSelectedTestsMnu.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
+            this.RunSelectedTestsMnu.Size = new System.Drawing.Size(188, 22);
+            this.RunSelectedTestsMnu.Text = "Selected Tests";
+            this.RunSelectedTestsMnu.Click += new System.EventHandler(this.RunSelectedTestsMnu_Click);
+            // 
+            // RunFailedTestsMnu
+            // 
+            this.RunFailedTestsMnu.Name = "RunFailedTestsMnu";
+            this.RunFailedTestsMnu.Size = new System.Drawing.Size(187, 22);
+            this.RunFailedTestsMnu.Text = "Failed Tests";
+            this.RunFailedTestsMnu.Visible = false;
+            this.RunFailedTestsMnu.Click += new System.EventHandler(this.RunFailedTestsMnu_Click);
             // 
             // imageList2
             // 
@@ -1514,6 +1653,113 @@ namespace GXDLMSDirector
             this.imageList2.Images.SetKeyName(0, "succees.bmp");
             this.imageList2.Images.SetKeyName(1, "warning.bmp");
             this.imageList2.Images.SetKeyName(2, "error.bmp");
+            // 
+            // tabPage7
+            // 
+            this.tabPage7.Controls.Add(this.ConformanceHistoryTests);
+            this.tabPage7.Location = new System.Drawing.Point(4, 22);
+            this.tabPage7.Name = "tabPage7";
+            this.tabPage7.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage7.Size = new System.Drawing.Size(336, 74);
+            this.tabPage7.TabIndex = 1;
+            this.tabPage7.Text = "History";
+            this.tabPage7.UseVisualStyleBackColor = true;
+            // 
+            // ConformanceHistoryTests
+            // 
+            this.ConformanceHistoryTests.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader3,
+            this.columnHeader4});
+            this.ConformanceHistoryTests.ContextMenuStrip = this.ConformanceHistoryMenu;
+            this.ConformanceHistoryTests.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ConformanceHistoryTests.FullRowSelect = true;
+            this.ConformanceHistoryTests.Location = new System.Drawing.Point(3, 3);
+            this.ConformanceHistoryTests.Name = "ConformanceHistoryTests";
+            this.ConformanceHistoryTests.Size = new System.Drawing.Size(330, 68);
+            this.ConformanceHistoryTests.SmallImageList = this.imageList2;
+            this.ConformanceHistoryTests.TabIndex = 47;
+            this.toolTip1.SetToolTip(this.ConformanceHistoryTests, "Conformance Tests shows executed conformance tests.");
+            this.ConformanceHistoryTests.UseCompatibleStateImageBehavior = false;
+            this.ConformanceHistoryTests.View = System.Windows.Forms.View.Details;
+            this.ConformanceHistoryTests.DoubleClick += new System.EventHandler(this.ShowReportBtn_Click);
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Conformance Test";
+            this.columnHeader3.Width = 227;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Result:";
+            this.columnHeader4.Width = 213;
+            // 
+            // ConformanceHistoryMenu
+            // 
+            this.ConformanceHistoryMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem26,
+            this.toolStripMenuItem27,
+            this.toolStripMenuItem28,
+            this.showVisualizedValuesToolStripMenuItem,
+            this.toolStripMenuItem29,
+            this.toolStripMenuItem30,
+            this.toolStripSeparator8,
+            this.ConformanceDelete});
+            this.ConformanceHistoryMenu.Name = "contextMenuStrip1";
+            this.ConformanceHistoryMenu.Size = new System.Drawing.Size(204, 164);
+            // 
+            // toolStripMenuItem26
+            // 
+            this.toolStripMenuItem26.Name = "toolStripMenuItem26";
+            this.toolStripMenuItem26.Size = new System.Drawing.Size(203, 22);
+            this.toolStripMenuItem26.Text = "Show Report...";
+            this.toolStripMenuItem26.Click += new System.EventHandler(this.ShowReportBtn_Click);
+            // 
+            // toolStripMenuItem27
+            // 
+            this.toolStripMenuItem27.Name = "toolStripMenuItem27";
+            this.toolStripMenuItem27.Size = new System.Drawing.Size(203, 22);
+            this.toolStripMenuItem27.Text = "Show Log...";
+            this.toolStripMenuItem27.Click += new System.EventHandler(this.ShowLogBtn_Click);
+            // 
+            // toolStripMenuItem28
+            // 
+            this.toolStripMenuItem28.Name = "toolStripMenuItem28";
+            this.toolStripMenuItem28.Size = new System.Drawing.Size(203, 22);
+            this.toolStripMenuItem28.Text = "Show Values...";
+            this.toolStripMenuItem28.Click += new System.EventHandler(this.showValuesBtn_Click);
+            // 
+            // showVisualizedValuesToolStripMenuItem
+            // 
+            this.showVisualizedValuesToolStripMenuItem.Name = "showVisualizedValuesToolStripMenuItem";
+            this.showVisualizedValuesToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.showVisualizedValuesToolStripMenuItem.Text = "Show Visualized Values...";
+            this.showVisualizedValuesToolStripMenuItem.Click += new System.EventHandler(this.showVisualizedValuesToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem29
+            // 
+            this.toolStripMenuItem29.Name = "toolStripMenuItem29";
+            this.toolStripMenuItem29.Size = new System.Drawing.Size(203, 22);
+            this.toolStripMenuItem29.Text = "Show Durations...";
+            this.toolStripMenuItem29.Click += new System.EventHandler(this.ShowDurationsMnu_Click);
+            // 
+            // toolStripMenuItem30
+            // 
+            this.toolStripMenuItem30.Name = "toolStripMenuItem30";
+            this.toolStripMenuItem30.Size = new System.Drawing.Size(203, 22);
+            this.toolStripMenuItem30.Text = "Open Containing Folder";
+            this.toolStripMenuItem30.Click += new System.EventHandler(this.OpenContainingFolderBtn_Click);
+            // 
+            // toolStripSeparator8
+            // 
+            this.toolStripSeparator8.Name = "toolStripSeparator8";
+            this.toolStripSeparator8.Size = new System.Drawing.Size(200, 6);
+            // 
+            // ConformanceDelete
+            // 
+            this.ConformanceDelete.Name = "ConformanceDelete";
+            this.ConformanceDelete.Size = new System.Drawing.Size(203, 22);
+            this.ConformanceDelete.Text = "&Delete";
+            this.ConformanceDelete.Click += new System.EventHandler(this.ConformanceDelete_Click);
             // 
             // splitter4
             // 
@@ -1618,7 +1864,7 @@ namespace GXDLMSDirector
             this.splitter2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.splitter2.Location = new System.Drawing.Point(201, 411);
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(524, 3);
+            this.splitter2.Size = new System.Drawing.Size(585, 3);
             this.splitter2.TabIndex = 31;
             this.splitter2.TabStop = false;
             // 
@@ -1666,7 +1912,6 @@ namespace GXDLMSDirector
             this.ObjectPanelFrame.Name = "ObjectPanelFrame";
             this.ObjectPanelFrame.Size = new System.Drawing.Size(207, 74);
             this.ObjectPanelFrame.TabIndex = 32;
-            this.ObjectPanelFrame.Paint += new System.Windows.Forms.PaintEventHandler(this.ObjectPanelFrame_Paint);
             // 
             // tabControl2
             // 
@@ -1736,7 +1981,7 @@ namespace GXDLMSDirector
             this.DeviceInfoView.Location = new System.Drawing.Point(202, 52);
             this.DeviceInfoView.Name = "DeviceInfoView";
             this.DeviceInfoView.SelectedIndex = 0;
-            this.DeviceInfoView.Size = new System.Drawing.Size(523, 462);
+            this.DeviceInfoView.Size = new System.Drawing.Size(518, 287);
             this.DeviceInfoView.TabIndex = 37;
             // 
             // tabPage4
@@ -1746,7 +1991,7 @@ namespace GXDLMSDirector
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(515, 436);
+            this.tabPage4.Size = new System.Drawing.Size(510, 261);
             this.tabPage4.TabIndex = 0;
             this.tabPage4.Text = "General";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -1760,9 +2005,9 @@ namespace GXDLMSDirector
             this.groupBox1.Controls.Add(this.PhysicalDeviceAddressTb);
             this.groupBox1.Controls.Add(this.NetworkIDTb);
             this.groupBox1.Controls.Add(this.NetworkIDLbl);
-            this.groupBox1.Location = new System.Drawing.Point(2, 339);
+            this.groupBox1.Location = new System.Drawing.Point(2, 327);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(512, 53);
+            this.groupBox1.Size = new System.Drawing.Size(507, 0);
             this.groupBox1.TabIndex = 71;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Gateway";
@@ -1803,6 +2048,9 @@ namespace GXDLMSDirector
             // 
             // DeviceGb
             // 
+            this.DeviceGb.Controls.Add(this.Negotiated);
+            this.DeviceGb.Controls.Add(this.label1);
+            this.DeviceGb.Controls.Add(this.ProposedConformanceTB);
             this.DeviceGb.Controls.Add(this.AuthenticationTb);
             this.DeviceGb.Controls.Add(this.AuthenticationLbl);
             this.DeviceGb.Controls.Add(this.Ciphering);
@@ -1819,9 +2067,37 @@ namespace GXDLMSDirector
             this.DeviceGb.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DeviceGb.Location = new System.Drawing.Point(3, 3);
             this.DeviceGb.Name = "DeviceGb";
-            this.DeviceGb.Size = new System.Drawing.Size(509, 430);
+            this.DeviceGb.Size = new System.Drawing.Size(504, 255);
             this.DeviceGb.TabIndex = 13;
             this.DeviceGb.TabStop = false;
+            // 
+            // Negotiated
+            // 
+            this.Negotiated.AutoSize = true;
+            this.Negotiated.Location = new System.Drawing.Point(341, 127);
+            this.Negotiated.Name = "Negotiated";
+            this.Negotiated.Size = new System.Drawing.Size(59, 13);
+            this.Negotiated.TabIndex = 73;
+            this.Negotiated.Text = "Negotiated";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(111, 127);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(55, 13);
+            this.label1.TabIndex = 72;
+            this.label1.Text = "Proposed:";
+            // 
+            // ProposedConformanceTB
+            // 
+            this.ProposedConformanceTB.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.ProposedConformanceTB.Location = new System.Drawing.Point(111, 143);
+            this.ProposedConformanceTB.Multiline = true;
+            this.ProposedConformanceTB.Name = "ProposedConformanceTB";
+            this.ProposedConformanceTB.ReadOnly = true;
+            this.ProposedConformanceTB.Size = new System.Drawing.Size(203, 36);
+            this.ProposedConformanceTB.TabIndex = 71;
             // 
             // AuthenticationTb
             // 
@@ -1858,25 +2134,25 @@ namespace GXDLMSDirector
             this.Ciphering.Controls.Add(this.AuthenticationKeyLbl);
             this.Ciphering.Controls.Add(this.BlockCipherKeyLbl);
             this.Ciphering.Controls.Add(this.SecurityLbl);
-            this.Ciphering.Location = new System.Drawing.Point(0, 165);
+            this.Ciphering.Location = new System.Drawing.Point(0, 188);
             this.Ciphering.Name = "Ciphering";
-            this.Ciphering.Size = new System.Drawing.Size(512, 172);
+            this.Ciphering.Size = new System.Drawing.Size(507, 0);
             this.Ciphering.TabIndex = 68;
             this.Ciphering.TabStop = false;
             this.Ciphering.Text = "Ciphering";
             // 
             // DedicatedKeyTb
             // 
-            this.DedicatedKeyTb.Location = new System.Drawing.Point(114, 143);
+            this.DedicatedKeyTb.Location = new System.Drawing.Point(114, 98);
             this.DedicatedKeyTb.Name = "DedicatedKeyTb";
             this.DedicatedKeyTb.ReadOnly = true;
-            this.DedicatedKeyTb.Size = new System.Drawing.Size(289, 20);
+            this.DedicatedKeyTb.Size = new System.Drawing.Size(164, 20);
             this.DedicatedKeyTb.TabIndex = 75;
             // 
             // DedicatedKeyLbl
             // 
             this.DedicatedKeyLbl.AutoSize = true;
-            this.DedicatedKeyLbl.Location = new System.Drawing.Point(10, 144);
+            this.DedicatedKeyLbl.Location = new System.Drawing.Point(10, 99);
             this.DedicatedKeyLbl.Name = "DedicatedKeyLbl";
             this.DedicatedKeyLbl.Size = new System.Drawing.Size(80, 13);
             this.DedicatedKeyLbl.TabIndex = 74;
@@ -1884,24 +2160,24 @@ namespace GXDLMSDirector
             // 
             // AuthenticationKeyTb
             // 
-            this.AuthenticationKeyTb.Location = new System.Drawing.Point(114, 119);
+            this.AuthenticationKeyTb.Location = new System.Drawing.Point(392, 72);
             this.AuthenticationKeyTb.Name = "AuthenticationKeyTb";
             this.AuthenticationKeyTb.ReadOnly = true;
-            this.AuthenticationKeyTb.Size = new System.Drawing.Size(289, 20);
+            this.AuthenticationKeyTb.Size = new System.Drawing.Size(164, 20);
             this.AuthenticationKeyTb.TabIndex = 73;
             // 
             // BlockCipherKeyTb
             // 
-            this.BlockCipherKeyTb.Location = new System.Drawing.Point(114, 93);
+            this.BlockCipherKeyTb.Location = new System.Drawing.Point(114, 72);
             this.BlockCipherKeyTb.Name = "BlockCipherKeyTb";
             this.BlockCipherKeyTb.ReadOnly = true;
-            this.BlockCipherKeyTb.Size = new System.Drawing.Size(289, 20);
+            this.BlockCipherKeyTb.Size = new System.Drawing.Size(164, 20);
             this.BlockCipherKeyTb.TabIndex = 72;
             // 
             // ServerSystemTitleLbl
             // 
             this.ServerSystemTitleLbl.AutoSize = true;
-            this.ServerSystemTitleLbl.Location = new System.Drawing.Point(10, 72);
+            this.ServerSystemTitleLbl.Location = new System.Drawing.Point(288, 48);
             this.ServerSystemTitleLbl.Name = "ServerSystemTitleLbl";
             this.ServerSystemTitleLbl.Size = new System.Drawing.Size(101, 13);
             this.ServerSystemTitleLbl.TabIndex = 71;
@@ -1909,10 +2185,10 @@ namespace GXDLMSDirector
             // 
             // ServerSystemTitleTb
             // 
-            this.ServerSystemTitleTb.Location = new System.Drawing.Point(114, 69);
+            this.ServerSystemTitleTb.Location = new System.Drawing.Point(392, 45);
             this.ServerSystemTitleTb.Name = "ServerSystemTitleTb";
             this.ServerSystemTitleTb.ReadOnly = true;
-            this.ServerSystemTitleTb.Size = new System.Drawing.Size(289, 20);
+            this.ServerSystemTitleTb.Size = new System.Drawing.Size(164, 20);
             this.ServerSystemTitleTb.TabIndex = 70;
             // 
             // ClientSystemTitleTb
@@ -1920,7 +2196,7 @@ namespace GXDLMSDirector
             this.ClientSystemTitleTb.Location = new System.Drawing.Point(114, 43);
             this.ClientSystemTitleTb.Name = "ClientSystemTitleTb";
             this.ClientSystemTitleTb.ReadOnly = true;
-            this.ClientSystemTitleTb.Size = new System.Drawing.Size(289, 20);
+            this.ClientSystemTitleTb.Size = new System.Drawing.Size(164, 20);
             this.ClientSystemTitleTb.TabIndex = 69;
             // 
             // ClientSystemTitleLbl
@@ -1944,7 +2220,7 @@ namespace GXDLMSDirector
             // AuthenticationKeyLbl
             // 
             this.AuthenticationKeyLbl.AutoSize = true;
-            this.AuthenticationKeyLbl.Location = new System.Drawing.Point(10, 120);
+            this.AuthenticationKeyLbl.Location = new System.Drawing.Point(288, 73);
             this.AuthenticationKeyLbl.Name = "AuthenticationKeyLbl";
             this.AuthenticationKeyLbl.Size = new System.Drawing.Size(99, 13);
             this.AuthenticationKeyLbl.TabIndex = 48;
@@ -1953,7 +2229,7 @@ namespace GXDLMSDirector
             // BlockCipherKeyLbl
             // 
             this.BlockCipherKeyLbl.AutoSize = true;
-            this.BlockCipherKeyLbl.Location = new System.Drawing.Point(10, 93);
+            this.BlockCipherKeyLbl.Location = new System.Drawing.Point(10, 72);
             this.BlockCipherKeyLbl.Name = "BlockCipherKeyLbl";
             this.BlockCipherKeyLbl.Size = new System.Drawing.Size(91, 13);
             this.BlockCipherKeyLbl.TabIndex = 47;
@@ -1971,17 +2247,17 @@ namespace GXDLMSDirector
             // NegotiatedConformanceTB
             // 
             this.NegotiatedConformanceTB.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.NegotiatedConformanceTB.Location = new System.Drawing.Point(111, 127);
+            this.NegotiatedConformanceTB.Location = new System.Drawing.Point(344, 143);
             this.NegotiatedConformanceTB.Multiline = true;
             this.NegotiatedConformanceTB.Name = "NegotiatedConformanceTB";
             this.NegotiatedConformanceTB.ReadOnly = true;
-            this.NegotiatedConformanceTB.Size = new System.Drawing.Size(292, 36);
+            this.NegotiatedConformanceTB.Size = new System.Drawing.Size(212, 36);
             this.NegotiatedConformanceTB.TabIndex = 63;
             // 
             // ConformanceLbl
             // 
             this.ConformanceLbl.AutoSize = true;
-            this.ConformanceLbl.Location = new System.Drawing.Point(6, 127);
+            this.ConformanceLbl.Location = new System.Drawing.Point(6, 143);
             this.ConformanceLbl.Name = "ConformanceLbl";
             this.ConformanceLbl.Size = new System.Drawing.Size(73, 13);
             this.ConformanceLbl.TabIndex = 62;
@@ -2065,7 +2341,7 @@ namespace GXDLMSDirector
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(512, 436);
+            this.tabPage5.Size = new System.Drawing.Size(510, 261);
             this.tabPage5.TabIndex = 1;
             this.tabPage5.Text = "Last errors";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -2078,7 +2354,7 @@ namespace GXDLMSDirector
             this.ErrorsView.Location = new System.Drawing.Point(3, 3);
             this.ErrorsView.MultiSelect = false;
             this.ErrorsView.Name = "ErrorsView";
-            this.ErrorsView.Size = new System.Drawing.Size(506, 430);
+            this.ErrorsView.Size = new System.Drawing.Size(504, 255);
             this.ErrorsView.TabIndex = 35;
             this.ErrorsView.UseCompatibleStateImageBehavior = false;
             this.ErrorsView.View = System.Windows.Forms.View.Details;
@@ -2093,7 +2369,7 @@ namespace GXDLMSDirector
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(725, 536);
+            this.ClientSize = new System.Drawing.Size(786, 536);
             this.Controls.Add(this.DeviceInfoView);
             this.Controls.Add(this.tabControl2);
             this.Controls.Add(this.ObjectValueView);
@@ -2123,7 +2399,11 @@ namespace GXDLMSDirector
             this.tabControl1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            this.contextMenuStrip2.ResumeLayout(false);
+            this.tabControl3.ResumeLayout(false);
+            this.tabPage6.ResumeLayout(false);
+            this.ConformanceMenu.ResumeLayout(false);
+            this.tabPage7.ResumeLayout(false);
+            this.ConformanceHistoryMenu.ResumeLayout(false);
             this.NotificationMnu.ResumeLayout(false);
             this.TraceMenu.ResumeLayout(false);
             this.tabControl2.ResumeLayout(false);
@@ -2283,11 +2563,10 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem18;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem13;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
+        private System.Windows.Forms.ContextMenuStrip ConformanceMenu;
         private System.Windows.Forms.ToolStripMenuItem ShowReportBtn;
         private System.Windows.Forms.ToolStripMenuItem ShowLogBtn;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem19;
-        private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem conformanceTestsToolStripMenuItem1;
         private System.Windows.Forms.Splitter splitter4;
         private System.Windows.Forms.TextBox EventsView;
@@ -2297,7 +2576,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ToolStripMenuItem showValuesBtn;
         private System.Windows.Forms.ImageList imageList2;
         private System.Windows.Forms.ToolStripMenuItem OpenContainingFolderBtn;
-        private System.Windows.Forms.ToolStripMenuItem reRunToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem20;
         private System.Windows.Forms.ToolStripMenuItem clearTraceMnu;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem21;
@@ -2356,6 +2634,37 @@ namespace GXDLMSDirector
         private System.Windows.Forms.TextBox PhysicalDeviceAddressTb;
         private System.Windows.Forms.TextBox NetworkIDTb;
         private System.Windows.Forms.Label NetworkIDLbl;
+        private System.Windows.Forms.ToolStripMenuItem LogTimeMnu;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem25;
+        private System.Windows.Forms.ToolStripMenuItem TraceTimeMnu;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem24;
+        private System.Windows.Forms.ToolStripMenuItem NotificationTimeMnu;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem23;
+        private System.Windows.Forms.ToolStripMenuItem LogDuration;
+        private System.Windows.Forms.ToolStripMenuItem TraceDuration;
+        private System.Windows.Forms.TextBox ProposedConformanceTB;
+        private System.Windows.Forms.Label Negotiated;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ToolStripMenuItem ShowDurationsMnu;
+        private System.Windows.Forms.ToolStripMenuItem RunMnu;
+        private System.Windows.Forms.ToolStripMenuItem RunSelectedTestsMnu;
+        private System.Windows.Forms.ToolStripMenuItem RunFailedTestsMnu;
+        private System.Windows.Forms.ToolStripMenuItem RunAllTestsMnu;
+        private System.Windows.Forms.TabControl tabControl3;
+        private System.Windows.Forms.TabPage tabPage6;
+        private System.Windows.Forms.TabPage tabPage7;
+        private System.Windows.Forms.ListView ConformanceHistoryTests;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.ContextMenuStrip ConformanceHistoryMenu;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem26;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem27;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem28;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem29;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem30;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
+        private System.Windows.Forms.ToolStripMenuItem ConformanceDelete;
+        private System.Windows.Forms.ToolStripMenuItem showVisualizedValuesToolStripMenuItem;
     }
 }
 

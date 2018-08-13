@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10148 $,
-//                  $Date: 2018-06-26 12:51:01 +0300 (Tue, 26 Jun 2018) $
+// Version:         $Revision: 10210 $,
+//                  $Date: 2018-08-13 14:41:15 +0300 (Mon, 13 Aug 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -575,7 +575,7 @@ namespace GXDLMSDirector
             try
             {
                 UpdateStatus(DeviceState.Connecting);
-                communicator.InitializeConnection();
+                communicator.InitializeConnection(true);
                 UpdateStatus(DeviceState.Connected);
             }
             catch (Exception Ex)
@@ -1047,7 +1047,15 @@ namespace GXDLMSDirector
                 list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.96.11.4.255"), new GXDLMSCaptureObject(2, 0)));
                 list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.1.25.2.0.255"), new GXDLMSCaptureObject(2, 0)));
             }
-
+            //Push Data Queue.
+            else if (ln == "0.0.98.1.0.255")
+            {
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSMacAddressSetup("0.1.25.2.0.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.50.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.23.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.24.255"), new GXDLMSCaptureObject(2, 0)));
+            }
             return list;
         }
 

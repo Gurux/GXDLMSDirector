@@ -90,6 +90,15 @@ namespace GXDLMSDirector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure that you want to remove selected Conformance Test results?.
+        /// </summary>
+        internal static string ConformanceTestRemove {
+            get {
+                return ResourceManager.GetString("ConformanceTestRemove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap ConnectMnu {
@@ -183,29 +192,11 @@ namespace GXDLMSDirector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Access Error : Device reports a hardware fault..
-        /// </summary>
-        internal static string HardwareFaultTxt {
-            get {
-                return ResourceManager.GetString("HardwareFaultTxt", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No Help topic is associated with this item..
         /// </summary>
         internal static string HelpNotAvailable {
             get {
                 return ResourceManager.GetString("HelpNotAvailable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Access Error : Device reports a inconsistent Class or Object..
-        /// </summary>
-        internal static string InconsistentClassTxt {
-            get {
-                return ResourceManager.GetString("InconsistentClassTxt", resourceCulture);
             }
         }
         
@@ -224,6 +215,24 @@ namespace GXDLMSDirector.Properties {
         internal static string InvalidASCII {
             get {
                 return ResourceManager.GetString("InvalidASCII", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dutations are not available..
+        /// </summary>
+        internal static string InvalidDurationFile {
+            get {
+                return ResourceManager.GetString("InvalidDurationFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Values are not available..
+        /// </summary>
+        internal static string InvalidValueFile {
+            get {
+                return ResourceManager.GetString("InvalidValueFile", resourceCulture);
             }
         }
         
@@ -253,6 +262,15 @@ namespace GXDLMSDirector.Properties {
             get {
                 object obj = ResourceManager.GetObject("NotifyMnu", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There are open connections. Do you want to close them first?.
+        /// </summary>
+        internal static string OpenConnectionsTxt {
+            get {
+                return ResourceManager.GetString("OpenConnectionsTxt", resourceCulture);
             }
         }
         
@@ -301,15 +319,6 @@ namespace GXDLMSDirector.Properties {
             get {
                 object obj = ResourceManager.GetObject("ReadMnu", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Access Error : Device reports Read-Write denied..
-        /// </summary>
-        internal static string ReadWriteDeniedTxt {
-            get {
-                return ResourceManager.GetString("ReadWriteDeniedTxt", resourceCulture);
             }
         }
         
@@ -369,47 +378,11 @@ namespace GXDLMSDirector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Access Error : Device reports a temporary failure..
+        ///   Looks up a localized string similar to .
         /// </summary>
-        internal static string TemporaryFailureTxt {
+        internal static string String1 {
             get {
-                return ResourceManager.GetString("TemporaryFailureTxt", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Access Error : Device reports a unavailable object..
-        /// </summary>
-        internal static string UnavailableObjectTxt {
-            get {
-                return ResourceManager.GetString("UnavailableObjectTxt", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Access Error : Device reports a undefined object..
-        /// </summary>
-        internal static string UndefinedObjectTxt {
-            get {
-                return ResourceManager.GetString("UndefinedObjectTxt", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unknown Error..
-        /// </summary>
-        internal static string UnknownErrorTxt {
-            get {
-                return ResourceManager.GetString("UnknownErrorTxt", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Access Error : Device reports a unmatched type..
-        /// </summary>
-        internal static string UnmatchedTypeTxt {
-            get {
-                return ResourceManager.GetString("UnmatchedTypeTxt", resourceCulture);
+                return ResourceManager.GetString("String1", resourceCulture);
             }
         }
         

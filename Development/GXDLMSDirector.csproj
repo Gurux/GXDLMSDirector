@@ -129,39 +129,59 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Gurux.Common, Version=8.1.1807.901, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Common.8.1.1807.901\lib\portable-win+net40\Gurux.Common.dll</HintPath>
+    <Reference Include="Gurux.Common, Version=8.1.1807.2603, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Common.8.1.1807.2603\lib\net40\Gurux.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=8.5.1807.1801, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.8.5.1807.1801\lib\portable-win+net35\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=8.5.1808.1301, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.8.5.1808.1301\lib\net40\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=8.5.1807.1901, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.8.5.1807.1901\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=8.5.1808.1301, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.8.5.1808.1301\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.Net, Version=8.1.1807.901, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Net.8.1.1807.901\lib\portable-win+net40\Gurux.Net.dll</HintPath>
+    <Reference Include="Gurux.Net, Version=8.1.1808.701, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Net.8.1.1808.701\lib\net40\Gurux.Net.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.Serial, Version=8.1.1807.901, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Serial.8.1.1807.901\lib\portable-win+net40\Gurux.Serial.dll</HintPath>
+    <Reference Include="Gurux.Serial, Version=8.1.1807.2701, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Serial.8.1.1807.2701\lib\net40\Gurux.Serial.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.Terminal, Version=8.1.1807.901, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Terminal.8.1.1807.901\lib\portable-win+net40\Gurux.Terminal.dll</HintPath>
+    <Reference Include="Gurux.Terminal, Version=8.1.1807.2701, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Terminal.8.1.1807.2701\lib\net40\Gurux.Terminal.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Messaging" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GXConformanceEditor.cs" />
+    <Compile Include="GXConformanceValueConverter.cs" />
+    <Compile Include="GXConformanceValueDescriptorCollection.cs" />
+    <Compile Include="GXConformanceValue.cs" />
     <Compile Include="GXByteConverter.cs" />
+    <Compile Include="GXConformanceHdlcTests.cs" />
+    <Compile Include="GXConformanceApplicationTests.cs" />
+    <Compile Include="GXValuesDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GXValuesDlg.Designer.cs">
+      <DependentUpon>GXValuesDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GXDurations.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GXDurations.Designer.cs">
+      <DependentUpon>GXDurations.cs</DependentUpon>
+    </Compile>
     <Compile Include="GXByteUIEditor.cs" />
     <Compile Include="Extensions\Actaris.cs" />
     <Compile Include="CryptHelper.cs" />
@@ -249,6 +269,14 @@
       <DependentUpon>DevicePropertiesForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="GXValuesDlg.resx">
+      <DependentUpon>GXValuesDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GXDurations.resx">
+      <DependentUpon>GXDurations.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="GXConformanceDlg.resx">
       <DependentUpon>GXConformanceDlg.cs</DependentUpon>
     </EmbeddedResource>

@@ -5,9 +5,9 @@
 //
 //
 //
-// Version:         $Revision: 10052 $,
-//                  $Date: 2018-04-26 10:11:27 +0300 (Thu, 26 Apr 2018) $
-//                  $Author: gurux01 $
+// Version:         $Revision: 10203 $,
+//                  $Date: 2018-08-04 19:20:42 +0300 (Sat, 04 Aug 2018) $
+//                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -84,7 +84,7 @@ namespace GXDLMS.ManufacturerSettings
                 return path;
             }
         }
-
+       
         static public int LogLevel
         {
             get;
@@ -103,22 +103,44 @@ namespace GXDLMS.ManufacturerSettings
             }
         }
 
-
         /// <summary>
         /// Append data to log file.
         /// </summary>
         static public void WriteLog(string data)
         {
+            WriteLog(data, GXDLMSDirector.Properties.Settings.Default.LogTime);
+        }
+
+        /// <summary>
+        /// Append data to log file.
+        /// </summary>
+        static public void WriteLog(string data, bool addTime)
+        {
             if (data == null)
             {
                 return;
             }
-            System.Diagnostics.Trace.WriteLine(DateTime.Now.ToLongTimeString() + " " + data.Replace("\r", "<CR>").Replace("\n", "<LF>"));
+            if (addTime)
+            {
+                System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("HH:mm:ss") + " " + data.Replace("\r", "<CR>").Replace("\n", "<LF>"));
+            }
+            else
+            {
+                System.Diagnostics.Trace.WriteLine(data.Replace("\r", "<CR>").Replace("\n", "<LF>"));
+            }
         }
 
         static public void WriteLog(string text, byte[] value)
         {
-            string str = DateTime.Now.ToLongTimeString() + " " + text;
+            string str;
+            if (GXDLMSDirector.Properties.Settings.Default.LogTime)
+            {
+                str = DateTime.Now.ToLongTimeString() + " " + text;
+            }
+            else
+            {
+                str = text;
+            }
             //Show data as hex.
             if ((LogLevel & 1) != 0)
             {

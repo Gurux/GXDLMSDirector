@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10173 $,
-//                  $Date: 2018-07-16 23:32:46 +0300 (Mon, 16 Jul 2018) $
+// Version:         $Revision: 10210 $,
+//                  $Date: 2018-08-13 14:41:15 +0300 (Mon, 13 Aug 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -57,7 +57,7 @@ namespace GXDLMSDirector
     public delegate void ProgressEventHandler(object sender, string description, int current, int maximium);
     public delegate void StatusEventHandler(object sender, DeviceState status);
     public delegate void ReadEventHandler(GXDLMSObject sender, int index, Exception ex);
-    public delegate void MessageTraceEventHandler(GXDLMSDevice sender, string trace, byte[] data, int framesize, string path);
+    public delegate void MessageTraceEventHandler(DateTime time, GXDLMSDevice sender, string trace, byte[] data, int payload, string path, int duration);
 
     public class GXDLMSCommunicator
     {
@@ -67,9 +67,9 @@ namespace GXDLMSDirector
         internal string LogFile;
 
         /// <summary>
-        /// Maximum frame size.
+        /// Maximum payload size.
         /// </summary>
-        internal int Framesize;
+        internal int payload;
 
         internal DateTime lastTransaction = DateTime.MinValue;
         internal DateTime connectionStartTime;
@@ -92,6 +92,7 @@ namespace GXDLMSDirector
 
         public byte[] SNRMRequest()
         {
+            payload = 0;
             return client.SNRMRequest();
         }
 
@@ -211,7 +212,7 @@ namespace GXDLMSDirector
                 {
                     media.Close();
                 }
-            }            
+            }
         }
 
         public void ReadDLMSPacket(byte[] data, GXReplyData reply)
@@ -248,6 +249,7 @@ namespace GXDLMSDirector
                 Count = 5,
                 WaitTime = parent.WaitTime * 1000,
             };
+            DateTime start = DateTime.Now;
             lock (media.Synchronous)
             {
                 if (!media.IsOpen)
@@ -257,6 +259,7 @@ namespace GXDLMSDirector
                 if (data != null)
                 {
                     media.Send(data, null);
+                    start = DateTime.Now;
                 }
                 while (!succeeded && pos != 3)
                 {
@@ -279,7 +282,7 @@ namespace GXDLMSDirector
                             GXLogWriter.WriteLog(log);
                             if (parent.OnTrace != null)
                             {
-                                parent.OnTrace(parent, log, p.Reply, 0, LogFile);
+                                parent.OnTrace(DateTime.Now, parent, log, p.Reply, 0, LogFile, 0);
                             }
                             media.Send(data, null);
                             continue;
@@ -288,7 +291,7 @@ namespace GXDLMSDirector
                         GXLogWriter.WriteLog(err, p.Reply);
                         if (parent.OnTrace != null)
                         {
-                            parent.OnTrace(parent, err, p.Reply, 0, LogFile);
+                            parent.OnTrace(DateTime.Now, parent, err, p.Reply, 0, LogFile, 0);
                         }
                         throw new TimeoutException(err);
                     }
@@ -329,7 +332,7 @@ namespace GXDLMSDirector
                                 GXLogWriter.WriteLog(err, data);
                                 if (parent.OnTrace != null)
                                 {
-                                    parent.OnTrace(parent, err, p.Reply, 0, LogFile);
+                                    parent.OnTrace(DateTime.Now, parent, err, p.Reply, 0, LogFile, 0);
                                 }
                                 media.Send(data, null);
                                 continue;
@@ -338,7 +341,7 @@ namespace GXDLMSDirector
                             GXLogWriter.WriteLog(err, p.Reply);
                             if (parent.OnTrace != null)
                             {
-                                parent.OnTrace(parent, err, p.Reply, 0, LogFile);
+                                parent.OnTrace(DateTime.Now, parent, err, p.Reply, 0, LogFile, 0);
                             }
                             throw new TimeoutException(err);
                         }
@@ -356,8 +359,25 @@ namespace GXDLMSDirector
             GXLogWriter.WriteLog(null, p.Reply);
             if (parent.OnTrace != null)
             {
-                parent.OnTrace(parent, "->\t" + DateTime.Now.ToLongTimeString(), p.Reply, reply.PacketLength + 3, LogFile);
+                int size = 0;
+                if (reply.Data != null)
+                {
+                    size = reply.Data.Size;
+                }
+                if (Properties.Settings.Default.TraceTime)
+                {
+                    parent.OnTrace(DateTime.Now, parent, "\r\nRX:\t", p.Reply, size, LogFile, (int)(DateTime.Now - start).TotalMilliseconds);
+                }
+                else
+                {
+                    parent.OnTrace(DateTime.Now, parent, "RX:\t", p.Reply, size, LogFile, (int)(DateTime.Now - start).TotalMilliseconds);
+                }
             }
+            if (Properties.Settings.Default.LogDuration)
+            {
+                GXLogWriter.WriteLog("Duration: " + ((int)(DateTime.Now - start).TotalMilliseconds).ToString(), false);
+            }
+
             if (reply.Error != 0)
             {
                 throw new GXDLMSException(reply.Error);
@@ -567,7 +587,7 @@ namespace GXDLMSDirector
             GXLogWriter.WriteLog(e.ToString());
             if (parent.OnTrace != null)
             {
-                parent.OnTrace(parent, e.ToString(), null, 0, LogFile);
+                parent.OnTrace(DateTime.Now, parent, e.ToString(), null, 0, LogFile, 0);
             }
         }
 
@@ -871,33 +891,36 @@ namespace GXDLMSDirector
             }
         }
 
-        public void InitializeConnection()
+        public void InitializeConnection(bool force)
         {
-            if (!string.IsNullOrEmpty(parent.Manufacturer))
+            if (force || !media.IsOpen)
             {
-                UpdateManufactureSettings(parent.Manufacturer);
-            }
-            if (media is GXSerial)
-            {
-                GXLogWriter.WriteLog("Initializing serial connection.");
-                InitSerial();
-                connectionStartTime = DateTime.Now;
-            }
-            else if (media is GXNet)
-            {
-                GXLogWriter.WriteLog("Initializing Network connection.");
-                InitNet();
-                //Some Electricity meters need some time before first message can be send.
-                System.Threading.Thread.Sleep(500);
-            }
-            else if (media is Gurux.Terminal.GXTerminal)
-            {
-                GXLogWriter.WriteLog("Initializing Terminal connection.");
-                InitTerminal();
-            }
-            else
-            {
-                media.Open();
+                if (!string.IsNullOrEmpty(parent.Manufacturer))
+                {
+                    UpdateManufactureSettings(parent.Manufacturer);
+                }
+                if (media is GXSerial)
+                {
+                    GXLogWriter.WriteLog("Initializing serial connection.");
+                    InitSerial();
+                    connectionStartTime = DateTime.Now;
+                }
+                else if (media is GXNet)
+                {
+                    GXLogWriter.WriteLog("Initializing Network connection.");
+                    InitNet();
+                    //Some Electricity meters need some time before first message can be send.
+                    System.Threading.Thread.Sleep(500);
+                }
+                else if (media is Gurux.Terminal.GXTerminal)
+                {
+                    GXLogWriter.WriteLog("Initializing Terminal connection.");
+                    InitTerminal();
+                }
+                else
+                {
+                    media.Open();
+                }
             }
             try
             {
@@ -1087,6 +1110,16 @@ namespace GXDLMSDirector
             }
         }
 
+        internal void ReadDataBlock(byte[][] data, string text, int multiplier, int tryCount, GXReplyData reply)
+        {
+            foreach (byte[] it in data)
+            {
+                reply.Clear();
+                ReadDataBlock(it, text, multiplier, tryCount, reply);
+            }
+        }
+
+
         internal void ReadDataBlock(byte[][] data, string text, int multiplier, GXReplyData reply)
         {
             foreach (byte[] it in data)
@@ -1125,7 +1158,7 @@ namespace GXDLMSDirector
             GXLogWriter.WriteLog(text, data);
             if (parent.OnTrace != null)
             {
-                parent.OnTrace(parent, text + "\r\n<-\t" + DateTime.Now.ToLongTimeString(), data, 0, LogFile);
+                parent.OnTrace(lastTransaction, parent, text + "\r\nTX:\t", data, 0, LogFile, 0);
             }
             ReadDLMSPacket(data, tryCount, reply);
 
@@ -1152,7 +1185,7 @@ namespace GXDLMSDirector
                     }
                     if (parent.OnTrace != null)
                     {
-                        parent.OnTrace(parent, "<-\t" + DateTime.Now.ToLongTimeString(), data, 0, LogFile);
+                        parent.OnTrace(DateTime.Now, parent, "\r\nTX:\t", data, 0, LogFile, 0);
                     }
                     GXLogWriter.WriteLog(text, data);
                     ReadDLMSPacket(data, reply);

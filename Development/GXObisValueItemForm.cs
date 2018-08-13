@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9442 $,
-//                  $Date: 2017-05-23 15:21:03 +0300 (ti, 23 touko 2017) $
+// Version:         $Revision: 10210 $,
+//                  $Date: 2018-08-13 14:41:15 +0300 (Mon, 13 Aug 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -33,12 +33,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using GXDLMS.ManufacturerSettings;
 using Gurux.DLMS.ManufacturerSettings;
 
 namespace GXDLMSDirector

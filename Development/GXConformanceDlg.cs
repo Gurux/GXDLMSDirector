@@ -73,10 +73,6 @@ namespace GXDLMSDirector
             try
             {
                 propertyGrid1.ResetSelectedProperty();
-                PropertyDescriptor pg = TypeDescriptor.GetProperties(propertyGrid1.SelectedObject)[propertyGrid1.SelectedGridItem.Label];
-                AttributeCollection attributes = pg.Attributes;
-                DefaultValueAttribute myAttribute = (DefaultValueAttribute)attributes[typeof(DefaultValueAttribute)];
-                pg.SetValue(propertyGrid1.SelectedObject, myAttribute.Value);
             }
             catch (Exception ex)
             {
@@ -84,9 +80,31 @@ namespace GXDLMSDirector
             }
         }
 
-        private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        /// <summary>
+        /// Reset all values.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void resetAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            try
+            {
+                PropertyDescriptorCollection props = TypeDescriptor.GetProperties(propertyGrid1.SelectedObject);
+                foreach (PropertyDescriptor pg in props)
+                {
+                    if (pg.IsBrowsable)
+                    {
+                        AttributeCollection attributes = pg.Attributes;
+                        DefaultValueAttribute myAttribute = (DefaultValueAttribute)attributes[typeof(DefaultValueAttribute)];
+                        pg.SetValue(propertyGrid1.SelectedObject, Convert.ChangeType(myAttribute.Value, pg.PropertyType));
+                    }
+                }
+                propertyGrid1.Refresh();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message);
+            }
         }
     }
 }

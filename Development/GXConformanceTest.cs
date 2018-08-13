@@ -31,6 +31,7 @@
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
+using Gurux.DLMS.Objects;
 using System;
 using System.Threading;
 
@@ -120,5 +121,15 @@ namespace GXDLMSDirector
             get;
             set;
         }
+
+        /// <summary>
+        /// Read values from the meter.
+        /// </summary>
+        public GXDLMSObjectCollection Values
+        {
+            get;
+            set;
+        }
+        
     }
 }

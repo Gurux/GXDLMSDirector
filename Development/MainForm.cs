@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10148 $,
-//                  $Date: 2018-06-26 12:51:01 +0300 (Tue, 26 Jun 2018) $
+// Version:         $Revision: 10210 $,
+//                  $Date: 2018-08-13 14:41:15 +0300 (Mon, 13 Aug 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -53,6 +53,7 @@ using Gurux.DLMS.Enums;
 using Gurux.DLMS.UI;
 using Gurux.Net;
 using System.Text;
+using static System.Windows.Forms.ListView;
 
 namespace GXDLMSDirector
 {
@@ -164,7 +165,6 @@ namespace GXDLMSDirector
         public MainForm()
         {
             InitializeComponent();
-            reRunToolStripMenuItem.Visible = false;
             CancelBtn.Enabled = false;
             traceTranslator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
 
@@ -344,6 +344,7 @@ namespace GXDLMSDirector
                     LogicalAddressValueLbl.Text = dev.LogicalAddress.ToString();
                     PhysicalAddressValueLbl.Text = dev.PhysicalAddress.ToString();
                     ManufacturerValueLbl.Text = dev.Manufacturers.FindByIdentification(dev.Manufacturer).Name;
+                    ProposedConformanceTB.Text = dev.Comm.client.ProposedConformance.ToString();
                     NegotiatedConformanceTB.Text = dev.Comm.client.NegotiatedConformance.ToString();
                     UpdateDeviceUI(dev, dev.Status);
                     DeviceInfoView.BringToFront();
@@ -1561,6 +1562,19 @@ namespace GXDLMSDirector
                     NotificationPdu_Click(null, null);
                 }
 
+                LogTimeMnu.Checked = !Properties.Settings.Default.LogTime;
+                LogTimeMnu_Click(null, null);
+                LogDuration.Checked = !Properties.Settings.Default.LogDuration;
+                LogDuration_Click(null, null);
+
+                TraceTimeMnu.Checked = !Properties.Settings.Default.TraceTime;
+                TraceTimeMnu_Click(null, null);
+                TraceDuration.Checked = !Properties.Settings.Default.TraceDuration;
+                TraceDuration_Click(null, null);
+
+                NotificationTimeMnu.Checked = !Properties.Settings.Default.NotificationTime;
+                NotificationTimeMnu_Click(null, null);
+
                 conformanceTestsToolStripMenuItem1.Checked = !Properties.Settings.Default.CTT;
                 conformanceTestsToolStripMenuItem1_Click(null, null);
 
@@ -1701,18 +1715,25 @@ namespace GXDLMSDirector
 
         delegate void UpdateTransactionEventHandler(bool start);
 
-        void OnTrace(GXDLMSDevice sender, string trace, byte[] data, int length, string path)
+        void OnTrace(DateTime time, GXDLMSDevice sender, string trace, byte[] data, int length, string path, int duration)
         {
             if (InvokeRequired)
             {
-                BeginInvoke(new MessageTraceEventHandler(this.OnTrace), sender, trace, data, length, path);
+                BeginInvoke(new MessageTraceEventHandler(this.OnTrace), time, sender, trace, data, length, path, duration);
             }
             else
             {
                 //Show data as hex.
                 if (traceLevel == 1)
                 {
-                    TraceView.AppendText(DateTime.Now.ToString() + trace + " " + GXCommon.ToHex(data, true) + Environment.NewLine);
+                    if (TraceTimeMnu.Checked)
+                    {
+                        TraceView.AppendText(time.ToString("HH:mm:ss") + " " + trace + " " + GXCommon.ToHex(data, true) + Environment.NewLine);
+                    }
+                    else
+                    {
+                        TraceView.AppendText(trace + " " + GXCommon.ToHex(data, true) + Environment.NewLine);
+                    }
                 }
                 else if (data != null && (traceLevel == 2 || traceLevel == 3))
                 {
@@ -1724,7 +1745,14 @@ namespace GXDLMSDirector
                         InterfaceType type = GXDLMSTranslator.GetDlmsFraming(receivedTraceData);
                         while (traceTranslator.FindNextFrame(receivedTraceData, pdu, type))
                         {
-                            TraceView.AppendText(Environment.NewLine + DateTime.Now.ToString() + Environment.NewLine + traceTranslator.MessageToXml(receivedTraceData));
+                            if (TraceTimeMnu.Checked)
+                            {
+                                TraceView.AppendText(Environment.NewLine + time.ToString("HH:mm:ss") + Environment.NewLine + traceTranslator.MessageToXml(receivedTraceData));
+                            }
+                            else
+                            {
+                                TraceView.AppendText(Environment.NewLine + traceTranslator.MessageToXml(receivedTraceData));
+                            }
                             receivedTraceData.Trim();
                         }
                     }
@@ -1732,8 +1760,15 @@ namespace GXDLMSDirector
                     {
                         receivedTraceData.Clear();
                         TraceView.ResetText();
-                        TraceView.AppendText(Environment.NewLine + DateTime.Now.ToString() + ex.Message + Environment.NewLine);
+                        TraceView.AppendText(Environment.NewLine + time.ToString() + ex.Message + Environment.NewLine);
                         TraceView.AppendText(trace + Environment.NewLine + GXCommon.ToHex(data, true) + Environment.NewLine);
+                    }
+                }
+                if (duration != 0)
+                {
+                    if (Properties.Settings.Default.TraceDuration)
+                    {
+                        TraceView.AppendText("Duration: " + duration.ToString() + Environment.NewLine);
                     }
                 }
             }
@@ -2327,10 +2362,39 @@ namespace GXDLMSDirector
         /// <param name="path"></param>
         void LoadFile(string path)
         {
+            DialogResult ret = DialogResult.OK;
+            //Ask user to close active connections.
+            foreach (GXDLMSDevice it in Devices)
+            {
+                if (it.Comm.media.IsOpen)
+                {
+                    MessageBox.Show(this, Properties.Resources.OpenConnectionsTxt, Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
+                    if (ret == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    break;
+                }
+            }
+            if (ret == DialogResult.Yes)
+            {
+                foreach (GXDLMSDevice it in Devices)
+                {
+                    try
+                    {
+                        it.Disconnect();
+                    }
+                    catch (Exception)
+                    {
+                        //Skip all errors.
+                    }
+                }
+            }
+
             //Save changes?
             if (this.Dirty)
             {
-                DialogResult ret = MessageBox.Show(this, Properties.Resources.SaveChangesTxt, Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                ret = MessageBox.Show(this, Properties.Resources.SaveChangesTxt, Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
                 if (ret == DialogResult.Cancel)
                 {
                     return;
@@ -2950,6 +3014,31 @@ namespace GXDLMSDirector
                 Manufacturers = new GXManufacturerCollection();
                 GXManufacturerCollection.ReadManufacturerSettings(Manufacturers);
                 ThreadPool.QueueUserWorkItem(new WaitCallback(CheckUpdates), this);
+
+                //Load conformace tests.
+                //GXConformanceTest
+                string path2 = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
+                string testResults = Path.Combine(path2, "TestResults");
+                if (Directory.Exists(testResults))
+                {
+                    var di = new DirectoryInfo(testResults);
+                    var list = di.EnumerateDirectories()
+                                        .OrderBy(d => d.CreationTime)
+                                        .Select(d => d.Name)
+                                        .ToList();
+                    foreach (string it in list)
+                    {
+                        GXConformanceTest t = new GXConformanceTest();
+                        t.OnReady = OnConformanceReady;
+                        t.OnError = OnConformanceError;
+                        t.OnTrace = OnConformanceTrace;
+                        t.OnProgress = OnProgress;
+                        t.Results = Path.Combine(testResults, it);
+                        ListViewItem li = ConformanceHistoryTests.Items.Insert(0, Path.GetFileName(it));
+                        li.SubItems.Add("");
+                        li.Tag = t;
+                    }
+                }
             }
             catch (Exception Ex)
             {
@@ -3069,7 +3158,14 @@ namespace GXDLMSDirector
                         {
                             EventsView.ResetText();
                         }
-                        OnAddNotification(DateTime.Now.ToString() + Environment.NewLine + sb.ToString());
+                        if (NotificationTimeMnu.Checked)
+                        {
+                            OnAddNotification(DateTime.Now.ToString() + Environment.NewLine + sb.ToString());
+                        }
+                        else
+                        {
+                            OnAddNotification(sb.ToString());
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -3090,7 +3186,7 @@ namespace GXDLMSDirector
             {
                 if (e.State == MediaState.Open)
                 {
-                    OnAddNotification("Notifications listen stated.");
+                    OnAddNotification("Notifications listen stated in " + (sender as GXNet).Protocol + "port " + (sender as GXNet).Port + ".");
                     StartNotifications.Visible = false;
                     StopNotifications.Visible = true;
                     NotificationsBtn.Checked = true;
@@ -3963,9 +4059,18 @@ namespace GXDLMSDirector
         {
             try
             {
-                if (ConformanceTests.SelectedItems.Count == 1)
+                SelectedListViewItemCollection target;
+                if (IsConformanceTestSelected(sender))
                 {
-                    ListViewItem li = ConformanceTests.SelectedItems[0];
+                    target = ConformanceTests.SelectedItems;
+                }
+                else
+                {
+                    target = ConformanceHistoryTests.SelectedItems;
+                }
+                if (target.Count == 1)
+                {
+                    ListViewItem li = target[0];
                     string path = Path.Combine((li.Tag as GXConformanceTest).Results, "Results.html");
                     Process.Start(path);
                 }
@@ -3983,9 +4088,18 @@ namespace GXDLMSDirector
         {
             try
             {
-                if (ConformanceTests.SelectedItems.Count == 1)
+                SelectedListViewItemCollection target;
+                if (IsConformanceTestSelected(sender))
                 {
-                    ListViewItem li = ConformanceTests.SelectedItems[0];
+                    target = ConformanceTests.SelectedItems;
+                }
+                else
+                {
+                    target = ConformanceHistoryTests.SelectedItems;
+                }
+                if (target.Count == 1)
+                {
+                    ListViewItem li = target[0];
                     string path = Path.Combine((li.Tag as GXConformanceTest).Results, "Trace.txt");
                     Process.Start(path);
                 }
@@ -4075,8 +4189,10 @@ namespace GXDLMSDirector
                 {
                     if (li.Tag == sender)
                     {
-                        string path = Path.Combine((li.Tag as GXConformanceTest).Results, "Results.html");
-                        li.SubItems[1].Text = path;
+                        ListViewItem tmp = new ListViewItem(Path.GetFileName((li.Tag as GXConformanceTest).Results));
+                        tmp.SubItems.Add("");
+                        tmp.Tag = sender;
+                        ConformanceHistoryTests.Items.Insert(0, tmp);
                         li.ImageIndex = sender.ErrorLevel;
                         break;
                     }
@@ -4109,6 +4225,11 @@ namespace GXDLMSDirector
                         if (li.Tag == sender)
                         {
                             li.SubItems[1].Text = e.Message;
+                            ListViewItem tmp = new ListViewItem(Path.GetFileName((li.Tag as GXConformanceTest).Results));
+                            tmp.SubItems.Add("");
+                            tmp.Tag = sender;
+                            ConformanceHistoryTests.Items.Insert(0, tmp);
+                            li.ImageIndex = sender.ErrorLevel;
                             break;
                         }
                     }
@@ -4153,63 +4274,6 @@ namespace GXDLMSDirector
                     System.Diagnostics.Debug.WriteLine(ex.Message);
                     System.Diagnostics.Debug.WriteLine(ex.ToString());
                 }
-            }
-        }
-
-        /// <summary>
-        /// Run basic conformance tests.
-        /// </summary>
-        private void runToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (Devices.Count == 0)
-                {
-                    throw new Exception("No devices to test.");
-                }
-                GXDLMSDeviceCollection devices = new GXDLMSDeviceCollection();
-                devices.AddRange(Devices);
-                GXConformanceSettings settings;
-                XmlSerializer x = new XmlSerializer(typeof(GXConformanceSettings));
-                if (Properties.Settings.Default.ConformanceSettings == "")
-                {
-                    settings = new GXConformanceSettings();
-                }
-                else
-                {
-                    try
-                    {
-                        using (StringReader reader = new StringReader(Properties.Settings.Default.ConformanceSettings))
-                        {
-                            settings = (GXConformanceSettings)x.Deserialize(reader);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Diagnostics.Debug.WriteLine(ex.Message);
-                        settings = new GXConformanceSettings();
-                    }
-                }
-                if (RunConformanceTest(settings, devices))
-                {
-                    try
-                    {
-                        using (StringWriter writer = new StringWriter())
-                        {
-                            x.Serialize(writer, settings);
-                            Properties.Settings.Default.ConformanceSettings = writer.ToString();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Diagnostics.Debug.WriteLine(ex.Message);
-                        Properties.Settings.Default.ConformanceSettings = "";
-                    }
-                }
-            }
-            catch (Exception Ex)
-            {
-                Error.ShowError(this, Ex);
             }
         }
 
@@ -4322,9 +4386,10 @@ namespace GXDLMSDirector
 
         private void contextMenuStrip2_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            runToolStripMenuItem.Enabled = Devices.Count != 0 && (TransactionWork == null || !TransactionWork.IsRunning);
-            OpenContainingFolderBtn.Enabled = showValuesBtn.Enabled = ShowLogBtn.Enabled = ShowReportBtn.Enabled = ConformanceTests.SelectedItems.Count != 0;
-            reRunToolStripMenuItem.Enabled = ConformanceTests.SelectedItems.Count != 0 && (TransactionWork == null || !TransactionWork.IsRunning);
+            ContextMenuStrip senderItem = (ContextMenuStrip)sender;
+            var ownerItem = senderItem.OwnerItem;
+            RunMnu.Enabled = Devices.Count != 0 && (TransactionWork == null || !TransactionWork.IsRunning);
+            ShowDurationsMnu.Enabled = OpenContainingFolderBtn.Enabled = showValuesBtn.Enabled = ShowLogBtn.Enabled = ShowReportBtn.Enabled = ConformanceTests.SelectedItems.Count != 0;
         }
 
         /// <summary>
@@ -4334,9 +4399,18 @@ namespace GXDLMSDirector
         {
             try
             {
-                if (ConformanceTests.SelectedItems.Count == 1)
+                SelectedListViewItemCollection target;
+                if (IsConformanceTestSelected(sender))
                 {
-                    ListViewItem li = ConformanceTests.SelectedItems[0];
+                    target = ConformanceTests.SelectedItems;
+                }
+                else
+                {
+                    target = ConformanceHistoryTests.SelectedItems;
+                }
+                if (target.Count == 1)
+                {
+                    ListViewItem li = target[0];
                     string path = Path.Combine((li.Tag as GXConformanceTest).Results, "Values.txt");
                     Process.Start(path);
                 }
@@ -4345,6 +4419,20 @@ namespace GXDLMSDirector
             {
                 Error.ShowError(this, Ex);
             }
+        }
+
+        private bool IsConformanceTestSelected(object sender)
+        {
+            if (sender == ConformanceTests)
+            {
+                return true;
+            }
+            if (sender == ConformanceHistoryTests)
+            {
+                return false;
+            }
+            ToolStripMenuItem t = (ToolStripMenuItem)sender;
+            return t.Owner == ConformanceMenu;
         }
 
         /// <summary>
@@ -4356,24 +4444,25 @@ namespace GXDLMSDirector
         {
             try
             {
-                if (ConformanceTests.SelectedItems.Count == 1)
+                SelectedListViewItemCollection target;
+                if (IsConformanceTestSelected(sender))
                 {
-                    ListViewItem li = ConformanceTests.SelectedItems[0];
-                    Process.Start("explorer.exe", string.Format("/select, \"{0}\"", (li.Tag as GXConformanceTest).Results));
+                    target = ConformanceTests.SelectedItems;
+                }
+                else
+                {
+                    target = ConformanceHistoryTests.SelectedItems;
+                }
+                if (target.Count == 1)
+                {
+                    ListViewItem li = target[0];
+                    Process.Start((li.Tag as GXConformanceTest).Results);
                 }
             }
             catch (Exception Ex)
             {
                 Error.ShowError(this, Ex);
             }
-        }
-
-        /// <summary>
-        /// Re-Run selected conformance test.
-        /// </summary>
-        private void reRunToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
         }
 
         /// <summary>
@@ -4516,9 +4605,358 @@ namespace GXDLMSDirector
             }
         }
 
-        private void ObjectPanelFrame_Paint(object sender, PaintEventArgs e)
+        private void LogTimeMnu_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.LogTime = LogTimeMnu.Checked = !LogTimeMnu.Checked;
+        }
+
+        private void TraceTimeMnu_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.TraceTime = TraceTimeMnu.Checked = !TraceTimeMnu.Checked;
+        }
+
+        private void NotificationTimeMnu_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.NotificationTime = NotificationTimeMnu.Checked = !NotificationTimeMnu.Checked;
+        }
+
+        private void LogDuration_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.LogDuration = LogDuration.Checked = !LogDuration.Checked;
+        }
+
+        private void TraceDuration_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.TraceDuration = TraceDuration.Checked = !TraceDuration.Checked;
+        }
+
+        /// <summary>
+        /// Show Conformance Test Tool conformances.
+        /// </summary>
+        private void ShowDurationsMnu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SelectedListViewItemCollection target;
+                if (IsConformanceTestSelected(sender))
+                {
+                    target = ConformanceTests.SelectedItems;
+                }
+                else
+                {
+                    target = ConformanceHistoryTests.SelectedItems;
+                }
+                List<KeyValuePair<string, string>> values = new List<KeyValuePair<string, string>>();
+                foreach (ListViewItem li in target)
+                {
+                    GXConformanceTest ct = li.Tag as GXConformanceTest;
+                    string path = Path.Combine(ct.Results, "Durations.txt");
+                    if (File.Exists(path))
+                    {
+                        string name;
+                        if (ct.Device == null)
+                        {
+                            name = Path.GetFileName(ct.Results);
+                        }
+                        else
+                        {
+                            name = ct.Device.Name;
+                        }
+                        values.Add(new KeyValuePair<string, string>(name, path));
+                    }
+                }
+                if (values.Count != 0)
+                {
+                    GXDurations dlg = new GXDurations(values);
+                    dlg.Show(this);
+                }
+                else
+                {
+                    throw new Exception(Properties.Resources.InvalidDurationFile);                    
+                }
+            }
+            catch (Exception Ex)
+            {
+                Error.ShowError(this, Ex);
+            }
+        }
+
+        /// <summary>
+        /// Run all conformance tests.
+        /// </summary>
+        private void RunAllTestsMnu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (Devices.Count == 0)
+                {
+                    throw new Exception("No devices to test.");
+                }
+                GXDLMSDeviceCollection devices = new GXDLMSDeviceCollection();
+                devices.AddRange(Devices);
+                GXConformanceSettings settings;
+                XmlSerializer x = new XmlSerializer(typeof(GXConformanceSettings));
+                if (Properties.Settings.Default.ConformanceSettings == "")
+                {
+                    settings = new GXConformanceSettings();
+                }
+                else
+                {
+                    try
+                    {
+                        using (StringReader reader = new StringReader(Properties.Settings.Default.ConformanceSettings))
+                        {
+                            settings = (GXConformanceSettings)x.Deserialize(reader);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine(ex.Message);
+                        settings = new GXConformanceSettings();
+                    }
+                }
+                if (RunConformanceTest(settings, devices))
+                {
+                    try
+                    {
+                        using (StringWriter writer = new StringWriter())
+                        {
+                            x.Serialize(writer, settings);
+                            Properties.Settings.Default.ConformanceSettings = writer.ToString();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine(ex.Message);
+                        Properties.Settings.Default.ConformanceSettings = "";
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                Error.ShowError(this, Ex);
+            }
+        }
+
+        /// <summary>
+        /// Run selected conformance tests.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RunSelectedTestsMnu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SelectedListViewItemCollection target;
+                target = ConformanceTests.SelectedItems;
+                GXDLMSDeviceCollection devices = new GXDLMSDeviceCollection();
+                foreach (ListViewItem it in target)
+                {
+                    devices.Add((it.Tag as GXConformanceTest).Device);
+                }
+                if (devices.Count == 0)
+                {
+                    throw new Exception("No devices selected.");
+                }
+                GXConformanceSettings settings;
+                XmlSerializer x = new XmlSerializer(typeof(GXConformanceSettings));
+                if (Properties.Settings.Default.ConformanceSettings == "")
+                {
+                    settings = new GXConformanceSettings();
+                }
+                else
+                {
+                    try
+                    {
+                        using (StringReader reader = new StringReader(Properties.Settings.Default.ConformanceSettings))
+                        {
+                            settings = (GXConformanceSettings)x.Deserialize(reader);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine(ex.Message);
+                        settings = new GXConformanceSettings();
+                    }
+                }
+                if (RunConformanceTest(settings, devices))
+                {
+                    try
+                    {
+                        using (StringWriter writer = new StringWriter())
+                        {
+                            x.Serialize(writer, settings);
+                            Properties.Settings.Default.ConformanceSettings = writer.ToString();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine(ex.Message);
+                        Properties.Settings.Default.ConformanceSettings = "";
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                Error.ShowError(this, Ex);
+            }
+        }
+
+        /// <summary>
+        /// Run failed conformance test.
+        /// </summary>
+        private void RunFailedTestsMnu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SelectedListViewItemCollection target;
+                if (IsConformanceTestSelected(sender))
+                {
+                    target = ConformanceTests.SelectedItems;
+                }
+                else
+                {
+                    target = ConformanceHistoryTests.SelectedItems;
+                }
+                GXDLMSDeviceCollection devices = new GXDLMSDeviceCollection();
+                foreach (ListViewItem it in target)
+                {
+                    if ((it.Tag as GXConformanceTest).Exception != null)
+                    {
+                        devices.Add((it.Tag as GXConformanceTest).Device);
+                    }
+                }
+                if (devices.Count == 0)
+                {
+                    throw new Exception("No devices selected.");
+                }
+                GXConformanceSettings settings;
+                XmlSerializer x = new XmlSerializer(typeof(GXConformanceSettings));
+                if (Properties.Settings.Default.ConformanceSettings == "")
+                {
+                    settings = new GXConformanceSettings();
+                }
+                else
+                {
+                    try
+                    {
+                        using (StringReader reader = new StringReader(Properties.Settings.Default.ConformanceSettings))
+                        {
+                            settings = (GXConformanceSettings)x.Deserialize(reader);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine(ex.Message);
+                        settings = new GXConformanceSettings();
+                    }
+                }
+                if (RunConformanceTest(settings, devices))
+                {
+                    try
+                    {
+                        using (StringWriter writer = new StringWriter())
+                        {
+                            x.Serialize(writer, settings);
+                            Properties.Settings.Default.ConformanceSettings = writer.ToString();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine(ex.Message);
+                        Properties.Settings.Default.ConformanceSettings = "";
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                Error.ShowError(this, Ex);
+            }
+        }
+
+        /// <summary>
+        /// Re-Run all conformance test.
+        /// </summary>
+        private void ReRunAllTestsMnu_Click(object sender, EventArgs e)
         {
 
+        }
+
+        /// <summary>
+        /// Re-Run selected conformance test.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ReRunSelectedTestsMnu_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ReRunFailedTestsMnu_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// Delete selected conformance tests.
+        /// </summary>
+        private void ConformanceDelete_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DialogResult ret = MessageBox.Show(this, Properties.Resources.ConformanceTestRemove, Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                if (ret == DialogResult.Yes)
+                {
+                    while (ConformanceHistoryTests.SelectedItems.Count != 0)
+                    {
+                        ListViewItem li = ConformanceHistoryTests.SelectedItems[0];
+                        GXConformanceTest ct = li.Tag as GXConformanceTest;
+                        Directory.Delete(ct.Results, true);
+                        ConformanceHistoryTests.Items.Remove(li);
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                Error.ShowError(this, Ex);
+            }
+        }
+
+        /// <summary>
+        /// Show Visualized values.
+        /// </summary>
+        private void showVisualizedValuesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SelectedListViewItemCollection target;
+                if (IsConformanceTestSelected(sender))
+                {
+                    target = ConformanceTests.SelectedItems;
+                }
+                else
+                {
+                    target = ConformanceHistoryTests.SelectedItems;
+                }
+                if (target.Count == 1)
+                {
+                    ListViewItem li = target[0];
+                    string path = Path.Combine((li.Tag as GXConformanceTest).Results, "Values.xml");
+                    if (File.Exists(path))
+                    {
+                        GXValuesDlg dlg = new GXValuesDlg(Views, path);
+                        dlg.Show(this);
+                    }
+                    else
+                    {
+                        throw new Exception(Properties.Resources.InvalidValueFile);
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                Error.ShowError(this, Ex);
+            }
         }
     }
 }

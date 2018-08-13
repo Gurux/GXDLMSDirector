@@ -34,6 +34,7 @@
 using Gurux.DLMS.UI;
 using System;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
@@ -46,6 +47,10 @@ namespace GXDLMSDirector
     /// </summary>
     public class GXConformanceSettings
     {
+        private string imageFile;
+        GXConformanceHdlcTests excludedHdlcTests;
+        GXConformanceApplicationTests excludedApplicationTests;
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -57,6 +62,8 @@ namespace GXDLMSDirector
             ImageActivateWaitTime = new TimeSpan(0, 0, 10);
             DelayConnection = Delay = new TimeSpan(0, 0, 0);
             WarningBeforeStart = true;
+            excludedApplicationTests = new GXConformanceApplicationTests();
+            excludedHdlcTests = new GXConformanceHdlcTests();
         }
 
         [Description("Are meters reading concurrently.")]
@@ -124,9 +131,13 @@ namespace GXDLMSDirector
             }
             set
             {
-                if (!string.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value)) 
                 {
                     Delay = XmlConvert.ToTimeSpan(value);
+                }
+                else
+                {
+                    Delay = new TimeSpan(0, 0, 0);
                 }
             }
         }
@@ -174,6 +185,10 @@ namespace GXDLMSDirector
                 {
                     DelayConnection = XmlConvert.ToTimeSpan(value);
                 }
+                else
+                {
+                    DelayConnection = new TimeSpan(0, 0, 0);
+                }
             }
         }
 
@@ -185,8 +200,6 @@ namespace GXDLMSDirector
             get;
             set;
         }
-
-        private string imageFile;
 
         [Description("Updated image file.")]
         [Category("Image")]
@@ -200,7 +213,7 @@ namespace GXDLMSDirector
             }
             set
             {
-                if (imageFile != value && ImageIdentifier == null || ImageIdentifier.Length == 0)
+                if (value != null && (imageFile != value && ImageIdentifier == null || ImageIdentifier.Length == 0))
                 {
                     if (string.Compare(Path.GetExtension(value), ".xml", true) == 0)
                     {
@@ -275,6 +288,10 @@ namespace GXDLMSDirector
                 {
                     ImageVerifyWaitTime = XmlConvert.ToTimeSpan(value);
                 }
+                else
+                {
+                    ImageVerifyWaitTime = new TimeSpan(0, 0, 10);
+                }
             }
         }
 
@@ -289,7 +306,7 @@ namespace GXDLMSDirector
         }
 
         [XmlIgnore]
-        [Description("How long is waited before image is activated.")]
+        [Description("How long is waited before image is activated. Image activation status is not checked if value is 00:00:00")]
         [Category("Image")]
         [DefaultValue(typeof(TimeSpan), "00:00:10")]
         public TimeSpan ImageActivateWaitTime
@@ -312,27 +329,97 @@ namespace GXDLMSDirector
                 {
                     ImageActivateWaitTime = XmlConvert.ToTimeSpan(value);
                 }
+                else
+                {
+                    ImageActivateWaitTime = new TimeSpan(0, 0, 10);
+                }
             }
         }
 
-        [Description("Exclude HDLC framing tests. HDLC tests are executed only when HDLC framing is used.")]
+        /// <summary>
+        /// Old functionality. This is removed later.
+        /// </summary>
         [DefaultValue(false)]
-        [Category("Accessibility")]
         public bool ExcludeHdlcTests
         {
-            get;
-            set;
+            get
+            {
+                return false;
+            }
+            set
+            {
+                if (value)
+                {
+                    ExcludedHdlcTests.Set(true);
+                }
+            }
+        }
+
+        [Description("Excluded HDLC framing tests. HDLC tests are executed only when HDLC framing is used.")]
+        [Category("Accessibility")]
+        [TypeConverter(typeof(GXConformanceValueConverter))]
+        [DefaultValue(null)]
+        [Editor(typeof(GXConformanceEditor), typeof(UITypeEditor))]
+        [RefreshPropertiesAttribute(RefreshProperties.All)]
+        public GXConformanceHdlcTests ExcludedHdlcTests
+        {
+            get
+            {
+                return excludedHdlcTests;
+            }
+            set
+            {
+                //If user reset values.
+                if (value == null)
+                {
+                    value = new GXConformanceHdlcTests();
+                }
+                excludedHdlcTests = value;
+            }
+        }
+
+        /// <summary>
+        /// Old functionality. This is removed later.
+        /// </summary>
+        [DefaultValue(false)]
+        [Browsable(false)]
+        public bool ExcludeApplicationTests
+        {
+            get
+            {
+                return false;
+            }
+            set
+            {
+                if (value)
+                {
+                    ExcludedApplicationTests.Set(true);
+                }
+            }
         }
 
         [Description("Exclude COSEM application layer tests.")]
-        [DefaultValue(false)]
         [Category("Accessibility")]
-        public bool ExcludeApplicationTests
+        [TypeConverter(typeof(GXConformanceValueConverter))]
+        [DefaultValue(null)]
+        [Editor(typeof(GXConformanceEditor), typeof(UITypeEditor))]
+        [RefreshPropertiesAttribute(RefreshProperties.All)]
+        public GXConformanceApplicationTests ExcludedApplicationTests
         {
-            get;
-            set;
+            get
+            {
+                return excludedApplicationTests;
+            }
+            set
+            {
+                //If user reset values.
+                if (value == null)
+                {
+                    value = new GXConformanceApplicationTests();
+                }
+                excludedApplicationTests = value;
+            }
         }
-        
 
         [Description("Meter information is not read. Logical Device Name, Firmware version and time are not read from the meter.")]
         [DefaultValue(false)]

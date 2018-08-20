@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9442 $,
-//                  $Date: 2017-05-23 15:21:03 +0300 (ti, 23 touko 2017) $
+// Version:         $Revision: 10221 $,
+//                  $Date: 2018-08-17 16:15:58 +0300 (Fri, 17 Aug 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -67,9 +67,9 @@ namespace GXDLMSDirector
             this.ObisPropertyGrid = new System.Windows.Forms.PropertyGrid();
             this.InterfaceCB = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
-            //
+            // 
             // OKBtn
-            //
+            // 
             this.OKBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.OKBtn.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.OKBtn.Location = new System.Drawing.Point(304, 341);
@@ -79,9 +79,9 @@ namespace GXDLMSDirector
             this.OKBtn.Text = "&OK";
             this.OKBtn.UseVisualStyleBackColor = true;
             this.OKBtn.Click += new System.EventHandler(this.OKBtn_Click);
-            //
+            // 
             // CancelBtn
-            //
+            // 
             this.CancelBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.CancelBtn.Location = new System.Drawing.Point(385, 341);
@@ -90,12 +90,12 @@ namespace GXDLMSDirector
             this.CancelBtn.TabIndex = 10;
             this.CancelBtn.Text = "&Cancel";
             this.CancelBtn.UseVisualStyleBackColor = true;
-            //
+            // 
             // ObisPropertyGrid
-            //
-            this.ObisPropertyGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                                            | System.Windows.Forms.AnchorStyles.Left)
-                                            | System.Windows.Forms.AnchorStyles.Right)));
+            // 
+            this.ObisPropertyGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.ObisPropertyGrid.HelpVisible = false;
             this.ObisPropertyGrid.Location = new System.Drawing.Point(8, 41);
             this.ObisPropertyGrid.Name = "ObisPropertyGrid";
@@ -103,9 +103,10 @@ namespace GXDLMSDirector
             this.ObisPropertyGrid.Size = new System.Drawing.Size(452, 290);
             this.ObisPropertyGrid.TabIndex = 11;
             this.ObisPropertyGrid.ToolbarVisible = false;
-            //
+            this.ObisPropertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.ObisPropertyGrid_PropertyValueChanged);
+            // 
             // InterfaceCB
-            //
+            // 
             this.InterfaceCB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.InterfaceCB.FormattingEnabled = true;
             this.InterfaceCB.Location = new System.Drawing.Point(8, 8);
@@ -113,9 +114,9 @@ namespace GXDLMSDirector
             this.InterfaceCB.Size = new System.Drawing.Size(452, 21);
             this.InterfaceCB.TabIndex = 21;
             this.InterfaceCB.SelectedIndexChanged += new System.EventHandler(this.InterfaceCB_SelectedIndexChanged);
-            //
+            // 
             // OBISCodeForm
-            //
+            // 
             this.AcceptButton = this.OKBtn;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;

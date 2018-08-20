@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10149 $,
-//                  $Date: 2018-06-26 14:17:33 +0300 (Tue, 26 Jun 2018) $
+// Version:         $Revision: 10221 $,
+//                  $Date: 2018-08-17 16:15:58 +0300 (Fri, 17 Aug 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -280,29 +280,20 @@ namespace GXDLMSDirector
         }
         private void UpdateDeviceSettings(GXDLMSDevice device, bool first)
         {
-            this.ManufacturerCB.SelectedItem = null;
-            GXDLMSDevice old = Device;
             if (first)
             {
                 this.ManufacturerCB.SelectedIndex = 0;
             }
             else
             {
-                try
+                Device = device;
+                foreach (GXManufacturer it in this.ManufacturerCB.Items)
                 {
-                    Device = device;
-                    foreach (GXManufacturer it in this.ManufacturerCB.Items)
+                    if (string.Compare(it.Identification, device.Manufacturer, true) == 0)
                     {
-                        if (string.Compare(it.Identification, device.Manufacturer, true) == 0)
-                        {
-                            this.ManufacturerCB.SelectedItem = it;
-                            break;
-                        }
+                        this.ManufacturerCB.SelectedItem = it;
+                        break;
                     }
-                }
-                finally
-                {
-                    Device = old;
                 }
                 if (this.ManufacturerCB.SelectedItem == null)
                 {
@@ -468,6 +459,7 @@ namespace GXDLMSDirector
                 UseGatewayCb.Checked = false;
                 NetworkIDTb.Text = "0";
             }
+            FrameSizeCb.Checked = Device.UseFrameSize;
         }
 
         private void ShowConformance(Conformance c)
@@ -961,6 +953,7 @@ namespace GXDLMSDirector
                 device.NetworkId = 0;
                 device.PhysicalDeviceAddress = null;
             }
+            device.UseFrameSize = FrameSizeCb.Checked;
         }
 
         /// <summary>
@@ -1678,7 +1671,7 @@ namespace GXDLMSDirector
                         using (XmlReader reader = XmlReader.Create(ms))
                         {
                             CopyDevice = (GXDLMSDevice)x.Deserialize(reader);
-                            UpdateDeviceSettings(CopyDevice, true);
+                            UpdateDeviceSettings(CopyDevice, false);
                             UpdateMediaSettings();
                         }
                     }
@@ -1774,7 +1767,7 @@ namespace GXDLMSDirector
             {
                 MessageBox.Show(this, ex.Message);
             }
-        }      
+        }
 
         /// <summary>
         /// Is gateway used.
@@ -1782,6 +1775,20 @@ namespace GXDLMSDirector
         private void UseGatewayCb_CheckedChanged(object sender, EventArgs e)
         {
             NetworkIDTb.ReadOnly = PhysicalDeviceAddressTb.ReadOnly = !UseGatewayCb.Checked;
+        }
+
+        private void FrameSizeCb_CheckedChanged(object sender, EventArgs e)
+        {
+            if (FrameSizeCb.Checked)
+            {
+                MaxInfoTXLbl.Text = "Max frame size in transmit";
+                MaxInfoRXLbl.Text = "Max frame size in receive";
+            }
+            else
+            {
+                MaxInfoTXLbl.Text = "Max payload size in transmit";
+                MaxInfoRXLbl.Text = "Max payload size in receive";
+            }
         }
     }
 }

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10210 $,
-//                  $Date: 2018-08-13 14:41:15 +0300 (Mon, 13 Aug 2018) $
+// Version:         $Revision: 10221 $,
+//                  $Date: 2018-08-17 16:15:58 +0300 (Fri, 17 Aug 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -192,6 +192,9 @@ namespace GXDLMSDirector
             Accessrights.Columns.Add(column);
             Accessrights.Columns.Add(CreateAccessRightColumns());
             Accessrights.Columns.Add(CreateStaticColumns());
+            Accessrights.Columns.Add(CreateTypeColumns("Type"));
+            Accessrights.Columns.Add(CreateTypeColumns("UIType"));
+
             Accessrights.CellValueChanged += Accessrights_CellValueChanged;
             Accessrights.AllowUserToAddRows = false;
             Accessrights.AllowUserToDeleteRows = false;
@@ -469,7 +472,14 @@ namespace GXDLMSDirector
                         SortedList<int, GXDLMSAttributeSettings> list = new SortedList<int, GXDLMSAttributeSettings>();
                         foreach (GXDLMSAttributeSettings it in (obj as GXDLMSObject).Attributes)
                         {
-                            list.Add(it.Index, it);
+                            try
+                            {
+                                list.Add(it.Index, it);
+                            }
+                            catch
+                            {
+                                //Skip all errors.
+                            }
                         }
                         //Add all attributes.
                         string[] names = (obj as IGXDLMSBase).GetNames();
@@ -570,7 +580,7 @@ namespace GXDLMSDirector
             try
             {
                 GXDLMSAttributeSettings a = (GXDLMSAttributeSettings)bindingSource1[e.RowIndex];
-                if (!SelectedView.Target.Attributes.Contains(a))
+                if (SelectedView.Target.Attributes.Find(a.Index) == null)
                 {
                     SelectedView.Target.Attributes.Add(a);
                 }
@@ -591,6 +601,15 @@ namespace GXDLMSDirector
             combo.DataSource = Enum.GetValues(typeof(AccessMode));
             combo.DataPropertyName = "Access";
             combo.Name = "Access";
+            return combo;
+        }
+
+        DataGridViewComboBoxColumn CreateTypeColumns(string name)
+        {
+            DataGridViewComboBoxColumn combo = new DataGridViewComboBoxColumn();
+            combo.DataSource = Enum.GetValues(typeof(DataType));
+            combo.DataPropertyName = name;
+            combo.Name = name;
             return combo;
         }
 
@@ -2300,8 +2319,10 @@ namespace GXDLMSDirector
                 {
                     obj.SetDataType(a.Index, a.UIType);
                 }
+                obj.SetValues(a.Index, a.Values);
+                obj.SetAccess(a.Index, a.Access);
+                obj.SetXml(a.Index, a.Xml);
             }
-
         }
 
         TreeNode AddDevice(GXDLMSDevice dev, bool refresh, bool first)
@@ -2573,7 +2594,6 @@ namespace GXDLMSDirector
                         RemoveObject(dev.Objects[0]);
                     }
                     GXManufacturer m = Manufacturers.FindByIdentification(dev.Manufacturer);
-                    dev.ObisCodes = null;
                     //Walk through object tree.
                     dev.UpdateObjects();
                     GroupItems(GroupsMnu.Checked);
@@ -4551,22 +4571,16 @@ namespace GXDLMSDirector
                 }
                 if (dev != null)
                 {
-                    GXObisCodeCollection collection = new GXObisCodeCollection();
+                    GXObisCodeCollection collection = dev.Manufacturers.FindByIdentification(dev.Manufacturer).ObisCodes;
                     GXObisCode item = new GXObisCode();
                     item.ObjectType = ot;
-                    OBISCodeForm dlg = new OBISCodeForm(collection, item);
+                    OBISCodeForm dlg = new OBISCodeForm(new GXDLMSConverter(dev.Standard), dev.Objects, collection, item);
                     if (dlg.ShowDialog(this) == DialogResult.OK)
                     {
                         GXDLMSObject obj = GXDLMSClient.CreateObject(item.ObjectType);
                         obj.LogicalName = item.LogicalName;
                         obj.Version = item.Version;
                         obj.Description = item.Description;
-                        if (string.IsNullOrEmpty(obj.Description))
-                        {
-                            GXDLMSConverter c = new GXDLMSConverter(dev.Standard);
-                            obj.Description = c.GetDescription(obj.LogicalName, obj.ObjectType)[0];
-                        }
-
                         UpdateAttributes(obj, item);
                         dev.Objects.Add(obj);
                         TreeNode deviceNode = (TreeNode)ObjectTreeItems[dev];
@@ -4672,7 +4686,7 @@ namespace GXDLMSDirector
                 }
                 else
                 {
-                    throw new Exception(Properties.Resources.InvalidDurationFile);                    
+                    throw new Exception(Properties.Resources.InvalidDurationFile);
                 }
             }
             catch (Exception Ex)

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10210 $,
-//                  $Date: 2018-08-13 14:41:15 +0300 (Mon, 13 Aug 2018) $
+// Version:         $Revision: 10221 $,
+//                  $Date: 2018-08-17 16:15:58 +0300 (Fri, 17 Aug 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -388,6 +388,15 @@ namespace GXDLMSDirector
             set;
         }
 
+        /// <summary>
+        /// Is MaxInfoTX and RX count for frame size or PDU size.
+        /// </summary>
+        [DefaultValue(false)]
+        public bool UseFrameSize
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// The maximum information field length in transmit.
@@ -486,7 +495,7 @@ namespace GXDLMSDirector
             get;
             set;
         }
-        
+
 
         /// <summary>
         ///Inactivity timeout.
@@ -882,7 +891,7 @@ namespace GXDLMSDirector
                         Comm.GetProfileGenericColumns(item);
                         if (Standard == Standard.Italy && item.CaptureObjects.Count == 0)
                         {
-                            cols = GetColumns(item.LogicalName);
+                            cols = GetColumns(Comm.client.Objects, Comm.client.CustomObisCodes, item.LogicalName);
                             GXDLMSConverter c = new GXDLMSConverter(Standard);
                             foreach (var it in cols)
                             {
@@ -895,7 +904,7 @@ namespace GXDLMSDirector
                     {
                         if (Standard == Standard.Italy)
                         {
-                            cols = GetColumns(item.LogicalName);
+                            cols = GetColumns(Comm.client.Objects, Comm.client.CustomObisCodes, item.LogicalName);
                             item.CaptureObjects.Clear();
                             GXDLMSConverter c = new GXDLMSConverter(Standard);
                             foreach (var it in cols)
@@ -917,144 +926,164 @@ namespace GXDLMSDirector
             }
         }
 
-        private static List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> GetColumns(string ln)
+        private static GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject> CreateColumn(GXDLMSObjectCollection objects, GXObisCodeCollection obisCodes, ObjectType ot, string ln, int index)
+        {
+            GXDLMSObject obj = objects.FindByLN(ot, ln);
+            if (obj == null)
+            {
+                GXObisCode code = obisCodes.FindByLN(ot, ln, null);
+                obj = GXDLMSClient.CreateObject(ot);
+                obj.LogicalName = ln;
+                if (code != null)
+                {
+                    GXDLMSAttributeSettings s = code.Attributes.Find(index);
+                    if (s != null)
+                    {
+                        obj.SetDataType(index, s.Type);
+                        obj.SetUIDataType(index, s.UIType);
+                        obj.SetValues(index, s.Values);
+                    }
+                }
+            }
+            return new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(obj, new GXDLMSCaptureObject(index, 0));
+        }
+
+        private static List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> GetColumns(GXDLMSObjectCollection objects, GXObisCodeCollection obisCodes, string ln)
         {
             List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> list = new List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>>();
+            //Event Logbook
             if (ln == "7.0.99.98.0.255")
             {
                 /*
                 //If meter.
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.96.15.2.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.96.11.2.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("7.1.96.5.1.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSAssociationLogicalName("0.0.40.0.0.255"), new GXDLMSCaptureObject(11, 0)));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.96.15.2.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.96.11.2.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "7.1.96.5.1.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.AssociationLogicalName, "0.0.40.0.0.255", 11));
     */
                 //If concentrator.
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.96.15.2.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.96.11.2.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSAssociationLogicalName("0.0.40.0.0.255"), new GXDLMSCaptureObject(11, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSGSMDiagnostic("0.0.25.6.0.255"), new GXDLMSCaptureObject(5, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSGSMDiagnostic("0.0.25.6.0.255"), new GXDLMSCaptureObject(6, 0)));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.96.15.2.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.96.11.2.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.AssociationLogicalName, "0.0.40.0.0.255", 11));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.GSMDiagnostic, "0.0.25.6.0.255", 5));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.GSMDiagnostic, "0.0.25.6.0.255", 6));
 
             }
             else if (ln == "7.0.99.99.3.255")
             {
                 /*
                 //If meter.
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("7.1.96.5.1.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSRegister("7.0.13.2.0.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSRegister("7.0.12.2.0.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "7.1.96.5.1.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Register,"7.0.13.2.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Register,"7.0.12.2.0.255", 2));
 */
                 //If concentrator.
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("7.1.96.5.1.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "7.1.96.5.1.255", 2));
             }
             else if (ln == "7.0.99.98.1.255")
             {
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.96.11.1.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.96.15.1.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSAssociationLogicalName("0.0.40.0.0.255"), new GXDLMSCaptureObject(11, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSRegister("7.0.13.2.0.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("7.1.96.5.1.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.96.11.1.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.96.15.1.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.AssociationLogicalName, "0.0.40.0.0.255", 11));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Register, "7.0.13.2.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "7.1.96.5.1.255", 2));
             }
             else if (ln == "7.0.99.98.6.255")
             {
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.96.15.3.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("7.0.96.5.1.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.96.5.4.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSMacAddressSetup("0.1.25.2.0.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.24.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.23.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.13.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.15.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.96.15.3.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "7.0.96.5.1.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.96.5.4.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.MacAddressSetup, "0.1.25.2.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.24.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.23.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.13.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.15.255", 2));
             }
             else if (ln == "7.0.99.16.0.255")
             {
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.96.15.1.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSParameterMonitor("0.0.16.2.0.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.96.15.1.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.ParameterMonitor, "0.0.16.2.0.255", 2));
             }
             else if (ln == "7.0.98.11.0.255")
             {
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("7.0.96.5.1.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("7.0.96.10.2.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("7.0.0.1.0.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSRegister("7.0.13.2.0.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSRegister("7.0.13.2.1.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSRegister("7.0.13.2.2.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSRegister("7.0.13.2.3.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSRegister("7.0.12.2.0.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSExtendedRegister("7.0.43.45.0.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSExtendedRegister("7.0.43.45.0.255"), new GXDLMSCaptureObject(5, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSTariffPlan("0.0.94.39.21.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "7.0.96.5.1.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "7.0.96.10.2.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "7.0.0.1.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Register, "7.0.13.2.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Register, "7.0.13.2.1.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Register, "7.0.13.2.2.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Register, "7.0.13.2.3.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Register, "7.0.12.2.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.ExtendedRegister, "7.0.43.45.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.ExtendedRegister, "7.0.43.45.0.255", 5));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.TariffPlan, "0.0.94.39.21.255", 2));
             }
             //Not Enrolled Detected List
             else if (ln == "0.0.21.0.1.255" ||
                 //Enrolled Detected List
                 ln == "0.1.21.0.1.255")
             {
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
-                GXDLMSData d = new GXDLMSData("0.0.94.39.36.255");
-                d.SetUIDataType(2, DataType.DateTime);
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(d, new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSMacAddressSetup("0.1.25.2.0.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.35.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.35.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.35.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.35.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.35.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.35.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.23.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.34.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.38.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.36.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.MacAddressSetup, "0.1.25.2.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.35.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.35.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.35.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.35.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.35.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.35.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.23.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.34.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.38.255", 2));
             }
             // White list
             else if (ln == "0.0.21.0.2.255")
             {
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSMacAddressSetup("0.1.25.2.0.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.13.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.15.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.39.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.MacAddressSetup, "0.1.25.2.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.13.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.15.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.39.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
             }
             // Bloack list
             else if (ln == "0.0.21.0.3.255")
             {
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSMacAddressSetup("0.1.25.2.0.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.MacAddressSetup, "0.1.25.2.0.255", 2));
             }
             // Command Queue
             else if (ln == "0.0.21.0.10.255")
             {
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSMacAddressSetup("0.1.25.2.0.255"), new GXDLMSCaptureObject(2, 0)));
-
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.45.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.27.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.50.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.28.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.MacAddressSetup, "0.1.25.2.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.45.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.27.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.50.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.28.255", 2));
             }
             // Directory event logbook
             else if (ln == "7.0.99.98.3.255")
             {
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.96.15.4.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.96.11.4.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.1.25.2.0.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.96.15.4.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.96.11.4.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.1.25.2.0.255", 2));
             }
             //Push Data Queue.
             else if (ln == "0.0.98.1.0.255")
             {
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.1.1.0.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSMacAddressSetup("0.1.25.2.0.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.50.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.23.255"), new GXDLMSCaptureObject(2, 0)));
-                list.Add(new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(new GXDLMSData("0.0.94.39.24.255"), new GXDLMSCaptureObject(2, 0)));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.MacAddressSetup, "0.1.25.2.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.50.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.23.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.24.255", 2));
             }
             return list;
         }
@@ -1078,7 +1107,7 @@ namespace GXDLMSDirector
                 throw ex;
             }
         }
-
+       
         /// <summary>
         /// After UpdateObjects call objects can be read using Objects property.
         /// </summary>
@@ -1169,7 +1198,7 @@ namespace GXDLMSDirector
                             throw ex;
                         }
                     }
-                }                
+                }
                 GXLogWriter.WriteLog("--- Reading scalers and units end. ---");
                 if (!UseLogicalNameReferencing)
                 {

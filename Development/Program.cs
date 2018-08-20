@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10163 $,
-//                  $Date: 2018-07-10 19:19:33 +0300 (Tue, 10 Jul 2018) $
+// Version:         $Revision: 10221 $,
+//                  $Date: 2018-08-17 16:15:58 +0300 (Fri, 17 Aug 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -41,6 +41,7 @@ using Gurux.Common;
 using System.Deployment.Application;
 using Microsoft.Win32;
 using System.Diagnostics;
+using System.ComponentModel;
 
 namespace GXDLMSDirector
 {

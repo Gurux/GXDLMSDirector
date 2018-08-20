@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10210 $,
-//                  $Date: 2018-08-13 14:41:15 +0300 (Mon, 13 Aug 2018) $
+// Version:         $Revision: 10221 $,
+//                  $Date: 2018-08-17 16:15:58 +0300 (Fri, 17 Aug 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -186,6 +186,7 @@ namespace GXDLMSDirector
             this.MaxPduLbl = new System.Windows.Forms.Label();
             this.UseWrapperCb = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.FrameSizeCb = new System.Windows.Forms.CheckBox();
             this.WindowSizeRXTb = new System.Windows.Forms.TextBox();
             this.WindowSizeRXLbl = new System.Windows.Forms.Label();
             this.WindowSizeTXTb = new System.Windows.Forms.TextBox();
@@ -1697,6 +1698,7 @@ namespace GXDLMSDirector
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.FrameSizeCb);
             this.groupBox1.Controls.Add(this.WindowSizeRXTb);
             this.groupBox1.Controls.Add(this.WindowSizeRXLbl);
             this.groupBox1.Controls.Add(this.WindowSizeTXTb);
@@ -1716,6 +1718,19 @@ namespace GXDLMSDirector
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "HDLC settings";
+            // 
+            // FrameSizeCb
+            // 
+            this.FrameSizeCb.AutoSize = true;
+            this.helpProvider1.SetHelpString(this.FrameSizeCb, "Is password given in ASCII or Hex.");
+            this.FrameSizeCb.Location = new System.Drawing.Point(267, 23);
+            this.FrameSizeCb.Name = "FrameSizeCb";
+            this.helpProvider1.SetShowHelp(this.FrameSizeCb, true);
+            this.FrameSizeCb.Size = new System.Drawing.Size(95, 17);
+            this.FrameSizeCb.TabIndex = 58;
+            this.FrameSizeCb.Text = "Use frame size";
+            this.FrameSizeCb.UseVisualStyleBackColor = true;
+            this.FrameSizeCb.CheckedChanged += new System.EventHandler(this.FrameSizeCb_CheckedChanged);
             // 
             // WindowSizeRXTb
             // 
@@ -2166,5 +2181,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label NetworkIDLbl;
         private System.Windows.Forms.Label PhysicalDeviceAddressLbl;
         private System.Windows.Forms.CheckBox UseGatewayCb;
+        private System.Windows.Forms.CheckBox FrameSizeCb;
     }
 }

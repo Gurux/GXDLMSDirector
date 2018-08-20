@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10210 $,
-//                  $Date: 2018-08-13 14:41:15 +0300 (Mon, 13 Aug 2018) $
+// Version:         $Revision: 10221 $,
+//                  $Date: 2018-08-17 16:15:58 +0300 (Fri, 17 Aug 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -879,6 +879,7 @@ namespace GXDLMSDirector
             }
             client.Limits.WindowSizeRX = parent.WindowSizeRX;
             client.Limits.WindowSizeTX = parent.WindowSizeTX;
+            client.Limits.UseFrameSize = parent.UseFrameSize;
             client.Limits.MaxInfoRX = parent.MaxInfoRX;
             client.Limits.MaxInfoTX = parent.MaxInfoTX;
             client.MaxReceivePDUSize = parent.PduSize;
@@ -1405,7 +1406,8 @@ namespace GXDLMSDirector
                                 ex.ErrorCode == (int)ErrorCode.UnavailableObject ||
                                 //Actaris returns access violation error.
                                 ex.ErrorCode == (int)ErrorCode.AccessViolated ||
-                                ex.ErrorCode == (int)ErrorCode.OtherReason)
+                                ex.ErrorCode == (int)ErrorCode.OtherReason ||
+                                ex.ErrorCode == (int)ErrorCode.InconsistentClass)
                         {
                             obj.SetAccess(it, AccessMode.NoAccess);
                             if (OnAfterRead != null)

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10008 $,
-//                  $Date: 2018-04-03 13:55:41 +0300 (ti, 03 huhti 2018) $
+// Version:         $Revision: 10221 $,
+//                  $Date: 2018-08-17 16:15:58 +0300 (Fri, 17 Aug 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -38,19 +38,28 @@ using System.Runtime.Serialization.Formatters.Binary;
 using Gurux.DLMS.ManufacturerSettings;
 using Gurux.DLMS.Objects;
 using Gurux.DLMS.Enums;
+using Gurux.DLMS;
 
 namespace GXDLMSDirector
 {
     public partial class OBISCodeForm : Form
     {
         System.Collections.Hashtable Items = new System.Collections.Hashtable();
+        GXDLMSObjectCollection objects;
         GXObisCodeCollection ObisCodeCollection;
         GXObisCode Target;
         GXObisCode OriginalTarget;
+        GXDLMSConverter converter;
 
-        public OBISCodeForm(GXObisCodeCollection collection, GXObisCode item)
+        public OBISCodeForm(GXDLMSConverter c, GXDLMSObjectCollection objs,  GXObisCodeCollection collection, GXObisCode item)
         {
             InitializeComponent();
+            converter = c;
+            objects = objs;
+            if (c == null)
+            {
+                converter = new GXDLMSConverter();
+            }
             OriginalTarget = item;
             //Create clone from original items.
             MemoryStream ms = new MemoryStream();
@@ -79,6 +88,13 @@ namespace GXDLMSDirector
             {
                 Target.LogicalName = "0.0.0.0.0.255";
             }
+            Target.Attributes.Clear();
+            GXObisCode code = ObisCodeCollection.FindByLN(Target.ObjectType, Target.LogicalName, null);
+            if (code != null && code.Attributes != null)
+            {
+                Target.Attributes.AddRange(code.Attributes);
+            }
+            Target.Description = converter.GetDescription(Target.LogicalName, Target.ObjectType)[0];
             ObisPropertyGrid.SelectedObject = Target;
             InterfaceCB.SelectedItem = Target;
         }
@@ -110,9 +126,21 @@ namespace GXDLMSDirector
                 OriginalTarget.Append = Target.Append;
                 OriginalTarget.Attributes.Clear();
                 OriginalTarget.Attributes.AddRange(Target.Attributes);
-                if (ObisCodeCollection.FindByLN(OriginalTarget.ObjectType, OriginalTarget.LogicalName, OriginalTarget) != null)
+                //If user is adding OBIS code to the device.
+                if (objects != null)
                 {
-                    throw new Exception("OBIS code already exists.");
+                    if (objects.FindByLN(OriginalTarget.ObjectType, OriginalTarget.LogicalName) != null)
+                    {
+                        throw new Exception("OBIS code already exists.");
+                    }
+                }
+                else
+                {
+                    //If user is adding new OBIS code to the template.
+                    if (ObisCodeCollection.FindByLN(OriginalTarget.ObjectType, OriginalTarget.LogicalName, OriginalTarget) != null)
+                    {
+                        throw new Exception("OBIS code already exists.");
+                    }
                 }
             }
             catch (Exception Ex)
@@ -135,13 +163,20 @@ namespace GXDLMSDirector
                 Target.ObjectType = (ObjectType)InterfaceCB.SelectedItem;
                 if (bChange)
                 {
-                    Target.Attributes.Clear();
-                }
                 UpdateTarget();
+                }
             }
             catch (Exception Ex)
             {
                 GXDLMS.Common.Error.ShowError(this, Ex);
+            }
+        }
+
+        private void ObisPropertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            if (e.ChangedItem.Label == "LogicalName")
+            {
+                UpdateTarget();
             }
         }
     }

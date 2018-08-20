@@ -736,11 +736,11 @@ namespace GXDLMSDirector
                     {
                         if (dev.MaxInfoRX != 128 && dev.MaxInfoRX != dev.Comm.client.Limits.MaxInfoRX)
                         {
-                            output.Warnings.Add("Client asked that RX frame size is " + dev.MaxInfoRX + ". Meter uses " + dev.Comm.client.Limits.MaxInfoRX);
+                            output.Warnings.Add("Client asked that RX PDU size is " + dev.MaxInfoRX + ". Meter uses " + dev.Comm.client.Limits.MaxInfoRX);
                         }
                         if (dev.MaxInfoTX != 128 && dev.MaxInfoTX != dev.Comm.client.Limits.MaxInfoTX)
                         {
-                            output.Warnings.Add("Client asked that TX frame size is " + dev.MaxInfoTX + ". Meter uses " + dev.Comm.client.Limits.MaxInfoTX);
+                            output.Warnings.Add("Client asked that TX PDU size is " + dev.MaxInfoTX + ". Meter uses " + dev.Comm.client.Limits.MaxInfoTX);
                         }
                         if (dev.PduSize < dev.Comm.client.MaxReceivePDUSize)
                         {

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9442 $,
-//                  $Date: 2017-05-23 15:21:03 +0300 (ti, 23 touko 2017) $
+// Version:         $Revision: 10221 $,
+//                  $Date: 2018-08-17 16:15:58 +0300 (Fri, 17 Aug 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -41,6 +41,7 @@ using System.Windows.Forms;
 using GXDLMS.ManufacturerSettings;
 using Gurux.DLMS.ManufacturerSettings;
 using Gurux.DLMS.Enums;
+using Gurux.DLMS;
 
 namespace GXDLMSDirector
 {
@@ -93,7 +94,8 @@ namespace GXDLMSDirector
             try
             {
                 GXObisCode item = new GXObisCode();
-                OBISCodeForm dlg = new OBISCodeForm(((GXManufacturer)ManufacturersList.SelectedItems[0].Tag).ObisCodes, item);
+                GXManufacturer man = (GXManufacturer)ManufacturersList.SelectedItems[0].Tag;
+                OBISCodeForm dlg = new OBISCodeForm(new GXDLMSConverter(man.Standard), null, man.ObisCodes, item);
                 if (dlg.ShowDialog(this) == DialogResult.OK)
                 {
                     AddItem(item);
@@ -111,7 +113,8 @@ namespace GXDLMSDirector
             try
             {
                 GXObisCode item = (GXObisCode)OBISCodesList.SelectedItems[0].Tag;
-                OBISCodeForm dlg = new OBISCodeForm(((GXManufacturer)ManufacturersList.SelectedItems[0].Tag).ObisCodes, item);
+                GXManufacturer man = (GXManufacturer) ManufacturersList.SelectedItems[0].Tag;                
+                OBISCodeForm dlg = new OBISCodeForm(new GXDLMSConverter(man.Standard), null, man.ObisCodes, item);
                 if (dlg.ShowDialog(this) == DialogResult.OK)
                 {
                     OBISCodesList.SelectedItems[0].Text = item.LogicalName + " " + item.Description;

@@ -132,11 +132,11 @@
     <Reference Include="Gurux.Common, Version=8.1.1807.2603, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Common.8.1.1807.2603\lib\net40\Gurux.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=8.5.1808.1301, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.8.5.1808.1301\lib\net40\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=8.5.1808.2001, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.8.5.1808.2001\lib\net40\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=8.5.1808.1301, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.8.5.1808.1301\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=8.5.1808.2001, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.8.5.1808.2001\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.Net, Version=8.1.1808.701, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Net.8.1.1808.701\lib\net40\Gurux.Net.dll</HintPath>
@@ -156,6 +156,7 @@
     <Reference Include="System.Deployment" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Design" />
     <Reference Include="System.Messaging" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
@@ -216,12 +217,6 @@
     </Compile>
     <Compile Include="IGXManufacturerExtension.cs" />
     <Compile Include="ManufacturerSettings\GXHelpers.cs" />
-    <Compile Include="GXObisValueItemForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GXObisValueItemForm.Designer.cs">
-      <DependentUpon>GXObisValueItemForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="ManufacturerSettings\GXError.cs" />
     <Compile Include="MRUManager.cs" />
     <Compile Include="ManufacturerSettings\GXLogWriter.cs" />
@@ -285,10 +280,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GXByteEditor.resx">
       <DependentUpon>GXByteEditor.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GXObisValueItemForm.resx">
-      <DependentUpon>GXObisValueItemForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="GXSettingsDlg.resx">
@@ -411,10 +402,10 @@
     <EmbeddedResource Include="ConformanceTests\DLMS\v1\IecHdlcSetup.xml" />
     <EmbeddedResource Include="ConformanceTests\DLMS\ParameterMonitor.xml" />
     <EmbeddedResource Include="ConformanceTests\DLMS\WirelessModeQchannel.xml" />
-    <EmbeddedResource Include="ConformanceTests\SEC\ActivityCalendar.xml">
+    <EmbeddedResource Include="ConformanceTests\SaudiArabia\ActivityCalendar.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ConformanceTests\SEC\ExtendedRegister.xml" />
+    <EmbeddedResource Include="ConformanceTests\SaudiArabia\ExtendedRegister.xml" />
     <Content Include="GXDLMSDirector.ico" />
     <None Include="Resources\NotifyMnu.bmp" />
     <None Include="Resources\cct.png" />
@@ -446,8 +437,8 @@
     </FileAssociation>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ConformanceTests\Indian\" />
-    <Folder Include="ConformanceTests\Italian\" />
+    <Folder Include="ConformanceTests\India\" />
+    <Folder Include="ConformanceTests\Italy\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

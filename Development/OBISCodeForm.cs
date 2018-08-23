@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10221 $,
-//                  $Date: 2018-08-17 16:15:58 +0300 (Fri, 17 Aug 2018) $
+// Version:         $Revision: 10229 $,
+//                  $Date: 2018-08-23 19:02:00 +0300 (Thu, 23 Aug 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -51,7 +51,7 @@ namespace GXDLMSDirector
         GXObisCode OriginalTarget;
         GXDLMSConverter converter;
 
-        public OBISCodeForm(GXDLMSConverter c, GXDLMSObjectCollection objs,  GXObisCodeCollection collection, GXObisCode item)
+        public OBISCodeForm(GXDLMSConverter c, GXDLMSObjectCollection objs, GXObisCodeCollection collection, GXObisCode item)
         {
             InitializeComponent();
             converter = c;
@@ -122,7 +122,7 @@ namespace GXDLMSDirector
                 }
                 OriginalTarget.Description = Target.Description;
                 OriginalTarget.ObjectType = Target.ObjectType;
-                OriginalTarget.LogicalName = Target.LogicalName;
+                OriginalTarget.LogicalName = Target.LogicalName.Trim();
                 OriginalTarget.Append = Target.Append;
                 OriginalTarget.Attributes.Clear();
                 OriginalTarget.Attributes.AddRange(Target.Attributes);
@@ -163,7 +163,7 @@ namespace GXDLMSDirector
                 Target.ObjectType = (ObjectType)InterfaceCB.SelectedItem;
                 if (bChange)
                 {
-                UpdateTarget();
+                    UpdateTarget();
                 }
             }
             catch (Exception Ex)
@@ -174,9 +174,16 @@ namespace GXDLMSDirector
 
         private void ObisPropertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            if (e.ChangedItem.Label == "LogicalName")
+            try
             {
-                UpdateTarget();
+                if (e.ChangedItem.Label == "LogicalName")
+                {
+                    UpdateTarget();
+                }
+            }
+            catch (Exception Ex)
+            {
+                GXDLMS.Common.Error.ShowError(this, Ex);
             }
         }
     }

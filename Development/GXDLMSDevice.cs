@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10221 $,
-//                  $Date: 2018-08-17 16:15:58 +0300 (Fri, 17 Aug 2018) $
+// Version:         $Revision: 10229 $,
+//                  $Date: 2018-08-23 19:02:00 +0300 (Thu, 23 Aug 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -925,8 +925,12 @@ namespace GXDLMSDirector
                 MessageBox.Show(ex.Message);
             }
         }
-
         private static GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject> CreateColumn(GXDLMSObjectCollection objects, GXObisCodeCollection obisCodes, ObjectType ot, string ln, int index)
+        {
+            return CreateColumn(objects, obisCodes, ot, ln, index, DataType.None);
+        }
+
+            private static GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject> CreateColumn(GXDLMSObjectCollection objects, GXObisCodeCollection obisCodes, ObjectType ot, string ln, int index, DataType dt)
         {
             GXDLMSObject obj = objects.FindByLN(ot, ln);
             if (obj == null)
@@ -943,6 +947,10 @@ namespace GXDLMSDirector
                         obj.SetUIDataType(index, s.UIType);
                         obj.SetValues(index, s.Values);
                     }
+                }
+                else
+                {
+                    obj.SetUIDataType(index, dt);
                 }
             }
             return new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(obj, new GXDLMSCaptureObject(index, 0));
@@ -1031,7 +1039,7 @@ namespace GXDLMSDirector
                 ln == "0.1.21.0.1.255")
             {
                 list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
-                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.36.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.36.255", 2, DataType.DateTime));
                 list.Add(CreateColumn(objects, obisCodes, ObjectType.MacAddressSetup, "0.1.25.2.0.255", 2));
                 list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.35.255", 2));
                 list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.35.255", 2));
@@ -1081,6 +1089,17 @@ namespace GXDLMSDirector
             {
                 list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
                 list.Add(CreateColumn(objects, obisCodes, ObjectType.MacAddressSetup, "0.1.25.2.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.50.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.23.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.24.255", 2));
+            }
+            //Response Queue
+            else if (ln == "0.0.21.0.11.255")
+            {
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.MacAddressSetup, "0.1.25.2.0.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.27.255", 2));
+                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.29.255", 2));
                 list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.50.255", 2));
                 list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.23.255", 2));
                 list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.24.255", 2));

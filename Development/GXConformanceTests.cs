@@ -727,7 +727,10 @@ namespace GXDLMSDirector
                     {
                         dev.Comm.UpdateSettings();
                     }
-                    dev.Comm.InitializeConnection(false);
+                    if (!settings.ExcludedHdlcTests.IsEnabled() && !settings.ExcludedApplicationTests.IsEnabled())
+                    {
+                        dev.Comm.InitializeConnection(false);
+                    }
                     if (client.Ciphering.InvocationCounter != 0)
                     {
                         output.PreInfo.Add("InvocationCounter: " + client.Ciphering.InvocationCounter);

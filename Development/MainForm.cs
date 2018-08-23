@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10221 $,
-//                  $Date: 2018-08-17 16:15:58 +0300 (Fri, 17 Aug 2018) $
+// Version:         $Revision: 10229 $,
+//                  $Date: 2018-08-23 19:02:00 +0300 (Thu, 23 Aug 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -2309,6 +2309,8 @@ namespace GXDLMSDirector
 
         private static void UpdateAttributes(GXDLMSObject obj, GXObisCode it)
         {
+            obj.Version = it.Version;
+            obj.LogicalName = it.LogicalName;
             foreach (GXDLMSAttributeSettings a in it.Attributes)
             {
                 if (a.UIType != DataType.None)
@@ -2317,7 +2319,7 @@ namespace GXDLMSDirector
                 }
                 if (a.Type != DataType.None)
                 {
-                    obj.SetDataType(a.Index, a.UIType);
+                    obj.SetDataType(a.Index, a.Type);
                 }
                 obj.SetValues(a.Index, a.Values);
                 obj.SetAccess(a.Index, a.Access);
@@ -2346,8 +2348,6 @@ namespace GXDLMSDirector
                         if (it.Append)
                         {
                             GXDLMSObject obj = GXDLMSClient.CreateObject(it.ObjectType);
-                            obj.Version = it.Version;
-                            obj.LogicalName = it.LogicalName;
                             if (string.IsNullOrEmpty(it.Description))
                             {
                                 obj.Description = c.GetDescription(it.LogicalName, it.ObjectType)[0];
@@ -4578,8 +4578,6 @@ namespace GXDLMSDirector
                     if (dlg.ShowDialog(this) == DialogResult.OK)
                     {
                         GXDLMSObject obj = GXDLMSClient.CreateObject(item.ObjectType);
-                        obj.LogicalName = item.LogicalName;
-                        obj.Version = item.Version;
                         obj.Description = item.Description;
                         UpdateAttributes(obj, item);
                         dev.Objects.Add(obj);

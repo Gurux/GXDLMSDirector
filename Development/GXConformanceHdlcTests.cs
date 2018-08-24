@@ -204,6 +204,24 @@ namespace GXDLMSDirector
             set;
         }
 
+        [Description("Exclude HDLC tests #20.")]
+        [DefaultValue(false)]
+        [Category("Accessibility")]
+        public bool ExcludeTest20
+        {
+            get;
+            set;
+        }
+
+        [Description("Exclude HDLC tests #21.")]
+        [DefaultValue(false)]
+        [Category("Accessibility")]
+        public bool ExcludeTest21
+        {
+            get;
+            set;
+        }
+
         [Description("Exclude COSEM application layer tests #101.")]
         [DefaultValue(false)]
         [Category("Accessibility")]

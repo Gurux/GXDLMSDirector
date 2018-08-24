@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9442 $,
-//                  $Date: 2017-05-23 15:21:03 +0300 (ti, 23 touko 2017) $
+// Version:         $Revision: 10230 $,
+//                  $Date: 2018-08-24 09:04:47 +0300 (Fri, 24 Aug 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -92,11 +92,11 @@ namespace GXDLMS.Common
             {
                 if (ctrl != null && ctrl.IsDisposed)
                 {
-                    System.Windows.Forms.MessageBox.Show(Ex.Message);
+                    System.Windows.Forms.MessageBox.Show(Ex.Message, "Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
                 }
                 else
                 {
-                    System.Windows.Forms.MessageBox.Show(owner, Ex.Message);
+                    System.Windows.Forms.MessageBox.Show(owner, Ex.Message, "Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
                 }
             }
         }

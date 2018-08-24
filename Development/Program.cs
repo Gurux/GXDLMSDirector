@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10221 $,
-//                  $Date: 2018-08-17 16:15:58 +0300 (Fri, 17 Aug 2018) $
+// Version:         $Revision: 10230 $,
+//                  $Date: 2018-08-24 09:04:47 +0300 (Fri, 24 Aug 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -139,7 +139,7 @@ namespace GXDLMSDirector
         /// <param name="ex"></param>
         static private void OnError(object sender, Exception ex)
         {
-            MessageBox.Show(ex.Message, Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error);
+            MessageBox.Show(ex.Message, Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         static Mutex mutex = new Mutex(true, "{e78762b5-4e85-45c8-a9fa-e95786f77684}");

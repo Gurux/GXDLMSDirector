@@ -121,9 +121,17 @@ namespace GXDLMSDirector
         /// <returns></returns>
         public static bool CheckUpdates(IGXUpdater updater, Assembly asm)
         {
+            //This will fix the error: request was aborted could not create ssl/tls secure channel.
+            //For Net45 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
             foreach (GXUpdateItem target in updater.CheckUpdates())
             {
                 WebRequest req = WebRequest.Create(target.Source);
+                IWebProxy proxy = WebRequest.GetSystemWebProxy();
+                if (proxy != null && proxy.Credentials != null)
+                {
+                    req.Proxy = proxy;
+                }
                 using (HttpWebResponse response = req.GetResponse() as HttpWebResponse)
                 {
                     if (response.StatusCode != HttpStatusCode.OK)
@@ -184,7 +192,15 @@ namespace GXDLMSDirector
 
         public static bool DownLoadMedia(string name)
         {
+            //This will fix the error: request was aborted could not create ssl/tls secure channel.
+            //For Net45 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
             WebRequest req = WebRequest.Create(name);
+            IWebProxy proxy = WebRequest.GetSystemWebProxy();
+            if (proxy != null && proxy.Credentials != null)
+            {
+                req.Proxy = proxy;
+            }
             using (HttpWebResponse response = req.GetResponse() as HttpWebResponse)
             {
                 if (response.StatusCode != HttpStatusCode.OK)

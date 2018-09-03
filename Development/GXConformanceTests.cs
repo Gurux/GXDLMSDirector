@@ -471,6 +471,13 @@ namespace GXDLMSDirector
                     }
                 }
             }
+            if (lastExternalException != null)
+            {
+                ErrorCode e = (ErrorCode)lastExternalException.ErrorCode;
+                output.Errors.Add("<a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " failed: <a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.ErrorCodes?" + e + ">" + e + "</a>)");
+                test.OnTrace(test, e + "\r\n");
+                lastExternalException = null;
+            }
             if (succeeded.Count != 0)
             {
                 StringBuilder sb = new StringBuilder();
@@ -1069,7 +1076,7 @@ namespace GXDLMSDirector
 
                     if (dev.Comm.payload != 0)
                     {
-                     //TODO:   output.Errors.Insert(0, "HDLC payload size is is too high. There are " + dev.Comm.payload + " bytes. Max size is " + dev.Comm.client.Limits.MaxInfoRX + " bytes.");
+                        //TODO:   output.Errors.Insert(0, "HDLC payload size is is too high. There are " + dev.Comm.payload + " bytes. Max size is " + dev.Comm.client.Limits.MaxInfoRX + " bytes.");
                     }
                     if (output.Errors.Count != 0)
                     {
@@ -1809,6 +1816,10 @@ namespace GXDLMSDirector
                         dev.Comm.ReadDataBlock(bb.Array(), "HDLC test #5. Invalid frame.", 1, tryCount, reply);
                         passed = false;
                         break;
+                    }
+                    catch (GXDLMSException ex)
+                    {
+                        passed = false;
                     }
                     catch (Exception)
                     {
@@ -3046,7 +3057,11 @@ namespace GXDLMSDirector
                     bb.SetHexString("E6E600601DA109060760857405080101BE10040E01000000065F1F040060FE9FFFFF");
                     byte[] data = dev.Comm.client.CustomHdlcFrameRequest(0x12, bb);
                     dev.Comm.ReadDataBlock(data, "HDLC test #18. Wrong N(S) sequence number.", 1, tryCount, reply);
-                    passed = false;
+                    //Meter should reply RR.
+                    if (reply.Data.Size != 0)
+                    {
+                        passed = false;
+                    }
                 }
                 catch (GXDLMSException ex)
                 {
@@ -3418,7 +3433,7 @@ namespace GXDLMSDirector
                 output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc21\">Test 21 failed.</a>");
             }
         }
-        
+
         /// <summary>
         /// Send same HDLC packet twice and check that meter can hanle this. Then read next data.
         /// </summary>
@@ -3585,7 +3600,6 @@ namespace GXDLMSDirector
             }
             if (!settings.ExcludedHdlcTests.ExcludeTest7)
             {
-
                 Test7(test, settings, dev, output, tryCount);
                 if (!Continue)
                 {
@@ -3594,7 +3608,6 @@ namespace GXDLMSDirector
             }
             if (!settings.ExcludedHdlcTests.ExcludeTest8)
             {
-
                 Test8(test, settings, dev, output, tryCount);
                 if (!Continue)
                 {
@@ -3603,7 +3616,6 @@ namespace GXDLMSDirector
             }
             if (!settings.ExcludedHdlcTests.ExcludeTest9)
             {
-
                 Test9(test, settings, dev, output, tryCount);
                 if (!Continue)
                 {
@@ -3612,7 +3624,6 @@ namespace GXDLMSDirector
             }
             if (!settings.ExcludedHdlcTests.ExcludeTest10)
             {
-
                 Test10(test, settings, dev, output, tryCount);
                 if (!Continue)
                 {
@@ -3621,7 +3632,6 @@ namespace GXDLMSDirector
             }
             if (!settings.ExcludedHdlcTests.ExcludeTest11)
             {
-
                 Test11(test, settings, dev, output, tryCount);
                 if (!Continue)
                 {
@@ -3630,7 +3640,6 @@ namespace GXDLMSDirector
             }
             if (!settings.ExcludedHdlcTests.ExcludeTest12)
             {
-
                 Test12(test, settings, dev, output, tryCount);
                 if (!Continue)
                 {
@@ -3639,7 +3648,6 @@ namespace GXDLMSDirector
             }
             if (!settings.ExcludedHdlcTests.ExcludeTest13)
             {
-
                 Test13(test, settings, dev, output, tryCount);
                 if (!Continue)
                 {

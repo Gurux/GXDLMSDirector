@@ -1380,7 +1380,7 @@ namespace GXDLMSDirector
                 try
                 {
                     reply.Clear();
-                    dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test 1. Disconnect request", 1, tryCount, reply);
+                    dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #1. Disconnect request", 1, tryCount, reply);
                     dev.Comm.ParseUAResponse(reply.Data);
                 }
                 catch (GXDLMSException ex)
@@ -1400,7 +1400,7 @@ namespace GXDLMSDirector
             try
             {
                 reply.Clear();
-                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test 1. Disconnect request", 1, tryCount, reply);
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #1. Disconnect request", 1, tryCount, reply);
                 dev.Comm.ParseUAResponse(reply.Data);
                 passed = false;
             }
@@ -1472,7 +1472,7 @@ namespace GXDLMSDirector
             {
                 output.Info.Add("Illegal frame succeeded.");
             }
-            Thread.Sleep(1000);
+            Thread.Sleep(2000);
             //Check that meter is Normal Response Mode. 
             try
             {
@@ -1482,6 +1482,27 @@ namespace GXDLMSDirector
                 {
                     passed = false;
                     output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc2\">Test #2 failed</a>. Response is not RR.");
+                }
+            }
+            catch (Exception)
+            {
+                passed = false;
+            }
+            try
+            {
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #2. Disconnect request", 1, tryCount, reply);
+                dev.Comm.ParseUAResponse(reply.Data);
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                {
+                    output.Info.Add("Meter returns DisconnectMode.");
+                }
+                else
+                {
+                    passed = false;
                 }
             }
             catch (Exception)
@@ -1817,13 +1838,12 @@ namespace GXDLMSDirector
                         passed = false;
                         break;
                     }
-                    catch (GXDLMSException ex)
+                    catch (TimeoutException)
                     {
-                        passed = false;
                     }
                     catch (Exception)
                     {
-                        //This should fail.
+                        passed = false;
                     }
                 }
             }
@@ -1899,9 +1919,13 @@ namespace GXDLMSDirector
                 output.Errors.Add("SNRM request failed.");
                 passed = false;
             }
-            catch (Exception)
+            catch (TimeoutException)
             {
                 output.Info.Add("SNRM request succeeded.");
+            }
+            catch (Exception)
+            {
+                passed = false;
             }
             try
             {
@@ -1976,9 +2000,13 @@ namespace GXDLMSDirector
                 output.Errors.Add("SNRM request failed. ");
                 passed = false;
             }
+            catch (TimeoutException)
+            {
+                output.Info.Add("Illegal frame succeeded.");
+            }
             catch (Exception)
             {
-                output.Info.Add("SNRM request succeeded.");
+                passed = false;
             }
             try
             {
@@ -2289,20 +2317,13 @@ namespace GXDLMSDirector
                 dev.Comm.ReadDataBlock(data, "HDLC test #10. Unknown command", 1, tryCount, reply);
                 passed = false;
             }
-            catch (GXDLMSException ex)
+            catch (TimeoutException)
             {
-                if (ex.ErrorCode == (int)ErrorCode.UnacceptableFrame)
-                {
-                    output.Info.Add("Meter returns Unacceptable Frame.");
-                }
-                else
-                {
-                    passed = false;
-                }
+                output.Info.Add("Invalid frame succeeded..");
             }
             catch (Exception)
             {
-                //This should happened.
+                passed = false;
             }
             try
             {
@@ -2508,7 +2529,7 @@ namespace GXDLMSDirector
         /// Try to connect using window size 4
         /// </summary>
         /// <remarks>
-        /// This is DLMS CCT T_HDLC_NDM2NRM_P1.
+        /// This is DLMS CCT T_HDLC_NDM2NRM_P2.
         /// </remarks>
         /// <param name="test"></param>
         /// <param name="settings"></param>
@@ -3058,7 +3079,7 @@ namespace GXDLMSDirector
                     byte[] data = dev.Comm.client.CustomHdlcFrameRequest(0x12, bb);
                     dev.Comm.ReadDataBlock(data, "HDLC test #18. Wrong N(S) sequence number.", 1, tryCount, reply);
                     //Meter should reply RR.
-                    if (reply.Data.Size != 0)
+                    if (reply.Data.Size != 0 || reply.FrameId != 0x11)
                     {
                         passed = false;
                     }
@@ -3876,6 +3897,88 @@ namespace GXDLMSDirector
                 {
                     passed = false;
                     output.Errors.Add("COSEM Application tests #1 failed. " + ex.Message);
+                }
+                if (passed)
+                {
+                    try
+                    {
+                        dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #4. Disconnect request", 1, tryCount, reply);
+                        dev.Comm.ParseUAResponse(reply.Data);
+                    }
+                    catch (GXDLMSException ex)
+                    {
+                        if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                        {
+                            output.Info.Add("Meter returns DisconnectMode.");
+                        }
+                        else
+                        {
+                            passed = false;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        passed = false;
+                        output.Info.Add("COSEM Application tests #4 failed. " + ex.Message);
+                    }
+                    if (passed)
+                    {
+                        try
+                        {
+                            reply.Clear();
+                            byte[] data = dev.Comm.client.SNRMRequest();
+                            dev.Comm.ReadDataBlock(data, "COSEM Application test #1. SNRM", 1, tryCount, reply);
+                            dev.Comm.ParseUAResponse(reply.Data);
+                            reply.Clear();
+                        }
+                        catch (GXDLMSException ex)
+                        {
+                            if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                            {
+                                output.Info.Add("Meter returns DisconnectMode.");
+                            }
+                            else
+                            {
+                                passed = false;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            passed = false;
+                        }
+                        //Mikko
+                        /*
+                        dev.Comm.client.Ciphering.Security = Security.AuthenticationEncryption;
+                        dev.Comm.client.Ciphering.SystemTitle = ASCIIEncoding.ASCII.GetBytes("CTT00000");
+                        dev.Comm.client.Ciphering.BlockCipherKey = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 86, 9, 10, 11, 12, 13, 14, 15 };
+                        dev.Comm.client.Ciphering.AuthenticationKey = new byte[] { 0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7,  0xD8, 0xD9, 0xDA, 0xDB, 0xDC, 0xDD, 0xDE, 0xDF};
+                        dev.Comm.client.Authentication = Authentication.Low;
+                        dev.Comm.client.Password = ASCIIEncoding.ASCII.GetBytes("Mikko");
+                        */
+                        try
+                        {
+                            reply.Clear();
+                            byte[] mikko = GXCommon.HexToBytes("E6E600605EA109060760857405080103A60A040843545430303030308A0207808B0760857405080201AC0A80083132333435363738BE2C042ADB0843545430303030301F3045835E10F8A798D38F371E8AE502D419A46232789B1332E986B39DCAB135");
+                            dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0x10, new GXByteBuffer(mikko)), "COSEM Application test #1. AARQ", 1, tryCount, reply);
+                            //dev.Comm.ReadDataBlock(dev.Comm.client.AARQRequest(), "COSEM Application test #1. AARQ", 1, tryCount, reply);
+                            dev.Comm.ParseAAREResponse(reply.Data);
+                            reply.Clear();
+                            if (dev.Comm.client.Authentication > Authentication.Low)
+                            {
+                                reply.Clear();
+                                dev.Comm.ReadDataBlock(dev.Comm.client.GetApplicationAssociationRequest(), "Authenticating.", 1, tryCount, reply);
+                                dev.Comm.client.ParseApplicationAssociationResponse(reply.Data);
+                            }
+                        }
+                        catch (GXDLMSException ex)
+                        {
+                            if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                            {
+                                output.Info.Add("Meter returns DisconnectMode.");
+                            }
+                            passed = false;
+                        }
+                    }
                 }
             }
 

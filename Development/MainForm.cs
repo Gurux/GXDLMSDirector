@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10229 $,
-//                  $Date: 2018-08-23 19:02:00 +0300 (Thu, 23 Aug 2018) $
+// Version:         $Revision: 10277 $,
+//                  $Date: 2018-09-14 10:39:44 +0300 (Fri, 14 Sep 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -2324,6 +2324,7 @@ namespace GXDLMSDirector
                 obj.SetValues(a.Index, a.Values);
                 obj.SetAccess(a.Index, a.Access);
                 obj.SetXml(a.Index, a.Xml);
+                obj.SetUIValueType(a.Index, a.UIValueType);
             }
         }
 

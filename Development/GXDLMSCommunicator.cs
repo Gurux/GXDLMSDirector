@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10221 $,
-//                  $Date: 2018-08-17 16:15:58 +0300 (Fri, 17 Aug 2018) $
+// Version:         $Revision: 10288 $,
+//                  $Date: 2018-09-26 13:43:57 +0300 (Wed, 26 Sep 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -171,7 +171,7 @@ namespace GXDLMSDirector
             return data;
         }
 
-        public void Disconnect()
+        public void Disconnect()            
         {
             try
             {
@@ -182,7 +182,7 @@ namespace GXDLMSDirector
                     {
                         //Release is call only for secured connections.
                         //Add meters are not supporting Release and it's causing problems.
-                        if (client.Ciphering.Security != Security.None)
+                        if (client.Ciphering.Security != Security.None && !parent.PreEstablished)
                         {
                             byte[] data = ReleaseRequest();
                             if (data != null)
@@ -995,33 +995,33 @@ namespace GXDLMSDirector
                         client.CtoSChallenge = challenge;
                     }
                 }
+                data = SNRMRequest();
+                if (data != null)
+                {
+                    try
+                    {
+                        reply.Clear();
+                        ReadDataBlock(data, "Send SNRM request.", 1, 1, reply);
+                    }
+                    catch (TimeoutException)
+                    {
+                        reply.Clear();
+                        ReadDataBlock(DisconnectRequest(true), "Send Disconnect request.", 1, 1, reply);
+                        reply.Clear();
+                        ReadDataBlock(data, "Send SNRM request.", reply);
+                    }
+                    catch (Exception e)
+                    {
+                        reply.Clear();
+                        ReadDataBlock(DisconnectRequest(), "Send Disconnect request.", reply);
+                        throw e;
+                    }
+                    GXLogWriter.WriteLog("Parsing UA reply succeeded.");
+                    //Has server accepted client.
+                    ParseUAResponse(reply.Data);
+                }
                 if (!parent.PreEstablished)
                 {
-                    data = SNRMRequest();
-                    if (data != null)
-                    {
-                        try
-                        {
-                            reply.Clear();
-                            ReadDataBlock(data, "Send SNRM request.", 1, 1, reply);
-                        }
-                        catch (TimeoutException)
-                        {
-                            reply.Clear();
-                            ReadDataBlock(DisconnectRequest(true), "Send Disconnect request.", 1, 1, reply);
-                            reply.Clear();
-                            ReadDataBlock(data, "Send SNRM request.", reply);
-                        }
-                        catch (Exception e)
-                        {
-                            reply.Clear();
-                            ReadDataBlock(DisconnectRequest(), "Send Disconnect request.", reply);
-                            throw e;
-                        }
-                        GXLogWriter.WriteLog("Parsing UA reply succeeded.");
-                        //Has server accepted client.
-                        ParseUAResponse(reply.Data);
-                    }
                     //Generate AARQ request.
                     //Split requests to multiple packets if needed.
                     //If password is used all data might not fit to one packet.

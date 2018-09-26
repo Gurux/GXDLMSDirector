@@ -1049,6 +1049,24 @@ namespace GXDLMSDirector
                                 }
                             }
                         }
+
+
+                        if ((dev.Comm.client.NegotiatedConformance & Conformance.MultipleReferences) == 0)
+                        {
+                            output.Info.Add("Meter don't support multiple references.");
+                        }
+                        else
+                        {
+                            GXDLMSObjectCollection objs = dev.Objects.GetObjects(ObjectType.Data);
+                            output.Info.Add("Testing multiple references support using " + objs.Count + " data object(s).");
+                            List<KeyValuePair<GXDLMSObject, int>> list = new List<KeyValuePair<GXDLMSObject, int>>();
+                            foreach (GXDLMSObject it in objs)
+                            {
+                                list.Add(new KeyValuePair<GXDLMSObject, int>(it, 2));
+                            }
+                            dev.Comm.ReadList(list);
+                            output.Info.Add("Multiple references support succeeded.");
+                        }
                         //Test invalid password.
                         try
                         {

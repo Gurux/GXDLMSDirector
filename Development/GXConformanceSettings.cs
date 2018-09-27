@@ -64,7 +64,49 @@ namespace GXDLMSDirector
             WarningBeforeStart = true;
             excludedApplicationTests = new GXConformanceApplicationTests();
             excludedHdlcTests = new GXConformanceHdlcTests();
+            ResendCount = -1;
         }
+
+        [Description("Resend count. If resend count is -1 meter's resend count is used.")]
+        [DefaultValue(-1)]
+        [Category("Behavior")]
+        public int ResendCount
+        {
+            get;
+            set;
+        }
+
+        [XmlIgnore]
+        [Description("Wait time. If waittime is zero meter's wait time is used.")]
+        [DefaultValue(typeof(TimeSpan), "00:00:00")]
+        [Category("Behavior")]
+        public TimeSpan WaitTime
+        {
+            get;
+            set;
+        }
+
+        [Browsable(false)]
+        [DefaultValue("00:00:00")]
+        public string WaitTimeAsString
+        {
+            get
+            {
+                return XmlConvert.ToString(Delay);
+            }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    WaitTime = XmlConvert.ToTimeSpan(value);
+                }
+                else
+                {
+                    WaitTime = new TimeSpan(0, 0, 0);
+                }
+            }
+        }
+
 
         [Description("Are meters reading concurrently.")]
         [DefaultValue(false)]
@@ -334,26 +376,7 @@ namespace GXDLMSDirector
                     ImageActivateWaitTime = new TimeSpan(0, 0, 10);
                 }
             }
-        }
-
-        /// <summary>
-        /// Old functionality. This is removed later.
-        /// </summary>
-        [DefaultValue(false)]
-        public bool ExcludeHdlcTests
-        {
-            get
-            {
-                return false;
-            }
-            set
-            {
-                if (value)
-                {
-                    ExcludedHdlcTests.Set(true);
-                }
-            }
-        }
+        }       
 
         [Description("Excluded HDLC framing tests. HDLC tests are executed only when HDLC framing is used.")]
         [Category("Accessibility")]

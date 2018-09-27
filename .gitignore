@@ -223,3 +223,4 @@ Development/.vs/config/applicationhost.config
 *.ide-wal
 *.db
 *.zip
+Development/.vs/GXDLMSDirector/DesignTimeBuild/.dtbcache

@@ -126,6 +126,16 @@ namespace GXDLMSDirector
         {
             KeepAlive.Stop();
         }
+       
+        /// <summary>
+        /// How many times message is try to resend.
+        /// </summary>
+        [DefaultValue(3)]
+        public int ResendCount
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// Define how long reply is waited in seconds.
@@ -690,6 +700,7 @@ namespace GXDLMSDirector
             this.KeepAlive.Elapsed += new System.Timers.ElapsedEventHandler(KeepAlive_Elapsed);
             m_Status = DeviceState.Initialized;
             WaitTime = 5;
+            ResendCount = 3;
             InactivityTimeout = 120;
             WindowSizeRX = WindowSizeTX = 1;
             MaxInfoRX = MaxInfoTX = 128;

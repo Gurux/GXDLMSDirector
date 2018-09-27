@@ -217,7 +217,7 @@ namespace GXDLMSDirector
 
         public void ReadDLMSPacket(byte[] data, GXReplyData reply)
         {
-            ReadDLMSPacket(data, 3, reply);
+            ReadDLMSPacket(data, parent.ResendCount, reply);
         }
 
         /// <summary>
@@ -261,7 +261,7 @@ namespace GXDLMSDirector
                     media.Send(data, null);
                     start = DateTime.Now;
                 }
-                while (!succeeded && pos != 3)
+                while (!succeeded && pos != tryCount)
                 {
                     if (!media.IsOpen)
                     {
@@ -271,14 +271,14 @@ namespace GXDLMSDirector
                     if (!succeeded)
                     {
                         //Try to read again...
-                        if (++pos != tryCount)
+                        if (++pos <= tryCount)
                         {
                             //If Eop is not set read one byte at time.
                             if (p.Eop == null)
                             {
                                 p.Count = 1;
                             }
-                            string log = "Data send failed. Try to resend " + pos.ToString() + "/3";
+                            string log = "Data send failed. Try to resend " + pos.ToString() + "/" + tryCount;
                             GXLogWriter.WriteLog(log);
                             if (parent.OnTrace != null)
                             {
@@ -1143,7 +1143,7 @@ namespace GXDLMSDirector
             {
                 return;
             }
-            ReadDataBlock(data, text, multiplier, 3, reply);
+            ReadDataBlock(data, text, multiplier, parent.ResendCount, reply);
         }
 
         /// <summary>

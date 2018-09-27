@@ -691,6 +691,14 @@ namespace GXDLMSDirector
                     dev.Comm.client = new GXDLMSXmlClient(TranslatorOutputType.SimpleXml);
                     cl.CopyTo(dev.Comm.client);
                     test.Device = dev;
+                    if (settings.ResendCount != -1)
+                    {
+                        dev.ResendCount = settings.ResendCount;
+                    }
+                    if (settings.WaitTime.TotalSeconds != 0)
+                    {
+                        dev.WaitTime = (int) settings.WaitTime.TotalSeconds;
+                    }
                     output = new GXOutput(Path.Combine(test.Results, "Results.html"), dev.Name);
                     //Disable keep alive.
                     dev.InactivityTimeout = 0;
@@ -712,14 +720,14 @@ namespace GXDLMSDirector
                     {
                         dev.Comm.UpdateSettings();
                         dev.Comm.InitializeConnection(false);
-                        HdlcTests(test, settings, dev, output);
+                        HdlcTests(test, settings, dev, output, dev.ResendCount);
                         if (!Continue)
                         {
                             continue;
                         }
                     }
                     //Application tests.
-                    if (!dev.Comm.media.IsOpen)
+                    if ((dev.Comm.client.ConnectionState & ConnectionState.Dlms) == 0)
                     {
                         dev.Comm.UpdateSettings();
                         dev.Comm.InitializeConnection(false);
@@ -729,13 +737,9 @@ namespace GXDLMSDirector
                     {
                         continue;
                     }
-                    //Application tests.
-                    if (!dev.Comm.media.IsOpen)
+                    if ((dev.Comm.client.ConnectionState & ConnectionState.Dlms) == 0)
                     {
                         dev.Comm.UpdateSettings();
-                    }
-                    if (!settings.ExcludedHdlcTests.IsEnabled() && !settings.ExcludedApplicationTests.IsEnabled())
-                    {
                         dev.Comm.InitializeConnection(false);
                     }
                     if (client.Ciphering.InvocationCounter != 0)
@@ -1050,22 +1054,32 @@ namespace GXDLMSDirector
                             }
                         }
 
-
-                        if ((dev.Comm.client.NegotiatedConformance & Conformance.MultipleReferences) == 0)
+                        if (!settings.ExcludeBasicTests)
                         {
-                            output.Info.Add("Meter don't support multiple references.");
-                        }
-                        else
-                        {
-                            GXDLMSObjectCollection objs = dev.Objects.GetObjects(ObjectType.Data);
-                            output.Info.Add("Testing multiple references support using " + objs.Count + " data object(s).");
-                            List<KeyValuePair<GXDLMSObject, int>> list = new List<KeyValuePair<GXDLMSObject, int>>();
-                            foreach (GXDLMSObject it in objs)
+                            if ((dev.Comm.client.NegotiatedConformance & Conformance.MultipleReferences) == 0)
                             {
-                                list.Add(new KeyValuePair<GXDLMSObject, int>(it, 2));
+                                output.Info.Add("Meter don't support multiple references.");
                             }
-                            dev.Comm.ReadList(list);
-                            output.Info.Add("Multiple references support succeeded.");
+                            else
+                            {
+                                GXDLMSObjectCollection objs = dev.Objects.GetObjects(ObjectType.Data);
+                                output.Info.Add("Testing multiple references support using " + objs.Count + " data object(s).");
+                                List<KeyValuePair<GXDLMSObject, int>> list = new List<KeyValuePair<GXDLMSObject, int>>();
+                                foreach (GXDLMSObject it in objs)
+                                {
+                                    list.Add(new KeyValuePair<GXDLMSObject, int>(it, 2));
+                                }
+                                (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
+                                try
+                                {
+                                    dev.Comm.ReadList(list);
+                                }
+                                finally
+                                {
+                                    (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = false;
+                                }
+                                output.Info.Add("Multiple references support succeeded.");
+                            }
                         }
                         //Test invalid password.
                         try
@@ -2388,8 +2402,7 @@ namespace GXDLMSDirector
             try
             {
                 reply.Clear();
-                byte[] data = Gurux.Common.GXCommon.HexToBytes("7EA00A0002040121537B737E");
-                dev.Comm.ReadDataBlock(data, "HDLC test #11. Disconnect request", 1, tryCount, reply);
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #10. Disconnect request", 1, tryCount, reply);
             }
             catch (GXDLMSException ex)
             {
@@ -2425,9 +2438,13 @@ namespace GXDLMSDirector
                     passed = false;
                 }
             }
-            catch (Exception)
+            catch (TimeoutException)
             {
                 //This should happened.
+            }
+            catch (Exception)
+            {
+                passed = false;
             }
             try
             {
@@ -3579,9 +3596,8 @@ namespace GXDLMSDirector
             }
         }
 
-        private static void HdlcTests(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output)
+        private static void HdlcTests(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output, int tryCount)
         {
-            int tryCount = 1;
             if (!Continue)
             {
                 return;
@@ -3813,12 +3829,23 @@ namespace GXDLMSDirector
                 reply.Clear();
                 GXDLMSAssociationLogicalName av = new GXDLMSAssociationLogicalName("0.0.40.0.0.255");
                 data = dev.Comm.Read(av, 1);
+                (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
                 dev.Comm.ReadDataBlock(data, "COSEM Application test #1. Read logical name", 1, reply);
                 reply.Clear();
+                passed = false;
             }
             catch (GXDLMSException ex)
             {
                 if (ex.ErrorCode != (int)ErrorCode.UnacceptableFrame)
+                {
+                    passed = false;
+                }
+            }
+            catch (GXDLMSConfirmedServiceError ex)
+            {
+                if (ex.ConfirmedServiceError != ConfirmedServiceError.InitiateError ||
+                    ex.ServiceError != ServiceError.Service ||
+                    ex.ServiceErrorValue != 2)
                 {
                     passed = false;
                 }
@@ -3828,6 +3855,8 @@ namespace GXDLMSDirector
                 passed = false;
                 output.Errors.Add("COSEM Application tests #1 failed. " + ex.Message);
             }
+            (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = false;
+
             //T_APPL_OPEN_1
             try
             {
@@ -3851,7 +3880,7 @@ namespace GXDLMSDirector
             {
                 passed = false;
             }
-
+            //SubTest 1.Establish an AA using the parameters declared
             try
             {
                 reply.Clear();
@@ -3875,7 +3904,6 @@ namespace GXDLMSDirector
             {
                 passed = false;
             }
-            //SubTest 1.Establish an AA using the parameters declared
             try
             {
                 reply.Clear();
@@ -3897,6 +3925,7 @@ namespace GXDLMSDirector
                 }
                 passed = false;
             }
+            //SubTest 2.Check that the AA has been established
             if (passed)
             {
                 try
@@ -3916,6 +3945,7 @@ namespace GXDLMSDirector
                     passed = false;
                     output.Errors.Add("COSEM Application tests #1 failed. " + ex.Message);
                 }
+                //SubTest 3.Release the AA
                 if (passed)
                 {
                     try
@@ -3937,7 +3967,7 @@ namespace GXDLMSDirector
                     catch (Exception ex)
                     {
                         passed = false;
-                        output.Info.Add("COSEM Application tests #4 failed. " + ex.Message);
+                        output.Info.Add("COSEM Application tests #1 failed. " + ex.Message);
                     }
                     if (passed)
                     {
@@ -3962,38 +3992,6 @@ namespace GXDLMSDirector
                         }
                         catch (Exception)
                         {
-                            passed = false;
-                        }
-                        //Mikko
-                        /*
-                        dev.Comm.client.Ciphering.Security = Security.AuthenticationEncryption;
-                        dev.Comm.client.Ciphering.SystemTitle = ASCIIEncoding.ASCII.GetBytes("CTT00000");
-                        dev.Comm.client.Ciphering.BlockCipherKey = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 86, 9, 10, 11, 12, 13, 14, 15 };
-                        dev.Comm.client.Ciphering.AuthenticationKey = new byte[] { 0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7,  0xD8, 0xD9, 0xDA, 0xDB, 0xDC, 0xDD, 0xDE, 0xDF};
-                        dev.Comm.client.Authentication = Authentication.Low;
-                        dev.Comm.client.Password = ASCIIEncoding.ASCII.GetBytes("Mikko");
-                        */
-                        try
-                        {
-                            reply.Clear();
-                            byte[] mikko = GXCommon.HexToBytes("E6E600605EA109060760857405080103A60A040843545430303030308A0207808B0760857405080201AC0A80083132333435363738BE2C042ADB0843545430303030301F3045835E10F8A798D38F371E8AE502D419A46232789B1332E986B39DCAB135");
-                            dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0x10, new GXByteBuffer(mikko)), "COSEM Application test #1. AARQ", 1, tryCount, reply);
-                            //dev.Comm.ReadDataBlock(dev.Comm.client.AARQRequest(), "COSEM Application test #1. AARQ", 1, tryCount, reply);
-                            dev.Comm.ParseAAREResponse(reply.Data);
-                            reply.Clear();
-                            if (dev.Comm.client.Authentication > Authentication.Low)
-                            {
-                                reply.Clear();
-                                dev.Comm.ReadDataBlock(dev.Comm.client.GetApplicationAssociationRequest(), "Authenticating.", 1, tryCount, reply);
-                                dev.Comm.client.ParseApplicationAssociationResponse(reply.Data);
-                            }
-                        }
-                        catch (GXDLMSException ex)
-                        {
-                            if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
-                            {
-                                output.Info.Add("Meter returns DisconnectMode.");
-                            }
                             passed = false;
                         }
                     }

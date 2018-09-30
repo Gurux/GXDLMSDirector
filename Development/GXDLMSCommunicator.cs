@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10288 $,
-//                  $Date: 2018-09-26 13:43:57 +0300 (Wed, 26 Sep 2018) $
+// Version:         $Revision: 10308 $,
+//                  $Date: 2018-09-30 19:45:52 +0300 (Sun, 30 Sep 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -182,7 +182,7 @@ namespace GXDLMSDirector
                     {
                         //Release is call only for secured connections.
                         //Add meters are not supporting Release and it's causing problems.
-                        if (client.Ciphering.Security != Security.None && !parent.PreEstablished)
+                        if (client.InterfaceType == InterfaceType.HDLC && client.Ciphering.Security != Security.None && !parent.PreEstablished)
                         {
                             byte[] data = ReleaseRequest();
                             if (data != null)
@@ -198,7 +198,10 @@ namespace GXDLMSDirector
                     try
                     {
                         reply.Clear();
-                        ReadDataBlock(DisconnectRequest(true), "Disconnect request", reply);
+                        if (!(client.InterfaceType == InterfaceType.WRAPPER && parent.PreEstablished))
+                        {
+                            ReadDataBlock(DisconnectRequest(true), "Disconnect request", reply);
+                        }
                     }
                     catch (Exception)
                     {

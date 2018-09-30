@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10229 $,
-//                  $Date: 2018-08-23 19:02:00 +0300 (Thu, 23 Aug 2018) $
+// Version:         $Revision: 10308 $,
+//                  $Date: 2018-09-30 19:45:52 +0300 (Sun, 30 Sep 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -93,8 +93,12 @@ namespace GXDLMSDirector
             if (code != null && code.Attributes != null)
             {
                 Target.Attributes.AddRange(code.Attributes);
+                Target.Description = code.Description;
             }
-            Target.Description = converter.GetDescription(Target.LogicalName, Target.ObjectType)[0];
+            else
+            {
+                Target.Description = converter.GetDescription(Target.LogicalName, Target.ObjectType)[0];
+            }
             ObisPropertyGrid.SelectedObject = Target;
             InterfaceCB.SelectedItem = Target;
         }

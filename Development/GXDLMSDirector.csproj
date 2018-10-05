@@ -132,11 +132,11 @@
     <Reference Include="Gurux.Common, Version=8.1.1807.2603, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Common.8.1.1807.2603\lib\net40\Gurux.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=8.5.1810.501, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.8.5.1810.501\lib\net40\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=8.5.1810.502, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.8.5.1810.502\lib\net40\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=8.5.1810.501, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.8.5.1810.501\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=8.5.1810.502, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.8.5.1810.502\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.Net, Version=8.1.1808.701, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Net.8.1.1808.701\lib\net40\Gurux.Net.dll</HintPath>
@@ -184,7 +184,6 @@
       <DependentUpon>GXDurations.cs</DependentUpon>
     </Compile>
     <Compile Include="GXByteUIEditor.cs" />
-    <Compile Include="Extensions\Actaris.cs" />
     <Compile Include="CryptHelper.cs" />
     <Compile Include="DeviceState.cs" />
     <Compile Include="GXConformanceDlg.cs">
@@ -215,7 +214,6 @@
     <Compile Include="GXSettingsDlg.Designer.cs">
       <DependentUpon>GXSettingsDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="IGXManufacturerExtension.cs" />
     <Compile Include="ManufacturerSettings\GXHelpers.cs" />
     <Compile Include="ManufacturerSettings\GXError.cs" />
     <Compile Include="MRUManager.cs" />

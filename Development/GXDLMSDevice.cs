@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10304 $,
-//                  $Date: 2018-09-27 21:36:48 +0300 (Thu, 27 Sep 2018) $
+// Version:         $Revision: 10322 $,
+//                  $Date: 2018-10-05 16:33:36 +0300 (Fri, 05 Oct 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -126,7 +126,7 @@ namespace GXDLMSDirector
         {
             KeepAlive.Stop();
         }
-       
+
         /// <summary>
         /// How many times message is try to resend.
         /// </summary>
@@ -630,15 +630,6 @@ namespace GXDLMSDirector
             }
         }
 
-
-        [Browsable(false)]
-        [XmlIgnore()]
-        public IGXManufacturerExtension Extension
-        {
-            get;
-            internal set;
-        }
-
         [Browsable(false)]
         [XmlIgnore()]
         public Gurux.Common.IGXMedia Media
@@ -891,43 +882,36 @@ namespace GXDLMSDirector
                 item.CaptureObjects.Clear();
                 List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> cols = null;
                 List<DataColumn> columns = new List<DataColumn>();
-                if (this.Extension != null)
+                try
                 {
-                    cols = this.Extension.Refresh(item, this.Comm);
-                }
-                if (cols == null)
-                {
-                    try
+                    Comm.GetProfileGenericColumns(item);
+                    if (Standard == Standard.Italy && item.CaptureObjects.Count == 0)
                     {
-                        Comm.GetProfileGenericColumns(item);
-                        if (Standard == Standard.Italy && item.CaptureObjects.Count == 0)
+                        cols = GetColumns(Comm.client.Objects, Comm.client.CustomObisCodes, item.LogicalName);
+                        GXDLMSConverter c = new GXDLMSConverter(Standard);
+                        foreach (var it in cols)
                         {
-                            cols = GetColumns(Comm.client.Objects, Comm.client.CustomObisCodes, item.LogicalName);
-                            GXDLMSConverter c = new GXDLMSConverter(Standard);
-                            foreach (var it in cols)
-                            {
-                                c.UpdateOBISCodeInformation(it.Key);
-                            }
-                            item.CaptureObjects.AddRange(cols);
+                            c.UpdateOBISCodeInformation(it.Key);
                         }
+                        item.CaptureObjects.AddRange(cols);
                     }
-                    catch (GXDLMSException ex)
+                }
+                catch (GXDLMSException ex)
+                {
+                    if (Standard == Standard.Italy)
                     {
-                        if (Standard == Standard.Italy)
+                        cols = GetColumns(Comm.client.Objects, Comm.client.CustomObisCodes, item.LogicalName);
+                        item.CaptureObjects.Clear();
+                        GXDLMSConverter c = new GXDLMSConverter(Standard);
+                        foreach (var it in cols)
                         {
-                            cols = GetColumns(Comm.client.Objects, Comm.client.CustomObisCodes, item.LogicalName);
-                            item.CaptureObjects.Clear();
-                            GXDLMSConverter c = new GXDLMSConverter(Standard);
-                            foreach (var it in cols)
-                            {
-                                c.UpdateOBISCodeInformation(it.Key);
-                            }
-                            item.CaptureObjects.AddRange(cols);
+                            c.UpdateOBISCodeInformation(it.Key);
                         }
-                        if (cols == null || cols.Count == 0)
-                        {
-                            throw ex;
-                        }
+                        item.CaptureObjects.AddRange(cols);
+                    }
+                    if (cols == null || cols.Count == 0)
+                    {
+                        throw ex;
                     }
                 }
             }
@@ -941,7 +925,7 @@ namespace GXDLMSDirector
             return CreateColumn(objects, obisCodes, ot, ln, index, DataType.None);
         }
 
-            private static GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject> CreateColumn(GXDLMSObjectCollection objects, GXObisCodeCollection obisCodes, ObjectType ot, string ln, int index, DataType dt)
+        private static GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject> CreateColumn(GXDLMSObjectCollection objects, GXObisCodeCollection obisCodes, ObjectType ot, string ln, int index, DataType dt)
         {
             GXDLMSObject obj = objects.FindByLN(ot, ln);
             if (obj == null)
@@ -1137,7 +1121,7 @@ namespace GXDLMSDirector
                 throw ex;
             }
         }
-       
+
         /// <summary>
         /// After UpdateObjects call objects can be read using Objects property.
         /// </summary>

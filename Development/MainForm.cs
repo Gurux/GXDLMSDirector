@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10277 $,
-//                  $Date: 2018-09-14 10:39:44 +0300 (Fri, 14 Sep 2018) $
+// Version:         $Revision: 10322 $,
+//                  $Date: 2018-10-05 16:33:36 +0300 (Fri, 05 Oct 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -2336,11 +2336,6 @@ namespace GXDLMSDirector
                 dev.OnProgress += new ProgressEventHandler(this.OnProgress);
                 dev.OnStatusChanged += new StatusEventHandler(this.OnStatusChanged);
                 GXManufacturer m = Manufacturers.FindByIdentification(dev.Manufacturer);
-                if (m.Extension != null)
-                {
-                    Type t = Type.GetType(m.Extension);
-                    dev.Extension = Activator.CreateInstance(t) as IGXManufacturerExtension;
-                }
                 if (first && m.ObisCodes != null)
                 {
                     GXDLMSConverter c = new GXDLMSConverter();

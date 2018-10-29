@@ -5,9 +5,9 @@
 //
 //
 //
-// Version:         $Revision: 10221 $,
-//                  $Date: 2018-08-17 16:15:58 +0300 (Fri, 17 Aug 2018) $
-//                  $Author: gurux01 $
+// Version:         $Revision: 10334 $,
+//                  $Date: 2018-10-12 17:07:40 +0300 (Fri, 12 Oct 2018) $
+//                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -56,9 +56,9 @@ namespace GXDLMSDirector
         Form MediaPropertiesForm = null;
         GXManufacturerCollection Manufacturers;
         IGXMedia SelectedMedia = null;
-        public GXDLMSDevice Device = null;
-        public GXDLMSDevice CopyDevice = null;
-        public DevicePropertiesForm(GXManufacturerCollection manufacturers, GXDLMSDevice dev2)
+        public GXDLMSMeter Device = null;
+        public GXDLMSMeter CopyDevice = null;
+        public DevicePropertiesForm(GXManufacturerCollection manufacturers, GXDLMSMeter dev2)
         {
             if (manufacturers.Count == 0)
             {
@@ -75,6 +75,11 @@ namespace GXDLMSDirector
                 {
                     StandardCb.Items.Add(it);
                 }
+                foreach (object it in Enum.GetValues(typeof(InterfaceType)))
+                {
+                    InterfaceCb.Items.Add(it);
+                }
+                
 
                 PriorityCb.Items.Add(Priority.Normal);
                 PriorityCb.Items.Add(Priority.High);
@@ -107,7 +112,7 @@ namespace GXDLMSDirector
                         pos = index;
                     }
                 }
-                if (Device == null)
+                if (Device == null || Device.Name == null)
                 {
                     Device = new GXDLMSDevice(null);
                     //Select first manufacturer.
@@ -115,7 +120,7 @@ namespace GXDLMSDirector
                     {
                         ManufacturerCB.SelectedIndex = pos;
                     }
-                    Device.Comm.client.ProposedConformance = GXDLMSClient.GetInitialConformance(UseLNCB.Checked);
+                    Device.Conformance = (int) GXDLMSClient.GetInitialConformance(UseLNCB.Checked);
                     FrameCounterTb.ReadOnly = true;
                     UpdateDeviceSettings(Device, true);
                 }
@@ -272,13 +277,13 @@ namespace GXDLMSDirector
                 SelectedMedia = (Gurux.Common.IGXMedia)this.MediasCB.Items[0];
             }
             this.MediasCB.SelectedItem = SelectedMedia;
-            bool bConnected = Device.Media != null && Device.Media.IsOpen;
+            bool bConnected = (Device is GXDLMSDevice) && (Device as GXDLMSDevice).Media != null && (Device as GXDLMSDevice).Media.IsOpen;
             SerialPortCB.Enabled = AdvancedBtn.Enabled = ManufacturerCB.Enabled = MediasCB.Enabled =
                                        AuthenticationCB.Enabled = UseRemoteSerialCB.Enabled = OKBtn.Enabled = !bConnected;
-            HostNameTB.ReadOnly = PortTB.ReadOnly = PasswordTB.ReadOnly = WaitTimeTB.ReadOnly = PhysicalServerAddressTB.ReadOnly = NameTB.ReadOnly = bConnected;
+            HostNameTB.ReadOnly = PortTB.ReadOnly = PasswordTB.ReadOnly = ResendTb.ReadOnly = WaitTimeTB.ReadOnly = PhysicalServerAddressTB.ReadOnly = NameTB.ReadOnly = bConnected;
 
         }
-        private void UpdateDeviceSettings(GXDLMSDevice device, bool first)
+        private void UpdateDeviceSettings(GXDLMSMeter device, bool first)
         {
             if (first)
             {
@@ -377,10 +382,13 @@ namespace GXDLMSDirector
 
             this.VerboseModeCB.Checked = device.Verbose;
             this.NameTB.Text = device.Name;
-            SelectedMedia = device.Media;
-            if (SelectedMedia != null)
+            if ((Device is GXDLMSDevice))
             {
-                SelectedMedia.Settings = device.MediaSettings;
+                SelectedMedia = (Device as GXDLMSDevice).Media;
+                if (SelectedMedia != null)
+                {
+                    SelectedMedia.Settings = device.MediaSettings;
+                }
             }
             UseRemoteSerialCB.Checked = device.UseRemoteSerial;
             StartProtocolCB.SelectedItem = device.StartProtocol;
@@ -388,6 +396,7 @@ namespace GXDLMSDirector
             LogicalServerAddressTB.Value = Convert.ToDecimal(device.LogicalAddress);
             this.ClientAddTB.Value = Convert.ToDecimal(Convert.ToUInt32(device.ClientAddress));
             WaitTimeTB.Value = device.WaitTime;
+            ResendTb.Value = device.ResendCount;
             SecurityCB.SelectedItem = device.Security;
             InvocationCounterTB.Text = device.InvocationCounter.ToString();
             FrameCounterTb.Text = device.FrameCounter;
@@ -410,9 +419,9 @@ namespace GXDLMSDirector
             this.UseLNCB.CheckedChanged -= new System.EventHandler(this.UseLNCB_CheckedChanged);
             this.UseLNCB.Checked = device.UseLogicalNameReferencing;
             this.UseLNCB.CheckedChanged += new System.EventHandler(this.UseLNCB_CheckedChanged);
-            ShowConformance(device.Comm.client.ProposedConformance);
+            ShowConformance((Conformance) device.Conformance);
 
-            UseWrapperCb.Checked = device.UseWrapper;
+            InterfaceCb.SelectedItem = device.InterfaceType;
             MaxInfoTXTb.Text = device.MaxInfoTX.ToString();
             MaxInfoRXTb.Text = device.MaxInfoRX.ToString();
             WindowSizeTXTb.Text = device.WindowSizeTX.ToString();
@@ -637,7 +646,7 @@ namespace GXDLMSDirector
                     c |= Conformance.ParameterizedAccess;
                 }
             }
-            Device.Comm.client.ProposedConformance = c;
+            Device.Conformance = (int) c;
         }
 
         private void MediasCB_SelectedIndexChanged(object sender, EventArgs e)
@@ -688,7 +697,7 @@ namespace GXDLMSDirector
             }
         }
 
-        private void UpdateSettings(GXDLMSDevice device, bool validate)
+        private void UpdateSettings(GXDLMSMeter device, bool validate)
         {
             string name = NameTB.Text.Trim();
             if (validate && name.Length == 0)
@@ -744,7 +753,7 @@ namespace GXDLMSDirector
             {
                 device.Password = "";
             }
-            device.UseWrapper = UseWrapperCb.Checked;
+            device.InterfaceType = (InterfaceType) InterfaceCb.SelectedItem;
             if (MaxInfoTXTb.Text == "")
             {
                 device.MaxInfoTX = 128;
@@ -828,9 +837,13 @@ namespace GXDLMSDirector
             }
 
             device.Name = name;
-            device.Media = SelectedMedia;
+            if (device is GXDLMSDevice)
+            {
+                (device as GXDLMSDevice).Media = SelectedMedia;
+            }
             device.Manufacturer = man.Identification;
             device.WaitTime = Convert.ToInt32(WaitTimeTB.Value);
+            device.ResendCount = Convert.ToInt32(ResendTb.Value);            
             device.Verbose = VerboseModeCB.Checked;
             device.MaximumBaudRate = 0;
             device.UtcTimeZone = UseUtcTimeZone.Checked;
@@ -1129,7 +1142,6 @@ namespace GXDLMSDirector
                 GXManufacturer man = this.ManufacturerCB.SelectedItem as GXManufacturer;
                 if (man != null)
                 {
-                    UseWrapperCb.Checked = man.UseIEC47;
                     UseLNCB.Checked = Device.UseLogicalNameReferencing = man.UseLogicalNameReferencing;
                     if (SelectedMedia is GXNet)
                     {
@@ -1186,7 +1198,10 @@ namespace GXDLMSDirector
                     if (Device.Name == null)
                     {
                         type = man.GetActiveServer().HDLCAddress;
-                        Device.UseWrapper = man.UseIEC47;
+                        if (man.UseIEC47)
+                        {
+                            Device.InterfaceType = InterfaceType.WRAPPER;
+                        }
                         StandardCb.SelectedItem = man.Standard;
                     }
                     foreach (GXServerAddress it in ((GXManufacturer)ManufacturerCB.SelectedItem).ServerSettings)
@@ -1579,11 +1594,6 @@ namespace GXDLMSDirector
             {
                 MessageBox.Show(this, ex.Message);
             }
-        }
-
-        private void UseWrapperCb_CheckedChanged(object sender, EventArgs e)
-        {
-            groupBox1.Enabled = !UseWrapperCb.Checked;
         }
 
         private void InvocationCounterCb_CheckedChanged(object sender, EventArgs e)

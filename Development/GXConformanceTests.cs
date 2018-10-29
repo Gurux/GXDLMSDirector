@@ -697,7 +697,7 @@ namespace GXDLMSDirector
                     }
                     if (settings.WaitTime.TotalSeconds != 0)
                     {
-                        dev.WaitTime = (int) settings.WaitTime.TotalSeconds;
+                        dev.WaitTime = (int)settings.WaitTime.TotalSeconds;
                     }
                     output = new GXOutput(Path.Combine(test.Results, "Results.html"), dev.Name);
                     //Disable keep alive.
@@ -746,7 +746,7 @@ namespace GXDLMSDirector
                     {
                         output.PreInfo.Add("InvocationCounter: " + client.Ciphering.InvocationCounter);
                     }
-                    if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                    if (dev.Comm.client.InterfaceType == InterfaceType.HDLC && !dev.Comm.client.Limits.UseFrameSize)
                     {
                         if (dev.MaxInfoRX != 128 && dev.MaxInfoRX != dev.Comm.client.Limits.MaxInfoRX)
                         {
@@ -5141,7 +5141,11 @@ namespace GXDLMSDirector
                         {
                             return;
                         }
-                        dev.Comm.ReadValue(img, 6);
+                        do
+                        {
+                            dev.Comm.ReadValue(img, 6);
+                        } while (img.ImageTransferStatus == ImageTransferStatus.NotInitiated);
+
                         if (img.ImageTransferStatus != ImageTransferStatus.TransferInitiated)
                         {
                             error = true;

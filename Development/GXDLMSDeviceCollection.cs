@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 9442 $,
-//                  $Date: 2017-05-23 15:21:03 +0300 (ti, 23 touko 2017) $
+// Version:         $Revision: 10346 $,
+//                  $Date: 2018-10-29 16:08:18 +0200 (Mon, 29 Oct 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -31,11 +31,9 @@
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
-
+using Gurux.DLMS;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml.Serialization;
 
 namespace GXDLMSDirector
 {
@@ -44,6 +42,14 @@ namespace GXDLMSDirector
     /// </summary>
     [Serializable]
     public class GXDLMSDeviceCollection : List<GXDLMSDevice>
+    {
+    }
+
+    /// <summary>
+    /// List of meters.
+    /// </summary>
+    [Serializable]
+    public class GXDLMSMeterCollection : List<GXDLMSMeter>
     {
     }
 }

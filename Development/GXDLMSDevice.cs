@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10322 $,
-//                  $Date: 2018-10-05 16:33:36 +0300 (Fri, 05 Oct 2018) $
+// Version:         $Revision: 10346 $,
+//                  $Date: 2018-10-29 16:08:18 +0200 (Mon, 29 Oct 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -30,29 +30,24 @@
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
-
 using System;
 using System.Collections.Generic;
-using Gurux.Serial;
 using System.Windows.Forms;
-using Gurux.DLMS;
 using System.Data;
 using System.ComponentModel;
-using System.Xml;
 using System.Xml.Serialization;
 using GXDLMS.ManufacturerSettings;
-using GXDLMS.Common;
-using Gurux.DLMS.ManufacturerSettings;
-using Gurux.DLMS.Objects;
-using Gurux.DLMS.Enums;
 using Gurux.Common;
 using System.Reflection;
-using Gurux.DLMS.Objects.Italy;
+using Gurux.DLMS;
+using Gurux.DLMS.Enums;
+using Gurux.DLMS.ManufacturerSettings;
+using Gurux.DLMS.Objects;
 
 namespace GXDLMSDirector
 {
     [Serializable]
-    public class GXDLMSDevice
+    public class GXDLMSDevice : GXDLMSMeter
     {
         DeviceState m_Status;
 
@@ -80,10 +75,6 @@ namespace GXDLMSDirector
                 return m_Status;
             }
         }
-
-        [Browsable(false)]
-        [XmlIgnore()]
-        GXDLMSObjectCollection m_Objects;
 
         [Browsable(false)]
         [XmlIgnore()]
@@ -128,202 +119,6 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// How many times message is try to resend.
-        /// </summary>
-        [DefaultValue(3)]
-        public int ResendCount
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Define how long reply is waited in seconds.
-        /// </summary>
-        [DefaultValue(5)]
-        public int WaitTime
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Maximum used baud rate.
-        /// </summary>
-        [DefaultValue(0)]
-        public int MaximumBaudRate
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Used authentication.
-        /// </summary>
-        [DefaultValue(Authentication.None)]
-        public Authentication Authentication
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Used standard.
-        /// </summary>
-        [DefaultValue(Standard.DLMS)]
-        public Standard Standard
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Password is used only if authentication is used.
-        /// </summary>
-        [DefaultValue("")]
-        public string Password
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Password is used only if authentication is used.
-        /// </summary>
-        [DefaultValue(null)]
-        public byte[] HexPassword
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Used communication security.
-        /// </summary>
-        [DefaultValue(Security.None)]
-        public Security Security
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// System Title.
-        /// </summary>
-        [DefaultValue("")]
-        public string SystemTitle
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Server System Title.
-        /// </summary>
-        [DefaultValue("")]
-        public string ServerSystemTitle
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Dedicated Key.
-        /// </summary>
-        [DefaultValue("")]
-        public string DedicatedKey
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Use pre-established application associations.
-        /// </summary>
-        [DefaultValue(false)]
-        public bool PreEstablished
-        {
-            get;
-            set;
-        }
-
-
-        /// <summary>
-        /// Block cipher key.
-        /// </summary>
-        [DefaultValue("")]
-        public string BlockCipherKey
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Authentication key.
-        /// </summary>
-        [DefaultValue("")]
-        public string AuthenticationKey
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Invocation counter.
-        /// </summary>
-        [DefaultValue(0)]
-        public UInt32 InvocationCounter
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Frame counter is used to update InvocationCounter automatically.
-        /// </summary>
-        [DefaultValue(null)]
-        public string FrameCounter
-        {
-            get;
-            set;
-        }
-
-
-
-        /// <summary>
-        /// Static challenge.
-        /// </summary>
-        [DefaultValue("")]
-        public string Challenge
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Used Physical address.
-        /// </summary>
-        /// <remarks>
-        /// Server HDLC Address (Logical + Physical address)  might be 1,2 or 4 bytes long.
-        /// </remarks>
-        [DefaultValue(null)]
-        public object PhysicalAddress
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Used logical address.
-        /// </summary>
-        [DefaultValue(0)]
-        public int LogicalAddress
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Used logical client ID.
         /// </summary>
         /// <remarks>
@@ -342,51 +137,6 @@ namespace GXDLMSDirector
             }
         }
 
-
-        /// <summary>
-        /// Standard says that Time zone is from normal time to UTC in minutes.
-        /// If meter is configured to use UTC time (UTC to normal time) set this to true.
-        /// </summary>
-        [DefaultValue(false)]
-        public bool UtcTimeZone
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// USed logical client ID.
-        /// </summary>
-        /// <remarks>
-        /// Client ID is always 1 byte long.
-        /// </remarks>
-        [DefaultValue(0x10)]
-        public int ClientAddress
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Is IEC 62056-21 skipped when using serial port connection.
-        /// </summary>
-        [DefaultValue(StartProtocolType.IEC)]
-        public StartProtocolType StartProtocol
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Is serial port access through TCP/IP or UDP converter.
-        /// </summary>
-        [DefaultValue(false)]
-        public bool UseRemoteSerial
-        {
-            get;
-            set;
-        }
-
         /// <summary>
         /// Is wrapper used.
         /// </summary>
@@ -394,160 +144,17 @@ namespace GXDLMSDirector
         [DefaultValue(false)]
         public bool UseWrapper
         {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Is MaxInfoTX and RX count for frame size or PDU size.
-        /// </summary>
-        [DefaultValue(false)]
-        public bool UseFrameSize
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// The maximum information field length in transmit.
-        /// </summary>
-        /// <remarks>
-        /// DefaultValue is 128. Minimum value is 32 and max value is 128.
-        /// </remarks>
-        [DefaultValue(128)]
-        public UInt16 MaxInfoTX
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// The maximum information field length in receive.
-        /// </summary>
-        /// <remarks>
-        /// DefaultValue is 128. Minimum value is 32 and max value is 128.
-        /// </remarks>
-        [DefaultValue(128)]
-        public UInt16 MaxInfoRX
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// The window size in transmit.
-        /// </summary>
-        /// <remarks>
-        /// DefaultValue is 1.
-        /// </remarks>
-        [DefaultValue(1)]
-        public byte WindowSizeTX
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// The window size in receive.
-        /// </summary>
-        /// <remarks>
-        /// DefaultValue is 1.
-        /// </remarks>
-        [DefaultValue(1)]
-        public byte WindowSizeRX
-        {
-            get;
-            set;
-        }
-
-
-        /// <summary>
-        /// Proposed maximum size of PDU.
-        /// </summary>
-        /// <remarks>
-        /// DefaultValue is 1.
-        /// </remarks>
-        [DefaultValue(0xFFFF)]
-        public UInt16 PduSize
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// User Id.
-        /// </summary>
-        /// <remarks>
-        /// In default user id is not used.
-        /// </remarks>
-        [DefaultValue(-1)]
-        public short UserId
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Network ID.
-        /// </summary>
-        [DefaultValue(0)]
-        public byte NetworkId
-        {
-            get;
-            set;
-        }
-        /// <summary>
-        /// Physical device address.
-        /// </summary>
-        [DefaultValue(null)]
-        public string PhysicalDeviceAddress
-        {
-            get;
-            set;
-        }
-
-
-        /// <summary>
-        ///Inactivity timeout.
-        /// </summary>
-        /// <remarks>
-        /// DefaultValue is 120 second.
-        /// </remarks>
-        public int InactivityTimeout
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Used ServiceClass.
-        /// </summary>
-        [DefaultValue(ServiceClass.Confirmed)]
-        public ServiceClass ServiceClass
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Used priority.
-        /// </summary>
-        [DefaultValue(Priority.High)]
-        public Priority Priority
-        {
-            get;
-            set;
-        }
-
-
-        /// <summary>
-        /// Server address size.
-        /// </summary>
-        [DefaultValue(0)]
-        public byte ServerAddressSize
-        {
-            get;
-            set;
+            get
+            {
+                return false;
+            }
+            set
+            {
+                if (value)
+                {
+                    InterfaceType = InterfaceType.WRAPPER;
+                }
+            }
         }
 
         void NotifyProgress(object sender, string description, int current, int maximium)
@@ -555,37 +162,6 @@ namespace GXDLMSDirector
             if (OnProgress != null)
             {
                 OnProgress(sender, description, current, maximium);
-            }
-        }
-
-        public string Name
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Is media verbose mode used.
-        /// </summary>
-        [DefaultValue(false)]
-        public bool Verbose
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Used Conformance.
-        /// </summary>
-        public int Conformance
-        {
-            get
-            {
-                return (int)communicator.client.ProposedConformance;
-            }
-            set
-            {
-                communicator.client.ProposedConformance = (Conformance)value;
             }
         }
 
@@ -653,52 +229,18 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// Name of the manufacturer.
-        /// </summary>
-        [Browsable(false)]
-        public string Manufacturer
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// What HDLC Addressing is used.
-        /// </summary>
-        [Browsable(false)]
-        public HDLCAddressType HDLCAddressing
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Constructor.
         /// </summary>
-        public GXDLMSDevice(Gurux.Common.IGXMedia media)
+        public GXDLMSDevice(Gurux.Common.IGXMedia media) : base()
         {
-            StartProtocol = StartProtocolType.IEC;
-            ClientAddress = 0x10; // Public client (lowest security level).
-            PhysicalAddress = 1;
-            Password = "";
-            Authentication = Authentication.None;
             communicator = new GXDLMSCommunicator(this, media);
-            m_Objects = communicator.client.Objects;
-            m_Objects.Tag = this;
+            Objects = communicator.client.Objects;
+            Objects.Tag = this;
             communicator.OnProgress += new ProgressEventHandler(this.NotifyProgress);
             this.KeepAlive = new System.Timers.Timer();
             this.KeepAlive.Interval = 40000;
             this.KeepAlive.Elapsed += new System.Timers.ElapsedEventHandler(KeepAlive_Elapsed);
             m_Status = DeviceState.Initialized;
-            WaitTime = 5;
-            ResendCount = 3;
-            InactivityTimeout = 120;
-            WindowSizeRX = WindowSizeTX = 1;
-            MaxInfoRX = MaxInfoTX = 128;
-            PduSize = 0xFFFF;
-            ServiceClass = ServiceClass.Confirmed;
-            Priority = Priority.High;
-            UserId = -1;
         }
 
         /// <summary>
@@ -709,7 +251,7 @@ namespace GXDLMSDirector
         }
 
         [Browsable(false)]
-        public string MediaType
+        public override string MediaType
         {
             get
             {
@@ -764,51 +306,6 @@ namespace GXDLMSDirector
             }
         }
 
-        /// <summary>
-        /// Media settings as a string.
-        /// </summary>
-        public string MediaSettings
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Is Logical name referencing used.
-        /// </summary>
-        [DefaultValue(false)]
-        [XmlElement("UseLN")]
-        public bool UseLogicalNameReferencing
-        {
-            get;
-            set;
-        }
-
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        [XmlArray("Objects2")]
-        public GXDLMSObjectCollection Objects
-        {
-            get
-            {
-                return m_Objects;
-            }
-        }
-
-        /// <summary>
-        /// Do not use this. This is obsolete.
-        /// </summary>
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        [XmlArray("Objects")]
-        [XmlArrayItem("Object", Type = typeof(GXDLMSObjectSerializer<GXDLMSObject>))]
-        //[Obsolete("Use Objects", true)]
-        public GXDLMSObjectCollection ObsoleteObjects
-        {
-            get
-            {
-                return m_Objects;
-            }
-        }
-
         public void Disconnect()
         {
             try
@@ -840,7 +337,7 @@ namespace GXDLMSDirector
 
         GXDLMSObject FindObject(ObjectType type, string logicalName)
         {
-            foreach (GXDLMSObject it in m_Objects)
+            foreach (GXDLMSObject it in Objects)
             {
                 if (type == it.ObjectType && it.LogicalName == logicalName)
                 {
@@ -848,16 +345,6 @@ namespace GXDLMSDirector
                 }
             }
             return null;
-        }
-
-        bool ShouldSkip(GXDLMSObject it, int index)
-        {
-            //Skip Scaler and unit.
-            if (it is GXDLMSRegister && index == 3)
-            {
-                return true;
-            }
-            return false;
         }
 
         delegate void UpdateColumnsEventHandler(GXDLMSProfileGeneric item, GXManufacturer man);
@@ -1136,9 +623,9 @@ namespace GXDLMSDirector
                 {
                     ++pos;
                     NotifyProgress(this, "Creating object " + it.LogicalName, pos, objs.Count);
-                    m_Objects.Add(it);
+                    Objects.Add(it);
                 }
-                GXLogWriter.WriteLog("--- Created " + m_Objects.Count.ToString() + " objects. ---");
+                GXLogWriter.WriteLog("--- Created " + Objects.Count.ToString() + " objects. ---");
                 //Read registers units and scalers.
                 int cnt = Objects.Count;
                 GXLogWriter.WriteLog("--- Reading scalers and units. ---");

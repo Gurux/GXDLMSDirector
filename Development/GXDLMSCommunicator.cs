@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10308 $,
-//                  $Date: 2018-09-30 19:45:52 +0300 (Sun, 30 Sep 2018) $
+// Version:         $Revision: 10346 $,
+//                  $Date: 2018-10-29 16:08:18 +0200 (Mon, 29 Oct 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -171,7 +171,7 @@ namespace GXDLMSDirector
             return data;
         }
 
-        public void Disconnect()            
+        public void Disconnect()
         {
             try
             {
@@ -264,7 +264,7 @@ namespace GXDLMSDirector
                     media.Send(data, null);
                     start = DateTime.Now;
                 }
-                while (!succeeded && pos != tryCount)
+                do
                 {
                     if (!media.IsOpen)
                     {
@@ -299,6 +299,8 @@ namespace GXDLMSDirector
                         throw new TimeoutException(err);
                     }
                 }
+                while (!succeeded && pos != tryCount);
+
                 try
                 {
                     pos = 0;
@@ -664,9 +666,8 @@ namespace GXDLMSDirector
             {
                 client.Password = CryptHelper.Decrypt(this.parent.HexPassword, Password.Key);
             }
-            Conformance c = client.ProposedConformance;
             client.UseLogicalNameReferencing = this.parent.UseLogicalNameReferencing;
-            client.ProposedConformance = c;
+            client.ProposedConformance = (Conformance)parent.Conformance;
             client.UtcTimeZone = parent.UtcTimeZone;
             //Show media verbose.
             if (this.parent.Verbose && media.Trace != System.Diagnostics.TraceLevel.Verbose)
@@ -794,7 +795,7 @@ namespace GXDLMSDirector
                 media.Settings = parent.MediaSettings;
             }
             client.Authentication = this.parent.Authentication;
-            client.InterfaceType = InterfaceType.HDLC;
+            client.InterfaceType = parent.InterfaceType;
             if (!string.IsNullOrEmpty(this.parent.Password))
             {
                 client.Password = CryptHelper.Decrypt(this.parent.Password, Password.Key);

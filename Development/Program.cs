@@ -4,9 +4,9 @@
 //
 //
 //
-// Version:         $Revision: 10230 $,
-//                  $Date: 2018-08-24 09:04:47 +0300 (Fri, 24 Aug 2018) $
-//                  $Author: gurux01 $
+// Version:         $Revision: 10334 $,
+//                  $Date: 2018-10-12 17:07:40 +0300 (Fri, 12 Oct 2018) $
+//                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -42,6 +42,7 @@ using System.Deployment.Application;
 using Microsoft.Win32;
 using System.Diagnostics;
 using System.ComponentModel;
+using Gurux.DLMS;
 
 namespace GXDLMSDirector
 {
@@ -66,7 +67,8 @@ namespace GXDLMSDirector
                         Assembly assembly = Assembly.LoadFile(file.FullName);
                         foreach (Type type in assembly.GetTypes())
                         {
-                            if (!type.IsAbstract && type.IsClass && typeof(IGXMedia).IsAssignableFrom(type))
+                            if (!type.IsAbstract && type.IsClass && 
+                                (typeof(IGXMedia).IsAssignableFrom(type)) || typeof(IGXDataConcentrator).IsAssignableFrom(type))
                             {
                                 assembly.CreateInstance(type.ToString());
                             }

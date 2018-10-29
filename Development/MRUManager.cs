@@ -61,12 +61,20 @@ namespace MRUSample
 
         public event OpenMRUFileEventHandler OnOpenMRUFile;
 
+
+        public bool Enabled
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="mruItem">Recent Files menu item</param>
         public MRUManager(MenuItem mruItem)
         {
+            Enabled = true;
             MruItems = new List<string>();
             // keep reference to MRU menu item
             menuItemMRU = mruItem;
@@ -82,6 +90,7 @@ namespace MRUSample
         /// <param name="mruItem">Recent Files menu item</param>
         public MRUManager(ToolStripMenuItem mruItem)
         {
+            Enabled = true;
             MruItems = new List<string>();
             // keep reference to MRU Tool strip menu item.
             ToolStripMruMenu = mruItem;
@@ -100,18 +109,21 @@ namespace MRUSample
         /// <param name="file">File Name</param>
         public void Insert(int index, string file)
         {
-            Remove(file);
-            // if array has maximum length, remove last element
-            if (MruItems.Count == maxNumberOfFiles)
+            if (!string.IsNullOrEmpty(file))
             {
-                MruItems.RemoveAt(maxNumberOfFiles - 1);
+                Remove(file);
+                // if array has maximum length, remove last element
+                if (MruItems.Count == maxNumberOfFiles)
+                {
+                    MruItems.RemoveAt(maxNumberOfFiles - 1);
+                }
+                if (index == -1)
+                {
+                    index = MruItems.Count;
+                }
+                // add new file name to the start of array
+                MruItems.Insert(index, file);
             }
-            if (index == -1)
-            {
-                index = MruItems.Count;
-            }
-            // add new file name to the start of array
-            MruItems.Insert(index, file);
         }
 
         /// <summary>
@@ -143,7 +155,7 @@ namespace MRUSample
         private void OnMRUShowItems(object sender, EventArgs e)
         {
             // remove all childs
-            if (ToolStripMruMenu != null)
+            if (Enabled && ToolStripMruMenu != null)
             {
                 ToolStripMruMenu.DropDownItems.Clear();
                 // Disable menu item if MRU list is empty
@@ -153,10 +165,13 @@ namespace MRUSample
                     ToolStripMenuItem item;
                     foreach (string it in MruItems)
                     {
-                        item = new ToolStripMenuItem(GetDisplayName(it));
-                        // subscribe to item's Click event
-                        item.Click += new EventHandler(this.OnMRUClicked);
-                        ToolStripMruMenu.DropDownItems.Add(item);
+                        if (!string.IsNullOrEmpty(it))
+                        {
+                            item = new ToolStripMenuItem(GetDisplayName(it));
+                            // subscribe to item's Click event
+                            item.Click += new EventHandler(this.OnMRUClicked);
+                            ToolStripMruMenu.DropDownItems.Add(item);
+                        }
                     }
                 }
             }

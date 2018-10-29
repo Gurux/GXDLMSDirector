@@ -5,9 +5,9 @@
 //
 //
 //
-// Version:         $Revision: 10221 $,
-//                  $Date: 2018-08-17 16:15:58 +0300 (Fri, 17 Aug 2018) $
-//                  $Author: gurux01 $
+// Version:         $Revision: 10334 $,
+//                  $Date: 2018-10-12 17:07:40 +0300 (Fri, 12 Oct 2018) $
+//                  $Author: kurumi $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -124,6 +124,8 @@ namespace GXDLMSDirector
             this.SystemtitleLbl = new System.Windows.Forms.Label();
             this.SecurityLbl = new System.Windows.Forms.Label();
             this.DeviceSettingsTab = new System.Windows.Forms.TabPage();
+            this.ResendTb = new System.Windows.Forms.NumericUpDown();
+            this.ResendLbl = new System.Windows.Forms.Label();
             this.CustomSettings = new System.Windows.Forms.GroupBox();
             this.PasswordAsciiCb = new System.Windows.Forms.CheckBox();
             this.VerboseModeCB = new System.Windows.Forms.CheckBox();
@@ -172,6 +174,8 @@ namespace GXDLMSDirector
             this.SerialPortCB = new System.Windows.Forms.ComboBox();
             this.DeviceTab = new System.Windows.Forms.TabControl();
             this.AdvancedTab = new System.Windows.Forms.TabPage();
+            this.InterfaceCb = new System.Windows.Forms.ComboBox();
+            this.InterfaceLbl = new System.Windows.Forms.Label();
             this.InactivityTimeoutTb = new System.Windows.Forms.TextBox();
             this.InactivityTimeoutLbl = new System.Windows.Forms.Label();
             this.ServiceClassCb = new System.Windows.Forms.ComboBox();
@@ -184,7 +188,6 @@ namespace GXDLMSDirector
             this.UserIDLbl = new System.Windows.Forms.Label();
             this.MaxPduTb = new System.Windows.Forms.TextBox();
             this.MaxPduLbl = new System.Windows.Forms.Label();
-            this.UseWrapperCb = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.FrameSizeCb = new System.Windows.Forms.CheckBox();
             this.WindowSizeRXTb = new System.Windows.Forms.TextBox();
@@ -218,6 +221,7 @@ namespace GXDLMSDirector
             this.CipheringTab.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.DeviceSettingsTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ResendTb)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ClientAddTB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LogicalServerAddressTB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PhysicalServerAddressTB)).BeginInit();
@@ -951,6 +955,8 @@ namespace GXDLMSDirector
             // 
             // DeviceSettingsTab
             // 
+            this.DeviceSettingsTab.Controls.Add(this.ResendTb);
+            this.DeviceSettingsTab.Controls.Add(this.ResendLbl);
             this.DeviceSettingsTab.Controls.Add(this.CustomSettings);
             this.DeviceSettingsTab.Controls.Add(this.PasswordAsciiCb);
             this.DeviceSettingsTab.Controls.Add(this.VerboseModeCB);
@@ -990,6 +996,35 @@ namespace GXDLMSDirector
             this.DeviceSettingsTab.Text = "Device Settings";
             this.DeviceSettingsTab.UseVisualStyleBackColor = true;
             // 
+            // ResendTb
+            // 
+            this.helpProvider1.SetHelpKeyword(this.ResendTb, "ResendCount");
+            this.helpProvider1.SetHelpNavigator(this.ResendTb, System.Windows.Forms.HelpNavigator.Topic);
+            this.ResendTb.Location = new System.Drawing.Point(298, 143);
+            this.ResendTb.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.ResendTb.Name = "ResendTb";
+            this.helpProvider1.SetShowHelp(this.ResendTb, true);
+            this.ResendTb.Size = new System.Drawing.Size(85, 20);
+            this.ResendTb.TabIndex = 10;
+            this.ResendTb.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            // 
+            // ResendLbl
+            // 
+            this.ResendLbl.AutoSize = true;
+            this.ResendLbl.Location = new System.Drawing.Point(207, 148);
+            this.ResendLbl.Name = "ResendLbl";
+            this.ResendLbl.Size = new System.Drawing.Size(77, 13);
+            this.ResendLbl.TabIndex = 52;
+            this.ResendLbl.Text = "Resend count:";
+            // 
             // CustomSettings
             // 
             this.CustomSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -1025,7 +1060,7 @@ namespace GXDLMSDirector
             this.VerboseModeCB.Name = "VerboseModeCB";
             this.helpProvider1.SetShowHelp(this.VerboseModeCB, true);
             this.VerboseModeCB.Size = new System.Drawing.Size(95, 17);
-            this.VerboseModeCB.TabIndex = 14;
+            this.VerboseModeCB.TabIndex = 15;
             this.VerboseModeCB.Text = "Verbose Mode";
             this.VerboseModeCB.UseVisualStyleBackColor = true;
             // 
@@ -1050,7 +1085,7 @@ namespace GXDLMSDirector
             this.ServerAddressTypeCB.Name = "ServerAddressTypeCB";
             this.helpProvider1.SetShowHelp(this.ServerAddressTypeCB, true);
             this.ServerAddressTypeCB.Size = new System.Drawing.Size(141, 21);
-            this.ServerAddressTypeCB.TabIndex = 10;
+            this.ServerAddressTypeCB.TabIndex = 11;
             this.ServerAddressTypeCB.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ServerAddressTypeCB_DrawItem);
             // 
             // label3
@@ -1128,7 +1163,7 @@ namespace GXDLMSDirector
             this.LogicalServerAddressTB.Name = "LogicalServerAddressTB";
             this.helpProvider1.SetShowHelp(this.LogicalServerAddressTB, true);
             this.LogicalServerAddressTB.Size = new System.Drawing.Size(85, 20);
-            this.LogicalServerAddressTB.TabIndex = 12;
+            this.LogicalServerAddressTB.TabIndex = 13;
             this.LogicalServerAddressTB.Value = new decimal(new int[] {
             1,
             0,
@@ -1158,7 +1193,7 @@ namespace GXDLMSDirector
             this.PhysicalServerAddressTB.Name = "PhysicalServerAddressTB";
             this.helpProvider1.SetShowHelp(this.PhysicalServerAddressTB, true);
             this.PhysicalServerAddressTB.Size = new System.Drawing.Size(85, 20);
-            this.PhysicalServerAddressTB.TabIndex = 11;
+            this.PhysicalServerAddressTB.TabIndex = 12;
             this.PhysicalServerAddressTB.Value = new decimal(new int[] {
             1,
             0,
@@ -1303,7 +1338,7 @@ namespace GXDLMSDirector
             this.MediasCB.Name = "MediasCB";
             this.helpProvider1.SetShowHelp(this.MediasCB, true);
             this.MediasCB.Size = new System.Drawing.Size(85, 21);
-            this.MediasCB.TabIndex = 13;
+            this.MediasCB.TabIndex = 14;
             this.MediasCB.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.MediasCB_DrawItem);
             this.MediasCB.SelectedIndexChanged += new System.EventHandler(this.MediasCB_SelectedIndexChanged);
             // 
@@ -1538,6 +1573,8 @@ namespace GXDLMSDirector
             // 
             // AdvancedTab
             // 
+            this.AdvancedTab.Controls.Add(this.InterfaceCb);
+            this.AdvancedTab.Controls.Add(this.InterfaceLbl);
             this.AdvancedTab.Controls.Add(this.InactivityTimeoutTb);
             this.AdvancedTab.Controls.Add(this.InactivityTimeoutLbl);
             this.AdvancedTab.Controls.Add(this.ServiceClassCb);
@@ -1550,7 +1587,6 @@ namespace GXDLMSDirector
             this.AdvancedTab.Controls.Add(this.UserIDLbl);
             this.AdvancedTab.Controls.Add(this.MaxPduTb);
             this.AdvancedTab.Controls.Add(this.MaxPduLbl);
-            this.AdvancedTab.Controls.Add(this.UseWrapperCb);
             this.AdvancedTab.Controls.Add(this.groupBox1);
             this.AdvancedTab.Controls.Add(this.UseUtcTimeZone);
             this.helpProvider1.SetHelpKeyword(this.AdvancedTab, "advanced");
@@ -1563,6 +1599,27 @@ namespace GXDLMSDirector
             this.AdvancedTab.TabIndex = 3;
             this.AdvancedTab.Text = "Advanced";
             this.AdvancedTab.UseVisualStyleBackColor = true;
+            // 
+            // InterfaceCb
+            // 
+            this.InterfaceCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.InterfaceCb.FormattingEnabled = true;
+            this.helpProvider1.SetHelpKeyword(this.InterfaceCb, "Manufacturer");
+            this.helpProvider1.SetHelpNavigator(this.InterfaceCb, System.Windows.Forms.HelpNavigator.Topic);
+            this.InterfaceCb.Location = new System.Drawing.Point(159, 246);
+            this.InterfaceCb.Name = "InterfaceCb";
+            this.helpProvider1.SetShowHelp(this.InterfaceCb, true);
+            this.InterfaceCb.Size = new System.Drawing.Size(93, 21);
+            this.InterfaceCb.TabIndex = 60;
+            // 
+            // InterfaceLbl
+            // 
+            this.InterfaceLbl.AutoSize = true;
+            this.InterfaceLbl.Location = new System.Drawing.Point(16, 251);
+            this.InterfaceLbl.Name = "InterfaceLbl";
+            this.InterfaceLbl.Size = new System.Drawing.Size(52, 13);
+            this.InterfaceLbl.TabIndex = 61;
+            this.InterfaceLbl.Text = "Interface:";
             // 
             // InactivityTimeoutTb
             // 
@@ -1681,20 +1738,6 @@ namespace GXDLMSDirector
             this.MaxPduLbl.Size = new System.Drawing.Size(77, 13);
             this.MaxPduLbl.TabIndex = 48;
             this.MaxPduLbl.Text = "Max PDU size:";
-            // 
-            // UseWrapperCb
-            // 
-            this.UseWrapperCb.AutoSize = true;
-            this.helpProvider1.SetHelpKeyword(this.UseWrapperCb, "UseWrapper");
-            this.helpProvider1.SetHelpNavigator(this.UseWrapperCb, System.Windows.Forms.HelpNavigator.Topic);
-            this.UseWrapperCb.Location = new System.Drawing.Point(20, 250);
-            this.UseWrapperCb.Name = "UseWrapperCb";
-            this.helpProvider1.SetShowHelp(this.UseWrapperCb, true);
-            this.UseWrapperCb.Size = new System.Drawing.Size(103, 17);
-            this.UseWrapperCb.TabIndex = 5;
-            this.UseWrapperCb.Text = "Use WRAPPER";
-            this.UseWrapperCb.UseVisualStyleBackColor = true;
-            this.UseWrapperCb.CheckedChanged += new System.EventHandler(this.UseWrapperCb_CheckedChanged);
             // 
             // groupBox1
             // 
@@ -2008,6 +2051,7 @@ namespace GXDLMSDirector
             this.groupBox2.PerformLayout();
             this.DeviceSettingsTab.ResumeLayout(false);
             this.DeviceSettingsTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ResendTb)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ClientAddTB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.LogicalServerAddressTB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PhysicalServerAddressTB)).EndInit();
@@ -2141,7 +2185,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label MaxInfoRXLbl;
         private System.Windows.Forms.TextBox MaxInfoTXTb;
         private System.Windows.Forms.Label MaxInfoTXLbl;
-        private System.Windows.Forms.CheckBox UseWrapperCb;
         private System.Windows.Forms.HelpProvider helpProvider1;
         private System.Windows.Forms.HelpProvider conformanceHelpProvider;
         private System.Windows.Forms.TextBox InactivityTimeoutTb;
@@ -2182,5 +2225,9 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label PhysicalDeviceAddressLbl;
         private System.Windows.Forms.CheckBox UseGatewayCb;
         private System.Windows.Forms.CheckBox FrameSizeCb;
+        private System.Windows.Forms.ComboBox InterfaceCb;
+        private System.Windows.Forms.Label InterfaceLbl;
+        private System.Windows.Forms.NumericUpDown ResendTb;
+        private System.Windows.Forms.Label ResendLbl;
     }
 }

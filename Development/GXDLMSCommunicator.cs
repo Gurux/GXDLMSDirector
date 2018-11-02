@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10346 $,
-//                  $Date: 2018-10-29 16:08:18 +0200 (Mon, 29 Oct 2018) $
+// Version:         $Revision: 10368 $,
+//                  $Date: 2018-11-02 14:03:38 +0200 (Fri, 02 Nov 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -274,7 +274,7 @@ namespace GXDLMSDirector
                     if (!succeeded)
                     {
                         //Try to read again...
-                        if (++pos <= tryCount)
+                        if (++pos != tryCount)
                         {
                             //If Eop is not set read one byte at time.
                             if (p.Eop == null)
@@ -682,9 +682,9 @@ namespace GXDLMSDirector
             }
 
             //If network media is used check is manufacturer supporting IEC 62056-47
-            if (parent.UseWrapper && !parent.UseRemoteSerial && this.media is GXNet)
+            if (client.InterfaceType == InterfaceType.WRAPPER && (parent.UseRemoteSerial || this.media is GXSerial))
             {
-                client.InterfaceType = InterfaceType.WRAPPER;
+                client.InterfaceType = InterfaceType.HDLC;
             }
 
             client.ClientAddress = parent.ClientAddress;
@@ -819,9 +819,9 @@ namespace GXDLMSDirector
             }
 
             //If network media is used check is manufacturer supporting IEC 62056-47
-            if (parent.UseWrapper && !parent.UseRemoteSerial && this.media is GXNet)
+            if (client.InterfaceType == InterfaceType.WRAPPER && (parent.UseRemoteSerial || this.media is GXSerial))
             {
-                client.InterfaceType = InterfaceType.WRAPPER;
+                client.InterfaceType = InterfaceType.HDLC;
             }
 
             client.ClientAddress = parent.ClientAddress;

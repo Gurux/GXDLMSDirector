@@ -274,7 +274,7 @@ namespace GXDLMSDirector
                             {
                                 break;
                             }
-                            if (obj.GetMethodAccess(index) == MethodAccessMode.NoAccess)
+                            if (obj != null && obj.GetMethodAccess(index) == MethodAccessMode.NoAccess)
                             {
                                 continue;
                             }

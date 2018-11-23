@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Messages>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*"/>
+      <AttributeDescriptor>
+        <!--GSM_DIAGNOSTIC-->
+        <ClassId Value="47"/>        
+        <InstanceId Value="0000190600FF"/>
+        <AttributeId Value="2"/>
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*"/>
+      <Result>
+        <Data>
+          <String Value="*"/>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*"/>
+      <AttributeDescriptor>
+        <!--GSM_DIAGNOSTIC-->
+        <ClassId Value="47"/>       
+        <InstanceId Value="0000190600FF"/>
+        <AttributeId Value="3"/>
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*"/>
+      <Result>
+        <Data>
+          <Enum Value="*"/>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*"/>
+      <AttributeDescriptor>
+        <!--GSM_DIAGNOSTIC-->
+        <ClassId Value="47"/>        
+        <InstanceId Value="0000190600FF"/>
+        <AttributeId Value="4"/>
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*"/>
+      <Result>
+        <Data>
+          <Enum Value="*"/>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*"/>
+      <AttributeDescriptor>
+        <!--GSM_DIAGNOSTIC-->
+        <ClassId Value="47"/>      
+        <InstanceId Value="0000190600FF"/>
+        <AttributeId Value="5"/>
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*"/>
+      <Result>
+        <Data>
+          <Enum Value="*"/>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*"/>
+      <AttributeDescriptor>
+        <!--GSM_DIAGNOSTIC-->
+        <ClassId Value="47"/>        
+        <InstanceId Value="0000190600FF"/>
+        <AttributeId Value="6"/>
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*"/>
+      <Result>
+        <Data>
+          <Structure Qty="4">
+            <UInt16 Value="*"/>
+            <UInt16 Value="*"/>
+            <UInt8 Value="*"/>
+            <UInt8 Value="*"/>
+          </Structure>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*"/>
+      <AttributeDescriptor>
+        <!--GSM_DIAGNOSTIC-->
+        <ClassId Value="47"/>        
+        <InstanceId Value="0000190600FF"/>
+        <AttributeId Value="7"/>
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*"/>
+      <Result>
+        <Data>
+          <Array Qty="*">
+            <Structure Qty="2">
+              <UInt16 Value="*"/>
+              <UInt8 Value="*"/>
+            </Structure>
+          </Array>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <InvokeIdAndPriority Value="*"/>
+      <AttributeDescriptor>
+        <!--GSM_DIAGNOSTIC-->
+        <ClassId Value="47"/>        
+        <InstanceId Value="0000190600FF"/>
+        <AttributeId Value="8"/>
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*"/>
+      <Result>
+        <Data>
+          <DateTime Value="*"/>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+</Messages>

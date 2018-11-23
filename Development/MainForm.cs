@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10346 $,
-//                  $Date: 2018-10-29 16:08:18 +0200 (Mon, 29 Oct 2018) $
+// Version:         $Revision: 10419 $,
+//                  $Date: 2018-11-23 13:12:56 +0200 (Fri, 23 Nov 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -78,6 +78,7 @@ namespace GXDLMSDirector
         /// Log translator.
         /// </summary>
         GXDLMSTranslator traceTranslator;
+        Form[] addInForms = null;
 
         delegate void CheckUpdatesEventHandler(MainForm form);
         GXAsyncWork TransactionWork;
@@ -328,6 +329,40 @@ namespace GXDLMSDirector
         {
             try
             {
+                if (activeDC != null && !(obj is GXDLMSMeterCollection))
+                {
+                    DeviceInfoView.TabPages.Clear();
+                    if (addInForms != null)
+                    {
+                        foreach (Form it in addInForms)
+                        {
+                            it.Close();
+                            it.Dispose();
+                        }
+                    }
+                    addInForms = activeDC.CustomPages(obj, activeDC);
+                    if (addInForms != null)
+                    {
+                        DeviceInfoView.Visible = true;
+                        DeviceInfoView.TabPages.Clear();
+                        DeviceList.Visible = tabControl2.Visible = ObjectValueView.Visible = false;
+                        foreach (Form f in addInForms)
+                        {
+                            TabPage tp = new TabPage(f.Text);
+                            DeviceInfoView.TabPages.Add(tp);
+                            foreach (Control it in f.Controls)
+                            {
+                                tp.Controls.Add(it);
+                            }
+                        }
+                        return;
+                    }
+                }
+                if (DeviceInfoView.Controls.Count == 0)
+                {
+                    DeviceInfoView.Controls.Add(this.tabPage4);
+                    DeviceInfoView.Controls.Add(this.tabPage5);
+                }
                 if (SelectedView != null && SelectedView.Target != null)
                 {
                     SelectedView.Target.OnChange -= new ObjectChangeEventHandler(DLMSItemOnChange);
@@ -1500,6 +1535,15 @@ namespace GXDLMSDirector
                 if (e.Cancel)
                 {
                     return;
+                }
+                if (addInForms != null)
+                {
+                    foreach (Form it in addInForms)
+                    {
+                        it.Close();
+                        it.Dispose();
+                    }
+                    addInForms = null;
                 }
                 SaveXmlPositioning();
                 SetDirty(false);
@@ -4538,6 +4582,7 @@ namespace GXDLMSDirector
                         tmp.Tag = sender;
                         ConformanceHistoryTests.Items.Insert(0, tmp);
                         li.ImageIndex = sender.ErrorLevel;
+                        li.Selected = true;
                         break;
                     }
                 }
@@ -4574,6 +4619,7 @@ namespace GXDLMSDirector
                             tmp.Tag = sender;
                             ConformanceHistoryTests.Items.Insert(0, tmp);
                             li.ImageIndex = sender.ErrorLevel;
+                            li.Selected = true;
                             break;
                         }
                     }
@@ -4647,6 +4693,12 @@ namespace GXDLMSDirector
             int testcount = 0;
             foreach (GXDLMSDevice it in devices)
             {
+                if (it.Media.IsOpen)
+                {
+                    //Conformance tests will close the connection.
+                    it.UpdateStatus(DeviceState.Initialized);
+                    UpdateDeviceUI(it, DeviceState.Initialized);
+                }
                 testcount += it.Objects.Count;
                 GXConformanceTest t = new GXConformanceTest() { Device = it };
                 t.OnReady = OnConformanceReady;
@@ -4776,7 +4828,7 @@ namespace GXDLMSDirector
                 return false;
             }
             ToolStripMenuItem t = (ToolStripMenuItem)sender;
-            return t.Owner == ConformanceMenu;
+            return t.Owner != ConformanceHistoryMenu;
         }
 
         /// <summary>
@@ -5293,6 +5345,12 @@ namespace GXDLMSDirector
             {
                 Error.ShowError(this, Ex);
             }
+        }
+
+        private void conformanceTestsToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
+            MainRunMnu.Enabled = Devices.Count != 0 && (TransactionWork == null || !TransactionWork.IsRunning);
+            MainShowDurationsMnu.Enabled = MainOpenContainingFolderBtn.Enabled = MainShowValuesBtn.Enabled = MainShowLogBtn.Enabled = MainShowReportBtn.Enabled = ConformanceTests.SelectedItems.Count != 0;
         }
     }
 }

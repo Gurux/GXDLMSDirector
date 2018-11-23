@@ -1063,22 +1063,25 @@ namespace GXDLMSDirector
                             else
                             {
                                 GXDLMSObjectCollection objs = dev.Objects.GetObjects(ObjectType.Data);
-                                output.Info.Add("Testing multiple references support using " + objs.Count + " data object(s).");
-                                List<KeyValuePair<GXDLMSObject, int>> list = new List<KeyValuePair<GXDLMSObject, int>>();
-                                foreach (GXDLMSObject it in objs)
+                                if (objs.Count != 0)
                                 {
-                                    list.Add(new KeyValuePair<GXDLMSObject, int>(it, 2));
+                                    output.Info.Add("Testing multiple references support using " + objs.Count + " data object(s).");
+                                    List<KeyValuePair<GXDLMSObject, int>> list = new List<KeyValuePair<GXDLMSObject, int>>();
+                                    foreach (GXDLMSObject it in objs)
+                                    {
+                                        list.Add(new KeyValuePair<GXDLMSObject, int>(it, 2));
+                                    }
+                                    (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
+                                    try
+                                    {
+                                        dev.Comm.ReadList(list);
+                                    }
+                                    finally
+                                    {
+                                        (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = false;
+                                    }
+                                    output.Info.Add("Multiple references support succeeded.");
                                 }
-                                (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
-                                try
-                                {
-                                    dev.Comm.ReadList(list);
-                                }
-                                finally
-                                {
-                                    (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = false;
-                                }
-                                output.Info.Add("Multiple references support succeeded.");
                             }
                         }
                         //Test invalid password.

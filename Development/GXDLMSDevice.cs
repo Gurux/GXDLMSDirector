@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10346 $,
-//                  $Date: 2018-10-29 16:08:18 +0200 (Mon, 29 Oct 2018) $
+// Version:         $Revision: 10419 $,
+//                  $Date: 2018-11-23 13:12:56 +0200 (Fri, 23 Nov 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -51,7 +51,7 @@ namespace GXDLMSDirector
     {
         DeviceState m_Status;
 
-        void UpdateStatus(DeviceState state)
+        internal void UpdateStatus(DeviceState state)
         {
             //Clear connecting.
             if (state == DeviceState.Connected)

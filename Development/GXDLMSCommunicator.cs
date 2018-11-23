@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10368 $,
-//                  $Date: 2018-11-02 14:03:38 +0200 (Fri, 02 Nov 2018) $
+// Version:         $Revision: 10402 $,
+//                  $Date: 2018-11-13 17:52:36 +0200 (Tue, 13 Nov 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -448,6 +448,11 @@ namespace GXDLMSDirector
             GXSerial serial = media as GXSerial;
             byte Terminator = (byte)0x0A;
             media.Open();
+            if (media is GXSerial)
+            {
+                //Some meters need a little break.
+                Thread.Sleep(1000);
+            }
             //Query device information.
             if (serial != null && parent.StartProtocol == StartProtocolType.IEC)
             {

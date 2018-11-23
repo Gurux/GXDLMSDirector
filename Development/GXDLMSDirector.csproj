@@ -404,6 +404,8 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ConformanceTests\SaudiArabia\ExtendedRegister.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\v0\GSMDiagnostic.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\v1\GSMDiagnostic.xml" />
     <Content Include="GXDLMSDirector.ico" />
     <None Include="Resources\NotifyMnu.bmp" />
     <None Include="Resources\cct.png" />

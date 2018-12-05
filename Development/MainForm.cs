@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10419 $,
-//                  $Date: 2018-11-23 13:12:56 +0200 (Fri, 23 Nov 2018) $
+// Version:         $Revision: 10440 $,
+//                  $Date: 2018-12-05 11:07:53 +0200 (Wed, 05 Dec 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -355,7 +355,6 @@ namespace GXDLMSDirector
                                 tp.Controls.Add(it);
                             }
                         }
-                        return;
                     }
                 }
                 if (DeviceInfoView.Controls.Count == 0)
@@ -501,8 +500,11 @@ namespace GXDLMSDirector
                         if (items.Count != 0)
                         {
                             GXDLMSObject obj2 = items[0] as GXDLMSObject;
-                            GXDLMSDevice dev = obj2.Parent.Tag as GXDLMSDevice;
-                            UpdateDeviceUI(dev, dev.Status);
+                            if (obj2.Parent != null)
+                            {
+                                GXDLMSDevice dev = obj2.Parent.Tag as GXDLMSDevice;
+                                UpdateDeviceUI(dev, dev.Status);
+                            }
                         }
                     }
                     finally
@@ -928,9 +930,9 @@ namespace GXDLMSDirector
                 }
                 else
                 {
-                    dev.KeepAliveStart();
                     if (dev != null)
                     {
+                        dev.KeepAliveStart();
                         GXDlmsUi.UpdateAccessRights(btn.View, btn.Target, (dev.Status & DeviceState.Connected) != 0);
                     }
                     else
@@ -2295,6 +2297,22 @@ namespace GXDLMSDirector
                     else if (this.ObjectTree.SelectedNode.Tag is GXDLMSObject)
                     {
                         GXDLMSObject obj = (GXDLMSObject)this.ObjectTree.SelectedNode.Tag;
+                        if (activeDC != null)
+                        {
+                            object val;
+                            List<KeyValuePair<GXDLMSObject, byte>> objects = new List<KeyValuePair<GXDLMSObject, byte>>();
+                            for (int it = 1; it != (obj as IGXDLMSBase).GetAttributeCount() + 1; ++it)
+                            {
+                                if (obj.GetDirty(it, out val))
+                                {
+                                    objects.Add(new KeyValuePair<GXDLMSObject, byte>(obj, (byte) it));
+                                }
+                            }
+                            if (objects.Count != 0)
+                            {
+                                activeDC.WriteObjects(new GXDLMSMeter[] { obj.Parent.Tag as GXDLMSMeter }, objects);
+                            }
+                        }
                         GXDLMSDevice dev = obj.Parent.Tag as GXDLMSDevice;
                         try
                         {

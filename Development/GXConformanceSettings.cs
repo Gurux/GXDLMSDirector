@@ -461,5 +461,26 @@ namespace GXDLMSDirector
             get;
             set;
         }
+
+        string readLastDays;
+
+        [Description("Override Profile Generic's Read last days.")]
+        [DefaultValue(null)]
+        [Category("Accessibility")]
+        public string ReadLastDays
+        {
+            get
+            {
+                return readLastDays;
+            }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    int.Parse(value);
+                }
+                readLastDays = value;
+            }
+        }
     }
 }

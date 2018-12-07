@@ -129,11 +129,7 @@ namespace GXDLMSDirector
             {
                 try
                 {
-                    using (StreamReader fs = File.OpenText(it))
-                    {
-                        client.Load(it);
-                        fs.Close();
-                    }
+                    client.Load(it);
                 }
                 catch (Exception ex)
                 {
@@ -904,13 +900,21 @@ namespace GXDLMSDirector
                             string str = "External tests: " + list.Length;
                             test.OnTrace(test, str + ".\r\n");
                             output.PreInfo.Add(str);
+                            GXXmlLoadSettings ls = null;
+                            if (!string.IsNullOrEmpty(settings.ReadLastDays))
+                            {
+                                ls = new GXXmlLoadSettings();
+                                ls.End = DateTime.Now;
+                                ls.Start = DateTime.Now.Date.AddDays(-Convert.ToInt32(settings.ReadLastDays)).Date;
+                                ls.End = DateTime.Now.AddDays(1).Date;
+                            }
                             foreach (string it in list)
                             {
                                 try
                                 {
                                     using (StreamReader fs = File.OpenText(it))
                                     {
-                                        externalTests.Add(new KeyValuePair<string, List<GXDLMSXmlPdu>>(it, client.Load(fs)));
+                                        externalTests.Add(new KeyValuePair<string, List<GXDLMSXmlPdu>>(it, client.Load(fs, ls)));
                                         fs.Close();
                                     }
                                     File.Copy(it, Path.Combine(dir, Path.GetFileName(it)));

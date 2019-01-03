@@ -685,6 +685,7 @@ namespace GXDLMSDirector
                     GXDLMSClient cl = dev.Comm.client;
                     converter = new GXDLMSConverter(dev.Standard);
                     dev.Comm.client = new GXDLMSXmlClient(TranslatorOutputType.SimpleXml);
+                    dev.Comm.client.Ciphering.TestMode = true;
                     cl.CopyTo(dev.Comm.client);
                     test.Device = dev;
                     if (settings.ResendCount != -1)
@@ -4050,7 +4051,7 @@ namespace GXDLMSDirector
                 passed = false;
                 output.Info.Add("COSEM Application tests #4 failed. " + ex.Message);
             }
-
+            //Protocol-version present and containing the default value.
             try
             {
                 reply.Clear();
@@ -4080,7 +4081,58 @@ namespace GXDLMSDirector
                 passed = false;
                 output.Info.Add("COSEM Application tests #4 failed. " + ex.Message);
             }
-
+            if (passed)
+            {
+                try
+                {
+                    reply.Clear();
+                    dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #4. Disconnect request", 1, tryCount, reply);
+                    dev.Comm.ParseUAResponse(reply.Data);
+                    reply.Clear();
+                }
+                catch (Exception ex)
+                {
+                    passed = false;
+                }
+                //SubTest 2: Protocol-version is present but not containing the default value
+                try
+                {
+                    reply.Clear();
+                    byte[] data = dev.Comm.client.SNRMRequest();
+                    dev.Comm.ReadDataBlock(data, "COSEM Application test #4. SNRM", 1, tryCount, reply);
+                    dev.Comm.ParseUAResponse(reply.Data);
+                    reply.Clear();
+                    try
+                    {
+                        dev.Comm.client.ProtocolVersion = "010001";
+                        dev.Comm.ReadDataBlock(dev.Comm.client.AARQRequest(), "COSEM Application test #4. AARQ", 1, tryCount, reply);
+                        dev.Comm.ParseAAREResponse(reply.Data);
+                        reply.Clear();
+                        throw new Exception("Protocol-version test failed.");
+                    }
+                    finally
+                    {
+                        dev.Comm.client.ProtocolVersion = null;
+                    }
+                }
+                catch (GXDLMSException ex)
+                {
+                    if (ex.Result == AssociationResult.PermanentRejected && ex.Diagnostic == SourceDiagnostic.ApplicationContextNameNotSupported)
+                    {
+                        output.Info.Add("COSEM Application tests #4 Invalid Protocol-version succeeded. " + ex.Message);
+                    }
+                    else
+                    {
+                        passed = false;
+                        output.Errors.Add("COSEM Application tests #4 failed. " + ex.Message);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    passed = false;
+                    output.Errors.Add("COSEM Application tests #4 failed. " + ex.Message);
+                }
+            }
             try
             {
                 reply.Clear();
@@ -4151,10 +4203,11 @@ namespace GXDLMSDirector
                 dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0x10, bb), "COSEM Application test #5. AARQ", 1, tryCount, reply);
                 dev.Comm.ParseAAREResponse(reply.Data);
                 reply.Clear();
+                throw new Exception("UNKNOWN ApplicationContextName failed.");
             }
-            catch (GXDLMSConfirmedServiceError ex)
+            catch (GXDLMSException ex)
             {
-                if (ex.ServiceError == ServiceError.Initiate && ex.ServiceErrorValue == 0)
+                if (ex.Result == AssociationResult.PermanentRejected && ex.Diagnostic == SourceDiagnostic.ApplicationContextNameNotSupported)
                 {
                     output.Info.Add("COSEM Application tests #5 UNKNOWN ApplicationContextName succeeded. " + ex.Message);
                 }
@@ -4322,7 +4375,7 @@ namespace GXDLMSDirector
                 passed = false;
                 output.Info.Add("COSEM Application tests #6 failed. " + ex.Message);
             }
-            //Unused AARQ fields are present with a dummy value
+            //SubTest 1: Unused AARQ fields are present with a dummy value
             try
             {
                 reply.Clear();
@@ -4331,17 +4384,157 @@ namespace GXDLMSDirector
                 dev.Comm.ParseUAResponse(reply.Data);
                 reply.Clear();
                 GXByteBuffer bb = new GXByteBuffer();
-                bb.SetHexString("E6E6006036A109060760857405080101A203040144A303040144A403020100A503020100A803020100BE10040E01000000065F1F040060FE9FFFFF");
+                bb.SetHexString("E6E6006036A109060760857405080101A203040144A303040144A403020100A503020100A803020100BE10040E01000000065F1F040060FEDFFFFF");
                 dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0x10, bb), "COSEM Application test #6. AARQ", 1, tryCount, reply);
                 dev.Comm.ParseAAREResponse(reply.Data);
+                GXDLMSTranslator t = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
+                reply.Data.Position = 0;
+                string str = t.PduToXml(reply.Data);
+                if (str.Contains("RespondingAeInvocationId"))
+                {
+                    throw new Exception("Responding AE Invocation ID present.");
+                }
+                if (str.Contains("RespondingAPTitle"))
+                {
+                    throw new Exception("Responding AP title present.");
+                }
                 reply.Clear();
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.Result == AssociationResult.PermanentRejected && ex.Diagnostic != SourceDiagnostic.None)
+                {
+                    output.Info.Add("COSEM Application tests #5 UNKNOWN ApplicationContextName succeeded. " + ex.Message);
+                }
+                else
+                {
+                    passed = false;
+                    output.Errors.Add("COSEM Application tests #6 failed. " + ex.Message);
+                }
             }
             catch (Exception ex)
             {
                 passed = false;
                 output.Errors.Add("COSEM Application tests #6 failed. " + ex.Message);
             }
-            //SubTest 1: Unused AARQ fields are present with a dummy value. Authentication is not used.
+            //SubTest 2: AARQ.calling-AP-title too short
+            if (passed && (dev.Comm.client.Authentication == Authentication.HighGMAC ||
+                (dev.Comm.client.Ciphering != null && dev.Comm.client.Ciphering.Security != Security.None)))
+            {
+                try
+                {
+                    reply.Clear();
+                    dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #6. Disconnect request", 1, tryCount, reply);
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
+                catch (GXDLMSException ex)
+                {
+                    if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                    {
+                        output.Info.Add("Meter returns DisconnectMode.");
+                    }
+                    else
+                    {
+                        passed = false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    passed = false;
+                    output.Info.Add("COSEM Application tests #6 failed. " + ex.Message);
+                }
+                byte[] st = dev.Comm.client.Ciphering.SystemTitle;
+                try
+                {
+                    reply.Clear();
+                    data = dev.Comm.client.SNRMRequest();
+                    dev.Comm.ReadDataBlock(data, "COSEM Application test #6. SNRM", 1, tryCount, reply);
+                    dev.Comm.ParseUAResponse(reply.Data);
+                    reply.Clear();
+                    dev.Comm.client.Ciphering.SystemTitle = new byte[] {0x44 };
+                    dev.Comm.ReadDataBlock(dev.Comm.client.AARQRequest(), "COSEM Application test #6. AARQ", 1, tryCount, reply);
+                    dev.Comm.ParseAAREResponse(reply.Data);
+                    reply.Clear();
+                    throw new Exception("AARQ.calling-AP-title too short.");
+                }
+                catch (GXDLMSException ex)
+                {
+                    if (ex.Result == AssociationResult.PermanentRejected && ex.Diagnostic == SourceDiagnostic.CallingApTitleNotRecognized)
+                    {
+                        output.Info.Add("COSEM Application tests #6 AARQ.calling-AP-title too short succeeded. " + ex.Message);
+                    }
+                    else
+                    {
+                        passed = false;
+                        output.Errors.Add("COSEM Application tests #6 AARQ.calling-AP-title too short failed. " + ex.Message);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    passed = false;
+                    output.Errors.Add("COSEM Application tests #6 failed. " + ex.Message);
+                }
+                dev.Comm.client.Ciphering.SystemTitle = st;
+            }
+            //SubTest 3: AARQ.calling-AP-title too long
+            if (passed && (dev.Comm.client.Authentication == Authentication.HighGMAC ||
+                (dev.Comm.client.Ciphering != null && dev.Comm.client.Ciphering.Security != Security.None)))
+            {
+                try
+                {
+                    reply.Clear();
+                    dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #6. Disconnect request", 1, tryCount, reply);
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
+                catch (GXDLMSException ex)
+                {
+                    if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                    {
+                        output.Info.Add("Meter returns DisconnectMode.");
+                    }
+                    else
+                    {
+                        passed = false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    passed = false;
+                    output.Info.Add("COSEM Application tests #6 failed. " + ex.Message);
+                }
+                byte[] st = dev.Comm.client.Ciphering.SystemTitle;
+                try
+                {
+                    reply.Clear();
+                    data = dev.Comm.client.SNRMRequest();
+                    dev.Comm.ReadDataBlock(data, "COSEM Application test #6. SNRM", 1, tryCount, reply);
+                    dev.Comm.ParseUAResponse(reply.Data);
+                    reply.Clear();
+                    dev.Comm.client.Ciphering.SystemTitle = new byte[] { 0x43, 0x54, 0x54, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30 };
+                    dev.Comm.ReadDataBlock(dev.Comm.client.AARQRequest(), "COSEM Application test #6. AARQ", 1, tryCount, reply);
+                    dev.Comm.ParseAAREResponse(reply.Data);
+                    reply.Clear();
+                    throw new Exception("AARQ.calling-AP-title too long.");
+                }
+                catch (GXDLMSException ex)
+                {
+                    if (ex.Result == AssociationResult.PermanentRejected && ex.Diagnostic == SourceDiagnostic.CallingApTitleNotRecognized)
+                    {
+                        output.Info.Add("COSEM Application tests #6 AARQ.calling-AP-title too long succeeded. " + ex.Message);
+                    }
+                    else
+                    {
+                        passed = false;
+                        output.Errors.Add("COSEM Application tests #6 AARQ.calling-AP-title too long failed. " + ex.Message);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    passed = false;
+                    output.Errors.Add("COSEM Application tests #6 AARQ.calling-AP-title too long failed. " + ex.Message);
+                }
+                dev.Comm.client.Ciphering.SystemTitle = st;
+            }
             try
             {
                 reply.Clear();
@@ -4918,9 +5111,9 @@ namespace GXDLMSDirector
                     dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0x32, bb), "COSEM Application test #14. Invalid Get request.", 1, tryCount, reply);
                     passed = false;
                 }
-                catch (GXDLMSConfirmedServiceError ex)
+                catch (GXDLMSException ex)
                 {
-                    if (ex.ServiceError == ServiceError.Service && ex.ServiceErrorValue == 2)
+                    if (ex.ErrorCode == (int) ErrorCode.ReadWriteDenied)
                     {
                         output.Info.Add("COSEM Application tests #14 Invalid Get request succeeded.");
                     }

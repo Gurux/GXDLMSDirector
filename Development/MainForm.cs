@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10440 $,
-//                  $Date: 2018-12-05 11:07:53 +0200 (Wed, 05 Dec 2018) $
+// Version:         $Revision: 10455 $,
+//                  $Date: 2018-12-21 09:19:08 +0200 (Fri, 21 Dec 2018) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -3588,7 +3588,7 @@ namespace GXDLMSDirector
             {
                 if (e.State == MediaState.Open)
                 {
-                    OnAddNotification("Notifications listen stated in " + (sender as GXNet).Protocol + "port " + (sender as GXNet).Port + ".");
+                    OnAddNotification("Notifications listen started on " + (sender as GXNet).Protocol + " port " + (sender as GXNet).Port + ".");
                     StartNotifications.Visible = false;
                     StopNotifications.Visible = true;
                     NotificationsBtn.Checked = true;

@@ -1341,6 +1341,9 @@ namespace GXDLMSDirector
                             {
                                 end = Convert.ToDateTime(CurrentProfileGeneric.To);
                             }
+                            //Set seconds to zero.
+                            start.Value = start.Value.AddSeconds(-start.Value.Second);
+                            end.Value = end.Value.AddSeconds(-end.Value.Second);
                             tmp = client.ReadRowsByRange(CurrentProfileGeneric, start, end);
                             ReadDataBlock(tmp, "Reading profile generic data", 1, reply);
                         }

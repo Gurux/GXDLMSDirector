@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10402 $,
-//                  $Date: 2018-11-13 17:52:36 +0200 (Tue, 13 Nov 2018) $
+// Version:         $Revision: 10466 $,
+//                  $Date: 2019-01-10 14:01:16 +0200 (to, 10 tammi 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -233,10 +233,12 @@ namespace GXDLMSDirector
         /// <returns>Received data.</returns>
         public void ReadDLMSPacket(byte[] data, int tryCount, GXReplyData reply)
         {
-            if (data == null)
+            if ((data == null || data.Length == 0) && !reply.IsStreaming())
             {
                 return;
             }
+            GXReplyData notify = new GXReplyData();
+            reply.Error = 0;
             object eop = (byte)0x7E;
             //In network connection terminator is not used.
             if (client.InterfaceType == InterfaceType.WRAPPER && media is GXNet && !parent.UseRemoteSerial)
@@ -253,6 +255,7 @@ namespace GXDLMSDirector
                 WaitTime = parent.WaitTime * 1000,
             };
             DateTime start = DateTime.Now;
+            GXByteBuffer rd = new GXByteBuffer();
             lock (media.Synchronous)
             {
                 if (!media.IsOpen)
@@ -300,22 +303,27 @@ namespace GXDLMSDirector
                     }
                 }
                 while (!succeeded && pos != tryCount);
-
+                rd = new GXByteBuffer(p.Reply);
                 try
                 {
                     pos = 0;
                     //Loop until whole COSEM packet is received.
-                    while (!client.GetData(p.Reply, reply) || reply.IsNotify)
+                    while (!client.GetData(rd, reply, notify))
                     {
-                        if (reply.IsNotify)
+                        p.Reply = null;
+                        if (notify.Data.Size != 0)
                         {
-                            if (parent.OnEvent != null)
+                            // Handle notify.
+                            if (!notify.IsMoreData)
                             {
-                                parent.OnEvent(media, new ReceiveEventArgs(p.Reply, media.ToString()));
+                                if (parent.OnEvent != null)
+                                {
+                                    parent.OnEvent(media, new ReceiveEventArgs(rd.Array(), media.ToString()));
+                                }
+                                notify.Clear();
+                                p.Eop = eop;
                             }
-                            reply.Clear();
-                            p.Reply = null;
-                            p.Eop = eop;
+                            continue;
                         }
                         //If Eop is not set read one byte at time.
                         if (p.Eop == null)
@@ -350,6 +358,7 @@ namespace GXDLMSDirector
                             }
                             throw new TimeoutException(err);
                         }
+                        rd.Set(p.Reply);
                     }
                 }
                 catch (Exception ex)

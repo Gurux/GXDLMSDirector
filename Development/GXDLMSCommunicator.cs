@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10466 $,
-//                  $Date: 2019-01-10 14:01:16 +0200 (to, 10 tammi 2019) $
+// Version:         $Revision: 10468 $,
+//                  $Date: 2019-01-10 14:25:46 +0200 (to, 10 tammi 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -304,6 +304,7 @@ namespace GXDLMSDirector
                 }
                 while (!succeeded && pos != tryCount);
                 rd = new GXByteBuffer(p.Reply);
+                int msgPos = 0;
                 try
                 {
                     pos = 0;
@@ -320,6 +321,7 @@ namespace GXDLMSDirector
                                 {
                                     parent.OnEvent(media, new ReceiveEventArgs(rd.Array(), media.ToString()));
                                 }
+                                msgPos = rd.Position;
                                 notify.Clear();
                                 p.Eop = eop;
                             }
@@ -359,6 +361,7 @@ namespace GXDLMSDirector
                             throw new TimeoutException(err);
                         }
                         rd.Set(p.Reply);
+                        rd.Position = msgPos;
                     }
                 }
                 catch (Exception ex)

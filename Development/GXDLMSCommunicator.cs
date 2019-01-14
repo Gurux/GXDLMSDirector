@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10468 $,
-//                  $Date: 2019-01-10 14:25:46 +0200 (to, 10 tammi 2019) $
+// Version:         $Revision: 10469 $,
+//                  $Date: 2019-01-14 11:30:12 +0200 (ma, 14 tammi 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -182,7 +182,8 @@ namespace GXDLMSDirector
                     {
                         //Release is call only for secured connections.
                         //Add meters are not supporting Release and it's causing problems.
-                        if (client.InterfaceType == InterfaceType.HDLC && client.Ciphering.Security != Security.None && !parent.PreEstablished)
+                        if (client.InterfaceType == InterfaceType.WRAPPER ||
+                            (client.InterfaceType == InterfaceType.HDLC && client.Ciphering.Security != Security.None && !parent.PreEstablished))
                         {
                             byte[] data = ReleaseRequest();
                             if (data != null)
@@ -347,16 +348,16 @@ namespace GXDLMSDirector
                                 GXLogWriter.WriteLog(err, data);
                                 if (parent.OnTrace != null)
                                 {
-                                    parent.OnTrace(DateTime.Now, parent, err, p.Reply, 0, LogFile, 0);
+                                    parent.OnTrace(DateTime.Now, parent, err, rd.Array(), 0, LogFile, 0);
                                 }
                                 media.Send(data, null);
                                 continue;
                             }
                             err = "Failed to receive reply from the device in given time.";
-                            GXLogWriter.WriteLog(err, p.Reply);
+                            GXLogWriter.WriteLog(err, rd.Array());
                             if (parent.OnTrace != null)
                             {
-                                parent.OnTrace(DateTime.Now, parent, err, p.Reply, 0, LogFile, 0);
+                                parent.OnTrace(DateTime.Now, parent, err, rd.Array(), 0, LogFile, 0);
                             }
                             throw new TimeoutException(err);
                         }
@@ -366,14 +367,14 @@ namespace GXDLMSDirector
                 }
                 catch (Exception ex)
                 {
-                    if (p.Reply != null)
+                    if (rd.Size != 0)
                     {
-                        GXLogWriter.WriteLog("Received data:", p.Reply);
+                        GXLogWriter.WriteLog("Received data:", rd.Array());
                     }
                     throw ex;
                 }
             }
-            GXLogWriter.WriteLog(null, p.Reply);
+            GXLogWriter.WriteLog(null, rd.Array());
             if (parent.OnTrace != null)
             {
                 int size = 0;
@@ -383,11 +384,11 @@ namespace GXDLMSDirector
                 }
                 if (Properties.Settings.Default.TraceTime)
                 {
-                    parent.OnTrace(DateTime.Now, parent, "\r\nRX:\t", p.Reply, size, LogFile, (int)(DateTime.Now - start).TotalMilliseconds);
+                    parent.OnTrace(DateTime.Now, parent, "\r\nRX:\t", rd.Array(), size, LogFile, (int)(DateTime.Now - start).TotalMilliseconds);
                 }
                 else
                 {
-                    parent.OnTrace(DateTime.Now, parent, "RX:\t", p.Reply, size, LogFile, (int)(DateTime.Now - start).TotalMilliseconds);
+                    parent.OnTrace(DateTime.Now, parent, "RX:\t", rd.Array(), size, LogFile, (int)(DateTime.Now - start).TotalMilliseconds);
                 }
             }
             if (Properties.Settings.Default.LogDuration)

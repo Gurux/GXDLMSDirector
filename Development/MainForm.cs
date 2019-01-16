@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10455 $,
-//                  $Date: 2018-12-21 09:19:08 +0200 (Fri, 21 Dec 2018) $
+// Version:         $Revision: 10478 $,
+//                  $Date: 2019-01-16 15:58:25 +0200 (ke, 16 tammi 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -875,6 +875,11 @@ namespace GXDLMSDirector
                                     if ((ve.Target.GetAccess(ve.Index) & AccessMode.Read) != 0)
                                     {
                                         dev.Comm.Write(ve.Target, ve.Index);
+                                        //Update UI.
+                                        if (SelectedView != null && SelectedView.Target == ve.Target)
+                                        {
+                                            GXDlmsUi.UpdateProperty(ve.Target, ve.Index, SelectedView, true, false);
+                                        }
                                     }
                                 }
                             }

@@ -71,16 +71,7 @@ namespace GXDLMSDirector
             get;
             set;
         }
-
-        /// <summary>
-        /// Task is done.
-        /// </summary>
-        public ManualResetEvent Done
-        {
-            get;
-            set;
-        }
-
+       
         /// <summary>
         /// Return error level.
         /// </summary>

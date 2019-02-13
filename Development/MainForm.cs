@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10478 $,
-//                  $Date: 2019-01-16 15:58:25 +0200 (ke, 16 tammi 2019) $
+// Version:         $Revision: 10492 $,
+//                  $Date: 2019-02-13 17:08:53 +0200 (ke, 13 helmi 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -516,7 +516,8 @@ namespace GXDLMSDirector
                 {
                     tabControl2.BringToFront();
                     SaveAsTemplateBtn.Enabled = true;
-                    SelectedView = GXDlmsUi.GetView(Views, (GXDLMSObject)obj);
+                    GXDLMSDevice d = GetDevice((GXDLMSObject)obj);
+                    SelectedView = GXDlmsUi.GetView(Views, (GXDLMSObject)obj, d.Standard);
                     foreach (Control it in ObjectPanelFrame.Controls)
                     {
                         it.Hide();
@@ -525,7 +526,6 @@ namespace GXDLMSDirector
                     SelectedView.Target = (GXDLMSObject)obj;
                     SelectedView.Target.OnChange += new ObjectChangeEventHandler(DLMSItemOnChange);
                     DeviceState s = DeviceState.Connected;
-                    GXDLMSDevice d = GetDevice((GXDLMSObject)obj);
                     if (d != null)
                     {
                         s = d.Status;
@@ -538,7 +538,7 @@ namespace GXDLMSDirector
                     {
                         //Show access levels of COSEM object.
                         bindingSource1.Clear();
-                        //All meters don't implement association view. 
+                        //All meters don't implement association view.
                         SortedList<int, GXDLMSAttributeSettings> list = new SortedList<int, GXDLMSAttributeSettings>();
                         foreach (GXDLMSAttributeSettings it in (obj as GXDLMSObject).Attributes)
                         {
@@ -1307,7 +1307,10 @@ namespace GXDLMSDirector
                 object obj = parameters[0];
                 int pos = 0;
                 int cnt;
-                if (obj is GXDLMSDeviceCollection)
+                if (obj is GXDLMSMeterCollection)
+                {
+                }
+                else if (obj is GXDLMSDeviceCollection)
                 {
                     cnt = ((GXDLMSDeviceCollection)obj).Count;
                     foreach (GXDLMSDevice it in (GXDLMSDeviceCollection)obj)
@@ -2310,7 +2313,7 @@ namespace GXDLMSDirector
                             {
                                 if (obj.GetDirty(it, out val))
                                 {
-                                    objects.Add(new KeyValuePair<GXDLMSObject, byte>(obj, (byte) it));
+                                    objects.Add(new KeyValuePair<GXDLMSObject, byte>(obj, (byte)it));
                                 }
                             }
                             if (objects.Count != 0)
@@ -4527,23 +4530,22 @@ namespace GXDLMSDirector
             if (p.ConcurrentTesting)
             {
                 List<GXConformanceTest> tests = (List<GXConformanceTest>)parameters[0];
-                ManualResetEvent[] threads = new ManualResetEvent[tests.Count];
-                int pos = 0;
+                GXConformanceParameters cp = new GXConformanceParameters();
+                cp.numberOfTasks = tests.Count;
+                cp.finished = new ManualResetEvent(false);
                 foreach (GXConformanceTest it in tests)
                 {
                     Thread t = new Thread(() =>
                     {
                         List<GXConformanceTest> tmp = new List<GXConformanceTest>();
                         tmp.Add(it);
-                        GXConformanceTests.ReadXmlMeter(new object[] { tmp, p });
+                        GXConformanceTests.ReadXmlMeter(new object[] { tmp, p, cp });
                     }
                     );
                     t.IsBackground = true;
-                    it.Done = threads[pos] = new ManualResetEvent(false);
-                    ++pos;
                     t.Start();
                 }
-                WaitHandle.WaitAll(threads);
+                cp.finished.WaitOne();
             }
             else
             {

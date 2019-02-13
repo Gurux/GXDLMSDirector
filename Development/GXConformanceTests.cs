@@ -665,6 +665,7 @@ namespace GXDLMSDirector
             object[] tmp2 = (object[])data;
             List<GXConformanceTest> tests = (List<GXConformanceTest>)tmp2[0];
             GXConformanceSettings settings = (GXConformanceSettings)tmp2[1];
+            GXConformanceParameters cp = (GXConformanceParameters)tmp2[2];
             GXConformanceTest test;
             GXDLMSDevice dev = null;
             GXOutput output;
@@ -1149,9 +1150,9 @@ namespace GXDLMSDirector
                     {
                         dev.Comm.Disconnect();
                     }
-                    if (test.Done != null)
+                    if (Interlocked.Decrement(ref cp.numberOfTasks) == 0)
                     {
-                        test.Done.Set();
+                        cp.finished.Set();
                     }
                 }
             }
@@ -5602,5 +5603,16 @@ namespace GXDLMSDirector
                 }
             }
         }
+    }
+
+    class GXConformanceParameters
+    {
+        /// <summary>
+        /// Number ofTasks
+        /// </summary>
+        public int numberOfTasks;
+
+        //Called when last talk is executed.
+        public ManualResetEvent finished = new ManualResetEvent(false);
     }
 }

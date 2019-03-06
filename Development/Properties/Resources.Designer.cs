@@ -109,7 +109,7 @@ namespace GXDLMSDirector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Copyright© 1998-2018 Gurux Ltd.
+        ///   Looks up a localized string similar to Copyright© 1998-2019 Gurux Ltd.
         ///All rights reserved..
         /// </summary>
         internal static string CopyrightTxt {
@@ -410,6 +410,15 @@ namespace GXDLMSDirector.Properties {
         internal static string ValueChangedTxt {
             get {
                 return ResourceManager.GetString("ValueChangedTxt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gurux GXDLMSDirector values (*.xml)|*.xml|All files (*.*)|*.*.
+        /// </summary>
+        internal static string ValuesFilterTxt {
+            get {
+                return ResourceManager.GetString("ValuesFilterTxt", resourceCulture);
             }
         }
         

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10469 $,
-//                  $Date: 2019-01-14 11:30:12 +0200 (ma, 14 tammi 2019) $
+// Version:         $Revision: 10515 $,
+//                  $Date: 2019-03-06 16:15:13 +0200 (ke, 06 maalis 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -139,7 +139,22 @@ namespace GXDLMSDirector
                     ++pos;
                     NotifyProgress(text, pos, tmp.Length);
                 }
-                ReadDataBlock(it, str, reply);
+                try
+                {
+                    ReadDataBlock(it, str, reply);
+                }
+                catch (Exception ex)
+                {
+                    //Update frame ID if meter returns error.
+                    if (client.InterfaceType == InterfaceType.HDLC)
+                    {
+                        int t, source;
+                        byte type;
+                        GXDLMSClient.GetHdlcAddressInfo(new GXByteBuffer(it), out t, out source, out type);
+                        client.Limits.SenderFrame = type;
+                    }
+                    throw ex;
+                }
             }
             NotifyProgress(text, 1, 1);
         }
@@ -278,7 +293,7 @@ namespace GXDLMSDirector
                     if (!succeeded)
                     {
                         //Try to read again...
-                        if (++pos != tryCount)
+                        if (++pos < tryCount)
                         {
                             //If Eop is not set read one byte at time.
                             if (p.Eop == null)
@@ -1103,8 +1118,22 @@ namespace GXDLMSDirector
         {
             foreach (byte[] it in data)
             {
-                reply.Clear();
-                ReadDataBlock(it, text, reply);
+                reply.Clear(); try
+                {
+                    ReadDataBlock(it, text, reply);
+                }
+                catch (Exception ex)
+                {
+                    //Update frame ID if meter returns error.
+                    if (client.InterfaceType == InterfaceType.HDLC)
+                    {
+                        int target, source;
+                        byte type;
+                        GXDLMSClient.GetHdlcAddressInfo(new GXByteBuffer(it), out target, out source, out type);
+                        client.Limits.SenderFrame = type;
+                    }
+                    throw ex;
+                }
             }
         }
 
@@ -1138,17 +1167,46 @@ namespace GXDLMSDirector
             foreach (byte[] it in data)
             {
                 reply.Clear();
-                ReadDataBlock(it, text, multiplier, tryCount, reply);
+                try
+                {
+                    ReadDataBlock(it, text, multiplier, tryCount, reply);
+                }
+                catch (Exception ex)
+                {
+                    //Update frame ID if meter returns error.
+                    if (client.InterfaceType == InterfaceType.HDLC)
+                    {
+                        int target, source;
+                        byte type;
+                        GXDLMSClient.GetHdlcAddressInfo(new GXByteBuffer(it), out target, out source, out type);
+                        client.Limits.SenderFrame = type;
+                    }
+                    throw ex;
+                }
             }
         }
-
 
         internal void ReadDataBlock(byte[][] data, string text, int multiplier, GXReplyData reply)
         {
             foreach (byte[] it in data)
             {
                 reply.Clear();
-                ReadDataBlock(it, text, multiplier, reply);
+                try
+                {
+                    ReadDataBlock(it, text, multiplier, reply);
+                }
+                catch (Exception ex)
+                {
+                    //Update frame ID if meter returns error.
+                    if (client.InterfaceType == InterfaceType.HDLC)
+                    {
+                        int target, source;
+                        byte type;
+                        GXDLMSClient.GetHdlcAddressInfo(new GXByteBuffer(it), out target, out source, out type);
+                        client.Limits.SenderFrame = type;
+                    }
+                    throw ex;
+                }
             }
         }
 
@@ -1507,10 +1565,7 @@ namespace GXDLMSDirector
                         }
                         try
                         {
-                            foreach (byte[] tmp in client.Write(obj, it))
-                            {
-                                ReadDataBlock(tmp, string.Format("Writing object {0}, interface {1}", obj.LogicalName, obj.ObjectType), reply);
-                            }
+                            ReadDataBlock(client.Write(obj, it), string.Format("Writing object {0}, interface {1}", obj.LogicalName, obj.ObjectType), reply);
                         }
                         catch (GXDLMSException ex)
                         {

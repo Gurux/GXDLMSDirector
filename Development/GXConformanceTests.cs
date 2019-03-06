@@ -1,7 +1,7 @@
 ﻿//
 // --------------------------------------------------------------------------
 //  Gurux Ltd
-// 
+//
 //
 //
 //
@@ -18,16 +18,16 @@
 // This file is a part of Gurux Device Framework.
 //
 // Gurux Device Framework is Open Source software; you can redistribute it
-// and/or modify it under the terms of the GNU General Public License 
+// and/or modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; version 2 of the License.
 // Gurux Device Framework is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
 //
 // More information of Gurux DLMS/COSEM Director: http://www.gurux.org/GXDLMSDirector
 //
-// This code is licensed under the GNU General Public License v2. 
+// This code is licensed under the GNU General Public License v2.
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
@@ -559,6 +559,7 @@ namespace GXDLMSDirector
                             {
                                 writer.WriteLine("Duration: " + duration);
                             }
+                            writer.Flush();
                         }
                     }
                     if (duration != 0)
@@ -665,7 +666,11 @@ namespace GXDLMSDirector
             object[] tmp2 = (object[])data;
             List<GXConformanceTest> tests = (List<GXConformanceTest>)tmp2[0];
             GXConformanceSettings settings = (GXConformanceSettings)tmp2[1];
-            GXConformanceParameters cp = (GXConformanceParameters)tmp2[2];
+            GXConformanceParameters cp = null;
+            if (tmp2.Length > 2)
+            {
+                cp = (GXConformanceParameters)tmp2[2];
+            }
             GXConformanceTest test;
             GXDLMSDevice dev = null;
             GXOutput output;
@@ -1150,7 +1155,7 @@ namespace GXDLMSDirector
                     {
                         dev.Comm.Disconnect();
                     }
-                    if (Interlocked.Decrement(ref cp.numberOfTasks) == 0)
+                    if (cp != null && Interlocked.Decrement(ref cp.numberOfTasks) == 0)
                     {
                         cp.finished.Set();
                     }
@@ -1336,7 +1341,7 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// Send Disc, SNRM and Receiver ready to check that meter is in Normal Response Mode. 
+        /// Send Disc, SNRM and Receiver ready to check that meter is in Normal Response Mode.
         /// </summary>
         /// <remarks>
         /// DLMS CCT: T_HDLC_FRAME_P1
@@ -1385,12 +1390,13 @@ namespace GXDLMSDirector
                 passed = false;
             }
             //SubTest 2: Check that the IUT is in NRM
-            //Check that meter is Normal Response Mode. 
+            //Check that meter is Normal Response Mode.
             if (passed)
             {
                 try
                 {
                     reply.Clear();
+                    dev.Comm.client.Limits.SenderFrame = 0x10;
                     dev.Comm.ReadDataBlock(dev.Comm.client.ReceiverReady(RequestTypes.None), "HDLC test #1. Receiver Ready ", 1, tryCount, reply);
                     if ((reply.FrameId & 0xF) != 1)
                     {
@@ -1472,7 +1478,7 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// Send SNRM and SNRM again where one byte from CRC is removed. Then check that meter is in Normal Response Mode. 
+        /// Send SNRM and SNRM again where one byte from CRC is removed. Then check that meter is in Normal Response Mode.
         /// </summary>
         /// <remarks>
         /// DLMS CCT: T_HDLC_FRAME_P2
@@ -1514,10 +1520,11 @@ namespace GXDLMSDirector
                 output.Info.Add("Illegal frame succeeded.");
             }
             Thread.Sleep(2000);
-            //Check that meter is Normal Response Mode. 
+            //Check that meter is Normal Response Mode.
             try
             {
                 reply.Clear();
+                dev.Comm.client.Limits.SenderFrame = 0x10;
                 dev.Comm.ReadDataBlock(dev.Comm.client.ReceiverReady(RequestTypes.None), "HDLC test #2. Receiver Ready ", 1, tryCount, reply);
                 if (reply.FrameId != 0x11)
                 {
@@ -1562,7 +1569,7 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// Send SNRM and then wait to check that inactivity timeout is working. 
+        /// Send SNRM and then wait to check that inactivity timeout is working.
         /// </summary>
         /// <remarks>
         /// DLMS CCT: T_HDLC_FRAME_P3
@@ -3621,7 +3628,6 @@ namespace GXDLMSDirector
             }
             if (!settings.ExcludedHdlcTests.ExcludeTest2)
             {
-
                 Test2(test, settings, dev, output, tryCount);
                 if (!Continue)
                 {
@@ -5194,7 +5200,7 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// COSEM application layer tests 
+        /// COSEM application layer tests
         /// </summary>
         private static void CosemApplicationLayerTests(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output)
         {

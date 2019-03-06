@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10492 $,
-//                  $Date: 2019-02-13 17:08:53 +0200 (ke, 13 helmi 2019) $
+// Version:         $Revision: 10515 $,
+//                  $Date: 2019-03-06 16:15:13 +0200 (ke, 06 maalis 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -2758,7 +2758,7 @@ namespace GXDLMSDirector
                     (it as GXDLMSAssociationLogicalName).ObjectList.AddRange(dev.Objects);
                 }
             }
-            GroupItems(GroupsMnu.Checked);
+            GroupItems(GroupsMnu.Checked, null);
             this.path = path;
             SetDirty(false);
             mruManager.Insert(0, path);
@@ -2865,7 +2865,6 @@ namespace GXDLMSDirector
                 {
                     OnProgress(dev, "Refresh device", 0, 1);
                     UpdateTransaction(true);
-                    RemoveObject(dev);
                     while (dev.Objects.Count != 0)
                     {
                         RemoveObject(dev.Objects[0]);
@@ -2891,7 +2890,6 @@ namespace GXDLMSDirector
                             dev.Objects.Add(obj);
                         }
                     }
-                    GroupItems(GroupsMnu.Checked);
                     //Read registers units and scalers.
                     int cnt = dev.Objects.Count;
                     for (int pos = 0; pos != cnt; ++pos)
@@ -2927,7 +2925,7 @@ namespace GXDLMSDirector
                         }
                         this.OnProgress(dev, "Reading scalers and units.", cnt, cnt);
                     }
-                    GroupItems(GroupsMnu.Checked);
+                    GroupItems(GroupsMnu.Checked, dev);
                 }
             }
             catch (ThreadAbortException)
@@ -3018,7 +3016,7 @@ namespace GXDLMSDirector
                     }
                     else
                     {
-                        foreach (GXDLMSDevice dev in (GXDLMSDeviceCollection)parameters[0])
+                        foreach (GXDLMSMeter dev in (GXDLMSMeterCollection)parameters[0])
                         {
                             RefreshDevice(dev, true);
                         }
@@ -3142,7 +3140,7 @@ namespace GXDLMSDirector
                 (dlg.Device as GXDLMSDevice).Comm.parentForm = this;
                 AddDevice((GXDLMSDevice)dlg.Device, false, dev == null);
                 Devices.Add((GXDLMSDevice)dlg.Device);
-                GroupItems(GroupsMnu.Checked);
+                GroupItems(GroupsMnu.Checked, null);
                 SetDirty(true);
             }
         }
@@ -3720,30 +3718,23 @@ namespace GXDLMSDirector
             }
         }
 
-        delegate void GroupItemsEventHandler(bool bGroup);
+        delegate void GroupItemsEventHandler(bool bGroup, GXDLMSMeter refreshDevice);
 
-        void GroupItems(bool bGroup)
+        void GroupItems(bool bGroup, GXDLMSMeter refreshDevice)
         {
             if (InvokeRequired)
             {
-                BeginInvoke(new GroupItemsEventHandler(GroupItems), bGroup);
+                BeginInvoke(new GroupItemsEventHandler(GroupItems), bGroup, refreshDevice);
             }
             else
             {
-                ObjectList.Groups.Clear();
-                ObjectList.Items.Clear();
-                SelectedListItems.Clear();
-                ObjectListItems.Clear();
-                ObjectTreeItems.Clear();
-                ObjectTreeItems[Devices] = this.ObjectTree.Nodes[0];
-                this.ObjectTree.Nodes[0].Nodes.Clear();
-                Dictionary<ObjectType, ListViewGroup> groups = new Dictionary<ObjectType, ListViewGroup>();
-                List<ListViewItem> items = new List<ListViewItem>();
-                foreach (GXDLMSMeter dev in Devices)
+                if (refreshDevice != null)
                 {
-                    TreeNode deviceNode = AddDevice(dev, true, false);
+                    Dictionary<ObjectType, ListViewGroup> groups = new Dictionary<ObjectType, ListViewGroup>();
+                    List<ListViewItem> items = new List<ListViewItem>();
+                    TreeNode deviceNode = (TreeNode)ObjectTreeItems[refreshDevice];
                     ListViewGroup group = null;
-                    foreach (GXDLMSObject it in dev.Objects)
+                    foreach (GXDLMSObject it in refreshDevice.Objects)
                     {
                         if (bGroup)
                         {
@@ -3759,16 +3750,51 @@ namespace GXDLMSDirector
                         }
                         items.Add(AddNode(it, deviceNode, group));
                     }
+                    ObjectList.Groups.AddRange(groups.Values.ToArray());
+                    ObjectList.Items.AddRange(items.ToArray());
                 }
-                ObjectList.Groups.AddRange(groups.Values.ToArray());
-                ObjectList.Items.AddRange(items.ToArray());
+                else
+                {
+                    ObjectList.Groups.Clear();
+                    ObjectList.Items.Clear();
+                    SelectedListItems.Clear();
+                    ObjectListItems.Clear();
+                    ObjectTreeItems.Clear();
+                    ObjectTreeItems[Devices] = this.ObjectTree.Nodes[0];
+                    this.ObjectTree.Nodes[0].Nodes.Clear();
+                    Dictionary<ObjectType, ListViewGroup> groups = new Dictionary<ObjectType, ListViewGroup>();
+                    List<ListViewItem> items = new List<ListViewItem>();
+                    foreach (GXDLMSMeter dev in Devices)
+                    {
+                        TreeNode deviceNode = AddDevice(dev, true, false);
+                        ListViewGroup group = null;
+                        foreach (GXDLMSObject it in dev.Objects)
+                        {
+                            if (bGroup)
+                            {
+                                if (!groups.ContainsKey(it.ObjectType))
+                                {
+                                    group = new ListViewGroup(it.ObjectType.ToString(), it.ObjectType.ToString());
+                                    groups.Add(it.ObjectType, group);
+                                }
+                                else
+                                {
+                                    group = groups[it.ObjectType];
+                                }
+                            }
+                            items.Add(AddNode(it, deviceNode, group));
+                        }
+                    }
+                    ObjectList.Groups.AddRange(groups.Values.ToArray());
+                    ObjectList.Items.AddRange(items.ToArray());
+                }
             }
         }
 
         private void GroupsMnu_Click(object sender, EventArgs e)
         {
             GroupsMnu.Checked = !GroupsMnu.Checked;
-            GroupItems(GroupsMnu.Checked);
+            GroupItems(GroupsMnu.Checked, null);
         }
 
         private void ObjectList_KeyUp(object sender, KeyEventArgs e)
@@ -5376,6 +5402,73 @@ namespace GXDLMSDirector
         {
             MainRunMnu.Enabled = Devices.Count != 0 && (TransactionWork == null || !TransactionWork.IsRunning);
             MainShowDurationsMnu.Enabled = MainOpenContainingFolderBtn.Enabled = MainShowValuesBtn.Enabled = MainShowLogBtn.Enabled = MainShowReportBtn.Enabled = ConformanceTests.SelectedItems.Count != 0;
+        }
+
+        /// <summary>
+        /// Save values to xml file.
+        /// </summary>
+        private void SaveValuesAsMnu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                GXDLMSMeter dev = GetSelectedDevice();
+                if (dev != null)
+                {
+                    SaveFileDialog dlg = new SaveFileDialog();
+                    dlg.Filter = Properties.Resources.ValuesFilterTxt;
+                    dlg.DefaultExt = ".xml";
+                    dlg.FileName = dev.Name;
+                    dlg.InitialDirectory = Directory.GetCurrentDirectory();
+                    if (dlg.ShowDialog(this) == DialogResult.OK)
+                    {
+                        dev.Objects.Save(dlg.FileName, null);
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                GXLogWriter.WriteLog(Ex.ToString());
+                GXDLMS.Common.Error.ShowError(this, Ex);
+            }
+        }
+
+        /// <summary>
+        /// Load values from xml file.
+        /// </summary>
+        private void LoadValuesMnu_Click(object sender, EventArgs e)
+        {
+            string file = null;
+            try
+            {
+                GXDLMSMeter dev = GetSelectedDevice();
+                if (dev != null)
+                {
+                    OpenFileDialog dlg = new OpenFileDialog();
+                    dlg.Multiselect = false;
+                    dlg.InitialDirectory = Directory.GetCurrentDirectory();
+                    dlg.FileName = dlg.FileName = dev.Name;
+                    dlg.Filter = Properties.Resources.ValuesFilterTxt;
+                    dlg.DefaultExt = ".xml";
+                    dlg.ValidateNames = true;
+                    if (dlg.ShowDialog(this) == DialogResult.OK)
+                    {
+                        file = dlg.FileName;
+                        if (File.Exists(file))
+                        {
+                            GXDLMSObjectCollection.Load(file, dev.Objects);
+                        }
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                if (file != null)
+                {
+                    mruManager.Remove(file);
+                }
+                GXLogWriter.WriteLog(Ex.ToString());
+                GXDLMS.Common.Error.ShowError(this, Ex);
+            }
         }
     }
 }

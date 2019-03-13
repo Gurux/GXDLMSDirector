@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10515 $,
-//                  $Date: 2019-03-06 16:15:13 +0200 (ke, 06 maalis 2019) $
+// Version:         $Revision: 10528 $,
+//                  $Date: 2019-03-13 16:30:50 +0200 (ke, 13 maalis 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -61,6 +61,7 @@ namespace GXDLMSDirector
     public partial class MainForm : Form
     {
         GXNet events;
+        string[] args;
 
         /// <summary>
         /// Active DC.
@@ -138,7 +139,7 @@ namespace GXDLMSDirector
             }
         }
 
-        public static void InitMain()
+        public static void InitMain(string[] args)
         {
             //Debug traces are written only log file.
             if (!Debugger.IsAttached)
@@ -159,7 +160,7 @@ namespace GXDLMSDirector
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
             }
-            MainForm form = new MainForm();
+            MainForm form = new MainForm(args);
             Application.Run(form);
         }
 
@@ -170,7 +171,7 @@ namespace GXDLMSDirector
         /// Do not catch errors here.
         /// If error is occurred exception is shown and application is closed.
         /// </remarks>
-        public MainForm()
+        public MainForm(string[] args)
         {
             InitializeComponent();
             CancelBtn.Enabled = false;
@@ -230,6 +231,7 @@ namespace GXDLMSDirector
             PropertyErrorView.AllowUserToAddRows = false;
             PropertyErrorView.AllowUserToDeleteRows = false;
             PropertyErrorView.AutoSize = true;
+            this.args = args;
         }
 
         public void OnProgress(object sender, string description, int current, int maximium)
@@ -295,7 +297,7 @@ namespace GXDLMSDirector
         {
             if (activeDC != null)
             {
-                ConnectCMnu.Enabled = ConnectBtn.Enabled = ConnectMnu.Enabled = false;
+                ImportMenu.Enabled = ExportMenu.Enabled = ConnectCMnu.Enabled = ConnectBtn.Enabled = ConnectMnu.Enabled = false;
                 ReadCMnu.Enabled = ReadBtn.Enabled = RefreshMnu.Enabled = ReadMnu.Enabled = true;
                 DisconnectCMnu.Enabled = DisconnectMnu.Enabled = ConnectBtn.Checked = false;
                 DeleteCMnu.Enabled = DeleteMnu.Enabled = DeleteBtn.Enabled = OptionsBtn.Enabled = true;
@@ -316,6 +318,7 @@ namespace GXDLMSDirector
                     device.OnTrace = OnTrace;
                     device.OnEvent = Events_OnReceived;
                 }
+                ImportMenu.Enabled = ExportMenu.Enabled = device != null;
                 ConnectCMnu.Enabled = ConnectBtn.Enabled = ConnectMnu.Enabled = (state & DeviceState.Initialized) != 0;
                 ReadCMnu.Enabled = ReadBtn.Enabled = RefreshMnu.Enabled = ReadMnu.Enabled = (state & DeviceState.Connected) == DeviceState.Connected;
                 DisconnectCMnu.Enabled = DisconnectMnu.Enabled = ConnectBtn.Checked = (state & DeviceState.Connected) == DeviceState.Connected;
@@ -3403,11 +3406,117 @@ namespace GXDLMSDirector
                     }
                 }
                 DataConcentratorsMnu.Visible = DataConcentratorsMnu.DropDownItems.Count != 0;
+                if (args.Length != 0)
+                {
+                    this.path = args[0];
+                    LoadFile(this.path);
+                    List<string> list = new List<string>(args);
+                    list.RemoveAt(0);
+                    string output;
+                    List<string> files = new List<string>();
+                    GetParameters(list.ToArray(), files, out output);
+                    foreach (string it in files)
+                    {
+                        if (!File.Exists(it))
+                        {
+                            throw new Exception("File don't exists. " + it);
+                        }
+                    }
+                    foreach (string it in files)
+                    {
+                        GXConformanceSettings settings;
+                        XmlSerializer x = new XmlSerializer(typeof(GXConformanceSettings));
+                        if (Properties.Settings.Default.ConformanceSettings == "")
+                        {
+                            settings = new GXConformanceSettings();
+                        }
+                        else
+                        {
+                            try
+                            {
+                                using (StringReader reader = new StringReader(Properties.Settings.Default.ConformanceSettings))
+                                {
+                                    settings = (GXConformanceSettings)x.Deserialize(reader);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine(ex.Message);
+                                settings = new GXConformanceSettings();
+                            }
+                        }
+                        settings.CommandLine = true;
+                        settings.ExternalTests = it;
+                        settings.ExcludedApplicationTests.Set(true);
+                        settings.ExcludedHdlcTests.Set(true);
+                        settings.ExcludeBasicTests = settings.ExcludeMeterInfo = true;
+                        if (RunConformanceTest(settings, Devices, false, output))
+                        {
+                            try
+                            {
+                                using (StringWriter writer = new StringWriter())
+                                {
+                                    x.Serialize(writer, settings);
+                                    Properties.Settings.Default.ConformanceSettings = writer.ToString();
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine(ex.Message);
+                                Properties.Settings.Default.ConformanceSettings = "";
+                            }
+                        }
+                    }
+                }
             }
             catch (Exception Ex)
             {
                 GXDLMS.Common.Error.ShowError(this, Ex);
             }
+        }
+
+        static int GetParameters(string[] args, List<string> files, out string output)
+        {
+            output = null;
+            List<GXCmdParameter> parameters = GXCommon.GetParameters(args, "x:o:");
+            foreach (GXCmdParameter it in parameters)
+            {
+                switch (it.Tag)
+                {
+                    case 'x':
+                        files.Add(it.Value);
+                        break;
+                    case 'o':
+                        output = it.Value;
+                        if (!Directory.Exists(output))
+                        {
+                            throw new Exception("Output directory don't exists. " + output);
+                        }
+                        break;
+                    case '?':
+                        switch (it.Tag)
+                        {
+                            case 'x':
+                                throw new ArgumentException("Missing mandatory test file.");
+                            case 'o':
+                                throw new ArgumentException("Missing mandatory output folder.");
+                            default:
+                                ShowHelp();
+                                return 1;
+                        }
+                    default:
+                        ShowHelp();
+                        return 1;
+                }
+            }
+            return 0;
+        }
+
+        static void ShowHelp()
+        {
+            Console.WriteLine("GXDLMSDirector wanted test file.");
+            Console.WriteLine(" -x \t Executed test file or directory.");
+            Console.WriteLine(" -x \t Output test directory.");
         }
 
         private void It_Click(object sender, EventArgs e)
@@ -3561,6 +3670,10 @@ namespace GXDLMSDirector
                         {
                             sb.Append(eventsTranslator.MessageToXml(eventsData));
                             pdu.Clear();
+                        }
+                        if (eventsData.Size == eventsData.Position)
+                        {
+                            eventsData.Clear();
                         }
                         if (AutoReset.Checked)
                         {
@@ -4601,6 +4714,17 @@ namespace GXDLMSDirector
                     StatusLbl.Text = GetReadyText();
                     if (state == AsyncState.Finish)
                     {
+                        if (parameters.Length == 2)
+                        {
+                            if (parameters[1] is GXConformanceSettings)
+                            {
+                                if ((parameters[1] as GXConformanceSettings).CommandLine)
+                                {
+                                    this.Close();
+                                    return;
+                                }
+                            }
+                        }
                         MessageBox.Show(this, "Gurux Conformance Tests end.");
                     }
                 }
@@ -4718,23 +4842,29 @@ namespace GXDLMSDirector
             }
         }
 
-        private bool RunConformanceTest(GXConformanceSettings settings, GXDLMSMeterCollection devices)
+        private bool RunConformanceTest(GXConformanceSettings settings, GXDLMSMeterCollection devices, bool showDlg, string testResults)
         {
-            GXConformanceDlg dlg = new GXConformanceDlg(settings);
-            if (dlg.ShowDialog(this) != DialogResult.OK)
+            if (showDlg)
             {
-                return false;
+                GXConformanceDlg dlg = new GXConformanceDlg(settings);
+                if (dlg.ShowDialog(this) != DialogResult.OK)
+                {
+                    return false;
+                }
             }
             TraceView.ResetText();
             ConformanceTests.Items.Clear();
             GXConformanceTests.ValidateTests(settings);
 
             List<GXConformanceTest> tests = new List<GXConformanceTest>();
-            string path2 = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
-            string testResults = Path.Combine(path2, "TestResults");
-            if (!Directory.Exists(path2))
+            if (testResults == null)
             {
-                Directory.CreateDirectory(path2);
+                string path2 = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
+                if (!Directory.Exists(path2))
+                {
+                    Directory.CreateDirectory(path2);
+                }
+                testResults = Path.Combine(path2, "TestResults");
             }
             if (!Directory.Exists(testResults))
             {
@@ -4793,7 +4923,7 @@ namespace GXDLMSDirector
             ProgressBar.Maximum = testcount;
             GXConformanceTests.Continue = true;
             TransactionWork = new GXAsyncWork(this, ConformanceStateChange, ConformanceExecute, ConformanceError, null, new object[] { tests, settings });
-            if (settings.WarningBeforeStart)
+            if (showDlg && settings.WarningBeforeStart)
             {
                 DialogResult ret = MessageBox.Show(this, Properties.Resources.CTTWarning, Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
                 if (ret != DialogResult.Yes)
@@ -5154,7 +5284,7 @@ namespace GXDLMSDirector
                         settings = new GXConformanceSettings();
                     }
                 }
-                if (RunConformanceTest(settings, devices))
+                if (RunConformanceTest(settings, devices, true, null))
                 {
                     try
                     {
@@ -5218,7 +5348,7 @@ namespace GXDLMSDirector
                         settings = new GXConformanceSettings();
                     }
                 }
-                if (RunConformanceTest(settings, devices))
+                if (RunConformanceTest(settings, devices, true, null))
                 {
                     try
                     {
@@ -5290,7 +5420,7 @@ namespace GXDLMSDirector
                         settings = new GXConformanceSettings();
                     }
                 }
-                if (RunConformanceTest(settings, devices))
+                if (RunConformanceTest(settings, devices, true, null))
                 {
                     try
                     {
@@ -5407,7 +5537,7 @@ namespace GXDLMSDirector
         /// <summary>
         /// Save values to xml file.
         /// </summary>
-        private void SaveValuesAsMnu_Click(object sender, EventArgs e)
+        private void ExportMenu_Click(object sender, EventArgs e)
         {
             try
             {
@@ -5435,7 +5565,7 @@ namespace GXDLMSDirector
         /// <summary>
         /// Load values from xml file.
         /// </summary>
-        private void LoadValuesMnu_Click(object sender, EventArgs e)
+        private void ImportMenu_Click(object sender, EventArgs e)
         {
             string file = null;
             try
@@ -5467,6 +5597,39 @@ namespace GXDLMSDirector
                     mruManager.Remove(file);
                 }
                 GXLogWriter.WriteLog(Ex.ToString());
+                GXDLMS.Common.Error.ShowError(this, Ex);
+            }
+        }
+
+        /// <summary>
+        /// Update descriptions.
+        /// </summary>
+        private void UpdateDescriptionsMenu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                //Device list is selected.
+                foreach (GXDLMSDevice dev in Devices)
+                {
+                    GXDLMSConverter c = new GXDLMSConverter(dev.Standard);
+                    foreach (GXDLMSObject it in dev.Objects)
+                    {
+                        it.Description = c.GetDescription(it.LogicalName, it.ObjectType)[0];
+                        ListViewItem item = ObjectListItems[it] as ListViewItem;
+                        if (item != null)
+                        {
+                            item.Text = it.LogicalName + " " + it.Description;
+                        }
+                        TreeNode t = ObjectTreeItems[it] as TreeNode;
+                        if (t != null)
+                        {
+                            t.Text = it.LogicalName + " " + it.Description;
+                        }
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
                 GXDLMS.Common.Error.ShowError(this, Ex);
             }
         }

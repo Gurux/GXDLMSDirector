@@ -4,9 +4,9 @@
 //
 //
 //
-// Version:         $Revision: 10334 $,
-//                  $Date: 2018-10-12 17:07:40 +0300 (Fri, 12 Oct 2018) $
-//                  $Author: kurumi $
+// Version:         $Revision: 10528 $,
+//                  $Date: 2019-03-13 16:30:50 +0200 (ke, 13 maalis 2019) $
+//                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -67,7 +67,7 @@ namespace GXDLMSDirector
                         Assembly assembly = Assembly.LoadFile(file.FullName);
                         foreach (Type type in assembly.GetTypes())
                         {
-                            if (!type.IsAbstract && type.IsClass && 
+                            if (!type.IsAbstract && type.IsClass &&
                                 (typeof(IGXMedia).IsAssignableFrom(type)) || typeof(IGXDataConcentrator).IsAssignableFrom(type))
                             {
                                 assembly.CreateInstance(type.ToString());
@@ -150,7 +150,7 @@ namespace GXDLMSDirector
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             //Allow only one instance.
             bool first;
@@ -249,7 +249,7 @@ namespace GXDLMSDirector
                     catch (Exception)
                     {
                     }
-                    MainForm.InitMain();
+                    MainForm.InitMain(args);
                 }
                 catch (Exception Ex)
                 {

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10515 $,
-//                  $Date: 2019-03-06 16:15:13 +0200 (ke, 06 maalis 2019) $
+// Version:         $Revision: 10528 $,
+//                  $Date: 2019-03-13 16:30:50 +0200 (ke, 13 maalis 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -88,6 +88,7 @@ namespace GXDLMSDirector
             this.toolStripMenuItem16 = new System.Windows.Forms.ToolStripSeparator();
             this.CloneBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.AddObjectMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.UpdateDescriptionsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ViewToolbarMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.ViewStatusbarMnu = new System.Windows.Forms.ToolStripMenuItem();
@@ -179,6 +180,9 @@ namespace GXDLMSDirector
             this.DisconnectCMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.ReadCMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.AddDeviceCMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem32 = new System.Windows.Forms.ToolStripSeparator();
+            this.ImportMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.ExportMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.Line1CMnu = new System.Windows.Forms.ToolStripSeparator();
             this.DeleteCMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
@@ -388,7 +392,7 @@ namespace GXDLMSDirector
             // 
             this.NewMnu.Name = "NewMnu";
             this.NewMnu.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.NewMnu.Size = new System.Drawing.Size(180, 22);
+            this.NewMnu.Size = new System.Drawing.Size(176, 22);
             this.NewMnu.Text = "&New";
             this.NewMnu.ToolTipText = "Create new device list.";
             this.NewMnu.Click += new System.EventHandler(this.NewMnu_Click);
@@ -397,7 +401,7 @@ namespace GXDLMSDirector
             // 
             this.AddDeviceMnu.Name = "AddDeviceMnu";
             this.AddDeviceMnu.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
-            this.AddDeviceMnu.Size = new System.Drawing.Size(180, 22);
+            this.AddDeviceMnu.Size = new System.Drawing.Size(176, 22);
             this.AddDeviceMnu.Text = "Add Device";
             this.AddDeviceMnu.ToolTipText = "Add new device.";
             this.AddDeviceMnu.Click += new System.EventHandler(this.AddDeviceMnu_Click);
@@ -406,7 +410,7 @@ namespace GXDLMSDirector
             // 
             this.OpenMnu.Name = "OpenMnu";
             this.OpenMnu.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.OpenMnu.Size = new System.Drawing.Size(180, 22);
+            this.OpenMnu.Size = new System.Drawing.Size(176, 22);
             this.OpenMnu.Text = "&Open";
             this.OpenMnu.ToolTipText = "Open device list.";
             this.OpenMnu.Click += new System.EventHandler(this.OpenMnu_Click);
@@ -414,13 +418,13 @@ namespace GXDLMSDirector
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(173, 6);
             // 
             // SaveMnu
             // 
             this.SaveMnu.Name = "SaveMnu";
             this.SaveMnu.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.SaveMnu.Size = new System.Drawing.Size(180, 22);
+            this.SaveMnu.Size = new System.Drawing.Size(176, 22);
             this.SaveMnu.Text = "&Save";
             this.SaveMnu.ToolTipText = "Save device list.";
             this.SaveMnu.Click += new System.EventHandler(this.SaveMnu_Click);
@@ -428,7 +432,7 @@ namespace GXDLMSDirector
             // SaveAsMnu
             // 
             this.SaveAsMnu.Name = "SaveAsMnu";
-            this.SaveAsMnu.Size = new System.Drawing.Size(180, 22);
+            this.SaveAsMnu.Size = new System.Drawing.Size(176, 22);
             this.SaveAsMnu.Text = "Save As...";
             this.SaveAsMnu.ToolTipText = "Open device list by name.";
             this.SaveAsMnu.Click += new System.EventHandler(this.SaveAsMnu_Click);
@@ -436,7 +440,7 @@ namespace GXDLMSDirector
             // SaveAsTemplateBtn
             // 
             this.SaveAsTemplateBtn.Name = "SaveAsTemplateBtn";
-            this.SaveAsTemplateBtn.Size = new System.Drawing.Size(180, 22);
+            this.SaveAsTemplateBtn.Size = new System.Drawing.Size(176, 22);
             this.SaveAsTemplateBtn.Text = "Save as Template";
             this.SaveAsTemplateBtn.ToolTipText = "Save COSEM obects from selected device as template.";
             this.SaveAsTemplateBtn.Click += new System.EventHandler(this.SaveAsTemplateBtn_Click);
@@ -444,13 +448,13 @@ namespace GXDLMSDirector
             // toolStripMenuItem18
             // 
             this.toolStripMenuItem18.Name = "toolStripMenuItem18";
-            this.toolStripMenuItem18.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem18.Size = new System.Drawing.Size(173, 6);
             // 
             // RefreshMnu
             // 
             this.RefreshMnu.Name = "RefreshMnu";
             this.RefreshMnu.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.RefreshMnu.Size = new System.Drawing.Size(180, 22);
+            this.RefreshMnu.Size = new System.Drawing.Size(176, 22);
             this.RefreshMnu.Text = "&Refresh";
             this.RefreshMnu.ToolTipText = "Read all objects from the meter.";
             this.RefreshMnu.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
@@ -458,46 +462,44 @@ namespace GXDLMSDirector
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(173, 6);
             // 
             // RecentFilesMnu
             // 
             this.RecentFilesMnu.Name = "RecentFilesMnu";
-            this.RecentFilesMnu.Size = new System.Drawing.Size(180, 22);
+            this.RecentFilesMnu.Size = new System.Drawing.Size(176, 22);
             this.RecentFilesMnu.Text = "Recent files";
             this.RecentFilesMnu.ToolTipText = "Recent files.";
             // 
             // toolStripMenuItem11
             // 
             this.toolStripMenuItem11.Name = "toolStripMenuItem11";
-            this.toolStripMenuItem11.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem11.Size = new System.Drawing.Size(173, 6);
             // 
             // SaveValuesAsMnu
             // 
             this.SaveValuesAsMnu.Name = "SaveValuesAsMnu";
-            this.SaveValuesAsMnu.Size = new System.Drawing.Size(180, 22);
+            this.SaveValuesAsMnu.Size = new System.Drawing.Size(176, 22);
             this.SaveValuesAsMnu.Text = "Save Values As...";
             this.SaveValuesAsMnu.Visible = false;
-            this.SaveValuesAsMnu.Click += new System.EventHandler(this.SaveValuesAsMnu_Click);
             // 
             // LoadValuesMnu
             // 
             this.LoadValuesMnu.Name = "LoadValuesMnu";
-            this.LoadValuesMnu.Size = new System.Drawing.Size(180, 22);
+            this.LoadValuesMnu.Size = new System.Drawing.Size(176, 22);
             this.LoadValuesMnu.Text = "Load Values";
             this.LoadValuesMnu.Visible = false;
-            this.LoadValuesMnu.Click += new System.EventHandler(this.LoadValuesMnu_Click);
             // 
             // toolStripMenuItem31
             // 
             this.toolStripMenuItem31.Name = "toolStripMenuItem31";
-            this.toolStripMenuItem31.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem31.Size = new System.Drawing.Size(173, 6);
             this.toolStripMenuItem31.Visible = false;
             // 
             // ExitMnu
             // 
             this.ExitMnu.Name = "ExitMnu";
-            this.ExitMnu.Size = new System.Drawing.Size(180, 22);
+            this.ExitMnu.Size = new System.Drawing.Size(176, 22);
             this.ExitMnu.Text = "&Exit";
             this.ExitMnu.ToolTipText = "Close application.";
             this.ExitMnu.Click += new System.EventHandler(this.ExitMnu_Click);
@@ -509,7 +511,8 @@ namespace GXDLMSDirector
             this.findNextToolStripMenuItem,
             this.toolStripMenuItem16,
             this.CloneBtn,
-            this.AddObjectMenu});
+            this.AddObjectMenu,
+            this.UpdateDescriptionsMenu});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editToolStripMenuItem.Text = "&Edit";
@@ -518,7 +521,7 @@ namespace GXDLMSDirector
             // 
             this.findToolStripMenuItem.Name = "findToolStripMenuItem";
             this.findToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
-            this.findToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.findToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.findToolStripMenuItem.Text = "Find...";
             this.findToolStripMenuItem.ToolTipText = "Find COSEM object by logical name.";
             this.findToolStripMenuItem.Click += new System.EventHandler(this.findToolStripMenuItem_Click);
@@ -528,7 +531,7 @@ namespace GXDLMSDirector
             this.findNextToolStripMenuItem.Enabled = false;
             this.findNextToolStripMenuItem.Name = "findNextToolStripMenuItem";
             this.findNextToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.findNextToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.findNextToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.findNextToolStripMenuItem.Text = "Find Next";
             this.findNextToolStripMenuItem.ToolTipText = "Find next COSEM object.";
             this.findNextToolStripMenuItem.Click += new System.EventHandler(this.findNextToolStripMenuItem_Click);
@@ -536,12 +539,12 @@ namespace GXDLMSDirector
             // toolStripMenuItem16
             // 
             this.toolStripMenuItem16.Name = "toolStripMenuItem16";
-            this.toolStripMenuItem16.Size = new System.Drawing.Size(143, 6);
+            this.toolStripMenuItem16.Size = new System.Drawing.Size(177, 6);
             // 
             // CloneBtn
             // 
             this.CloneBtn.Name = "CloneBtn";
-            this.CloneBtn.Size = new System.Drawing.Size(146, 22);
+            this.CloneBtn.Size = new System.Drawing.Size(180, 22);
             this.CloneBtn.Text = "Clone...";
             this.CloneBtn.ToolTipText = "Clone selected device.";
             this.CloneBtn.Click += new System.EventHandler(this.CloneBtn_Click);
@@ -549,9 +552,16 @@ namespace GXDLMSDirector
             // AddObjectMenu
             // 
             this.AddObjectMenu.Name = "AddObjectMenu";
-            this.AddObjectMenu.Size = new System.Drawing.Size(146, 22);
+            this.AddObjectMenu.Size = new System.Drawing.Size(180, 22);
             this.AddObjectMenu.Text = "Add Object...";
             this.AddObjectMenu.Click += new System.EventHandler(this.AddObjectMenu_Click);
+            // 
+            // UpdateDescriptionsMenu
+            // 
+            this.UpdateDescriptionsMenu.Name = "UpdateDescriptionsMenu";
+            this.UpdateDescriptionsMenu.Size = new System.Drawing.Size(180, 22);
+            this.UpdateDescriptionsMenu.Text = "Update Descriptions";
+            this.UpdateDescriptionsMenu.Click += new System.EventHandler(this.UpdateDescriptionsMenu_Click);
             // 
             // viewToolStripMenuItem
             // 
@@ -1268,62 +1278,84 @@ namespace GXDLMSDirector
             this.DisconnectCMnu,
             this.ReadCMnu,
             this.AddDeviceCMnu,
+            this.toolStripMenuItem32,
+            this.ImportMenu,
+            this.ExportMenu,
             this.Line1CMnu,
             this.DeleteCMnu,
             this.toolStripMenuItem5,
             this.PropertiesCMnu});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(135, 148);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 220);
             // 
             // ConnectCMnu
             // 
             this.ConnectCMnu.Name = "ConnectCMnu";
-            this.ConnectCMnu.Size = new System.Drawing.Size(134, 22);
+            this.ConnectCMnu.Size = new System.Drawing.Size(180, 22);
             this.ConnectCMnu.Text = "&Connect";
             this.ConnectCMnu.Click += new System.EventHandler(this.ConnectMnu_Click);
             // 
             // DisconnectCMnu
             // 
             this.DisconnectCMnu.Name = "DisconnectCMnu";
-            this.DisconnectCMnu.Size = new System.Drawing.Size(134, 22);
+            this.DisconnectCMnu.Size = new System.Drawing.Size(180, 22);
             this.DisconnectCMnu.Text = "&Disconnect";
             this.DisconnectCMnu.Click += new System.EventHandler(this.DisconnectMnu_Click);
             // 
             // ReadCMnu
             // 
             this.ReadCMnu.Name = "ReadCMnu";
-            this.ReadCMnu.Size = new System.Drawing.Size(134, 22);
+            this.ReadCMnu.Size = new System.Drawing.Size(180, 22);
             this.ReadCMnu.Text = "Read";
             this.ReadCMnu.Click += new System.EventHandler(this.ReadMnu_Click);
             // 
             // AddDeviceCMnu
             // 
             this.AddDeviceCMnu.Name = "AddDeviceCMnu";
-            this.AddDeviceCMnu.Size = new System.Drawing.Size(134, 22);
+            this.AddDeviceCMnu.Size = new System.Drawing.Size(180, 22);
             this.AddDeviceCMnu.Text = "&Add Device";
             this.AddDeviceCMnu.Click += new System.EventHandler(this.AddDeviceMnu_Click);
+            // 
+            // toolStripMenuItem32
+            // 
+            this.toolStripMenuItem32.Name = "toolStripMenuItem32";
+            this.toolStripMenuItem32.Size = new System.Drawing.Size(177, 6);
+            // 
+            // ImportMenu
+            // 
+            this.ImportMenu.Name = "ImportMenu";
+            this.ImportMenu.Size = new System.Drawing.Size(180, 22);
+            this.ImportMenu.Text = "Load Values";
+            this.ImportMenu.Click += new System.EventHandler(this.ImportMenu_Click);
+            // 
+            // ExportMenu
+            // 
+            this.ExportMenu.Name = "ExportMenu";
+            this.ExportMenu.Size = new System.Drawing.Size(180, 22);
+            this.ExportMenu.Text = "Save Values As...";
+            this.ExportMenu.Click += new System.EventHandler(this.ExportMenu_Click);
             // 
             // Line1CMnu
             // 
             this.Line1CMnu.Name = "Line1CMnu";
-            this.Line1CMnu.Size = new System.Drawing.Size(131, 6);
+            this.Line1CMnu.Size = new System.Drawing.Size(177, 6);
             // 
             // DeleteCMnu
             // 
             this.DeleteCMnu.Name = "DeleteCMnu";
-            this.DeleteCMnu.Size = new System.Drawing.Size(134, 22);
+            this.DeleteCMnu.Size = new System.Drawing.Size(180, 22);
             this.DeleteCMnu.Text = "Delete";
             this.DeleteCMnu.Click += new System.EventHandler(this.DeleteMnu_Click);
             // 
             // toolStripMenuItem5
             // 
             this.toolStripMenuItem5.Name = "toolStripMenuItem5";
-            this.toolStripMenuItem5.Size = new System.Drawing.Size(131, 6);
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(177, 6);
             // 
             // PropertiesCMnu
             // 
             this.PropertiesCMnu.Name = "PropertiesCMnu";
-            this.PropertiesCMnu.Size = new System.Drawing.Size(134, 22);
+            this.PropertiesCMnu.Size = new System.Drawing.Size(180, 22);
             this.PropertiesCMnu.Text = "&Properties";
             this.PropertiesCMnu.Click += new System.EventHandler(this.PropertiesMnu_Click);
             // 
@@ -2819,6 +2851,10 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ToolStripMenuItem SaveValuesAsMnu;
         private System.Windows.Forms.ToolStripMenuItem LoadValuesMnu;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem31;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem32;
+        private System.Windows.Forms.ToolStripMenuItem ExportMenu;
+        private System.Windows.Forms.ToolStripMenuItem ImportMenu;
+        private System.Windows.Forms.ToolStripMenuItem UpdateDescriptionsMenu;
     }
 }
 

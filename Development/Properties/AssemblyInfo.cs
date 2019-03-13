@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 9796 $,
-//                  $Date: 2018-01-09 12:23:45 +0200 (ti, 09 tammi 2018) $
+// Version:         $Revision: 10528 $,
+//                  $Date: 2019-03-13 16:30:50 +0200 (ke, 13 maalis 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -43,7 +43,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Gurux Ltd")]
 [assembly: AssemblyProduct("GXDLMSDirector Community Edition")]
-[assembly: AssemblyCopyright("Copyright (c) 1998-2018 Gurux Ltd. All rights reserved.")]
+[assembly: AssemblyCopyright("Copyright (c) 1998-2019 Gurux Ltd. All rights reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

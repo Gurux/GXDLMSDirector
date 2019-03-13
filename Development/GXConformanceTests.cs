@@ -89,10 +89,14 @@ namespace GXDLMSDirector
         /// <returns>External tests.</returns>
         private static string[] GetExternalTests(GXConformanceSettings settings)
         {
-            if (string.IsNullOrEmpty(settings.ExternalTests) ||
-                !Directory.Exists(settings.ExternalTests))
+            if (string.IsNullOrEmpty(settings.ExternalTests))
             {
                 return new string[0];
+            }
+            //If single file.
+            if (File.Exists(settings.ExternalTests))
+            {
+                return new string[] { settings.ExternalTests };
             }
             return Directory.GetFiles(settings.ExternalTests, "*.xml");
         }
@@ -4124,7 +4128,7 @@ namespace GXDLMSDirector
                 }
                 catch (GXDLMSException ex)
                 {
-                    if (ex.Result == AssociationResult.PermanentRejected && ex.Diagnostic == SourceDiagnostic.ApplicationContextNameNotSupported)
+                    if (ex.Result == AssociationResult.TransientRejected && ex.Diagnostic == (byte)AcseServiceProvider.NoCommonAcseVersion)
                     {
                         output.Info.Add("COSEM Application tests #4 Invalid Protocol-version succeeded. " + ex.Message);
                     }
@@ -4214,7 +4218,7 @@ namespace GXDLMSDirector
             }
             catch (GXDLMSException ex)
             {
-                if (ex.Result == AssociationResult.PermanentRejected && ex.Diagnostic == SourceDiagnostic.ApplicationContextNameNotSupported)
+                if (ex.Result == AssociationResult.PermanentRejected && ex.Diagnostic == (byte) SourceDiagnostic.ApplicationContextNameNotSupported)
                 {
                     output.Info.Add("COSEM Application tests #5 UNKNOWN ApplicationContextName succeeded. " + ex.Message);
                 }
@@ -4409,7 +4413,7 @@ namespace GXDLMSDirector
             }
             catch (GXDLMSException ex)
             {
-                if (ex.Result == AssociationResult.PermanentRejected && ex.Diagnostic != SourceDiagnostic.None)
+                if (ex.Result == AssociationResult.PermanentRejected && ex.Diagnostic != (byte)SourceDiagnostic.None)
                 {
                     output.Info.Add("COSEM Application tests #5 UNKNOWN ApplicationContextName succeeded. " + ex.Message);
                 }
@@ -4466,7 +4470,7 @@ namespace GXDLMSDirector
                 }
                 catch (GXDLMSException ex)
                 {
-                    if (ex.Result == AssociationResult.PermanentRejected && ex.Diagnostic == SourceDiagnostic.CallingApTitleNotRecognized)
+                    if (ex.Result == AssociationResult.PermanentRejected && ex.Diagnostic == (byte)SourceDiagnostic.CallingApTitleNotRecognized)
                     {
                         output.Info.Add("COSEM Application tests #6 AARQ.calling-AP-title too short succeeded. " + ex.Message);
                     }
@@ -4525,7 +4529,7 @@ namespace GXDLMSDirector
                 }
                 catch (GXDLMSException ex)
                 {
-                    if (ex.Result == AssociationResult.PermanentRejected && ex.Diagnostic == SourceDiagnostic.CallingApTitleNotRecognized)
+                    if (ex.Result == AssociationResult.PermanentRejected && ex.Diagnostic == (byte)SourceDiagnostic.CallingApTitleNotRecognized)
                     {
                         output.Info.Add("COSEM Application tests #6 AARQ.calling-AP-title too long succeeded. " + ex.Message);
                     }

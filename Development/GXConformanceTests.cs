@@ -18,7 +18,7 @@
 // This file is a part of Gurux Device Framework.
 //
 // Gurux Device Framework is Open Source software; you can redistribute it
-// and/or modify it under the terms of the GNU General Public License
+// and/or modify it under the terms of the GNU General Public LicenseTestCommandTypes
 // as published by the Free Software Foundation; version 2 of the License.
 // Gurux Device Framework is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -1118,6 +1118,15 @@ namespace GXDLMSDirector
                             output.Errors.Add(ex.Message);
                             test.OnError(test, ex);
                         }
+                        try
+                        {
+                            TestCommandTypes(settings, dev, output);
+                        }
+                        catch (Exception ex)
+                        {
+                            output.Errors.Add(ex.Message);
+                            test.OnError(test, ex);
+                        }
                     }
                     if (!settings.ExcludeBasicTests)
                     {
@@ -1299,6 +1308,66 @@ namespace GXDLMSDirector
             if (ln.XDLMSContextInfo.MaxSendPduSize == 0)
             {
                 output.Errors.Insert(0, "Invalid MaxSendPduSize: " + ln.XDLMSContextInfo.MaxSendPduSize);
+            }
+        }
+
+        /// <summary>
+        /// Test that meter is returning right command type.
+        /// </summary>
+        /// <param name="settings">Conformance settings.</param>
+        /// <param name="dev">DLMS device.</param>
+        /// <param name="output"></param>
+        private static void TestCommandTypes(GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output)
+        {
+            try
+            {
+                if (dev.Comm.client.Ciphering.Security != Security.None)
+                {
+                    GXDLMSData ldn = new GXDLMSData("0.0.42.0.0.255");
+                    GXReplyData reply = new GXReplyData();
+                    byte[] data = dev.Comm.Read(ldn, 1);
+                    dev.Comm.ReadDataBlock(data, "TestCommandTypes", 1, reply);
+                    bool ded = dev.Comm.client.Ciphering.DedicatedKey != null;
+                    if ((dev.Comm.client.ConnectionState & ConnectionState.Dlms) == 0 ||
+                        (dev.Comm.client.NegotiatedConformance & Conformance.GeneralProtection) != 0)
+                    {
+                        if (ded)
+                        {
+                            if (reply.Command != Command.GeneralDedCiphering)
+                            {
+                                throw new Exception("Reply data is not send using general ded ciphering.");
+                            }
+                        }
+                        else
+                        {
+                            if (reply.Command != Command.GeneralGloCiphering)
+                            {
+                                throw new Exception("Reply data is not send using general glo ciphering.");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (ded)
+                        {
+                            if (reply.Command != Command.DedGetResponse)
+                            {
+                                throw new Exception("Reply data is not send using Ded get response.");
+                            }
+                        }
+                        else
+                        {
+                            if (reply.Command != Command.GloGetResponse)
+                            {
+                                throw new Exception("Reply data is not send using Glo get response.");
+                            }
+                        }
+                    }
+                }
+            }
+            catch (GXDLMSException)
+            {
+                output.Errors.Insert(0, "Login failed after wrong password.");
             }
         }
 
@@ -3804,7 +3873,7 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// Appl_01: Connection establishment : Protocol-version
+        /// Appl_01: Connection establishment.
         /// </summary>
         /// <remarks>
         /// This is DLMS Conformance test: T_APPL_IDLE_N1.
@@ -3820,7 +3889,7 @@ namespace GXDLMSDirector
             test.OnTrace(test, "Starting COSEM Application tests #1.\r\n");
             try
             {
-                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #1. Disconnect request", 1, tryCount, reply);
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(), "HDLC test #1. Disconnect request", 1, tryCount, reply);
                 dev.Comm.ParseUAResponse(reply.Data);
             }
             catch (GXDLMSException ex)
@@ -4169,7 +4238,7 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// T_APPL_OPEN_5: Connection establishment : Protocol-version
+        /// T_APPL_OPEN_5: Unknown application context
         /// </summary>
         /// <param name="test"></param>
         /// <param name="settings"></param>
@@ -4718,7 +4787,7 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// Test for dedicated key.
+        /// T_APPL_OPEN_9. Test for dedicated key.
         /// </summary>
         /// <param name="test"></param>
         /// <param name="settings"></param>
@@ -4786,7 +4855,7 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// Check Quality of service.
+        /// T_APPL_OPEN_11. Check Quality of service.
         /// </summary>
         /// <param name="test"></param>
         /// <param name="settings"></param>
@@ -4855,7 +4924,7 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// Check DLMS version number. Try to use version 5 and 7.
+        /// T_APPL_OPEN_12. Check DLMS version number. Try to use version 5 and 7.
         /// </summary>
         /// <param name="test"></param>
         /// <param name="settings"></param>
@@ -5004,7 +5073,7 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// Check invalid PDU size.
+        /// T_APPL_OPEN_14. Try to connect with invalid PDU size.
         /// </summary>
         /// <param name="test"></param>
         /// <param name="settings"></param>
@@ -5110,27 +5179,142 @@ namespace GXDLMSDirector
             {
                 passed = false;
             }
-            //Get-Request with unknown tag.
+            if (passed)
+            {
+                test.OnTrace(test, "Passed.\r\n");
+                output.Info.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app14\">COSEM Application test #14 passed.</a>");
+            }
+            else
+            {
+                test.OnTrace(test, "Failed.\r\n");
+                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app14\">COSEM Application test #14 failed.</a>");
+            }
+        }
+
+        /// <summary>
+        /// T_APPL_DATA_LN_N1. Get-Request with unknown tag and Get-Request with missing elements.
+        /// </summary>
+        /// <param name="test"></param>
+        /// <param name="settings"></param>
+        /// <param name="dev"></param>
+        /// <param name="output"></param>
+        private static void AppTest15(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output, int tryCount)
+        {
+            GXReplyData reply = new GXReplyData();
+            byte[] data;
+            bool passed = true;
+            test.OnTrace(test, "Starting COSEM Application tests #15.\r\n");
+            try
+            {
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #15. Disconnect request", 1, tryCount, reply);
+                dev.Comm.ParseUAResponse(reply.Data);
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                {
+                    output.Info.Add("Meter returns DisconnectMode.");
+                }
+                else
+                {
+                    passed = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                passed = false;
+                output.Info.Add("COSEM Application tests #15 failed. " + ex.Message);
+            }
+            try
+            {
+                reply.Clear();
+                data = dev.Comm.client.SNRMRequest();
+                dev.Comm.ReadDataBlock(data, "COSEM Application test #15. SNRM", 1, tryCount, reply);
+                dev.Comm.ParseUAResponse(reply.Data);
+                reply.Clear();
+            }
+            catch (Exception ex)
+            {
+                passed = false;
+                output.Info.Add("COSEM Application tests #15 failed. " + ex.Message);
+            }
+            reply.Clear();
+
+            try
+            {
+                GXByteBuffer bb = new GXByteBuffer();
+                dev.Comm.ReadDataBlock(dev.Comm.client.AARQRequest(), "HDLC test #15. AARQRequest.", 1, tryCount, reply);
+                dev.Comm.ParseAAREResponse(reply.Data);
+                reply.Clear();
+                if (dev.Comm.client.Authentication > Authentication.Low)
+                {
+                    reply.Clear();
+                    dev.Comm.ReadDataBlock(dev.Comm.client.GetApplicationAssociationRequest(), "Authenticating.", 1, tryCount, reply);
+                    dev.Comm.client.ParseApplicationAssociationResponse(reply.Data);
+                }
+            }
+            catch (Exception ex)
+            {
+                passed = false;
+            }
+            //T_APPL_DATA_LN_N1. Get-Request with unknown tag.
             if (passed)
             {
                 try
                 {
                     reply.Clear();
                     GXByteBuffer bb = new GXByteBuffer();
-                    bb.SetHexString("E6E600C004C1000F0000280000FF0100");
+                    if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                    {
+                        bb.SetHexString("E6E600");
+                    }
+                    bb.SetHexString("C004C1000F0000280000FF0100");
                     (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
-                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0x32, bb), "COSEM Application test #14. Invalid Get request.", 1, tryCount, reply);
+                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0, bb), "COSEM Application test #15. Invalid Get request.", 1, tryCount, reply);
                     passed = false;
                 }
                 catch (GXDLMSException ex)
                 {
-                    if (ex.ErrorCode == (int) ErrorCode.ReadWriteDenied)
+                    if (ex.ErrorCode == (int)ErrorCode.ReadWriteDenied)
                     {
-                        output.Info.Add("COSEM Application tests #14 Invalid Get request succeeded.");
+                        output.Info.Add("COSEM Application tests #15 Invalid Get request succeeded.");
                     }
                     else
                     {
-                        output.Errors.Add("COSEM Application tests #14 failed. " + ex.Message);
+                        output.Errors.Add("COSEM Application tests #15 failed. " + ex.Message);
+                        passed = false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    passed = false;
+                }
+            }
+            //Get-Request with missing elements
+            if (passed)
+            {
+                try
+                {
+                    reply.Clear();
+                    GXByteBuffer bb = new GXByteBuffer();
+                    if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                    {
+                        bb.SetHexString("E6E600");
+                    }
+                    bb.SetHexString("C001C1000028000100");
+                    (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
+                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0, bb), "COSEM Application test #15. Invalid Get request.", 1, tryCount, reply);
+                    passed = false;
+                }
+                catch (GXDLMSException ex)
+                {
+                    if (ex.ErrorCode == (int)ErrorCode.ReadWriteDenied)
+                    {
+                        output.Info.Add("COSEM Application tests #15 Invalid Get request succeeded.");
+                    }
+                    else
+                    {
+                        output.Errors.Add("COSEM Application tests #15 failed. " + ex.Message);
                         passed = false;
                     }
                 }
@@ -5143,7 +5327,7 @@ namespace GXDLMSDirector
             try
             {
                 reply.Clear();
-                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #14. Disconnect request", 1, tryCount, reply);
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #15. Disconnect request", 1, tryCount, reply);
                 dev.Comm.ParseUAResponse(reply.Data);
             }
             catch (Exception)
@@ -5155,35 +5339,39 @@ namespace GXDLMSDirector
             {
                 reply.Clear();
                 data = dev.Comm.client.SNRMRequest();
-                dev.Comm.ReadDataBlock(data, "COSEM Application test #14. SNRM", 1, tryCount, reply);
+                dev.Comm.ReadDataBlock(data, "COSEM Application test #15. SNRM", 1, tryCount, reply);
                 dev.Comm.ParseUAResponse(reply.Data);
-                dev.Comm.ReadDataBlock(dev.Comm.client.AARQRequest(), "HDLC test #14. AARQRequest.", 1, tryCount, reply);
+                dev.Comm.ReadDataBlock(dev.Comm.client.AARQRequest(), "HDLC test #15. AARQRequest.", 1, tryCount, reply);
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #14 failed. " + ex.Message);
+                output.Info.Add("COSEM Application tests #15 failed. " + ex.Message);
             }
             reply.Clear();
             try
             {
 
                 GXByteBuffer bb = new GXByteBuffer();
-                bb.SetHexString("E6E600050102FA00");
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    bb.SetHexString("E6E600");
+                }
+                bb.SetHexString("050102FA00");
                 (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
-                dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0x32, bb), "COSEM Application test #14. Read service", 1, tryCount, reply);
+                dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0x32, bb), "COSEM Application test #15. Read service", 1, tryCount, reply);
                 passed = false;
-                output.Errors.Add("COSEM Application tests #14 failed using read service.");
+                output.Errors.Add("COSEM Application tests #15 failed using read service.");
             }
             catch (GXDLMSConfirmedServiceError ex)
             {
                 if (ex.ServiceError == ServiceError.Service && ex.ServiceErrorValue == 2)
                 {
-                    output.Info.Add("COSEM Application tests #14 succeeded with PDU size 11.");
+                    output.Info.Add("COSEM Application tests #15 succeeded when Short Name referencing is used.");
                 }
                 else
                 {
-                    output.Info.Add("COSEM Application tests #14 failed. " + ex.Message);
+                    output.Info.Add("COSEM Application tests #15 failed for Short Name referencing. " + ex.Message);
                 }
             }
             catch (Exception ex)
@@ -5194,12 +5382,167 @@ namespace GXDLMSDirector
             if (passed)
             {
                 test.OnTrace(test, "Passed.\r\n");
-                output.Info.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app14\">COSEM Application test #14 passed.</a>");
+                output.Info.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app15\">COSEM Application test #15 passed.</a>");
             }
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app14\">COSEM Application test #14 failed.</a>");
+                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app15\">COSEM Application test #15 failed.</a>");
+            }
+        }
+
+        /// <summary>
+        /// T_APPL_DATA_LN_N3. Set-Request with unknown tag and set-Request with missing elements.
+        /// </summary>
+        /// <param name="test"></param>
+        /// <param name="settings"></param>
+        /// <param name="dev"></param>
+        /// <param name="output"></param>
+        private static void AppTest16(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output, int tryCount)
+        {
+            GXReplyData reply = new GXReplyData();
+            byte[] data;
+            bool passed = true;
+            test.OnTrace(test, "Starting COSEM Application tests #16.\r\n");
+            try
+            {
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #16. Disconnect request", 1, tryCount, reply);
+                dev.Comm.ParseUAResponse(reply.Data);
+            }
+            catch (GXDLMSException ex)
+            {
+                if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
+                {
+                    output.Info.Add("Meter returns DisconnectMode.");
+                }
+                else
+                {
+                    passed = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                passed = false;
+                output.Info.Add("COSEM Application tests #16 failed. " + ex.Message);
+            }
+            try
+            {
+                reply.Clear();
+                data = dev.Comm.client.SNRMRequest();
+                dev.Comm.ReadDataBlock(data, "COSEM Application test #16. SNRM", 1, tryCount, reply);
+                dev.Comm.ParseUAResponse(reply.Data);
+                reply.Clear();
+            }
+            catch (Exception ex)
+            {
+                passed = false;
+                output.Info.Add("COSEM Application tests #16 failed. " + ex.Message);
+            }
+            reply.Clear();
+
+            try
+            {
+                GXByteBuffer bb = new GXByteBuffer();
+                dev.Comm.ReadDataBlock(dev.Comm.client.AARQRequest(), "HDLC test #16. AARQRequest.", 1, tryCount, reply);
+                dev.Comm.ParseAAREResponse(reply.Data);
+                if (dev.Comm.client.Authentication > Authentication.Low)
+                {
+                    reply.Clear();
+                    dev.Comm.ReadDataBlock(dev.Comm.client.GetApplicationAssociationRequest(), "Authenticating.", 1, tryCount, reply);
+                    dev.Comm.client.ParseApplicationAssociationResponse(reply.Data);
+                }
+                reply.Clear();
+            }
+            catch (Exception)
+            {
+                passed = false;
+            }
+            //T_APPL_DATA_LN_N1. Set-Request with unknown tag.
+            if (passed)
+            {
+                try
+                {
+                    reply.Clear();
+                    GXByteBuffer bb = new GXByteBuffer();
+                    if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                    {
+                        bb.SetHexString("E6E600");
+                    }
+                    bb.SetHexString("C106C1000F0000280000FF010009060000280000FF");
+                    (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
+                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0, bb), "COSEM Application test #16. Invalid Set request.", 1, tryCount, reply);
+                    passed = false;
+                }
+                catch (GXDLMSException ex)
+                {
+                    if (ex.ErrorCode == (int)ErrorCode.ReadWriteDenied)
+                    {
+                        output.Info.Add("COSEM Application tests #16 Invalid Set request succeeded.");
+                    }
+                    else
+                    {
+                        output.Errors.Add("COSEM Application tests #16 failed. " + ex.Message);
+                        passed = false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    passed = false;
+                }
+            }
+            //Set-Request with missing data
+            if (passed)
+            {
+                try
+                {
+                    reply.Clear();
+                    GXByteBuffer bb = new GXByteBuffer();
+                    if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                    {
+                        bb.SetHexString("E6E600");
+                    }
+                    bb.SetHexString("C101C1000F0000280000");
+                    (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
+                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0, bb), "COSEM Application test #16. Invalid Set request.", 1, tryCount, reply);
+                    passed = false;
+                }
+                catch (GXDLMSException ex)
+                {
+                    if (ex.ErrorCode == (int)ErrorCode.ReadWriteDenied)
+                    {
+                        output.Info.Add("COSEM Application tests #16 Invalid Set request succeeded.");
+                    }
+                    else
+                    {
+                        output.Errors.Add("COSEM Application tests #16 failed. " + ex.Message);
+                        passed = false;
+                    }
+                }
+                catch (Exception)
+                {
+                    passed = false;
+                }
+            }
+            (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = false;
+            try
+            {
+                reply.Clear();
+                dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #16. Disconnect request", 1, tryCount, reply);
+                dev.Comm.ParseUAResponse(reply.Data);
+            }
+            catch (Exception)
+            {
+                passed = false;
+            }
+            if (passed)
+            {
+                test.OnTrace(test, "Passed.\r\n");
+                output.Info.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app16\">COSEM Application test #16 passed.</a>");
+            }
+            else
+            {
+                test.OnTrace(test, "Failed.\r\n");
+                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app16\">COSEM Application test #16 failed.</a>");
             }
         }
 
@@ -5280,6 +5623,22 @@ namespace GXDLMSDirector
             if (!settings.ExcludedApplicationTests.ExcludeTest14)
             {
                 AppTest14(test, settings, dev, output, tryCount);
+                if (!Continue)
+                {
+                    return;
+                }
+            }
+            if (!settings.ExcludedApplicationTests.ExcludeTest15)
+            {
+                AppTest15(test, settings, dev, output, tryCount);
+                if (!Continue)
+                {
+                    return;
+                }
+            }
+            if (!settings.ExcludedApplicationTests.ExcludeTest16)
+            {
+                AppTest16(test, settings, dev, output, tryCount);
                 if (!Continue)
                 {
                     return;

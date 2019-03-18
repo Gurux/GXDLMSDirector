@@ -489,6 +489,7 @@ namespace GXDLMSDirector
         /// </summary>
         [DefaultValue(false)]
         [Browsable(false)]
+        [XmlIgnore]
         public bool CommandLine
         {
             get;

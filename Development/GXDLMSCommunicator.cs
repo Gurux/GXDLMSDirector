@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10515 $,
-//                  $Date: 2019-03-06 16:15:13 +0200 (ke, 06 maalis 2019) $
+// Version:         $Revision: 10537 $,
+//                  $Date: 2019-03-18 16:13:05 +0200 (ma, 18 maalis 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -384,7 +384,27 @@ namespace GXDLMSDirector
                 {
                     if (rd.Size != 0)
                     {
-                        GXLogWriter.WriteLog("Received data:", rd.Array());
+                        GXLogWriter.WriteLog(null, rd.Array());
+                        if (parent.OnTrace != null)
+                        {
+                            int size = 0;
+                            if (reply.Data != null)
+                            {
+                                size = reply.Data.Size;
+                            }
+                            if (Properties.Settings.Default.TraceTime)
+                            {
+                                parent.OnTrace(DateTime.Now, parent, "\r\nRX:\t", rd.Array(), size, LogFile, (int)(DateTime.Now - start).TotalMilliseconds);
+                            }
+                            else
+                            {
+                                parent.OnTrace(DateTime.Now, parent, "RX:\t", rd.Array(), size, LogFile, (int)(DateTime.Now - start).TotalMilliseconds);
+                            }
+                        }
+                        if (Properties.Settings.Default.LogDuration)
+                        {
+                            GXLogWriter.WriteLog("Duration: " + ((int)(DateTime.Now - start).TotalMilliseconds).ToString(), false);
+                        }
                     }
                     throw ex;
                 }

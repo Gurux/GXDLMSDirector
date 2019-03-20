@@ -18,7 +18,7 @@
 // This file is a part of Gurux Device Framework.
 //
 // Gurux Device Framework is Open Source software; you can redistribute it
-// and/or modify it under the terms of the GNU General Public LicenseTestCommandTypes
+// and/or modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; version 2 of the License.
 // Gurux Device Framework is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -773,7 +773,13 @@ namespace GXDLMSDirector
                     {
                         test.OnTrace(test, "Re-reading association view.\r\n");
                         dev.Objects.Clear();
-                        dev.Objects.AddRange(dev.Comm.GetObjects());
+                        GXDLMSObjectCollection objs = dev.Comm.GetObjects();
+                        while (objs.Count != 0)
+                        {
+                            GXDLMSObject obj = objs[0];
+                            objs.Remove(obj);
+                            dev.Objects.Add(obj);
+                        }
                     }
                     if (client.UseLogicalNameReferencing)
                     {
@@ -829,21 +835,7 @@ namespace GXDLMSDirector
                     }
                     if (!settings.ExcludeMeterInfo)
                     {
-                        GXDLMSData ldn = new GXDLMSData("0.0.42.0.0.255");
-                        try
-                        {
-                            dev.Comm.ReadValue(ldn, 2);
-                            object v = ldn.Value;
-                            if (v is byte[])
-                            {
-                                v = ASCIIEncoding.ASCII.GetString((byte[])v);
-                            }
-                            output.PreInfo.Add("Logical Device Name is: " + Convert.ToString(v + "."));
-                        }
-                        catch (Exception)
-                        {
-                            output.Errors.Add("Logical Device Name is not implemented.");
-                        }
+                        ReadLogicalDeviceName(settings, dev, output);
                         GXDLMSData firmware = new GXDLMSData("1.0.0.2.0.255");
                         try
                         {
@@ -1118,15 +1110,6 @@ namespace GXDLMSDirector
                             output.Errors.Add(ex.Message);
                             test.OnError(test, ex);
                         }
-                        try
-                        {
-                            TestCommandTypes(settings, dev, output);
-                        }
-                        catch (Exception ex)
-                        {
-                            output.Errors.Add(ex.Message);
-                            test.OnError(test, ex);
-                        }
                     }
                     if (!settings.ExcludeBasicTests)
                     {
@@ -1312,35 +1295,49 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// Test that meter is returning right command type.
+        /// Rerad logical device name and test that meter is returning right command type.
         /// </summary>
         /// <param name="settings">Conformance settings.</param>
         /// <param name="dev">DLMS device.</param>
         /// <param name="output"></param>
-        private static void TestCommandTypes(GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output)
+        private static void ReadLogicalDeviceName(GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output)
         {
+            GXReplyData reply = new GXReplyData();
+            try
+            {
+                GXDLMSData ldn = new GXDLMSData("0.0.42.0.0.255");
+                byte[] data = dev.Comm.Read(ldn, 2);
+                dev.Comm.ReadDataBlock(data, "Read Logical Device Name", 2, reply);
+                object v = reply.Value;
+                if (v is byte[])
+                {
+                    v = ASCIIEncoding.ASCII.GetString((byte[])v);
+                }
+                output.PreInfo.Add("Logical Device Name is: " + Convert.ToString(v + "."));
+            }
+            catch (Exception)
+            {
+                output.Errors.Add("Logical Device Name is not implemented.");
+                return;
+            }
             try
             {
                 if (dev.Comm.client.Ciphering.Security != Security.None)
                 {
-                    GXDLMSData ldn = new GXDLMSData("0.0.42.0.0.255");
-                    GXReplyData reply = new GXReplyData();
-                    byte[] data = dev.Comm.Read(ldn, 1);
-                    dev.Comm.ReadDataBlock(data, "TestCommandTypes", 1, reply);
                     bool ded = dev.Comm.client.Ciphering.DedicatedKey != null;
                     if ((dev.Comm.client.ConnectionState & ConnectionState.Dlms) == 0 ||
                         (dev.Comm.client.NegotiatedConformance & Conformance.GeneralProtection) != 0)
                     {
                         if (ded)
                         {
-                            if (reply.Command != Command.GeneralDedCiphering)
+                            if (reply.CipheredCommand != Command.GeneralDedCiphering)
                             {
                                 throw new Exception("Reply data is not send using general ded ciphering.");
                             }
                         }
                         else
                         {
-                            if (reply.Command != Command.GeneralGloCiphering)
+                            if (reply.CipheredCommand != Command.GeneralGloCiphering)
                             {
                                 throw new Exception("Reply data is not send using general glo ciphering.");
                             }
@@ -1350,14 +1347,14 @@ namespace GXDLMSDirector
                     {
                         if (ded)
                         {
-                            if (reply.Command != Command.DedGetResponse)
+                            if (reply.CipheredCommand != Command.DedGetResponse)
                             {
                                 throw new Exception("Reply data is not send using Ded get response.");
                             }
                         }
                         else
                         {
-                            if (reply.Command != Command.GloGetResponse)
+                            if (reply.CipheredCommand != Command.GloGetResponse)
                             {
                                 throw new Exception("Reply data is not send using Glo get response.");
                             }
@@ -4287,7 +4284,7 @@ namespace GXDLMSDirector
             }
             catch (GXDLMSException ex)
             {
-                if (ex.Result == AssociationResult.PermanentRejected && ex.Diagnostic == (byte) SourceDiagnostic.ApplicationContextNameNotSupported)
+                if (ex.Result == AssociationResult.PermanentRejected && ex.Diagnostic == (byte)SourceDiagnostic.ApplicationContextNameNotSupported)
                 {
                     output.Info.Add("COSEM Application tests #5 UNKNOWN ApplicationContextName succeeded. " + ex.Message);
                 }
@@ -4531,7 +4528,7 @@ namespace GXDLMSDirector
                     dev.Comm.ReadDataBlock(data, "COSEM Application test #6. SNRM", 1, tryCount, reply);
                     dev.Comm.ParseUAResponse(reply.Data);
                     reply.Clear();
-                    dev.Comm.client.Ciphering.SystemTitle = new byte[] {0x44 };
+                    dev.Comm.client.Ciphering.SystemTitle = new byte[] { 0x44 };
                     dev.Comm.ReadDataBlock(dev.Comm.client.AARQRequest(), "COSEM Application test #6. AARQ", 1, tryCount, reply);
                     dev.Comm.ParseAAREResponse(reply.Data);
                     reply.Clear();

@@ -5,9 +5,9 @@
 //
 //
 //
-// Version:         $Revision: 10334 $,
-//                  $Date: 2018-10-12 17:07:40 +0300 (Fri, 12 Oct 2018) $
-//                  $Author: kurumi $
+// Version:         $Revision: 10569 $,
+//                  $Date: 2019-04-01 16:00:29 +0300 (ma, 01 huhti 2019) $
+//                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -79,7 +79,7 @@ namespace GXDLMSDirector
                 {
                     InterfaceCb.Items.Add(it);
                 }
-                
+
 
                 PriorityCb.Items.Add(Priority.Normal);
                 PriorityCb.Items.Add(Priority.High);
@@ -278,9 +278,9 @@ namespace GXDLMSDirector
             }
             this.MediasCB.SelectedItem = SelectedMedia;
             bool bConnected = (Device is GXDLMSDevice) && (Device as GXDLMSDevice).Media != null && (Device as GXDLMSDevice).Media.IsOpen;
-            SerialPortCB.Enabled = AdvancedBtn.Enabled = ManufacturerCB.Enabled = MediasCB.Enabled =
+            WaitTimeTB.Enabled = SerialPortCB.Enabled = AdvancedBtn.Enabled = ManufacturerCB.Enabled = MediasCB.Enabled =
                                        AuthenticationCB.Enabled = UseRemoteSerialCB.Enabled = OKBtn.Enabled = !bConnected;
-            HostNameTB.ReadOnly = PortTB.ReadOnly = PasswordTB.ReadOnly = ResendTb.ReadOnly = WaitTimeTB.ReadOnly = PhysicalServerAddressTB.ReadOnly = NameTB.ReadOnly = bConnected;
+            HostNameTB.ReadOnly = PortTB.ReadOnly = PasswordTB.ReadOnly = ResendTb.ReadOnly = PhysicalServerAddressTB.ReadOnly = NameTB.ReadOnly = bConnected;
 
         }
         private void UpdateDeviceSettings(GXDLMSMeter device, bool first)
@@ -395,7 +395,7 @@ namespace GXDLMSDirector
             PhysicalServerAddressTB.Value = Convert.ToDecimal(device.PhysicalAddress);
             LogicalServerAddressTB.Value = Convert.ToDecimal(device.LogicalAddress);
             this.ClientAddTB.Value = Convert.ToDecimal(Convert.ToUInt32(device.ClientAddress));
-            WaitTimeTB.Value = device.WaitTime;
+            WaitTimeTB.Value = new DateTime(2000, 1, 1).AddSeconds(device.WaitTime);
             ResendTb.Value = device.ResendCount;
             SecurityCB.SelectedItem = device.Security;
             InvocationCounterTB.Text = device.InvocationCounter.ToString();
@@ -842,8 +842,8 @@ namespace GXDLMSDirector
                 (device as GXDLMSDevice).Media = SelectedMedia;
             }
             device.Manufacturer = man.Identification;
-            device.WaitTime = Convert.ToInt32(WaitTimeTB.Value);
-            device.ResendCount = Convert.ToInt32(ResendTb.Value);            
+            device.WaitTime = (int) (WaitTimeTB.Value - WaitTimeTB.Value.Date).TotalSeconds;
+            device.ResendCount = Convert.ToInt32(ResendTb.Value);
             device.Verbose = VerboseModeCB.Checked;
             device.MaximumBaudRate = 0;
             device.UtcTimeZone = UseUtcTimeZone.Checked;

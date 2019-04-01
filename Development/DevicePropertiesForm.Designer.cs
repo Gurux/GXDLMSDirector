@@ -5,9 +5,9 @@
 //
 //
 //
-// Version:         $Revision: 10334 $,
-//                  $Date: 2018-10-12 17:07:40 +0300 (Fri, 12 Oct 2018) $
-//                  $Author: kurumi $
+// Version:         $Revision: 10569 $,
+//                  $Date: 2019-04-01 16:00:29 +0300 (ma, 01 huhti 2019) $
+//                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
 //
@@ -124,6 +124,7 @@ namespace GXDLMSDirector
             this.SystemtitleLbl = new System.Windows.Forms.Label();
             this.SecurityLbl = new System.Windows.Forms.Label();
             this.DeviceSettingsTab = new System.Windows.Forms.TabPage();
+            this.WaitTimeTB = new System.Windows.Forms.DateTimePicker();
             this.ResendTb = new System.Windows.Forms.NumericUpDown();
             this.ResendLbl = new System.Windows.Forms.Label();
             this.CustomSettings = new System.Windows.Forms.GroupBox();
@@ -140,7 +141,6 @@ namespace GXDLMSDirector
             this.LogicalServerAddressLbl = new System.Windows.Forms.Label();
             this.PhysicalServerAddressTB = new System.Windows.Forms.NumericUpDown();
             this.PhysicalServerAddressLbl = new System.Windows.Forms.Label();
-            this.WaitTimeTB = new System.Windows.Forms.NumericUpDown();
             this.WaitTimeLbl = new System.Windows.Forms.Label();
             this.ManufacturerCB = new System.Windows.Forms.ComboBox();
             this.ManufacturerLbl = new System.Windows.Forms.Label();
@@ -225,7 +225,6 @@ namespace GXDLMSDirector
             ((System.ComponentModel.ISupportInitialize)(this.ClientAddTB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LogicalServerAddressTB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PhysicalServerAddressTB)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.WaitTimeTB)).BeginInit();
             this.NetworkSettingsGB.SuspendLayout();
             this.TerminalSettingsGB.SuspendLayout();
             this.SerialSettingsGB.SuspendLayout();
@@ -955,6 +954,7 @@ namespace GXDLMSDirector
             // 
             // DeviceSettingsTab
             // 
+            this.DeviceSettingsTab.Controls.Add(this.WaitTimeTB);
             this.DeviceSettingsTab.Controls.Add(this.ResendTb);
             this.DeviceSettingsTab.Controls.Add(this.ResendLbl);
             this.DeviceSettingsTab.Controls.Add(this.CustomSettings);
@@ -971,7 +971,6 @@ namespace GXDLMSDirector
             this.DeviceSettingsTab.Controls.Add(this.LogicalServerAddressLbl);
             this.DeviceSettingsTab.Controls.Add(this.PhysicalServerAddressTB);
             this.DeviceSettingsTab.Controls.Add(this.PhysicalServerAddressLbl);
-            this.DeviceSettingsTab.Controls.Add(this.WaitTimeTB);
             this.DeviceSettingsTab.Controls.Add(this.WaitTimeLbl);
             this.DeviceSettingsTab.Controls.Add(this.ManufacturerCB);
             this.DeviceSettingsTab.Controls.Add(this.ManufacturerLbl);
@@ -995,6 +994,19 @@ namespace GXDLMSDirector
             this.DeviceSettingsTab.TabIndex = 0;
             this.DeviceSettingsTab.Text = "Device Settings";
             this.DeviceSettingsTab.UseVisualStyleBackColor = true;
+            // 
+            // WaitTimeTB
+            // 
+            this.WaitTimeTB.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.helpProvider1.SetHelpKeyword(this.WaitTimeTB, "WaitTime");
+            this.helpProvider1.SetHelpNavigator(this.WaitTimeTB, System.Windows.Forms.HelpNavigator.Topic);
+            this.WaitTimeTB.Location = new System.Drawing.Point(109, 142);
+            this.WaitTimeTB.Name = "WaitTimeTB";
+            this.helpProvider1.SetShowHelp(this.WaitTimeTB, true);
+            this.WaitTimeTB.ShowUpDown = true;
+            this.WaitTimeTB.Size = new System.Drawing.Size(87, 20);
+            this.WaitTimeTB.TabIndex = 8;
+            this.WaitTimeTB.Value = new System.DateTime(2019, 4, 1, 14, 52, 0, 0);
             // 
             // ResendTb
             // 
@@ -1208,31 +1220,6 @@ namespace GXDLMSDirector
             this.PhysicalServerAddressLbl.Size = new System.Drawing.Size(83, 13);
             this.PhysicalServerAddressLbl.TabIndex = 39;
             this.PhysicalServerAddressLbl.Text = "Physical Server:";
-            // 
-            // WaitTimeTB
-            // 
-            this.helpProvider1.SetHelpKeyword(this.WaitTimeTB, "WaitTime");
-            this.helpProvider1.SetHelpNavigator(this.WaitTimeTB, System.Windows.Forms.HelpNavigator.Topic);
-            this.WaitTimeTB.Location = new System.Drawing.Point(109, 143);
-            this.WaitTimeTB.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.WaitTimeTB.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.WaitTimeTB.Name = "WaitTimeTB";
-            this.helpProvider1.SetShowHelp(this.WaitTimeTB, true);
-            this.WaitTimeTB.Size = new System.Drawing.Size(85, 20);
-            this.WaitTimeTB.TabIndex = 9;
-            this.WaitTimeTB.Value = new decimal(new int[] {
-            7,
-            0,
-            0,
-            0});
             // 
             // WaitTimeLbl
             // 
@@ -2055,7 +2042,6 @@ namespace GXDLMSDirector
             ((System.ComponentModel.ISupportInitialize)(this.ClientAddTB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.LogicalServerAddressTB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PhysicalServerAddressTB)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.WaitTimeTB)).EndInit();
             this.NetworkSettingsGB.ResumeLayout(false);
             this.NetworkSettingsGB.PerformLayout();
             this.TerminalSettingsGB.ResumeLayout(false);
@@ -2103,7 +2089,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label LogicalServerAddressLbl;
         private System.Windows.Forms.NumericUpDown PhysicalServerAddressTB;
         private System.Windows.Forms.Label PhysicalServerAddressLbl;
-        private System.Windows.Forms.NumericUpDown WaitTimeTB;
         private System.Windows.Forms.Label WaitTimeLbl;
         private System.Windows.Forms.ComboBox ManufacturerCB;
         private System.Windows.Forms.Label ManufacturerLbl;
@@ -2229,5 +2214,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label InterfaceLbl;
         private System.Windows.Forms.NumericUpDown ResendTb;
         private System.Windows.Forms.Label ResendLbl;
+        private System.Windows.Forms.DateTimePicker WaitTimeTB;
     }
 }

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10537 $,
-//                  $Date: 2019-03-18 16:13:05 +0200 (ma, 18 maalis 2019) $
+// Version:         $Revision: 10569 $,
+//                  $Date: 2019-04-01 16:00:29 +0300 (ma, 01 huhti 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -257,7 +257,7 @@ namespace GXDLMSDirector
             reply.Error = 0;
             object eop = (byte)0x7E;
             //In network connection terminator is not used.
-            if (client.InterfaceType == InterfaceType.WRAPPER && media is GXNet && !parent.UseRemoteSerial)
+            if (client.InterfaceType == InterfaceType.WRAPPER && !(media is GXSerial) && !parent.UseRemoteSerial)
             {
                 eop = null;
             }

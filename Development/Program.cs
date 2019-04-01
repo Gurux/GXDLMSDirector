@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10528 $,
-//                  $Date: 2019-03-13 16:30:50 +0200 (ke, 13 maalis 2019) $
+// Version:         $Revision: 10569 $,
+//                  $Date: 2019-04-01 16:00:29 +0300 (ma, 01 huhti 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -150,7 +150,7 @@ namespace GXDLMSDirector
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main(string[] args)
+        static void Main()
         {
             //Allow only one instance.
             bool first;
@@ -249,7 +249,7 @@ namespace GXDLMSDirector
                     catch (Exception)
                     {
                     }
-                    MainForm.InitMain(args);
+                    MainForm.InitMain();
                 }
                 catch (Exception Ex)
                 {

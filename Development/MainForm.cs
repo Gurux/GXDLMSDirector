@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10528 $,
-//                  $Date: 2019-03-13 16:30:50 +0200 (ke, 13 maalis 2019) $
+// Version:         $Revision: 10569 $,
+//                  $Date: 2019-04-01 16:00:29 +0300 (ma, 01 huhti 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -139,7 +139,7 @@ namespace GXDLMSDirector
             }
         }
 
-        public static void InitMain(string[] args)
+        public static void InitMain()
         {
             //Debug traces are written only log file.
             if (!Debugger.IsAttached)
@@ -160,7 +160,7 @@ namespace GXDLMSDirector
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
             }
-            MainForm form = new MainForm(args);
+            MainForm form = new MainForm();
             Application.Run(form);
         }
 
@@ -171,7 +171,7 @@ namespace GXDLMSDirector
         /// Do not catch errors here.
         /// If error is occurred exception is shown and application is closed.
         /// </remarks>
-        public MainForm(string[] args)
+        public MainForm()
         {
             InitializeComponent();
             CancelBtn.Enabled = false;
@@ -231,7 +231,16 @@ namespace GXDLMSDirector
             PropertyErrorView.AllowUserToAddRows = false;
             PropertyErrorView.AllowUserToDeleteRows = false;
             PropertyErrorView.AutoSize = true;
-            this.args = args;
+
+            //Get the normal command lines arguments in case the EXE is called directly
+            List<string> argList = new List<string>(Environment.GetCommandLineArgs());
+            argList.RemoveAt(0); //Remove the application.EXE entry
+            // this is how arguments are passed from windows explorer to clickonce installed apps when files are associated in explorer
+            if (AppDomain.CurrentDomain.SetupInformation.ActivationArguments?.ActivationData != null)
+            {
+                argList.InsertRange(0, AppDomain.CurrentDomain.SetupInformation.ActivationArguments.ActivationData);
+            }
+            this.args = argList.ToArray();
         }
 
         public void OnProgress(object sender, string description, int current, int maximium)

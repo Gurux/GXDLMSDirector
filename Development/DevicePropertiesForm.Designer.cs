@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10569 $,
-//                  $Date: 2019-04-01 16:00:29 +0300 (ma, 01 huhti 2019) $
+// Version:         $Revision: 10570 $,
+//                  $Date: 2019-04-01 16:52:20 +0300 (Mon, 01 Apr 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -997,7 +997,8 @@ namespace GXDLMSDirector
             // 
             // WaitTimeTB
             // 
-            this.WaitTimeTB.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.WaitTimeTB.CustomFormat = "HH:mm:ss";
+            this.WaitTimeTB.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.helpProvider1.SetHelpKeyword(this.WaitTimeTB, "WaitTime");
             this.helpProvider1.SetHelpNavigator(this.WaitTimeTB, System.Windows.Forms.HelpNavigator.Topic);
             this.WaitTimeTB.Location = new System.Drawing.Point(109, 142);

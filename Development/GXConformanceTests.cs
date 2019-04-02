@@ -5688,7 +5688,19 @@ namespace GXDLMSDirector
                         GXReplyData reply = new GXReplyData();
                         dev.Comm.ReadDataBlock(img.ImageTransferInitiate(dev.Comm.client, settings.ImageIdentifier, image.Length), "", 1, reply);
                         reply.Clear();
-
+                        int cnt1 = 0;
+                        do
+                        {
+                            dev.Comm.ReadValue(img, 6);
+                            if (++cnt1 > 10)
+                            {
+                                throw new Exception("Failed to read Image transfer status after image transfer initiate.");
+                            }
+                            if (img.ImageTransferStatus == ImageTransferStatus.NotInitiated)
+                            {
+                                Thread.Sleep(2000);
+                            }
+                        } while (img.ImageTransferStatus == ImageTransferStatus.NotInitiated);
                         //Check ImageTransferredBlocksStatus.
                         dev.Comm.ReadValue(img, 3);
                         if (img.ImageTransferredBlocksStatus != null)
@@ -5708,11 +5720,6 @@ namespace GXDLMSDirector
                         {
                             return;
                         }
-                        do
-                        {
-                            dev.Comm.ReadValue(img, 6);
-                        } while (img.ImageTransferStatus == ImageTransferStatus.NotInitiated);
-
                         if (img.ImageTransferStatus != ImageTransferStatus.TransferInitiated)
                         {
                             error = true;

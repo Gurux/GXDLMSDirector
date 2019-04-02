@@ -1,7 +1,7 @@
 //
 // --------------------------------------------------------------------------
 //  Gurux Ltd
-// 
+//
 //
 //
 //
@@ -18,14 +18,14 @@
 // This file is a part of Gurux Device Framework.
 //
 // Gurux Device Framework is Open Source software; you can redistribute it
-// and/or modify it under the terms of the GNU General Public License 
+// and/or modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; version 2 of the License.
 // Gurux Device Framework is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
 //
-// This code is licensed under the GNU General Public License v2. 
+// This code is licensed under the GNU General Public License v2.
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
@@ -163,14 +163,23 @@ namespace MRUSample
                 if (ToolStripMruMenu.Enabled)
                 {
                     ToolStripMenuItem item;
-                    foreach (string it in MruItems)
+                    for (int pos = 0; pos != MruItems.Count; ++pos)
                     {
+                        string it = MruItems[pos];
                         if (!string.IsNullOrEmpty(it))
                         {
-                            item = new ToolStripMenuItem(GetDisplayName(it));
-                            // subscribe to item's Click event
-                            item.Click += new EventHandler(this.OnMRUClicked);
-                            ToolStripMruMenu.DropDownItems.Add(item);
+                            try
+                            {
+                                item = new ToolStripMenuItem(GetDisplayName(it));
+                                // subscribe to item's Click event
+                                item.Click += new EventHandler(this.OnMRUClicked);
+                                ToolStripMruMenu.DropDownItems.Add(item);
+                            }
+                            catch (Exception)
+                            {
+                                MruItems.RemoveAt(pos);
+                                --pos;
+                            }
                         }
                     }
                 }
@@ -183,12 +192,21 @@ namespace MRUSample
                 if (menuItemMRU.Enabled)
                 {
                     MenuItem item;
-                    foreach (string it in MruItems)
+                    for (int pos = 0; pos != MruItems.Count; ++pos)
                     {
-                        item = new MenuItem(GetDisplayName(it));
-                        // subscribe to item's Click event
-                        item.Click += new EventHandler(this.OnMRUClicked);
-                        menuItemMRU.MenuItems.Add(item);
+                        string it = MruItems[pos];
+                        try
+                        {
+                            item = new MenuItem(GetDisplayName(it));
+                            // subscribe to item's Click event
+                            item.Click += new EventHandler(this.OnMRUClicked);
+                            menuItemMRU.MenuItems.Add(item);
+                        }
+                        catch (Exception)
+                        {
+                            MruItems.RemoveAt(pos);
+                            --pos;
+                        }
                     }
                 }
             }
@@ -237,8 +255,8 @@ namespace MRUSample
         }
 
         /// <summary>
-        /// Truncate a path to fit within a certain number of characters 
-        /// by replacing path components with ellipses.		
+        /// Truncate a path to fit within a certain number of characters
+        /// by replacing path components with ellipses.
         /// </summary>
         /// <param name="fullPath">Full path to the file.</param>
         /// <returns>Truncated file name</returns>

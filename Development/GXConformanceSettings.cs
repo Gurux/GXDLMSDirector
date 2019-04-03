@@ -485,15 +485,34 @@ namespace GXDLMSDirector
 
 
         /// <summary>
-        /// Are tests run from command line.
+        /// Is application closed after tests are run.
         /// </summary>
+        /// <remarks>
+        /// This can be used when tests are run from command line.
+        /// </remarks>
         [DefaultValue(false)]
         [Browsable(false)]
         [XmlIgnore]
-        public bool CommandLine
+        public CloseApp CloseApplication
         {
             get;
             set;
         }
+    }
+
+    public enum CloseApp
+    {
+        /// <summary>
+        /// Application is newer close.
+        /// </summary>
+        Never,
+        /// <summary>
+        /// Application is always closed.
+        /// </summary>
+        Always,
+        /// <summary>
+        /// Application is closed if all tests succeeded.
+        /// </summary>
+        Success
     }
 }

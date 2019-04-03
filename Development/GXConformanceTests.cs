@@ -671,9 +671,9 @@ namespace GXDLMSDirector
             List<GXConformanceTest> tests = (List<GXConformanceTest>)tmp2[0];
             GXConformanceSettings settings = (GXConformanceSettings)tmp2[1];
             GXConformanceParameters cp = null;
-            if (tmp2.Length > 2)
+            if (tmp2.Length > 3)
             {
-                cp = (GXConformanceParameters)tmp2[2];
+                cp = (GXConformanceParameters)tmp2[3];
             }
             GXConformanceTest test;
             GXDLMSDevice dev = null;

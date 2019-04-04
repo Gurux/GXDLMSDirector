@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10579 $,
-//                  $Date: 2019-04-03 12:48:49 +0300 (Wed, 03 Apr 2019) $
+// Version:         $Revision: 10587 $,
+//                  $Date: 2019-04-04 13:41:56 +0300 (Thu, 04 Apr 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -675,13 +675,24 @@ namespace GXDLMSDirector
             return combo;
         }
 
-        DataGridViewComboBoxColumn CreateTypeColumns(string name)
+        DataGridViewColumn CreateTypeColumns(string name)
         {
-            DataGridViewComboBoxColumn combo = new DataGridViewComboBoxColumn();
-            combo.DataSource = Enum.GetValues(typeof(DataType));
-            combo.DataPropertyName = name;
-            combo.Name = name;
-            return combo;
+            if (name == "Type")
+            {
+                DataGridViewColumn column = new DataGridViewTextBoxColumn();
+                column.DataPropertyName = name;
+                column.Name = name;
+                column.ReadOnly = true;
+                return column;
+            }
+            else
+            {
+                DataGridViewComboBoxColumn combo = new DataGridViewComboBoxColumn();
+                combo.DataSource = Enum.GetValues(typeof(DataType));
+                combo.DataPropertyName = name;
+                combo.Name = name;
+                return combo;
+            }
         }
 
         DataGridViewCheckBoxColumn CreateStaticColumns()
@@ -3419,15 +3430,16 @@ namespace GXDLMSDirector
                     }
                 }
                 DataConcentratorsMnu.Visible = DataConcentratorsMnu.DropDownItems.Count != 0;
+                try {
                 if (list.Count != 0)
                 {
-                    this.path = list[0];
                     if (list[0] == "-h" || list[0] == "/h")
                     {
                         ShowHelp();
                         Close();
                         return;
                     }
+                    this.path = list[0];
                     LoadFile(this.path);
                     list.RemoveAt(0);
                     bool showHelp;
@@ -3481,6 +3493,7 @@ namespace GXDLMSDirector
                             using (StringReader reader = new StringReader(settingsFile))
                             {
                                 settings = (GXConformanceSettings)x.Deserialize(reader);
+                                settings.WarningBeforeStart = false;
                                 settings.CloseApplication = closeApp;
                             }
                         }
@@ -3526,6 +3539,7 @@ namespace GXDLMSDirector
                                         settings = new GXConformanceSettings();
                                     }
                                 }
+                                settings.WarningBeforeStart = false;
                                 settings.CloseApplication = closeApp;
                                 settings.ExternalTests = it;
                                 settings.ExcludedApplicationTests.Set(true);
@@ -3538,6 +3552,7 @@ namespace GXDLMSDirector
                                 {
                                     settings = (GXConformanceSettings)x.Deserialize(reader);
                                     settings.CloseApplication = closeApp;
+                                    settings.WarningBeforeStart = false;
                                 }
                             }
                             if (RunConformanceTest(settings, Devices, false, output))
@@ -3559,6 +3574,12 @@ namespace GXDLMSDirector
                         }
                     }
                 }
+                }
+                catch (Exception Ex)
+                {
+                    GXDLMS.Common.Error.ShowError(this, Ex);
+                    Close();
+                }
             }
             catch (Exception Ex)
             {
@@ -3573,73 +3594,88 @@ namespace GXDLMSDirector
             showHelp = false;
             output = null;
             settings = null;
-            List<GXCmdParameter> parameters = GXCommon.GetParameters(args, "x:o:s:hc:t");
-            foreach (GXCmdParameter it in parameters)
+            try
             {
-                switch (it.Tag)
+                List<GXCmdParameter> parameters = GXCommon.GetParameters(args, "x:o:s:hc:t");
+                foreach (GXCmdParameter it in parameters)
                 {
-                    case 't':
-                        ctt = true;
-                        break;
-                    case 'c':
-                        try
-                        {
-                            closeApp = (CloseApp)Enum.Parse(typeof(CloseApp), it.Value);
-                        }
-                        catch (Exception)
-                        {
-                            throw new Exception("Invalid close value. (Never, Always, Success");
-                        }
-                        break;
-                    case 'x':
-                        files.Add(it.Value);
-                        break;
-                    case 'o':
-                        output = it.Value;
-                        if (!Directory.Exists(output))
-                        {
-                            throw new Exception("Output directory don't exists. " + output);
-                        }
-                        break;
-                    case 's':
-                        settings = it.Value;
-                        if (!File.Exists(settings))
-                        {
-                            throw new Exception("settings file don't exists. " + settings);
-                        }
-                        break;
-                    case '?':
-                        switch (it.Tag)
-                        {
-                            case 'c':
-                                closeApp = CloseApp.Always;
-                                break;
-                            case 'x':
-                                throw new ArgumentException("Missing mandatory test file.");
-                            case 'o':
-                                throw new ArgumentException("Missing mandatory output folder.");
-                            default:
-                                ShowHelp();
-                                return 1;
-                        }
-                        break;
-                    case 'h':
-                    default:
-                        showHelp = true;
-                        ShowHelp();
-                        return 1;
+                    switch (it.Tag)
+                    {
+                        case 't':
+                            ctt = true;
+                            break;
+                        case 'c':
+                            try
+                            {
+                                closeApp = (CloseApp)Enum.Parse(typeof(CloseApp), it.Value);
+                            }
+                            catch (Exception)
+                            {
+                                throw new Exception("Invalid close value. (Never, Always, Success");
+                            }
+                            break;
+                        case 'x':
+                            files.Add(it.Value);
+                            break;
+                        case 'o':
+                            output = it.Value;
+                            if (!Directory.Exists(output))
+                            {
+                                throw new Exception("Output directory don't exists. " + output);
+                            }
+                            break;
+                        case 's':
+                            settings = it.Value;
+                            if (!File.Exists(settings))
+                            {
+                                throw new Exception("settings file don't exists. " + settings);
+                            }
+                            break;
+                        case '?':
+                            switch (it.Tag)
+                            {
+                                case 'c':
+                                    closeApp = CloseApp.Always;
+                                    break;
+                                case 'x':
+                                    throw new ArgumentException("Missing mandatory test file.");
+                                case 'o':
+                                    throw new ArgumentException("Missing mandatory output folder.");
+                                default:
+                                    ShowHelp();
+                                    return 1;
+                            }
+                            break;
+                        case 'h':
+                        default:
+                            showHelp = true;
+                            ShowHelp();
+                            return 1;
+                    }
                 }
+            }
+            catch (Exception)
+            {
+                showHelp = true;
+                ShowHelp();
+                return 1;
             }
             return 0;
         }
 
         static void ShowHelp()
         {
-            Console.WriteLine("GXDLMSDirector wanted device file.");
-            Console.WriteLine(" -x\t Executed test file or directory.");
-            Console.WriteLine(" -x\t Output test directory.");
-            Console.WriteLine(" -s\t Settings file.");
-            Console.WriteLine(" -c\t Closes GXDLMSDirector after tests are run.");
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("Command line parameter for GXDLMSDirector to execute Conformance Tests.");
+            sb.AppendLine("%userprofile%\\Desktop\\GXDLMSDirector.appref-ms \"C:\\DeviceFile.gxc\"");
+            sb.AppendLine(" -t\t Run Conformance tests. Conformance tests are not run with external tests.");
+            sb.AppendLine(" -x\t External test file or directory.");
+            sb.AppendLine(" -o\t Output test directory.");
+            sb.AppendLine(" -s\t External Settings file. If external test file is given, this is ignored.");
+            sb.AppendLine(" -c\t Closes application after tests are run (Never, Always, Success).");
+            sb.AppendLine(" Note! The argument string that you pass can not have spaces or double-quotes in it.");
+            sb.AppendLine("%userprofile%\\Desktop\\GXDLMSDirector.appref-ms \"C:\\DeviceFile.gxc -c Never\"");
+            MessageBox.Show(sb.ToString());
         }
 
         private void It_Click(object sender, EventArgs e)
@@ -4842,7 +4878,7 @@ namespace GXDLMSDirector
                         {
                             if (parameters[1] is GXConformanceSettings)
                             {
-                                bool close =(parameters[1] as GXConformanceSettings).CloseApplication == CloseApp.Always;
+                                bool close = (parameters[1] as GXConformanceSettings).CloseApplication == CloseApp.Always;
                                 //Check test status.
                                 if ((parameters[1] as GXConformanceSettings).CloseApplication == CloseApp.Success)
                                 {
@@ -5024,7 +5060,11 @@ namespace GXDLMSDirector
                 t.OnError = OnConformanceError;
                 t.OnTrace = OnConformanceTrace;
                 t.OnProgress = OnProgress;
-                t.Results = Path.Combine(testResults, it.Name + "_" + DateTime.Now.ToString("yyyy-MM-dd hh_mm_ss"));
+                t.Results = Path.Combine(testResults, it.Name);
+                if (Directory.Exists(t.Results))
+                {
+                    t.Results = Path.Combine(testResults, it.Name + "_" + DateTime.Now.ToString("yyyy-MM-dd hh_mm_ss"));
+                }
                 Directory.CreateDirectory(t.Results);
                 using (Stream stream = File.Open(Path.Combine(t.Results, "Results.html"), FileMode.Create))
                 {

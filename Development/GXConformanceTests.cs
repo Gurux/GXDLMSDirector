@@ -299,6 +299,13 @@ namespace GXDLMSDirector
                     }
                     catch (GXDLMSException ex)
                     {
+                        using (Stream stream = File.Open(Path.Combine(test.Results, "error.txt"), FileMode.Append))
+                        {
+                            using (TextWriter writer = new StreamWriter(stream))
+                            {
+                                writer.WriteLine(DateTime.Now + ";" + ot + ";" + ln + ";" + indexStr + ";" + index + ";" + ex.Message);
+                            }
+                        }
                         //Error is not shown for external tests.
                         if (obj != null)
                         {
@@ -326,6 +333,13 @@ namespace GXDLMSDirector
                     }
                     catch (Exception ex)
                     {
+                        using (Stream stream = File.Open(Path.Combine(test.Results, "error.txt"), FileMode.Append))
+                        {
+                            using (TextWriter writer = new StreamWriter(stream))
+                            {
+                                writer.WriteLine(DateTime.Now + ";" + ot + ";" + ln + ";" + indexStr + ";" + index + ";" + ex.Message);
+                            }
+                        }
                         output.Errors.Add("<a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " <div class=\"tooltip\">failed:" + ex.Message);
                         output.Errors.Add("<span class=\"tooltiptext\">");
                         output.Errors.Add(ex.ToString());
@@ -409,6 +423,13 @@ namespace GXDLMSDirector
                             }
                             catch (Exception ex)
                             {
+                                using (Stream stream = File.Open(Path.Combine(test.Results, "error.txt"), FileMode.Append))
+                                {
+                                    using (TextWriter writer = new StreamWriter(stream))
+                                    {
+                                        writer.WriteLine(DateTime.Now + ";" + ot + ";" + ln + ";" + indexStr + ";" + index + ";" + ex.Message);
+                                    }
+                                }
                                 output.Errors.Add("<a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " <div class=\"tooltip\">failed:" + ex.Message);
                                 output.Errors.Add("<span class=\"tooltiptext\">");
                                 output.Errors.Add(ex.ToString());
@@ -1140,6 +1161,13 @@ namespace GXDLMSDirector
                     output.Errors.Add(ex.Message);
                     test.ErrorLevel = 2;
                     test.OnError(test, ex);
+                    using (Stream stream = File.Open(Path.Combine(test.Results, "error.txt"), FileMode.Append))
+                    {
+                        using (TextWriter writer = new StreamWriter(stream))
+                        {
+                            writer.WriteLine(DateTime.Now + ";" + ex.Message);
+                        }
+                    }
                 }
                 finally
                 {

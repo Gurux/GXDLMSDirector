@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10528 $,
-//                  $Date: 2019-03-13 16:30:50 +0200 (ke, 13 maalis 2019) $
+// Version:         $Revision: 10624 $,
+//                  $Date: 2019-04-24 13:56:09 +0300 (Wed, 24 Apr 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -25,7 +25,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
 //
-// More information of Gurux DLMS/COSEM Director: http://www.gurux.org/GXDLMSDirector
+// More information of Gurux DLMS/COSEM Director: https://www.gurux.org/GXDLMSDirector
 //
 // This code is licensed under the GNU General Public License v2.
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -318,6 +318,7 @@ namespace GXDLMSDirector
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.ErrorsView = new System.Windows.Forms.ListView();
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ReadObjectMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -1277,6 +1278,7 @@ namespace GXDLMSDirector
             this.ConnectCMnu,
             this.DisconnectCMnu,
             this.ReadCMnu,
+            this.ReadObjectMnu,
             this.AddDeviceCMnu,
             this.toolStripMenuItem32,
             this.ImportMenu,
@@ -1286,7 +1288,7 @@ namespace GXDLMSDirector
             this.toolStripMenuItem5,
             this.PropertiesCMnu});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 220);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 242);
             // 
             // ConnectCMnu
             // 
@@ -2536,6 +2538,13 @@ namespace GXDLMSDirector
             this.columnHeader2.Text = "Name";
             this.columnHeader2.Width = 117;
             // 
+            // ReadObjectMnu
+            // 
+            this.ReadObjectMnu.Name = "ReadObjectMnu";
+            this.ReadObjectMnu.Size = new System.Drawing.Size(180, 22);
+            this.ReadObjectMnu.Text = "Read Object";
+            this.ReadObjectMnu.Click += new System.EventHandler(this.ReadObjectMnu_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2855,6 +2864,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ToolStripMenuItem ExportMenu;
         private System.Windows.Forms.ToolStripMenuItem ImportMenu;
         private System.Windows.Forms.ToolStripMenuItem UpdateDescriptionsMenu;
+        private System.Windows.Forms.ToolStripMenuItem ReadObjectMnu;
     }
 }
 

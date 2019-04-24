@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10587 $,
-//                  $Date: 2019-04-04 13:41:56 +0300 (Thu, 04 Apr 2019) $
+// Version:         $Revision: 10624 $,
+//                  $Date: 2019-04-24 13:56:09 +0300 (Wed, 24 Apr 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -25,7 +25,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
 //
-// More information of Gurux DLMS/COSEM Director: http://www.gurux.org/GXDLMSDirector
+// More information of Gurux DLMS/COSEM Director: https://www.gurux.org/GXDLMSDirector
 //
 // This code is licensed under the GNU General Public License v2.
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -299,6 +299,7 @@ namespace GXDLMSDirector
                 ReadCMnu.Enabled = ReadBtn.Enabled = RefreshMnu.Enabled = ReadMnu.Enabled = true;
                 DisconnectCMnu.Enabled = DisconnectMnu.Enabled = ConnectBtn.Checked = false;
                 DeleteCMnu.Enabled = DeleteMnu.Enabled = DeleteBtn.Enabled = OptionsBtn.Enabled = true;
+                ReadObjectMnu.Enabled = false;
             }
             else
             {
@@ -321,6 +322,7 @@ namespace GXDLMSDirector
                 ReadCMnu.Enabled = ReadBtn.Enabled = RefreshMnu.Enabled = ReadMnu.Enabled = (state & DeviceState.Connected) == DeviceState.Connected;
                 DisconnectCMnu.Enabled = DisconnectMnu.Enabled = ConnectBtn.Checked = (state & DeviceState.Connected) == DeviceState.Connected;
                 DeleteCMnu.Enabled = DeleteMnu.Enabled = DeleteBtn.Enabled = OptionsBtn.Enabled = state == DeviceState.Initialized;
+                ReadObjectMnu.Enabled = ReadMnu.Enabled && (device.Comm.client.NegotiatedConformance & Conformance.MultipleReferences) != 0;
                 UpdateWriteEnabled();
             }
         }
@@ -2132,7 +2134,19 @@ namespace GXDLMSDirector
                             {
                                 dev.Comm.OnBeforeRead += new ReadEventHandler(OnBeforeRead);
                                 dev.Comm.OnAfterRead += new ReadEventHandler(OnAfterRead);
-                                dev.Comm.Read(this, obj, ForceRefreshBtn.Checked);
+                                if (parameters.Length == 3 && (bool) parameters[2])
+                                {
+                                    List<KeyValuePair<GXDLMSObject, int>> list = new List<KeyValuePair<GXDLMSObject, int>>();
+                                    foreach(int index in ((IGXDLMSBase) obj).GetAttributeIndexToRead(ForceRefreshBtn.Checked))
+                                    {
+                                        list.Add(new KeyValuePair<GXDLMSObject, int>(obj, index));
+                                    }
+                                    dev.Comm.ReadList(list);
+                                }
+                                else
+                                {
+                                    dev.Comm.Read(this, obj, ForceRefreshBtn.Checked);
+                                }
                             }
                             finally
                             {
@@ -3175,7 +3189,7 @@ namespace GXDLMSDirector
         {
             try
             {
-                Process.Start("http://www.gurux.fi/index.php?q=GXDLMSDirectorHelp");
+                Process.Start("https://www.gurux.fi/index.php?q=GXDLMSDirectorHelp");
             }
             catch (Exception Ex)
             {
@@ -4731,26 +4745,26 @@ namespace GXDLMSDirector
                 // Get the control where the user clicked
                 Point lpe = menuStrip1.PointToClient(hevent.MousePos);
                 Control ctl = this.GetChildAtPoint(this.PointToClient(hevent.MousePos));
-                string str = "http://www.gurux.fi/index.php?q=GXDLMSDirectorHelp";
+                string str = "https://www.gurux.fi/index.php?q=GXDLMSDirectorHelp";
                 if (ctl == toolStrip1 || ctl == menuStrip1)
                 {
-                    str = "http://www.gurux.fi/GXDLMSDirector.Menu";
+                    str = "https://www.gurux.fi/GXDLMSDirector.Menu";
                 }
                 else if (ctl == tabControl2 && tabControl2.SelectedTab == tabPage1 && SelectedView != null)
                 {
                     GXDLMSViewAttribute[] att = (GXDLMSViewAttribute[])SelectedView.GetType().GetCustomAttributes(typeof(GXDLMSViewAttribute), true);
-                    str = "http://www.gurux.fi/index.php?q=" + att[0].DLMSType.ToString();
+                    str = "https://www.gurux.fi/index.php?q=" + att[0].DLMSType.ToString();
                 }
                 else if (ctl == ObjectValueView && ObjectValueView.Items.Count != 0)
                 {
-                    str = "http://www.gurux.fi/index.php?q=" + ObjectValueView.Items[0].Tag.GetType();
+                    str = "https://www.gurux.fi/index.php?q=" + ObjectValueView.Items[0].Tag.GetType();
                 }
                 else if (ctl == panel1)
                 {
                     ctl = panel1.GetChildAtPoint(panel1.PointToClient(hevent.MousePos));
                     if (ctl == ConformanceTests)
                     {
-                        str = "http://www.gurux.fi/index.php?q=GXDLMSDirector.ConformanceTest";
+                        str = "https://www.gurux.fi/index.php?q=GXDLMSDirector.ConformanceTest";
                     }
                 }
                 // Show online help.
@@ -5811,6 +5825,38 @@ namespace GXDLMSDirector
             catch (Exception Ex)
             {
                 GXDLMS.Common.Error.ShowError(this, Ex);
+            }
+        }
+
+        /// <summary>
+        /// Read all attributes of selected object
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ReadObjectMnu_Click(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedIndex == 0)
+            {
+                //Set focus to the tree or Read count do not updated.
+                this.ObjectTree.Focus();
+                if (this.ObjectTree.SelectedNode != null)
+                {
+                    TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Read, OnError, null, new object[] { this.ObjectTree.SelectedNode.Tag, SelectedView, true });
+                    TransactionWork.Start();
+                }
+            }
+            else
+            {
+                if (this.ObjectList.SelectedItems.Count != 0)
+                {
+                    GXDLMSObjectCollection items = new GXDLMSObjectCollection();
+                    foreach (ListViewItem it in this.ObjectList.SelectedItems)
+                    {
+                        items.Add(it.Tag as GXDLMSObject);
+                    }
+                    TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Read, OnError, null, new object[] { items, SelectedView, true });
+                    TransactionWork.Start();
+                }
             }
         }
     }

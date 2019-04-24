@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10569 $,
-//                  $Date: 2019-04-01 16:00:29 +0300 (ma, 01 huhti 2019) $
+// Version:         $Revision: 10624 $,
+//                  $Date: 2019-04-24 13:56:09 +0300 (Wed, 24 Apr 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -25,7 +25,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
 //
-// More information of Gurux DLMS/COSEM Director: http://www.gurux.org/GXDLMSDirector
+// More information of Gurux DLMS/COSEM Director: https://www.gurux.org/GXDLMSDirector
 //
 // This code is licensed under the GNU General Public License v2.
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -1383,7 +1383,7 @@ namespace GXDLMSDirector
         {
             try
             {
-                System.Diagnostics.Process.Start("http://www.gurux.fi/index.php?q=GXDLMSDirectorExample");
+                System.Diagnostics.Process.Start("https://www.gurux.fi/index.php?q=GXDLMSDirectorExample");
             }
             catch (Exception Ex)
             {
@@ -1611,7 +1611,7 @@ namespace GXDLMSDirector
                 {
                     using (MemoryStream ms = new MemoryStream())
                     {
-                        List<Type> types = new List<Type>();
+                        List<Type> types = new List<Type>(GXDLMSClient.GetObjectTypes());
                         types.Add(typeof(GXDLMSAttributeSettings));
                         types.Add(typeof(GXDLMSAttribute));
                         XmlAttributeOverrides overrides = new XmlAttributeOverrides();

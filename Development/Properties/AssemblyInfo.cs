@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10528 $,
-//                  $Date: 2019-03-13 16:30:50 +0200 (ke, 13 maalis 2019) $
+// Version:         $Revision: 10624 $,
+//                  $Date: 2019-04-24 13:56:09 +0300 (Wed, 24 Apr 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -24,7 +24,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
 //
-// More information of Gurux DLMS/COSEM Director: http://www.gurux.org/GXDLMSDirector
+// More information of Gurux DLMS/COSEM Director: https://www.gurux.org/GXDLMSDirector
 //
 // This code is licensed under the GNU General Public License v2.
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt

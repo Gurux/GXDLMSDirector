@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10569 $,
-//                  $Date: 2019-04-01 16:00:29 +0300 (ma, 01 huhti 2019) $
+// Version:         $Revision: 10624 $,
+//                  $Date: 2019-04-24 13:56:09 +0300 (Wed, 24 Apr 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -24,7 +24,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
 //
-// More information of Gurux DLMS/COSEM Director: http://www.gurux.org/GXDLMSDirector
+// More information of Gurux DLMS/COSEM Director: https://www.gurux.org/GXDLMSDirector
 //
 // This code is licensed under the GNU General Public License v2.
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -509,7 +509,7 @@ namespace GXDLMSDirector
                 {
                     data = "/?" + this.parent.PhysicalAddress + "!\r\n";
                 }
-                GXLogWriter.WriteLog("HDLC sending:" + data);
+                GXLogWriter.WriteLog("IEC Sending:" + data);
                 ReceiveParameters<string> p = new ReceiveParameters<string>()
                 {
                     AllData = false,

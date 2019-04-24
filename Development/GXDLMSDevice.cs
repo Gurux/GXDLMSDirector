@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10419 $,
-//                  $Date: 2018-11-23 13:12:56 +0200 (Fri, 23 Nov 2018) $
+// Version:         $Revision: 10624 $,
+//                  $Date: 2019-04-24 13:56:09 +0300 (Wed, 24 Apr 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -24,7 +24,7 @@
 // MERCgHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
 //
-// More information of Gurux DLMS/COSEM Director: http://www.gurux.org/GXDLMSDirector
+// More information of Gurux DLMS/COSEM Director: https://www.gurux.org/GXDLMSDirector
 //
 // This code is licensed under the GNU General Public License v2.
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -628,79 +628,6 @@ namespace GXDLMSDirector
                 GXLogWriter.WriteLog("--- Created " + Objects.Count.ToString() + " objects. ---");
                 //Read registers units and scalers.
                 int cnt = Objects.Count;
-                GXLogWriter.WriteLog("--- Reading scalers and units. ---");
-                for (pos = 0; pos != cnt; ++pos)
-                {
-                    GXDLMSObject it = Objects[pos];
-                    this.OnProgress(this, "Reading scalers and units.", cnt + pos + 1, 3 * cnt);
-                    if (it is GXDLMSRegister)
-                    {
-                        //Read scaler first.
-                        try
-                        {
-                            Comm.ReadValue(it, 3);
-                        }
-                        catch (Exception ex)
-                        {
-                            GXLogWriter.WriteLog(ex.Message);
-                            it.SetAccess(3, AccessMode.NoAccess);
-                            if (ex is GXDLMSException)
-                            {
-                                continue;
-                            }
-                            throw ex;
-                        }
-                    }
-                    if (it is GXDLMSDemandRegister)
-                    {
-                        //Read scaler first.
-                        try
-                        {
-                            Comm.ReadValue(it, 4);
-                        }
-                        catch (Exception ex)
-                        {
-                            GXLogWriter.WriteLog(ex.Message);
-                            UpdateError(it, 4, ex);
-                            if (ex is GXDLMSException)
-                            {
-                                continue;
-                            }
-                            throw ex;
-                        }
-                        //Read Period
-                        try
-                        {
-                            Comm.ReadValue(it, 8);
-                        }
-                        catch (Exception ex)
-                        {
-                            GXLogWriter.WriteLog(ex.Message);
-                            UpdateError(it, 8, ex);
-                            if (ex is GXDLMSException)
-                            {
-                                continue;
-                            }
-                            throw ex;
-                        }
-                        //Read number of periods
-                        try
-                        {
-                            Comm.ReadValue(it, 9);
-                        }
-                        catch (Exception ex)
-                        {
-                            GXLogWriter.WriteLog(ex.Message);
-                            UpdateError(it, 9, ex);
-                            if (ex is GXDLMSException)
-                            {
-                                continue;
-                            }
-                            throw ex;
-                        }
-                    }
-                }
-                GXLogWriter.WriteLog("--- Reading scalers and units end. ---");
                 if (!UseLogicalNameReferencing)
                 {
                     GXLogWriter.WriteLog("--- Reading Access rights. ---");
@@ -717,6 +644,108 @@ namespace GXDLMSDirector
                     }
                     GXLogWriter.WriteLog("--- Reading Access rights end. ---");
                 }
+                GXLogWriter.WriteLog("--- Reading scalers and units. ---");
+                this.OnProgress(this, "Reading scalers and units.", cnt + pos + 1, 3 * cnt);
+                if ((Comm.client.NegotiatedConformance & Gurux.DLMS.Enums.Conformance.MultipleReferences) != 0)
+                {
+                    List<KeyValuePair<GXDLMSObject, int>> list = new List<KeyValuePair<GXDLMSObject, int>>();
+                    foreach (GXDLMSObject it in Objects)
+                    {
+                        if (it is GXDLMSRegister && (it.GetAccess(3) & AccessMode.Read) != 0)
+                        {
+                            list.Add(new KeyValuePair<GXDLMSObject, int>(it, 3));
+                        }
+                        if (it is GXDLMSDemandRegister && (it.GetAccess(4) & AccessMode.Read) != 0)
+                        {
+                            list.Add(new KeyValuePair<GXDLMSObject, int>(it, 4));
+                        }
+                    }
+                    if (list.Count != 0)
+                    {
+                        try
+                        {
+                            Comm.ReadList(list);
+                        }
+                        catch (Exception)
+                        {
+                            //Show error.
+                        }
+                    }
+                }
+                else
+                {
+                    for (pos = 0; pos != cnt; ++pos)
+                    {
+                        GXDLMSObject it = Objects[pos];
+                        if (it is GXDLMSRegister)
+                        {
+                            //Read scaler first.
+                            try
+                            {
+                                Comm.ReadValue(it, 3);
+                            }
+                            catch (Exception ex)
+                            {
+                                GXLogWriter.WriteLog(ex.Message);
+                                it.SetAccess(3, AccessMode.NoAccess);
+                                if (ex is GXDLMSException)
+                                {
+                                    continue;
+                                }
+                                throw ex;
+                            }
+                        }
+                        if (it is GXDLMSDemandRegister)
+                        {
+                            //Read scaler first.
+                            try
+                            {
+                                Comm.ReadValue(it, 4);
+                            }
+                            catch (Exception ex)
+                            {
+                                GXLogWriter.WriteLog(ex.Message);
+                                UpdateError(it, 4, ex);
+                                if (ex is GXDLMSException)
+                                {
+                                    continue;
+                                }
+                                throw ex;
+                            }
+                            //Read Period
+                            try
+                            {
+                                Comm.ReadValue(it, 8);
+                            }
+                            catch (Exception ex)
+                            {
+                                GXLogWriter.WriteLog(ex.Message);
+                                UpdateError(it, 8, ex);
+                                if (ex is GXDLMSException)
+                                {
+                                    continue;
+                                }
+                                throw ex;
+                            }
+                            //Read number of periods
+                            try
+                            {
+                                Comm.ReadValue(it, 9);
+                            }
+                            catch (Exception ex)
+                            {
+                                GXLogWriter.WriteLog(ex.Message);
+                                UpdateError(it, 9, ex);
+                                if (ex is GXDLMSException)
+                                {
+                                    continue;
+                                }
+                                throw ex;
+                            }
+                        }
+                    }
+                }
+                GXLogWriter.WriteLog("--- Reading scalers and units end. ---");
                 this.OnProgress(this, "Reading profile generic columns.", cnt, cnt);
                 foreach (Gurux.DLMS.Objects.GXDLMSProfileGeneric it in objs.GetObjects(ObjectType.ProfileGeneric))
                 {

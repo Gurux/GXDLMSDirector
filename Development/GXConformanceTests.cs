@@ -25,7 +25,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
 //
-// More information of Gurux DLMS/COSEM Director: http://www.gurux.org/GXDLMSDirector
+// More information of Gurux DLMS/COSEM Director: https://www.gurux.org/GXDLMSDirector
 //
 // This code is licensed under the GNU General Public License v2.
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
@@ -312,12 +312,12 @@ namespace GXDLMSDirector
                             if (ex.ErrorCode != 0)
                             {
                                 ErrorCode e = (ErrorCode)ex.ErrorCode;
-                                output.Errors.Add("<a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " failed: <a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.ErrorCodes?" + e + ">" + e + "</a>)");
+                                output.Errors.Add("<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " failed: <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.ErrorCodes?" + e + ">" + e + "</a>)");
                                 test.OnTrace(test, e + "\r\n");
                             }
                             else
                             {
-                                output.Errors.Add("<a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " <div class=\"tooltip\">failed:" + ex.Message);
+                                output.Errors.Add("<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " <div class=\"tooltip\">failed:" + ex.Message);
                                 output.Errors.Add("<span class=\"tooltiptext\">");
                                 output.Errors.Add(ex.ToString());
                                 output.Errors.Add("</span></div>");
@@ -340,7 +340,7 @@ namespace GXDLMSDirector
                                 writer.WriteLine(DateTime.Now + ";" + ot + ";" + ln + ";" + indexStr + ";" + index + ";" + ex.Message);
                             }
                         }
-                        output.Errors.Add("<a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " <div class=\"tooltip\">failed:" + ex.Message);
+                        output.Errors.Add("<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " <div class=\"tooltip\">failed:" + ex.Message);
                         output.Errors.Add("<span class=\"tooltiptext\">");
                         output.Errors.Add(ex.ToString());
                         output.Errors.Add("</span></div>");
@@ -382,13 +382,13 @@ namespace GXDLMSDirector
                             if (lastExternalException != null)
                             {
                                 ErrorCode e = (ErrorCode)lastExternalException.ErrorCode;
-                                output.Errors.Add("<a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " failed: <a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.ErrorCodes?" + e + ">" + e + "</a>)");
+                                output.Errors.Add("<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " failed: <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.ErrorCodes?" + e + ">" + e + "</a>)");
                                 test.OnTrace(test, e + "\r\n");
                                 lastExternalException = null;
                             }
                             else
                             {
-                                output.Errors.Add(" <a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " " + indexStr + " " + index + " is <div class=\"tooltip\">invalid.");
+                                output.Errors.Add(" <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " " + indexStr + " " + index + " is <div class=\"tooltip\">invalid.");
                                 output.Errors.Add("<span class=\"tooltiptext\">");
                                 output.Errors.Add("Expected:</b><br/>");
                                 output.Errors.Add(it.PduAsXml.Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
@@ -430,7 +430,7 @@ namespace GXDLMSDirector
                                         writer.WriteLine(DateTime.Now + ";" + ot + ";" + ln + ";" + indexStr + ";" + index + ";" + ex.Message);
                                     }
                                 }
-                                output.Errors.Add("<a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " <div class=\"tooltip\">failed:" + ex.Message);
+                                output.Errors.Add("<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " <div class=\"tooltip\">failed:" + ex.Message);
                                 output.Errors.Add("<span class=\"tooltiptext\">");
                                 output.Errors.Add(ex.ToString());
                                 output.Errors.Add("</span></div>");
@@ -495,7 +495,7 @@ namespace GXDLMSDirector
             if (lastExternalException != null)
             {
                 ErrorCode e = (ErrorCode)lastExternalException.ErrorCode;
-                output.Errors.Add("<a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " failed: <a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.ErrorCodes?" + e + ">" + e + "</a>)");
+                output.Errors.Add("<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " failed: <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.ErrorCodes?" + e + ">" + e + "</a>)");
                 test.OnTrace(test, e + "\r\n");
                 lastExternalException = null;
             }
@@ -509,7 +509,7 @@ namespace GXDLMSDirector
                     sb.Append(it.Value + "<br/>");
                 }
                 sb.Append("</span></div>");
-                sb.Append("&nbsp;" + converter.GetDescription(ln, succeeded[0].Key)[0] + "&nbsp;" + "<a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a>.");
+                sb.Append("&nbsp;" + converter.GetDescription(ln, succeeded[0].Key)[0] + "&nbsp;" + "<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a>.");
                 output.Info.Add(sb.ToString());
             }
             if (obj != null)
@@ -816,7 +816,7 @@ namespace GXDLMSDirector
                     {
                         if (((int)it & (int)client.ProposedConformance) != 0)
                         {
-                            sb.Append("<a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Conformance?" + it + ">" + it + "</a>, ");
+                            sb.Append("<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Conformance?" + it + ">" + it + "</a>, ");
                         }
                     }
                     if (sb.Length != 0)
@@ -830,7 +830,7 @@ namespace GXDLMSDirector
                     {
                         if (((int)it & (int)client.NegotiatedConformance) != 0)
                         {
-                            sb.Append("<a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Conformance?" + it + ">" + it + "</a>, ");
+                            sb.Append("<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Conformance?" + it + ">" + it + "</a>, ");
                         }
                     }
                     if (sb.Length != 0)
@@ -848,7 +848,7 @@ namespace GXDLMSDirector
                         {
                             if (it.Description == "Invalid")
                             {
-                                output.Errors.Add("Invalid OBIS code " + it.LogicalName + " for <a target=\"_blank\" href=http://www.gurux.fi/" + it.GetType().FullName + ">" + it.ObjectType + "</a>.");
+                                output.Errors.Add("Invalid OBIS code " + it.LogicalName + " for <a target=\"_blank\" href=https://www.gurux.fi/" + it.GetType().FullName + ">" + it.ObjectType + "</a>.");
                                 Console.WriteLine("------------------------------------------------------------");
                                 Console.WriteLine(it.LogicalName + ": Invalid OBIS code.");
                             }
@@ -1017,7 +1017,7 @@ namespace GXDLMSDirector
                                     if (!found)
                                     {
                                         unknownDataTypes.Add(o.ObjectType);
-                                        output.Warnings.Add("<a target=\"_blank\" href=http://www.gurux.fi/" + o.GetType().FullName + ">" + o.ObjectType + "</a> is not tested.");
+                                        output.Warnings.Add("<a target=\"_blank\" href=https://www.gurux.fi/" + o.GetType().FullName + ">" + o.ObjectType + "</a> is not tested.");
                                     }
                                 }
                             }
@@ -1042,7 +1042,7 @@ namespace GXDLMSDirector
                                             //Check that value is not changed.
                                             if (Convert.ToString(expected) != Convert.ToString(actual))
                                             {
-                                                output.Errors.Add("Write <a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " is <div class=\"tooltip\">failed.");
+                                                output.Errors.Add("Write <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " is <div class=\"tooltip\">failed.");
                                                 output.Errors.Add("<span class=\"tooltiptext\">");
                                                 output.Errors.Add("Expected:</b><br/>");
                                                 output.Errors.Add(Convert.ToString(expected).Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
@@ -1060,11 +1060,11 @@ namespace GXDLMSDirector
                                             if (ex.ErrorCode != 0)
                                             {
                                                 ErrorCode e = (ErrorCode)ex.ErrorCode;
-                                                output.Errors.Add("<a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " failed: <a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.ErrorCodes?" + e + ">" + e + "</a>)");
+                                                output.Errors.Add("<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " failed: <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.ErrorCodes?" + e + ">" + e + "</a>)");
                                             }
                                             else
                                             {
-                                                output.Errors.Add("<a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " <div class=\"tooltip\">failed:" + ex.Message);
+                                                output.Errors.Add("<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " <div class=\"tooltip\">failed:" + ex.Message);
                                                 output.Errors.Add("<span class=\"tooltiptext\">");
                                                 output.Errors.Add(ex.ToString().Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
                                                 output.Errors.Add("</span></div>");
@@ -1072,7 +1072,7 @@ namespace GXDLMSDirector
                                         }
                                         catch (Exception ex)
                                         {
-                                            output.Errors.Add("Write <a target=\"_blank\" href=http://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " <div class=\"tooltip\">failed. " + ex.Message);
+                                            output.Errors.Add("Write <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " <div class=\"tooltip\">failed. " + ex.Message);
                                             output.Errors.Add("<span class=\"tooltiptext\">");
                                             output.Errors.Add(ex.ToString().Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
                                             output.Errors.Add("</span></div>");
@@ -5954,7 +5954,12 @@ namespace GXDLMSDirector
                                 reply.Error = (short)ex.ErrorCode;
                             }
                             //Image activate is not checked if image activate timeout is zero.
-                            if (settings.ImageActivateWaitTime.TotalSeconds != 0)
+                            if (settings.ImageActivateWaitTime.TotalSeconds == 0)
+                            {
+                                //Disconnect is not send because meter is restarted and not answering.
+                                dev.Comm.media.Close();
+                            }
+                            else
                             {
                                 if (reply.Error == (short)ErrorCode.TemporaryFailure)
                                 {

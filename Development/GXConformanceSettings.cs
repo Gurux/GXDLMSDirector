@@ -496,6 +496,18 @@ namespace GXDLMSDirector
             get;
             set;
         }
+
+#if DEBUG
+        [Description("Exclude clock Tests.")]
+        [DefaultValue(false)]
+        [Category("Accessibility")]
+        public bool ExcludeClockTests
+        {
+            get;
+            set;
+
+        }
+#endif //DEBUG
     }
 
     public enum CloseApp

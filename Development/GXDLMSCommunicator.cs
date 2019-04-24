@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10624 $,
-//                  $Date: 2019-04-24 13:56:09 +0300 (Wed, 24 Apr 2019) $
+// Version:         $Revision: 10626 $,
+//                  $Date: 2019-04-24 14:03:55 +0300 (Wed, 24 Apr 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1646,7 +1646,7 @@ namespace GXDLMSDirector
             client.UpdateValues(list, values);
         }
 
-        public void ReadValue(GXDLMSObject it, int attributeOrdinal)
+        public object ReadValue(GXDLMSObject it, int attributeOrdinal)
         {
             GXReplyData reply = new GXReplyData();
             string str = string.Format("Reading object {0}, interface {1}", it.LogicalName, it.ObjectType);
@@ -1657,6 +1657,7 @@ namespace GXDLMSDirector
                 it.SetDataType(attributeOrdinal, reply.DataType);
             }
             client.UpdateValue(it, attributeOrdinal, reply.Value);
+            return reply.Value;
         }
 
         public void GetProfileGenericColumns(GXDLMSProfileGeneric item)

@@ -1136,6 +1136,12 @@ namespace GXDLMSDirector
                     {
                         TestAssociationLn(settings, dev, output);
                     }
+#if DEBUG
+                    if (!settings.ExcludeClockTests)
+                    {
+                        TestClock(settings, dev, output);
+                    }
+#endif //DEBUG                    
 
                     if (dev.Comm.payload != 0)
                     {
@@ -5667,6 +5673,242 @@ namespace GXDLMSDirector
                 if (!Continue)
                 {
                     return;
+                }
+            }
+        }
+
+        private static void TestClock(GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output)
+        {
+            GXDLMSObjectCollection objects = dev.Comm.client.Objects.GetObjects(ObjectType.Clock);
+            foreach (GXDLMSClock it in objects)
+            {
+                //If settings time and time zone is allowed.
+                if (it.GetAccess(2) == AccessMode.ReadWrite && it.GetAccess(3) == AccessMode.ReadWrite)
+                {
+                    //Read old values.
+                    dev.Comm.ReadValue(it, 3);
+                    dev.Comm.ReadValue(it, 2);
+                    DateTime time;
+                    int timeZone = it.TimeZone;
+                    try
+                    {
+                        //Update new time using current time.
+                        GXDateTime newTime = new GXDateTime(DateTime.Now);
+                        it.Time = newTime;
+                        dev.Comm.Write(it, 2);
+                        newTime.Skip |= DateTimeSkips.Second;
+                        dev.Comm.ReadValue(it, 2);
+                        DateTime start = DateTime.Now;
+                        time = it.Time;
+                        if (newTime.Compare(it.Time.Value.Add(DateTime.Now - start).LocalDateTime) != 0)
+                        {
+                            output.Errors.Add("Failed to set new time using current time zone. Expected: " + newTime + " Actual: " + it.Time.Value.Add(DateTime.Now - start).LocalDateTime);
+                        }
+                        //Update new time using UTC time.
+                        newTime = new GXDateTime(DateTime.Now.ToUniversalTime());
+                        newTime.Skip |= DateTimeSkips.Second;
+                        it.Time = newTime;
+                        dev.Comm.Write(it, 2);
+                        dev.Comm.ReadValue(it, 2);
+                        if (newTime.Compare(it.Time.Value.Add(DateTime.Now - start).LocalDateTime) != 0)
+                        {
+                            output.Errors.Add("Failed to set new time using UTC time. Expected: " + newTime + " Actual: " + it.Time.Value.Add(DateTime.Now - start).LocalDateTime);
+                        }
+                        /*
+                        //Update new time without timezone.
+                        it.Time.Skip |= DateTimeSkips.Deviation;
+                        dev.Comm.Write(it, 2);
+                        dev.Comm.ReadValue(it, 2);
+                        if (newTime.Compare(it.Time.Value.Add(DateTime.Now - start).DateTime) != 0)
+                        {
+                            output.Errors.Add("Failed to set new time using without time zone. Expected: " + newTime + " Actual: " + it.Time.Value.Add(DateTime.Now - start).DateTime);
+                        }
+                        */
+
+                        //Check DST.
+                        if (it.GetAccess(8) == AccessMode.ReadWrite && (it.GetAccess(7) & AccessMode.Read) != 0)
+                        {
+                            dev.Comm.ReadValue(it, 8);
+                            dev.Comm.ReadValue(it, 7);
+                            bool dst = it.Enabled;
+                            int deviation = it.Deviation;
+                            if (dst)
+                            {
+                                output.Info.Add("DST is in use and deviation is " + deviation + ".");
+                            }
+                            else
+                            {
+                                output.Info.Add("DST is not in use. Devitation is " + deviation + ".");
+                            }
+                            if (deviation != 0)
+                            {
+                                //Flip DST.
+                                it.Enabled = !dst;
+                                try
+                                {
+                                    dev.Comm.Write(it, 8);
+                                }
+                                catch (Exception)
+                                {
+                                    output.Errors.Add("Clock test failed. Failed to enable DST.");
+                                }
+                                //Read time.
+                                GXDateTime tmp = (GXDateTime)dev.Comm.ReadValue(it, 2);
+                                tmp.Skip |= DateTimeSkips.Second;
+                                if (tmp.Compare(time.Add(DateTime.Now - start)) != 0)
+                                {
+                                    //Setting current time 
+                                    output.Errors.Add("Clock test failed. Time is not valid if DST is changed. Expected: " + time.Add(DateTime.Now - start) + " Actual: " + tmp);
+                                }
+                                else
+                                {
+                                    output.Info.Add("Meter can change DST and time is updated correctly.");
+                                }
+                                //Enable DST back.
+                                if (!it.Enabled)
+                                {
+                                    it.Enabled = dst;
+                                    try
+                                    {
+                                        dev.Comm.Write(it, 8);
+                                    }
+                                    catch (Exception)
+                                    {
+                                        output.Errors.Add("Clock test failed. Failed to set DST.");
+                                    }
+                                }
+                            }
+                            //Change time and check is DST flag set.
+                            if ((it.GetAccess(5) & AccessMode.Read) != 0 && (it.GetAccess(6) & AccessMode.Read) != 0)
+                            {
+                                dev.Comm.ReadValue(it, 4);
+                                dev.Comm.ReadValue(it, 5);
+                                dev.Comm.ReadValue(it, 6);
+                                GXDateTime begin = it.Begin;
+                                GXDateTime end = it.End;
+                                bool dst1;
+                                //Read time.
+                                GXDateTime tmp = (GXDateTime)dev.Comm.ReadValue(it, 2);
+                                if (begin.Compare(tmp) != 1 && end.Compare(tmp) != -1)
+                                {
+                                    output.Info.Add("Meter is in DST time.");
+                                    if ((it.Status & ClockStatus.DaylightSavingActive) == 0)
+                                    {
+                                        output.Errors.Add("Meter is in DST, but DST status flag is not set.");
+                                        dst1 = true;
+                                    }
+                                    else
+                                    {
+                                        //Move meter to normal time.
+                                        it.Time = new GXDateTime(end.Value.AddDays(7));
+                                        dst1 = false;
+                                    }
+                                }
+                                else
+                                {
+                                    output.Info.Add("Meter is in normal time.");
+                                    if ((it.Status & ClockStatus.DaylightSavingActive) != 0)
+                                    {
+                                        output.Errors.Add("Meter is in normal time, but DST status flag is set.");
+                                        dst1 = false;
+                                    }
+                                    else
+                                    {
+                                        //Move meter to DST time.
+                                        it.Time = new GXDateTime(begin.Value.AddDays(7));
+                                        dst1 = true;
+                                    }
+                                }
+                                //Write new time.
+                                dev.Comm.Write(it, 2);
+                                //Check that clock status is changed.
+                                dev.Comm.ReadValue(it, 4);
+                                if (((it.Status & ClockStatus.DaylightSavingActive) != 0 && !dst1) ||
+                                     ((it.Status & ClockStatus.DaylightSavingActive) == 0 && dst1))
+                                {
+                                    if (dst1)
+                                    {
+                                        output.Errors.Add("Meter is in DST, but DST status flag is not set.");
+                                    }
+                                    else
+                                    {
+                                        output.Errors.Add("Meter is in normal time, but DST status flag is set.");
+                                    }
+                                }
+                                else
+                                {
+                                    if (dst1)
+                                    {
+                                        output.Info.Add("Time is changed to DST time, and DST status flag is set.");
+                                    }
+                                    else
+                                    {
+                                        output.Info.Add("Time is changed to normal time and DST status flag is not set.");
+                                    }
+                                }
+                                //Move meter to current time.
+                                it.Time = new GXDateTime(time.Add(DateTime.Now - start));
+                                dev.Comm.Write(it, 2);
+                            }
+                            else
+                            {
+                                output.Info.Add("Changind DST begin and end time is not tested.");
+                            }
+                            //Return DST back.
+                            it.Enabled = dst;
+                            try
+                            {
+                                dev.Comm.Write(it, 8);
+                            }
+                            catch (Exception)
+                            {
+                                output.Errors.Add("Clock test failed. Failed to set DST.");
+                            }
+                        }
+                        //Change time zone to UTC.
+                        if (it.TimeZone != 0)
+                        {
+                            output.Info.Add("Time zone of the meter:" + it.TimeZone);
+                            it.TimeZone = 0;
+                            dev.Comm.Write(it, 3);
+                            //Read time.
+                            GXDateTime tmp = (GXDateTime)dev.Comm.ReadValue(it, 2);
+                            tmp.Skip |= DateTimeSkips.Second;
+                            if (tmp.Compare(time.Add(DateTime.Now - start)) != 0)
+                            {
+                                //Setting UTC time 
+                                output.Errors.Add("Clock test failed. Time is not valid if time zone is changed to UTC. Expected: " + time.Add(DateTime.Now - start) + " Actual: " + tmp);
+                            }
+                            else
+                            {
+                                output.Info.Add("Meter can change time zone to UTC and time is updated correctly.");
+                            }
+                        }
+                        else
+                        {
+                            it.TimeZone = (int)TimeZoneInfo.Utc.GetUtcOffset(DateTime.Now).TotalMinutes;
+                            output.Info.Add("Time zone of the meter is UTC. Try to set it to " + it.TimeZone);
+                            dev.Comm.Write(it, 3);
+                            //Read time.
+                            GXDateTime tmp = (GXDateTime)dev.Comm.ReadValue(it, 2);
+                            tmp.Skip |= DateTimeSkips.Second;
+                            if (tmp.Compare(time.Add(DateTime.Now - start)) != 0)
+                            {
+                                //Setting current time 
+                                output.Errors.Add("Clock test failed. Time is not valid if time zone is changed from UTC. Expected: " + time.Add(DateTime.Now - start) + " Actual: " + tmp);
+                            }
+                            else
+                            {
+                                output.Info.Add("Meter can change time zone from UTC and time is updated correctly.");
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        output.Errors.Add("Clock test failed.");
+                    }
+                    it.TimeZone = timeZone;
+                    dev.Comm.Write(it, 3);
                 }
             }
         }

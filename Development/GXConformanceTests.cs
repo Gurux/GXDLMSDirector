@@ -1141,7 +1141,7 @@ namespace GXDLMSDirector
                     {
                         TestClock(settings, dev, output);
                     }
-#endif //DEBUG                    
+#endif //DEBUG
 
                     if (dev.Comm.payload != 0)
                     {
@@ -5688,32 +5688,67 @@ namespace GXDLMSDirector
                     //Read old values.
                     dev.Comm.ReadValue(it, 3);
                     dev.Comm.ReadValue(it, 2);
-                    DateTime time;
+                    DateTime time = DateTime.Now;
                     int timeZone = it.TimeZone;
                     try
                     {
                         //Update new time using current time.
                         GXDateTime newTime = new GXDateTime(DateTime.Now);
                         it.Time = newTime;
-                        dev.Comm.Write(it, 2);
-                        newTime.Skip |= DateTimeSkips.Second;
-                        dev.Comm.ReadValue(it, 2);
                         DateTime start = DateTime.Now;
-                        time = it.Time;
-                        if (newTime.Compare(it.Time.Value.Add(DateTime.Now - start).LocalDateTime) != 0)
+                        try
                         {
-                            output.Errors.Add("Failed to set new time using current time zone. Expected: " + newTime + " Actual: " + it.Time.Value.Add(DateTime.Now - start).LocalDateTime);
+                            if (dev.Comm.client.UtcTimeZone)
+                            {
+                                it.TimeZone = (int)TimeZoneInfo.Local.BaseUtcOffset.TotalMinutes;
+                            }
+                            else
+                            {
+                                it.TimeZone = -(int)TimeZoneInfo.Local.BaseUtcOffset.TotalMinutes;
+                            }
+                            output.Info.Add("Set new Time zone:" + it.TimeZone);
+                            dev.Comm.Write(it, 3);
+                            dev.Comm.Write(it, 2);
+                            newTime.Skip |= DateTimeSkips.Second;
+                            dev.Comm.ReadValue(it, 2);
+                            time = it.Time;
+                            if (newTime.Compare(it.Time.Value.Add(DateTime.Now - start).LocalDateTime) != 0)
+                            {
+                                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock1\">Clock test #1 failed</a>. Failed to set new time using current time zone. Expected: " + newTime + " Actual: " + it.Time.Value.Add(DateTime.Now - start).LocalDateTime);
+                                start = time = DateTime.Now;
+                            }
+                            else
+                            {
+                                output.Info.Add("Setting new time succeeded using current time zone.");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock1\">Clock test #1 failed</a>. Failed to set new time using current time zone. Meter returns exception. " + ex.Message);
+                            start = time = DateTime.Now;
                         }
                         //Update new time using UTC time.
                         newTime = new GXDateTime(DateTime.Now.ToUniversalTime());
                         newTime.Skip |= DateTimeSkips.Second;
                         it.Time = newTime;
-                        dev.Comm.Write(it, 2);
-                        dev.Comm.ReadValue(it, 2);
-                        if (newTime.Compare(it.Time.Value.Add(DateTime.Now - start).LocalDateTime) != 0)
+                        try
                         {
-                            output.Errors.Add("Failed to set new time using UTC time. Expected: " + newTime + " Actual: " + it.Time.Value.Add(DateTime.Now - start).LocalDateTime);
+                            dev.Comm.Write(it, 2);
+                            dev.Comm.ReadValue(it, 2);
+                            if (newTime.Compare(it.Time.Value.Add(DateTime.Now - start).LocalDateTime) != 0)
+                            {
+                                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock2\">Clock test #2 failed</a>. Failed to set new time using UTC time. Expected: " + newTime + " Actual: " + it.Time.Value.Add(DateTime.Now - start).LocalDateTime);
+                            }
+                            else
+                            {
+                                output.Info.Add("Setting new time succeeded using UTC time zone.");
+                            }
                         }
+                        catch (Exception ex)
+                        {
+                            output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock2\">Clock test #2 failed</a>. Failed to set new time using UTC time zone. Meter returns exception. " + ex.Message);
+                        }
+
                         /*
                         //Update new time without timezone.
                         it.Time.Skip |= DateTimeSkips.Deviation;
@@ -5750,15 +5785,16 @@ namespace GXDLMSDirector
                                 }
                                 catch (Exception)
                                 {
-                                    output.Errors.Add("Clock test failed. Failed to enable DST.");
+                                    output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock3\">Clock test #3 failed</a>. Clock test failed. Failed to enable DST.");
                                 }
                                 //Read time.
-                                GXDateTime tmp = (GXDateTime)dev.Comm.ReadValue(it, 2);
+                                dev.Comm.ReadValue(it, 2);
+                                GXDateTime tmp = new GXDateTime(it.Time);
                                 tmp.Skip |= DateTimeSkips.Second;
                                 if (tmp.Compare(time.Add(DateTime.Now - start)) != 0)
                                 {
-                                    //Setting current time 
-                                    output.Errors.Add("Clock test failed. Time is not valid if DST is changed. Expected: " + time.Add(DateTime.Now - start) + " Actual: " + tmp);
+                                    //Setting current time
+                                    output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock3\">Clock test #3 failed</a>. Clock test failed. Time is not valid if DST is changed. Expected: " + time.Add(DateTime.Now - start) + " Actual: " + tmp);
                                 }
                                 else
                                 {
@@ -5774,7 +5810,7 @@ namespace GXDLMSDirector
                                     }
                                     catch (Exception)
                                     {
-                                        output.Errors.Add("Clock test failed. Failed to set DST.");
+                                        output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock3\">Clock test #3 failed</a>. Clock test failed. Failed to set DST.");
                                     }
                                 }
                             }
@@ -5788,36 +5824,29 @@ namespace GXDLMSDirector
                                 GXDateTime end = it.End;
                                 bool dst1;
                                 //Read time.
-                                GXDateTime tmp = (GXDateTime)dev.Comm.ReadValue(it, 2);
+                                dev.Comm.ReadValue(it, 2);
+                                GXDateTime tmp = new GXDateTime(it.Time);
                                 if (begin.Compare(tmp) != 1 && end.Compare(tmp) != -1)
                                 {
                                     output.Info.Add("Meter is in DST time.");
                                     if ((it.Status & ClockStatus.DaylightSavingActive) == 0)
                                     {
-                                        output.Errors.Add("Meter is in DST, but DST status flag is not set.");
-                                        dst1 = true;
+                                        output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 failed</a>. Meter is in DST, but DST status flag is not set.");
                                     }
-                                    else
-                                    {
-                                        //Move meter to normal time.
-                                        it.Time = new GXDateTime(end.Value.AddDays(7));
-                                        dst1 = false;
-                                    }
+                                    //Move meter to normal time.
+                                    it.Time = new GXDateTime(end.Value.AddDays(7));
+                                    dst1 = false;
                                 }
                                 else
                                 {
                                     output.Info.Add("Meter is in normal time.");
                                     if ((it.Status & ClockStatus.DaylightSavingActive) != 0)
                                     {
-                                        output.Errors.Add("Meter is in normal time, but DST status flag is set.");
-                                        dst1 = false;
+                                        output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 failed</a>. Meter is in normal time, but DST status flag is set.");
                                     }
-                                    else
-                                    {
-                                        //Move meter to DST time.
-                                        it.Time = new GXDateTime(begin.Value.AddDays(7));
-                                        dst1 = true;
-                                    }
+                                    //Move meter to DST time.
+                                    it.Time = new GXDateTime(begin.Value.AddDays(7));
+                                    dst1 = true;
                                 }
                                 //Write new time.
                                 dev.Comm.Write(it, 2);
@@ -5828,11 +5857,11 @@ namespace GXDLMSDirector
                                 {
                                     if (dst1)
                                     {
-                                        output.Errors.Add("Meter is in DST, but DST status flag is not set.");
+                                        output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 failed</a>. Meter is in DST, but DST status flag is not set.");
                                     }
                                     else
                                     {
-                                        output.Errors.Add("Meter is in normal time, but DST status flag is set.");
+                                        output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 failed</a>. Meter is in normal time, but DST status flag is set.");
                                     }
                                 }
                                 else
@@ -5852,7 +5881,7 @@ namespace GXDLMSDirector
                             }
                             else
                             {
-                                output.Info.Add("Changind DST begin and end time is not tested.");
+                                output.Info.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 is not tested</a>. Changind DST begin and end time is not tested.");
                             }
                             //Return DST back.
                             it.Enabled = dst;
@@ -5872,12 +5901,13 @@ namespace GXDLMSDirector
                             it.TimeZone = 0;
                             dev.Comm.Write(it, 3);
                             //Read time.
-                            GXDateTime tmp = (GXDateTime)dev.Comm.ReadValue(it, 2);
+                            dev.Comm.ReadValue(it, 2);
+                            GXDateTime tmp = new GXDateTime(it.Time);
                             tmp.Skip |= DateTimeSkips.Second;
                             if (tmp.Compare(time.Add(DateTime.Now - start)) != 0)
                             {
-                                //Setting UTC time 
-                                output.Errors.Add("Clock test failed. Time is not valid if time zone is changed to UTC. Expected: " + time.Add(DateTime.Now - start) + " Actual: " + tmp);
+                                //Setting UTC time
+                                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock5\">Clock test #5 failed</a>. Clock test failed. Time is not valid if time zone is changed to UTC. Expected: " + time.Add(DateTime.Now - start) + " Actual: " + tmp);
                             }
                             else
                             {
@@ -5890,12 +5920,13 @@ namespace GXDLMSDirector
                             output.Info.Add("Time zone of the meter is UTC. Try to set it to " + it.TimeZone);
                             dev.Comm.Write(it, 3);
                             //Read time.
-                            GXDateTime tmp = (GXDateTime)dev.Comm.ReadValue(it, 2);
+                            dev.Comm.ReadValue(it, 2);
+                            GXDateTime tmp = new GXDateTime(it.Time);
                             tmp.Skip |= DateTimeSkips.Second;
                             if (tmp.Compare(time.Add(DateTime.Now - start)) != 0)
                             {
-                                //Setting current time 
-                                output.Errors.Add("Clock test failed. Time is not valid if time zone is changed from UTC. Expected: " + time.Add(DateTime.Now - start) + " Actual: " + tmp);
+                                //Setting current time
+                                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock5\">Clock test #5 failed</a>.  Clock test failed. Time is not valid if time zone is changed from UTC. Expected: " + time.Add(DateTime.Now - start) + " Actual: " + tmp);
                             }
                             else
                             {
@@ -5905,10 +5936,15 @@ namespace GXDLMSDirector
                     }
                     catch (Exception ex)
                     {
-                        output.Errors.Add("Clock test failed.");
+                        output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock1\">Clock test failed</a>. " + ex.Message);
                     }
                     it.TimeZone = timeZone;
                     dev.Comm.Write(it, 3);
+                }
+                else
+                {
+                    output.Info.Add("Clock time access for " + it.LogicalName + " is " + it.GetAccess(2));
+                    output.Info.Add("Clock time zone access for " + it.LogicalName + " is " + it.GetAccess(3));
                 }
             }
         }

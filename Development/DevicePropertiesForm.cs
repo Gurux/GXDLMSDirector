@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10624 $,
-//                  $Date: 2019-04-24 13:56:09 +0300 (Wed, 24 Apr 2019) $
+// Version:         $Revision: 10643 $,
+//                  $Date: 2019-04-25 14:36:22 +0300 (Thu, 25 Apr 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -271,7 +271,7 @@ namespace GXDLMSDirector
                 }
             }
 
-            //Select first media if medis is not selected.
+            //Select first media if media is not selected.
             if (SelectedMedia == null)
             {
                 SelectedMedia = (Gurux.Common.IGXMedia)this.MediasCB.Items[0];

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10624 $,
-//                  $Date: 2019-04-24 13:56:09 +0300 (Wed, 24 Apr 2019) $
+// Version:         $Revision: 10643 $,
+//                  $Date: 2019-04-25 14:36:22 +0300 (Thu, 25 Apr 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -2829,6 +2829,10 @@ namespace GXDLMSDirector
                 if (file != null)
                 {
                     mruManager.Remove(file);
+                }
+                if (Ex.InnerException != null)
+                {
+                    Ex = Ex.InnerException;
                 }
                 GXLogWriter.WriteLog(Ex.ToString());
                 GXDLMS.Common.Error.ShowError(this, Ex);

@@ -1,0 +1,467 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0CA083FF-4071-4E07-AFFF-5B2E31A11D45}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GXDLMSDirector</RootNamespace>
+    <AssemblyName>GXDLMSDirector</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ApplicationIcon>GXDLMSDirector.ico</ApplicationIcon>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Background</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <SupportUrl>http://gurux.fi/GXDLMSDirectorHelp</SupportUrl>
+    <ErrorReportUrl>http://gurux.fi/project/issues/GXDLMSDirector</ErrorReportUrl>
+    <ProductName>GXDLMSDirector</ProductName>
+    <PublisherName>Gurux Ltd</PublisherName>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>publish.htm</WebPage>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>0.0.0.0</ApplicationVersion>
+    <UseApplicationTrust>true</UseApplicationTrust>
+    <CreateDesktopShortcut>true</CreateDesktopShortcut>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET46</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>CAC4A554188741D10E4F149122BF5D97F168A782</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>
+    </ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>Internet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <StartupObject>GXDLMSDirector.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Gurux.Common, Version=8.1.1811.1101, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Common.8.1.1811.1101\lib\net40\Gurux.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Gurux.DLMS, Version=8.5.1904.2403, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.8.5.1904.2403\lib\net40\Gurux.DLMS.dll</HintPath>
+    </Reference>
+    <Reference Include="Gurux.DLMS.UI, Version=8.5.1904.2403, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.8.5.1904.2403\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="Gurux.MQTT, Version=8.1.1904.2501, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.MQTT.8.1.1904.2501\lib\net46\Gurux.MQTT.dll</HintPath>
+    </Reference>
+    <Reference Include="Gurux.Net, Version=8.1.1903.601, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Net.8.1.1903.601\lib\net40\Gurux.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Gurux.Serial, Version=8.1.1904.1802, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Serial.8.1.1904.1802\lib\net40\Gurux.Serial.dll</HintPath>
+    </Reference>
+    <Reference Include="Gurux.Terminal, Version=8.1.1811.1101, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Terminal.8.1.1811.1101\lib\net40\Gurux.Terminal.dll</HintPath>
+    </Reference>
+    <Reference Include="MQTTnet, Version=2.8.5.0, Culture=neutral, PublicKeyToken=b69712f52770c0a7, processorArchitecture=MSIL">
+      <HintPath>packages\MQTTnet.2.8.5\lib\net452\MQTTnet.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Design" />
+    <Reference Include="System.Messaging" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="GXConformanceEditor.cs" />
+    <Compile Include="GXConformanceValueConverter.cs" />
+    <Compile Include="GXConformanceValueDescriptorCollection.cs" />
+    <Compile Include="GXConformanceValue.cs" />
+    <Compile Include="GXByteConverter.cs" />
+    <Compile Include="GXConformanceHdlcTests.cs" />
+    <Compile Include="GXConformanceApplicationTests.cs" />
+    <Compile Include="GXValuesDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GXValuesDlg.Designer.cs">
+      <DependentUpon>GXValuesDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GXDurations.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GXDurations.Designer.cs">
+      <DependentUpon>GXDurations.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GXByteUIEditor.cs" />
+    <Compile Include="CryptHelper.cs" />
+    <Compile Include="DeviceState.cs" />
+    <Compile Include="GXConformanceDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GXConformanceDlg.Designer.cs">
+      <DependentUpon>GXConformanceDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GXConformanceSettings.cs" />
+    <Compile Include="GXConformanceTests.cs" />
+    <Compile Include="GXConformanceTest.cs" />
+    <Compile Include="GXExternalMediaForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GXExternalMediaForm.Designer.cs">
+      <DependentUpon>GXExternalMediaForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GXByteEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GXByteEditor.Designer.cs">
+      <DependentUpon>GXByteEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GXOutput.cs" />
+    <Compile Include="GXSettingsDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GXSettingsDlg.Designer.cs">
+      <DependentUpon>GXSettingsDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ManufacturerSettings\GXHelpers.cs" />
+    <Compile Include="ManufacturerSettings\GXError.cs" />
+    <Compile Include="MRUManager.cs" />
+    <Compile Include="ManufacturerSettings\GXLogWriter.cs" />
+    <Compile Include="GXValueSerializer.cs" />
+    <Compile Include="GXDLMSObjectSerializer.cs" />
+    <Compile Include="GuruxWin32.cs" />
+    <Compile Include="GXDLMSCommunicator.cs" />
+    <Compile Include="GXDLMSDevice.cs" />
+    <Compile Include="GXDLMSDeviceCollection.cs" />
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ManufacturerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ManufacturerForm.Designer.cs">
+      <DependentUpon>ManufacturerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ManufacturersForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ManufacturersForm.Designer.cs">
+      <DependentUpon>ManufacturersForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OBISCodeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OBISCodeForm.Designer.cs">
+      <DependentUpon>OBISCodeForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OBISCodesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OBISCodesForm.Designer.cs">
+      <DependentUpon>OBISCodesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="DevicePropertiesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DevicePropertiesForm.Designer.cs">
+      <DependentUpon>DevicePropertiesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="GXValuesDlg.resx">
+      <DependentUpon>GXValuesDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GXDurations.resx">
+      <DependentUpon>GXDurations.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GXConformanceDlg.resx">
+      <DependentUpon>GXConformanceDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GXExternalMediaForm.resx">
+      <DependentUpon>GXExternalMediaForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GXByteEditor.resx">
+      <DependentUpon>GXByteEditor.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GXSettingsDlg.resx">
+      <DependentUpon>GXSettingsDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DevicePropertiesForm.resx">
+      <DependentUpon>DevicePropertiesForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ManufacturerForm.resx">
+      <DependentUpon>ManufacturerForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ManufacturersForm.resx">
+      <DependentUpon>ManufacturersForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OBISCodeForm.resx">
+      <DependentUpon>OBISCodeForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OBISCodesForm.resx">
+      <DependentUpon>OBISCodesForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="app.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\app.manifest" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NewMnu.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DeleteMnu.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\OpenMnu.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\OptionsMnu.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ReadMnu.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SaveMnu.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\WriteMnu.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ConnectMnu.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ConformanceTests\DLMS\ActionSchedule.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ConformanceTests\DLMS\ActivityCalendar.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ConformanceTests\DLMS\AssociationLogicalName.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\AutoAnswer.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\AutoConnect.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\Clock.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\Data.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\DemandRegister.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\DisconnectControl.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\ExtendedRegister.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\GprsSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\IecLocalPortSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\ImageTransfer.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\IP4Setup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\Limiter.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\MacAddressSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\MBusClient.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\MBusMasterPortSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\ModemConfiguration.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\PPPSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\ProfileGeneric.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\PushSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\Register.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\RegisterActivation.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\RegisterMonitor.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\SapAssignment.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\ScriptTable.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\SecuritySetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\SpecialDaysTable.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\TcpUdpSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\Ip6Setup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\Account.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\Credit.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\Charge.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\TokenGateway.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\v0\IecHdlcSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\v1\IecHdlcSetup.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\ParameterMonitor.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\WirelessModeQchannel.xml" />
+    <EmbeddedResource Include="ConformanceTests\SaudiArabia\ActivityCalendar.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ConformanceTests\SaudiArabia\ExtendedRegister.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\v0\GSMDiagnostic.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\v1\GSMDiagnostic.xml" />
+    <Content Include="GXDLMSDirector.ico" />
+    <None Include="Resources\NotifyMnu.bmp" />
+    <None Include="Resources\cct.png" />
+    <Content Include="Resources\warning.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.6 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <FileAssociation Include=".gxc">
+      <Visible>False</Visible>
+      <Description>GXDLMSDirector file</Description>
+      <Progid>GXDLMSDirector</Progid>
+      <DefaultIcon>GXDLMSDirector.ico</DefaultIcon>
+    </FileAssociation>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ConformanceTests\India\" />
+    <Folder Include="ConformanceTests\Italy\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

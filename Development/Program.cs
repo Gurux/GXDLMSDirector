@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10624 $,
-//                  $Date: 2019-04-24 13:56:09 +0300 (Wed, 24 Apr 2019) $
+// Version:         $Revision: 10643 $,
+//                  $Date: 2019-04-25 14:36:22 +0300 (Thu, 25 Apr 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -29,7 +29,6 @@
 // This code is licensed under the GNU General Public License v2.
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
-
 
 using System;
 using System.Collections.Generic;
@@ -176,6 +175,10 @@ namespace GXDLMSDirector
                         Properties.Settings.Default.Save();
                         Gurux.DLMS.UI.GXDlmsUi.Upgrade();
                     }
+#if (NET46)
+                    //This is needed to make Gurux.MQTT visible.
+                    object type = typeof(Gurux.MQTT.GXMqtt);
+#endif
 
                     string initDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
                     if (!Directory.Exists(initDir))

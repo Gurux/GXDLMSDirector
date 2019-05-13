@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10624 $,
-//                  $Date: 2019-04-24 13:56:09 +0300 (Wed, 24 Apr 2019) $
+// Version:         $Revision: 10724 $,
+//                  $Date: 2019-05-13 17:09:05 +0300 (Mon, 13 May 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -168,8 +168,10 @@ namespace GXDLMSDirector
             this.ContentsMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.LibraryVersionsMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.checkForNewUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem9 = new System.Windows.Forms.ToolStripSeparator();
             this.AboutMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.UpdateToLatestVersionMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.StatusLbl = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -179,6 +181,7 @@ namespace GXDLMSDirector
             this.ConnectCMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.DisconnectCMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.ReadCMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.ReadObjectMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.AddDeviceCMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem32 = new System.Windows.Forms.ToolStripSeparator();
             this.ImportMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -318,7 +321,6 @@ namespace GXDLMSDirector
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.ErrorsView = new System.Windows.Forms.ListView();
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.ReadObjectMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -359,10 +361,11 @@ namespace GXDLMSDirector
             this.conformanceTestsToolStripMenuItem,
             this.DataConcentratorsMnu,
             this.updateManufactureSettingsToolStripMenuItem,
-            this.helpToolStripMenuItem});
+            this.helpToolStripMenuItem,
+            this.UpdateToLatestVersionMnu});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(786, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(913, 24);
             this.menuStrip1.TabIndex = 3;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -1181,6 +1184,7 @@ namespace GXDLMSDirector
             this.ContentsMnu,
             this.toolStripMenuItem1,
             this.LibraryVersionsMenu,
+            this.checkForNewUpdatesToolStripMenuItem,
             this.toolStripMenuItem9,
             this.AboutMnu});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
@@ -1190,7 +1194,7 @@ namespace GXDLMSDirector
             // ContentsMnu
             // 
             this.ContentsMnu.Name = "ContentsMnu";
-            this.ContentsMnu.Size = new System.Drawing.Size(177, 22);
+            this.ContentsMnu.Size = new System.Drawing.Size(195, 22);
             this.ContentsMnu.Text = "Technical support...";
             this.ContentsMnu.ToolTipText = "Show help.";
             this.ContentsMnu.Click += new System.EventHandler(this.ContentsMnu_Click);
@@ -1198,28 +1202,43 @@ namespace GXDLMSDirector
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(174, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(192, 6);
             // 
             // LibraryVersionsMenu
             // 
             this.LibraryVersionsMenu.Name = "LibraryVersionsMenu";
-            this.LibraryVersionsMenu.Size = new System.Drawing.Size(177, 22);
+            this.LibraryVersionsMenu.Size = new System.Drawing.Size(195, 22);
             this.LibraryVersionsMenu.Text = "Library Versions...";
             this.LibraryVersionsMenu.ToolTipText = "Show library versions.";
             this.LibraryVersionsMenu.Click += new System.EventHandler(this.LibraryVersionsMenu_Click);
             // 
+            // checkForNewUpdatesToolStripMenuItem
+            // 
+            this.checkForNewUpdatesToolStripMenuItem.Name = "checkForNewUpdatesToolStripMenuItem";
+            this.checkForNewUpdatesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.checkForNewUpdatesToolStripMenuItem.Text = "Check for updates";
+            this.checkForNewUpdatesToolStripMenuItem.Click += new System.EventHandler(this.checkForNewUpdatesToolStripMenuItem_Click);
+            // 
             // toolStripMenuItem9
             // 
             this.toolStripMenuItem9.Name = "toolStripMenuItem9";
-            this.toolStripMenuItem9.Size = new System.Drawing.Size(174, 6);
+            this.toolStripMenuItem9.Size = new System.Drawing.Size(192, 6);
             // 
             // AboutMnu
             // 
             this.AboutMnu.Name = "AboutMnu";
-            this.AboutMnu.Size = new System.Drawing.Size(177, 22);
+            this.AboutMnu.Size = new System.Drawing.Size(195, 22);
             this.AboutMnu.Text = "&About...";
             this.AboutMnu.ToolTipText = "General information from the application.";
             this.AboutMnu.Click += new System.EventHandler(this.AboutMnu_Click);
+            // 
+            // UpdateToLatestVersionMnu
+            // 
+            this.UpdateToLatestVersionMnu.Name = "UpdateToLatestVersionMnu";
+            this.UpdateToLatestVersionMnu.Size = new System.Drawing.Size(146, 20);
+            this.UpdateToLatestVersionMnu.Text = "Update to latest version.";
+            this.UpdateToLatestVersionMnu.Visible = false;
+            this.UpdateToLatestVersionMnu.Click += new System.EventHandler(this.UpdateToLatestVersionMnu_Click);
             // 
             // statusStrip1
             // 
@@ -1229,14 +1248,14 @@ namespace GXDLMSDirector
             this.ProgressBar});
             this.statusStrip1.Location = new System.Drawing.Point(0, 514);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(786, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(913, 22);
             this.statusStrip1.TabIndex = 5;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // StatusLbl
             // 
             this.StatusLbl.Name = "StatusLbl";
-            this.StatusLbl.Size = new System.Drawing.Size(669, 17);
+            this.StatusLbl.Size = new System.Drawing.Size(796, 17);
             this.StatusLbl.Spring = true;
             this.StatusLbl.Text = "Ready";
             this.StatusLbl.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1288,76 +1307,83 @@ namespace GXDLMSDirector
             this.toolStripMenuItem5,
             this.PropertiesCMnu});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 242);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(160, 220);
             // 
             // ConnectCMnu
             // 
             this.ConnectCMnu.Name = "ConnectCMnu";
-            this.ConnectCMnu.Size = new System.Drawing.Size(180, 22);
+            this.ConnectCMnu.Size = new System.Drawing.Size(159, 22);
             this.ConnectCMnu.Text = "&Connect";
             this.ConnectCMnu.Click += new System.EventHandler(this.ConnectMnu_Click);
             // 
             // DisconnectCMnu
             // 
             this.DisconnectCMnu.Name = "DisconnectCMnu";
-            this.DisconnectCMnu.Size = new System.Drawing.Size(180, 22);
+            this.DisconnectCMnu.Size = new System.Drawing.Size(159, 22);
             this.DisconnectCMnu.Text = "&Disconnect";
             this.DisconnectCMnu.Click += new System.EventHandler(this.DisconnectMnu_Click);
             // 
             // ReadCMnu
             // 
             this.ReadCMnu.Name = "ReadCMnu";
-            this.ReadCMnu.Size = new System.Drawing.Size(180, 22);
+            this.ReadCMnu.Size = new System.Drawing.Size(159, 22);
             this.ReadCMnu.Text = "Read";
             this.ReadCMnu.Click += new System.EventHandler(this.ReadMnu_Click);
+            // 
+            // ReadObjectMnu
+            // 
+            this.ReadObjectMnu.Name = "ReadObjectMnu";
+            this.ReadObjectMnu.Size = new System.Drawing.Size(159, 22);
+            this.ReadObjectMnu.Text = "Read Object";
+            this.ReadObjectMnu.Click += new System.EventHandler(this.ReadObjectMnu_Click);
             // 
             // AddDeviceCMnu
             // 
             this.AddDeviceCMnu.Name = "AddDeviceCMnu";
-            this.AddDeviceCMnu.Size = new System.Drawing.Size(180, 22);
+            this.AddDeviceCMnu.Size = new System.Drawing.Size(159, 22);
             this.AddDeviceCMnu.Text = "&Add Device";
             this.AddDeviceCMnu.Click += new System.EventHandler(this.AddDeviceMnu_Click);
             // 
             // toolStripMenuItem32
             // 
             this.toolStripMenuItem32.Name = "toolStripMenuItem32";
-            this.toolStripMenuItem32.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem32.Size = new System.Drawing.Size(156, 6);
             // 
             // ImportMenu
             // 
             this.ImportMenu.Name = "ImportMenu";
-            this.ImportMenu.Size = new System.Drawing.Size(180, 22);
+            this.ImportMenu.Size = new System.Drawing.Size(159, 22);
             this.ImportMenu.Text = "Load Values";
             this.ImportMenu.Click += new System.EventHandler(this.ImportMenu_Click);
             // 
             // ExportMenu
             // 
             this.ExportMenu.Name = "ExportMenu";
-            this.ExportMenu.Size = new System.Drawing.Size(180, 22);
+            this.ExportMenu.Size = new System.Drawing.Size(159, 22);
             this.ExportMenu.Text = "Save Values As...";
             this.ExportMenu.Click += new System.EventHandler(this.ExportMenu_Click);
             // 
             // Line1CMnu
             // 
             this.Line1CMnu.Name = "Line1CMnu";
-            this.Line1CMnu.Size = new System.Drawing.Size(177, 6);
+            this.Line1CMnu.Size = new System.Drawing.Size(156, 6);
             // 
             // DeleteCMnu
             // 
             this.DeleteCMnu.Name = "DeleteCMnu";
-            this.DeleteCMnu.Size = new System.Drawing.Size(180, 22);
+            this.DeleteCMnu.Size = new System.Drawing.Size(159, 22);
             this.DeleteCMnu.Text = "Delete";
             this.DeleteCMnu.Click += new System.EventHandler(this.DeleteMnu_Click);
             // 
             // toolStripMenuItem5
             // 
             this.toolStripMenuItem5.Name = "toolStripMenuItem5";
-            this.toolStripMenuItem5.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(156, 6);
             // 
             // PropertiesCMnu
             // 
             this.PropertiesCMnu.Name = "PropertiesCMnu";
-            this.PropertiesCMnu.Size = new System.Drawing.Size(180, 22);
+            this.PropertiesCMnu.Size = new System.Drawing.Size(159, 22);
             this.PropertiesCMnu.Text = "&Properties";
             this.PropertiesCMnu.Click += new System.EventHandler(this.PropertiesMnu_Click);
             // 
@@ -1382,7 +1408,7 @@ namespace GXDLMSDirector
             this.toolStripButton1});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(786, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(913, 25);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -1678,7 +1704,7 @@ namespace GXDLMSDirector
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel1.Location = new System.Drawing.Point(201, 414);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(585, 100);
+            this.panel1.Size = new System.Drawing.Size(712, 100);
             this.panel1.TabIndex = 30;
             // 
             // tabControl3
@@ -1689,7 +1715,7 @@ namespace GXDLMSDirector
             this.tabControl3.Location = new System.Drawing.Point(241, 0);
             this.tabControl3.Name = "tabControl3";
             this.tabControl3.SelectedIndex = 0;
-            this.tabControl3.Size = new System.Drawing.Size(344, 100);
+            this.tabControl3.Size = new System.Drawing.Size(471, 100);
             this.tabControl3.TabIndex = 47;
             // 
             // tabPage6
@@ -1698,7 +1724,7 @@ namespace GXDLMSDirector
             this.tabPage6.Location = new System.Drawing.Point(4, 22);
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage6.Size = new System.Drawing.Size(336, 74);
+            this.tabPage6.Size = new System.Drawing.Size(463, 74);
             this.tabPage6.TabIndex = 0;
             this.tabPage6.Text = "Conformace Tests";
             this.tabPage6.UseVisualStyleBackColor = true;
@@ -1714,7 +1740,7 @@ namespace GXDLMSDirector
             this.ConformanceTests.HideSelection = false;
             this.ConformanceTests.Location = new System.Drawing.Point(3, 3);
             this.ConformanceTests.Name = "ConformanceTests";
-            this.ConformanceTests.Size = new System.Drawing.Size(330, 68);
+            this.ConformanceTests.Size = new System.Drawing.Size(457, 68);
             this.ConformanceTests.SmallImageList = this.imageList2;
             this.ConformanceTests.TabIndex = 46;
             this.toolTip1.SetToolTip(this.ConformanceTests, "Conformance Tests shows executed conformance tests.");
@@ -1833,7 +1859,7 @@ namespace GXDLMSDirector
             this.tabPage7.Location = new System.Drawing.Point(4, 22);
             this.tabPage7.Name = "tabPage7";
             this.tabPage7.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage7.Size = new System.Drawing.Size(336, 74);
+            this.tabPage7.Size = new System.Drawing.Size(463, 74);
             this.tabPage7.TabIndex = 1;
             this.tabPage7.Text = "History";
             this.tabPage7.UseVisualStyleBackColor = true;
@@ -1848,7 +1874,7 @@ namespace GXDLMSDirector
             this.ConformanceHistoryTests.FullRowSelect = true;
             this.ConformanceHistoryTests.Location = new System.Drawing.Point(3, 3);
             this.ConformanceHistoryTests.Name = "ConformanceHistoryTests";
-            this.ConformanceHistoryTests.Size = new System.Drawing.Size(330, 68);
+            this.ConformanceHistoryTests.Size = new System.Drawing.Size(457, 68);
             this.ConformanceHistoryTests.SmallImageList = this.imageList2;
             this.ConformanceHistoryTests.TabIndex = 47;
             this.toolTip1.SetToolTip(this.ConformanceHistoryTests, "Conformance Tests shows executed conformance tests.");
@@ -2037,7 +2063,7 @@ namespace GXDLMSDirector
             this.splitter2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.splitter2.Location = new System.Drawing.Point(201, 411);
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(585, 3);
+            this.splitter2.Size = new System.Drawing.Size(712, 3);
             this.splitter2.TabIndex = 31;
             this.splitter2.TabStop = false;
             // 
@@ -2538,18 +2564,11 @@ namespace GXDLMSDirector
             this.columnHeader2.Text = "Name";
             this.columnHeader2.Width = 117;
             // 
-            // ReadObjectMnu
-            // 
-            this.ReadObjectMnu.Name = "ReadObjectMnu";
-            this.ReadObjectMnu.Size = new System.Drawing.Size(180, 22);
-            this.ReadObjectMnu.Text = "Read Object";
-            this.ReadObjectMnu.Click += new System.EventHandler(this.ReadObjectMnu_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(786, 536);
+            this.ClientSize = new System.Drawing.Size(913, 536);
             this.Controls.Add(this.DeviceInfoView);
             this.Controls.Add(this.tabControl2);
             this.Controls.Add(this.ObjectValueView);
@@ -2865,6 +2884,8 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ToolStripMenuItem ImportMenu;
         private System.Windows.Forms.ToolStripMenuItem UpdateDescriptionsMenu;
         private System.Windows.Forms.ToolStripMenuItem ReadObjectMnu;
+        private System.Windows.Forms.ToolStripMenuItem UpdateToLatestVersionMnu;
+        private System.Windows.Forms.ToolStripMenuItem checkForNewUpdatesToolStripMenuItem;
     }
 }
 

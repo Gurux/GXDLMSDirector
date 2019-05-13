@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10626 $,
-//                  $Date: 2019-04-24 14:03:55 +0300 (Wed, 24 Apr 2019) $
+// Version:         $Revision: 10710 $,
+//                  $Date: 2019-05-13 10:15:30 +0300 (Mon, 13 May 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1628,14 +1628,10 @@ namespace GXDLMSDirector
             foreach (byte[] it in data)
             {
                 ReadDataBlock(it, "", 1, 1, reply);
-                if (list.Count != 1 && reply.Value is object[])
+                //Value is null if data is send in multiple frames.
+                if (reply.Value is object[])
                 {
                     values.AddRange((object[])reply.Value);
-                }
-                else if (reply.Value != null)
-                {
-                    //Value is null if data is send in multiple frames.
-                    values.Add(reply.Value);
                 }
                 reply.Clear();
             }

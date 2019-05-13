@@ -132,11 +132,11 @@
     <Reference Include="Gurux.Common, Version=8.1.1811.1101, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Common.8.1.1811.1101\lib\net40\Gurux.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=8.5.1904.2403, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.8.5.1904.2403\lib\net40\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=8.5.1905.1304, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.8.5.1905.1304\lib\net40\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=8.5.1904.2403, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.8.5.1904.2403\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=8.5.1905.1301, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.8.5.1905.1301\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.Net, Version=8.1.1903.601, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Net.8.1.1903.601\lib\net40\Gurux.Net.dll</HintPath>
@@ -406,6 +406,7 @@
     <EmbeddedResource Include="ConformanceTests\SaudiArabia\ExtendedRegister.xml" />
     <EmbeddedResource Include="ConformanceTests\DLMS\v0\GSMDiagnostic.xml" />
     <EmbeddedResource Include="ConformanceTests\DLMS\v1\GSMDiagnostic.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\UtilityTables.xml" />
     <Content Include="GXDLMSDirector.ico" />
     <None Include="Resources\NotifyMnu.bmp" />
     <None Include="Resources\cct.png" />

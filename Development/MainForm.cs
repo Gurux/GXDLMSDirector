@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10643 $,
-//                  $Date: 2019-04-25 14:36:22 +0300 (Thu, 25 Apr 2019) $
+// Version:         $Revision: 10724 $,
+//                  $Date: 2019-05-13 17:09:05 +0300 (Mon, 13 May 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -55,6 +55,7 @@ using Gurux.Net;
 using System.Text;
 using static System.Windows.Forms.ListView;
 using System.Reflection;
+using System.Deployment.Application;
 
 namespace GXDLMSDirector
 {
@@ -2134,10 +2135,10 @@ namespace GXDLMSDirector
                             {
                                 dev.Comm.OnBeforeRead += new ReadEventHandler(OnBeforeRead);
                                 dev.Comm.OnAfterRead += new ReadEventHandler(OnAfterRead);
-                                if (parameters.Length == 3 && (bool) parameters[2])
+                                if (parameters.Length == 3 && (bool)parameters[2])
                                 {
                                     List<KeyValuePair<GXDLMSObject, int>> list = new List<KeyValuePair<GXDLMSObject, int>>();
-                                    foreach(int index in ((IGXDLMSBase) obj).GetAttributeIndexToRead(ForceRefreshBtn.Checked))
+                                    foreach (int index in ((IGXDLMSBase)obj).GetAttributeIndexToRead(ForceRefreshBtn.Checked))
                                     {
                                         list.Add(new KeyValuePair<GXDLMSObject, int>(obj, index));
                                     }
@@ -3448,93 +3449,40 @@ namespace GXDLMSDirector
                     }
                 }
                 DataConcentratorsMnu.Visible = DataConcentratorsMnu.DropDownItems.Count != 0;
-                try {
-                if (list.Count != 0)
+                try
                 {
-                    if (list[0] == "-h" || list[0] == "/h")
+                    if (list.Count != 0)
                     {
-                        ShowHelp();
-                        Close();
-                        return;
-                    }
-                    this.path = list[0];
-                    LoadFile(this.path);
-                    list.RemoveAt(0);
-                    bool showHelp;
-                    CloseApp closeApp;
-                    string output, settingsFile;
-                    List<string> files = new List<string>();
-                    bool ctt;
-                    GetParameters(list.ToArray(), files, out output, out settingsFile, out showHelp, out closeApp, out ctt);
-                    if (showHelp)
-                    {
-                        Close();
-                        return;
-                    }
-                    foreach (string it in files)
-                    {
-                        if (!File.Exists(it))
+                        if (list[0] == "-h" || list[0] == "/h")
                         {
-                            throw new Exception("File don't exists. " + it);
+                            ShowHelp();
+                            Close();
+                            return;
                         }
-                    }
-                    GXConformanceSettings settings;
-                    XmlSerializer x = new XmlSerializer(typeof(GXConformanceSettings));
-                    if (ctt)
-                    {
-                        if (string.IsNullOrEmpty(settingsFile))
+                        this.path = list[0];
+                        LoadFile(this.path);
+                        list.RemoveAt(0);
+                        bool showHelp;
+                        CloseApp closeApp;
+                        string output, settingsFile;
+                        List<string> files = new List<string>();
+                        bool ctt;
+                        GetParameters(list.ToArray(), files, out output, out settingsFile, out showHelp, out closeApp, out ctt);
+                        if (showHelp)
                         {
-                            if (Properties.Settings.Default.ConformanceSettings == "")
-                            {
-                                settings = new GXConformanceSettings();
-                            }
-                            else
-                            {
-                                try
-                                {
-                                    using (StringReader reader = new StringReader(Properties.Settings.Default.ConformanceSettings))
-                                    {
-                                        settings = (GXConformanceSettings)x.Deserialize(reader);
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                                    settings = new GXConformanceSettings();
-                                }
-                            }
-                            settings.WarningBeforeStart = false;
-                            settings.CloseApplication = closeApp;
+                            Close();
+                            return;
                         }
-                        else
-                        {
-                            using (StringReader reader = new StringReader(settingsFile))
-                            {
-                                settings = (GXConformanceSettings)x.Deserialize(reader);
-                                settings.WarningBeforeStart = false;
-                                settings.CloseApplication = closeApp;
-                            }
-                        }
-                        if (RunConformanceTest(settings, Devices, false, output))
-                        {
-                            try
-                            {
-                                using (StringWriter writer = new StringWriter())
-                                {
-                                    x.Serialize(writer, settings);
-                                    Properties.Settings.Default.ConformanceSettings = writer.ToString();
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                System.Diagnostics.Debug.WriteLine(ex.Message);
-                                Properties.Settings.Default.ConformanceSettings = "";
-                            }
-                        }
-                    }
-                    else
-                    {
                         foreach (string it in files)
+                        {
+                            if (!File.Exists(it))
+                            {
+                                throw new Exception("File don't exists. " + it);
+                            }
+                        }
+                        GXConformanceSettings settings;
+                        XmlSerializer x = new XmlSerializer(typeof(GXConformanceSettings));
+                        if (ctt)
                         {
                             if (string.IsNullOrEmpty(settingsFile))
                             {
@@ -3559,18 +3507,14 @@ namespace GXDLMSDirector
                                 }
                                 settings.WarningBeforeStart = false;
                                 settings.CloseApplication = closeApp;
-                                settings.ExternalTests = it;
-                                settings.ExcludedApplicationTests.Set(true);
-                                settings.ExcludedHdlcTests.Set(true);
-                                settings.ExcludeBasicTests = settings.ExcludeMeterInfo = true;
                             }
                             else
                             {
                                 using (StringReader reader = new StringReader(settingsFile))
                                 {
                                     settings = (GXConformanceSettings)x.Deserialize(reader);
-                                    settings.CloseApplication = closeApp;
                                     settings.WarningBeforeStart = false;
+                                    settings.CloseApplication = closeApp;
                                 }
                             }
                             if (RunConformanceTest(settings, Devices, false, output))
@@ -3590,8 +3534,66 @@ namespace GXDLMSDirector
                                 }
                             }
                         }
+                        else
+                        {
+                            foreach (string it in files)
+                            {
+                                if (string.IsNullOrEmpty(settingsFile))
+                                {
+                                    if (Properties.Settings.Default.ConformanceSettings == "")
+                                    {
+                                        settings = new GXConformanceSettings();
+                                    }
+                                    else
+                                    {
+                                        try
+                                        {
+                                            using (StringReader reader = new StringReader(Properties.Settings.Default.ConformanceSettings))
+                                            {
+                                                settings = (GXConformanceSettings)x.Deserialize(reader);
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            System.Diagnostics.Debug.WriteLine(ex.Message);
+                                            settings = new GXConformanceSettings();
+                                        }
+                                    }
+                                    settings.WarningBeforeStart = false;
+                                    settings.CloseApplication = closeApp;
+                                    settings.ExternalTests = it;
+                                    settings.ExcludedApplicationTests.Set(true);
+                                    settings.ExcludedHdlcTests.Set(true);
+                                    settings.ExcludeBasicTests = settings.ExcludeMeterInfo = true;
+                                }
+                                else
+                                {
+                                    using (StringReader reader = new StringReader(settingsFile))
+                                    {
+                                        settings = (GXConformanceSettings)x.Deserialize(reader);
+                                        settings.CloseApplication = closeApp;
+                                        settings.WarningBeforeStart = false;
+                                    }
+                                }
+                                if (RunConformanceTest(settings, Devices, false, output))
+                                {
+                                    try
+                                    {
+                                        using (StringWriter writer = new StringWriter())
+                                        {
+                                            x.Serialize(writer, settings);
+                                            Properties.Settings.Default.ConformanceSettings = writer.ToString();
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        System.Diagnostics.Debug.WriteLine(ex.Message);
+                                        Properties.Settings.Default.ConformanceSettings = "";
+                                    }
+                                }
+                            }
+                        }
                     }
-                }
                 }
                 catch (Exception Ex)
                 {
@@ -3918,6 +3920,43 @@ namespace GXDLMSDirector
                             Gurux.Win32.InternetConnectionState flags = Gurux.Win32.InternetConnectionState.INTERNET_CONNECTION_LAN | Gurux.Win32.InternetConnectionState.INTERNET_CONNECTION_CONFIGURED;
                             isConnected = Gurux.Win32.InternetGetConnectedState(ref flags, 0);
                         }
+                        //Check if there are new app versions.
+                        try
+                        {
+                            UpdateCheckInfo info = null;
+                            //Check is Click once installed.
+                            if (!Debugger.IsAttached && isConnected && ApplicationDeployment.IsNetworkDeployed)
+                            {
+                                ApplicationDeployment ad = ApplicationDeployment.CurrentDeployment;
+                                try
+                                {
+                                    info = ad.CheckForDetailedUpdate();
+                                }
+                                catch (DeploymentDownloadException dde)
+                                {
+                                    MessageBox.Show("The new version of the application cannot be downloaded at this time. \n\nPlease check your network connection, or try again later. Error: " + dde.Message);
+                                    return;
+                                }
+                                catch (InvalidDeploymentException ide)
+                                {
+                                    MessageBox.Show("Cannot check for a new version of the application. The ClickOnce deployment is corrupt. Please redeploy the application and try again. Error: " + ide.Message);
+                                    return;
+                                }
+                                catch (InvalidOperationException ioe)
+                                {
+                                    MessageBox.Show("This application cannot be updated. It is likely not a ClickOnce application. Error: " + ioe.Message);
+                                    return;
+                                }
+                                if (info.UpdateAvailable)
+                                {
+                                    main.BeginInvoke(new CheckUpdatesEventHandler(OnNewAppVersion), new object[] { main });
+                                }
+                            }
+                        }
+                        catch (Exception Ex)
+                        {
+                            //Skip error.
+                        }
                         //If there are updates available.
                         if (isConnected && GXManufacturerCollection.IsUpdatesAvailable())
                         {
@@ -3942,6 +3981,10 @@ namespace GXDLMSDirector
             form.updateManufactureSettingsToolStripMenuItem.Visible = true;
         }
 
+        static void OnNewAppVersion(MainForm form)
+        {
+            form.UpdateToLatestVersionMnu.Visible = true;
+        }
 
         private void updateManufactureSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -5861,6 +5904,104 @@ namespace GXDLMSDirector
                     TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Read, OnError, null, new object[] { items, SelectedView, true });
                     TransactionWork.Start();
                 }
+            }
+        }
+
+        private void UpdateToLatestVersionMnu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                UpdateCheckInfo info = null;
+                //Check is Click once installed.
+                if (!Debugger.IsAttached && ApplicationDeployment.IsNetworkDeployed)
+                {
+                    ApplicationDeployment ad = ApplicationDeployment.CurrentDeployment;
+                    try
+                    {
+                        info = ad.CheckForDetailedUpdate();
+                    }
+                    catch (DeploymentDownloadException dde)
+                    {
+                        MessageBox.Show("The new version of the application cannot be downloaded at this time. \n\nPlease check your network connection, or try again later. Error: " + dde.Message);
+                        return;
+                    }
+                    catch (InvalidDeploymentException ide)
+                    {
+                        MessageBox.Show("Cannot check for a new version of the application. The ClickOnce deployment is corrupt. Please redeploy the application and try again. Error: " + ide.Message);
+                        return;
+                    }
+                    catch (InvalidOperationException ioe)
+                    {
+                        MessageBox.Show("This application cannot be updated. It is likely not a ClickOnce application. Error: " + ioe.Message);
+                        return;
+                    }
+                    if (info.UpdateAvailable)
+                    {
+                        try
+                        {
+                            ad.Update();
+                            Application.Restart();
+                        }
+                        catch (DeploymentDownloadException dde)
+                        {
+                            MessageBox.Show("Cannot install the latest version of the application. \n\nPlease check your network connection, or try again later. Error: " + dde);
+                        }
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                Error.ShowError(this, Ex);
+            }
+        }
+
+        private void checkForNewUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //Check if there are new app versions.
+            try
+            {
+                bool isConnected = true;
+                if (Environment.OSVersion.Platform != PlatformID.Unix)
+                {
+                    Gurux.Win32.InternetConnectionState flags = Gurux.Win32.InternetConnectionState.INTERNET_CONNECTION_LAN | Gurux.Win32.InternetConnectionState.INTERNET_CONNECTION_CONFIGURED;
+                    isConnected = Gurux.Win32.InternetGetConnectedState(ref flags, 0);
+                }
+                UpdateCheckInfo info = null;
+                //Check is Click once installed.
+                if (!Debugger.IsAttached && isConnected && ApplicationDeployment.IsNetworkDeployed)
+                {
+                    ApplicationDeployment ad = ApplicationDeployment.CurrentDeployment;
+                    try
+                    {
+                        info = ad.CheckForDetailedUpdate();
+                    }
+                    catch (DeploymentDownloadException dde)
+                    {
+                        MessageBox.Show(this, "The new version of the application cannot be downloaded at this time. \n\nPlease check your network connection, or try again later. Error: " + dde.Message);
+                        return;
+                    }
+                    catch (InvalidDeploymentException ide)
+                    {
+                        MessageBox.Show(this, "Cannot check for a new version of the application. The ClickOnce deployment is corrupt. Please redeploy the application and try again. Error: " + ide.Message);
+                        return;
+                    }
+                    catch (InvalidOperationException ioe)
+                    {
+                        MessageBox.Show(this, "This application cannot be updated. It is likely not a ClickOnce application. Error: " + ioe.Message);
+                        return;
+                    }
+                    if (info.UpdateAvailable)
+                    {
+                        UpdateToLatestVersionMnu.Visible = true;
+                        MessageBox.Show(this, "New updates available.");
+                        return;
+                    }
+                }
+                MessageBox.Show(this, "No updates available.");
+            }
+            catch (Exception Ex)
+            {
+                Error.ShowError(this, Ex);
             }
         }
     }

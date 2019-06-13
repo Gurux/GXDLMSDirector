@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10724 $,
-//                  $Date: 2019-05-13 17:09:05 +0300 (Mon, 13 May 2019) $
+// Version:         $Revision: 10801 $,
+//                  $Date: 2019-06-13 15:20:59 +0300 (to, 13 kesä 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -71,7 +71,7 @@ namespace GXDLMSDirector
         /// <summary>
         /// Events translator.
         /// </summary>
-        GXDLMSTranslator eventsTranslator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
+        readonly GXDLMSTranslator eventsTranslator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
         GXByteBuffer eventsData = new GXByteBuffer();
         delegate void ShowLastErrorsEventHandler(GXDLMSObject target);
 
@@ -909,7 +909,7 @@ namespace GXDLMSDirector
                                 else
                                 {
                                     //Is action allowed.
-                                    if (ve.Target.GetMethodAccess(ve.Index) != MethodAccessMode.NoAccess)
+                                    if (ve.Index < 0 || ve.Target.GetMethodAccess(ve.Index) != MethodAccessMode.NoAccess)
                                     {
                                         dev.Comm.MethodRequest(ve.Target, ve.Index, ve.Value, ve.Text, reply);
                                     }
@@ -2752,6 +2752,7 @@ namespace GXDLMSDirector
             foreach (GXDLMSMeter dev in Devices)
             {
                 GXDLMSDevice d = dev as GXDLMSDevice;
+                d.Comm.client.Standard = dev.Standard;
                 //Conformance is new funtionality. Set default value if not set.
                 if (dev.UseLogicalNameReferencing && dev.Conformance == (int)GXDLMSClient.GetInitialConformance(false))
                 {

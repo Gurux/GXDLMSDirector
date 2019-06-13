@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10643 $,
-//                  $Date: 2019-04-25 14:36:22 +0300 (Thu, 25 Apr 2019) $
+// Version:         $Revision: 10795 $,
+//                  $Date: 2019-06-13 11:14:08 +0300 (to, 13 kesä 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -378,7 +378,7 @@ namespace GXDLMSDirector
                     Comm.GetProfileGenericColumns(item);
                     if (Standard == Standard.Italy && item.CaptureObjects.Count == 0)
                     {
-                        cols = GetColumns(Comm.client.Objects, Comm.client.CustomObisCodes, item.LogicalName);
+                        cols = GetColumns(Comm.client.Objects, Comm.client.CustomObisCodes, item.LogicalName, 0);
                         GXDLMSConverter c = new GXDLMSConverter(Standard);
                         foreach (var it in cols)
                         {
@@ -391,7 +391,28 @@ namespace GXDLMSDirector
                 {
                     if (Standard == Standard.Italy)
                     {
-                        cols = GetColumns(Comm.client.Objects, Comm.client.CustomObisCodes, item.LogicalName);
+                        GXDLMSData obj = Comm.client.Objects.FindByLN(ObjectType.Data, "0.0.96.1.3.255") as GXDLMSData;
+                        int type = 0;
+                        if (obj != null)
+                        {
+                            if (obj.Value == null)
+                            {
+                                try
+                                {
+                                    Comm.ReadValue(obj, 2);
+                                    type = Convert.ToInt16(obj.Value);
+                                }
+                                catch (Exception)
+                                {
+                                    type = 0;
+                                }
+                            }
+                            else
+                            {
+                                type = Convert.ToInt16(obj.Value);
+                            }
+                        }
+                        cols = GetColumns(Comm.client.Objects, Comm.client.CustomObisCodes, item.LogicalName, type);
                         item.CaptureObjects.Clear();
                         GXDLMSConverter c = new GXDLMSConverter(Standard);
                         foreach (var it in cols)
@@ -442,41 +463,48 @@ namespace GXDLMSDirector
             return new GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>(obj, new GXDLMSCaptureObject(index, 0));
         }
 
-        private static List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> GetColumns(GXDLMSObjectCollection objects, GXObisCodeCollection obisCodes, string ln)
+        private static List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> GetColumns(GXDLMSObjectCollection objects, GXObisCodeCollection obisCodes, string ln, int type)
         {
             List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> list = new List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>>();
             //Event Logbook
             if (ln == "7.0.99.98.0.255")
             {
-                /*
                 //If meter.
-                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
-                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.96.15.2.255", 2));
-                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.96.11.2.255", 2));
-                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "7.1.96.5.1.255", 2));
-                list.Add(CreateColumn(objects, obisCodes, ObjectType.AssociationLogicalName, "0.0.40.0.0.255", 11));
-    */
-                //If concentrator.
-                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
-                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.96.15.2.255", 2));
-                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.96.11.2.255", 2));
-                list.Add(CreateColumn(objects, obisCodes, ObjectType.AssociationLogicalName, "0.0.40.0.0.255", 11));
-                list.Add(CreateColumn(objects, obisCodes, ObjectType.GSMDiagnostic, "0.0.25.6.0.255", 5));
-                list.Add(CreateColumn(objects, obisCodes, ObjectType.GSMDiagnostic, "0.0.25.6.0.255", 6));
-
+                if (type == 2)
+                {
+                    list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
+                    list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.96.15.2.255", 2));
+                    list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.96.11.2.255", 2));
+                    list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "7.1.96.5.1.255", 2));
+                    list.Add(CreateColumn(objects, obisCodes, ObjectType.AssociationLogicalName, "0.0.40.0.0.255", 11));
+                }
+                else
+                {
+                    //If concentrator.
+                    list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
+                    list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.96.15.2.255", 2));
+                    list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.96.11.2.255", 2));
+                    list.Add(CreateColumn(objects, obisCodes, ObjectType.AssociationLogicalName, "0.0.40.0.0.255", 11));
+                    list.Add(CreateColumn(objects, obisCodes, ObjectType.GSMDiagnostic, "0.0.25.6.0.255", 5));
+                    list.Add(CreateColumn(objects, obisCodes, ObjectType.GSMDiagnostic, "0.0.25.6.0.255", 6));
+                }
             }
             else if (ln == "7.0.99.99.3.255")
             {
-                /*
                 //If meter.
-                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
-                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "7.1.96.5.1.255", 2));
-                list.Add(CreateColumn(objects, obisCodes, ObjectType.Register,"7.0.13.2.0.255", 2));
-                list.Add(CreateColumn(objects, obisCodes, ObjectType.Register,"7.0.12.2.0.255", 2));
-*/
-                //If concentrator.
-                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
-                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "7.1.96.5.1.255", 2));
+                if (type == 2)
+                {
+                    list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
+                    list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "7.1.96.5.1.255", 2));
+                    list.Add(CreateColumn(objects, obisCodes, ObjectType.Register, "7.0.13.2.0.255", 2));
+                    list.Add(CreateColumn(objects, obisCodes, ObjectType.Register, "7.0.12.2.0.255", 2));
+                }
+                else
+                {
+                    //If concentrator.
+                    list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
+                    list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "7.1.96.5.1.255", 2));
+                }
             }
             else if (ln == "7.0.99.98.1.255")
             {

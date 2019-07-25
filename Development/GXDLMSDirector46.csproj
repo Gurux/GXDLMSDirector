@@ -144,8 +144,8 @@
     <Reference Include="Gurux.DLMS.UI, Version=8.5.1906.1301, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.DLMS.UI.8.5.1906.1301\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.MQTT, Version=8.1.1906.1301, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.MQTT.8.1.1906.1301\lib\net46\Gurux.MQTT.dll</HintPath>
+    <Reference Include="Gurux.MQTT, Version=8.1.1907.2502, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.MQTT.8.1.1907.2502\lib\net46\Gurux.MQTT.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.Net, Version=8.1.1905.1701, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Net.8.1.1905.1701\lib\net45\Gurux.Net.dll</HintPath>

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10710 $,
-//                  $Date: 2019-05-13 10:15:30 +0300 (Mon, 13 May 2019) $
+// Version:         $Revision: 10850 $,
+//                  $Date: 2019-07-25 21:07:45 +0300 (to, 25 heinä 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1570,11 +1570,10 @@ namespace GXDLMSDirector
                         byte[] data = client.Read(obj, it)[0];
                         ReadDataBlock(data, "Read object type " + obj.ObjectType, reply);
                         type = reply.DataType;
-                        if (type == DataType.None)
+                        if (type != DataType.None)
                         {
-                            throw new Exception("Failed to write value. Data type not set.");
+                            obj.SetDataType(it, type);
                         }
-                        obj.SetDataType(it, type);
                         reply.Clear();
                     }
                     try

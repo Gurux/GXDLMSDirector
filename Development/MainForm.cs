@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10801 $,
-//                  $Date: 2019-06-13 15:20:59 +0300 (to, 13 kesä 2019) $
+// Version:         $Revision: 10970 $,
+//                  $Date: 2019-09-10 11:12:32 +0300 (ti, 10 syys 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -2036,7 +2036,7 @@ namespace GXDLMSDirector
             {
                 object value = sender.GetValues()[index - 1];
                 string str;
-                if (value != null && value.GetType().IsArray)
+                if (value != null && (value is List<object> || value.GetType().IsArray))
                 {
                     str = Convert.ToString(GXDLMS.Common.GXHelpers.ConvertFromDLMS(value, DataType.None, DataType.None, true, false));
                 }

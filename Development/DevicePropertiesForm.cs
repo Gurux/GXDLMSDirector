@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10643 $,
-//                  $Date: 2019-04-25 14:36:22 +0300 (Thu, 25 Apr 2019) $
+// Version:         $Revision: 10926 $,
+//                  $Date: 2019-08-22 09:32:57 +0300 (to, 22 elo 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -75,9 +75,13 @@ namespace GXDLMSDirector
                 {
                     StandardCb.Items.Add(it);
                 }
-                foreach (object it in Enum.GetValues(typeof(InterfaceType)))
+                foreach (InterfaceType it in Enum.GetValues(typeof(InterfaceType)))
                 {
-                    InterfaceCb.Items.Add(it);
+                    if (it != InterfaceType.PDU)
+                    {
+                        InterfaceCb.Items.Add(it);
+                    }
+
                 }
 
 
@@ -1799,6 +1803,21 @@ namespace GXDLMSDirector
                 MaxInfoTXLbl.Text = "Max payload size in transmit";
                 MaxInfoRXLbl.Text = "Max payload size in receive";
             }
+        }
+
+        private void InterfaceCb_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            InterfaceType type = (InterfaceType)InterfaceCb.SelectedItem;
+            if (type == InterfaceType.WRAPPER)
+            {
+                PhysicalServerAddressLbl.Text = "Logical device:";
+            }
+            else
+            {
+                PhysicalServerAddressLbl.Text = "Physical Server:";
+            }
+            LogicalServerAddressLbl.Visible = LogicalServerAddressTB.Visible = type == InterfaceType.HDLC;
+
         }
     }
 }

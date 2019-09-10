@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10850 $,
-//                  $Date: 2019-07-25 21:07:45 +0300 (to, 25 heinä 2019) $
+// Version:         $Revision: 10970 $,
+//                  $Date: 2019-09-10 11:12:32 +0300 (ti, 10 syys 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -196,7 +196,7 @@ namespace GXDLMSDirector
                     try
                     {
                         //Release is call only for secured connections.
-                        //Add meters are not supporting Release and it's causing problems.
+                        //All meters are not supporting Release and it's causing problems.
                         if (client.InterfaceType == InterfaceType.WRAPPER ||
                             (client.InterfaceType == InterfaceType.HDLC && client.Ciphering.Security != Security.None && !parent.PreEstablished))
                         {
@@ -214,7 +214,7 @@ namespace GXDLMSDirector
                     try
                     {
                         reply.Clear();
-                        if (!(client.InterfaceType == InterfaceType.WRAPPER && parent.PreEstablished))
+                        if (client.InterfaceType == InterfaceType.HDLC && !parent.PreEstablished)
                         {
                             ReadDataBlock(DisconnectRequest(true), "Disconnect request", reply);
                         }
@@ -1628,9 +1628,9 @@ namespace GXDLMSDirector
             {
                 ReadDataBlock(it, "", 1, 1, reply);
                 //Value is null if data is send in multiple frames.
-                if (reply.Value is object[])
+                if (reply.Value is List<object>)
                 {
-                    values.AddRange((object[])reply.Value);
+                    values.AddRange((List<object>)reply.Value);
                 }
                 reply.Clear();
             }

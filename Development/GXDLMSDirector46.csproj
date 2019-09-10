@@ -135,26 +135,26 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Gurux.Common, Version=8.1.1905.1301, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Common.8.1.1905.1301\lib\net45\Gurux.Common.dll</HintPath>
+    <Reference Include="Gurux.Common, Version=8.1.1907.301, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Common.8.1.1907.301\lib\net45\Gurux.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=8.5.1906.1301, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.8.5.1906.1301\lib\net45\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=9.0.1909.1001, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.9.0.1909.1001\lib\net45\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=8.5.1906.1301, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.8.5.1906.1301\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=9.0.1909.1002, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.9.0.1909.1002\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.MQTT, Version=8.1.1907.2502, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.MQTT.8.1.1907.2502\lib\net46\Gurux.MQTT.dll</HintPath>
+    <Reference Include="Gurux.MQTT, Version=8.1.1909.601, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.MQTT.8.1.1909.601\lib\net46\Gurux.MQTT.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.Net, Version=8.1.1905.1701, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Net.8.1.1905.1701\lib\net45\Gurux.Net.dll</HintPath>
+    <Reference Include="Gurux.Net, Version=8.1.1909.601, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Net.8.1.1909.601\lib\net45\Gurux.Net.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.Serial, Version=8.1.1905.1701, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Serial.8.1.1905.1701\lib\net45\Gurux.Serial.dll</HintPath>
+    <Reference Include="Gurux.Serial, Version=8.1.1909.601, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Serial.8.1.1909.601\lib\net45\Gurux.Serial.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.Terminal, Version=8.1.1905.1701, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Terminal.8.1.1905.1701\lib\net45\Gurux.Terminal.dll</HintPath>
+    <Reference Include="Gurux.Terminal, Version=8.1.1909.601, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Terminal.8.1.1909.601\lib\net45\Gurux.Terminal.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Win32.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Win32.Primitives.4.0.1\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>

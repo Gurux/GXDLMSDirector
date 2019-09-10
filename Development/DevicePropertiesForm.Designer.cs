@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10624 $,
-//                  $Date: 2019-04-24 13:56:09 +0300 (Wed, 24 Apr 2019) $
+// Version:         $Revision: 10926 $,
+//                  $Date: 2019-08-22 09:32:57 +0300 (to, 22 elo 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -124,6 +124,8 @@ namespace GXDLMSDirector
             this.SystemtitleLbl = new System.Windows.Forms.Label();
             this.SecurityLbl = new System.Windows.Forms.Label();
             this.DeviceSettingsTab = new System.Windows.Forms.TabPage();
+            this.InterfaceCb = new System.Windows.Forms.ComboBox();
+            this.InterfaceLbl = new System.Windows.Forms.Label();
             this.WaitTimeTB = new System.Windows.Forms.DateTimePicker();
             this.ResendTb = new System.Windows.Forms.NumericUpDown();
             this.ResendLbl = new System.Windows.Forms.Label();
@@ -174,8 +176,6 @@ namespace GXDLMSDirector
             this.SerialPortCB = new System.Windows.Forms.ComboBox();
             this.DeviceTab = new System.Windows.Forms.TabControl();
             this.AdvancedTab = new System.Windows.Forms.TabPage();
-            this.InterfaceCb = new System.Windows.Forms.ComboBox();
-            this.InterfaceLbl = new System.Windows.Forms.Label();
             this.InactivityTimeoutTb = new System.Windows.Forms.TextBox();
             this.InactivityTimeoutLbl = new System.Windows.Forms.Label();
             this.ServiceClassCb = new System.Windows.Forms.ComboBox();
@@ -954,6 +954,8 @@ namespace GXDLMSDirector
             // 
             // DeviceSettingsTab
             // 
+            this.DeviceSettingsTab.Controls.Add(this.InterfaceCb);
+            this.DeviceSettingsTab.Controls.Add(this.InterfaceLbl);
             this.DeviceSettingsTab.Controls.Add(this.WaitTimeTB);
             this.DeviceSettingsTab.Controls.Add(this.ResendTb);
             this.DeviceSettingsTab.Controls.Add(this.ResendLbl);
@@ -995,6 +997,28 @@ namespace GXDLMSDirector
             this.DeviceSettingsTab.Text = "Device Settings";
             this.DeviceSettingsTab.UseVisualStyleBackColor = true;
             // 
+            // InterfaceCb
+            // 
+            this.InterfaceCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.InterfaceCb.FormattingEnabled = true;
+            this.helpProvider1.SetHelpKeyword(this.InterfaceCb, "Manufacturer");
+            this.helpProvider1.SetHelpNavigator(this.InterfaceCb, System.Windows.Forms.HelpNavigator.Topic);
+            this.InterfaceCb.Location = new System.Drawing.Point(350, 169);
+            this.InterfaceCb.Name = "InterfaceCb";
+            this.helpProvider1.SetShowHelp(this.InterfaceCb, true);
+            this.InterfaceCb.Size = new System.Drawing.Size(104, 21);
+            this.InterfaceCb.TabIndex = 62;
+            this.InterfaceCb.SelectedIndexChanged += new System.EventHandler(this.InterfaceCb_SelectedIndexChanged);
+            // 
+            // InterfaceLbl
+            // 
+            this.InterfaceLbl.AutoSize = true;
+            this.InterfaceLbl.Location = new System.Drawing.Point(266, 173);
+            this.InterfaceLbl.Name = "InterfaceLbl";
+            this.InterfaceLbl.Size = new System.Drawing.Size(52, 13);
+            this.InterfaceLbl.TabIndex = 63;
+            this.InterfaceLbl.Text = "Interface:";
+            // 
             // WaitTimeTB
             // 
             this.WaitTimeTB.CustomFormat = "HH:mm:ss";
@@ -1005,7 +1029,7 @@ namespace GXDLMSDirector
             this.WaitTimeTB.Name = "WaitTimeTB";
             this.helpProvider1.SetShowHelp(this.WaitTimeTB, true);
             this.WaitTimeTB.ShowUpDown = true;
-            this.WaitTimeTB.Size = new System.Drawing.Size(87, 20);
+            this.WaitTimeTB.Size = new System.Drawing.Size(139, 20);
             this.WaitTimeTB.TabIndex = 8;
             this.WaitTimeTB.Value = new System.DateTime(2019, 4, 1, 14, 52, 0, 0);
             // 
@@ -1013,7 +1037,7 @@ namespace GXDLMSDirector
             // 
             this.helpProvider1.SetHelpKeyword(this.ResendTb, "ResendCount");
             this.helpProvider1.SetHelpNavigator(this.ResendTb, System.Windows.Forms.HelpNavigator.Topic);
-            this.ResendTb.Location = new System.Drawing.Point(298, 143);
+            this.ResendTb.Location = new System.Drawing.Point(351, 143);
             this.ResendTb.Maximum = new decimal(new int[] {
             10,
             0,
@@ -1021,7 +1045,7 @@ namespace GXDLMSDirector
             0});
             this.ResendTb.Name = "ResendTb";
             this.helpProvider1.SetShowHelp(this.ResendTb, true);
-            this.ResendTb.Size = new System.Drawing.Size(85, 20);
+            this.ResendTb.Size = new System.Drawing.Size(105, 20);
             this.ResendTb.TabIndex = 10;
             this.ResendTb.Value = new decimal(new int[] {
             3,
@@ -1032,7 +1056,7 @@ namespace GXDLMSDirector
             // ResendLbl
             // 
             this.ResendLbl.AutoSize = true;
-            this.ResendLbl.Location = new System.Drawing.Point(207, 148);
+            this.ResendLbl.Location = new System.Drawing.Point(266, 148);
             this.ResendLbl.Name = "ResendLbl";
             this.ResendLbl.Size = new System.Drawing.Size(77, 13);
             this.ResendLbl.TabIndex = 52;
@@ -1055,7 +1079,7 @@ namespace GXDLMSDirector
             this.PasswordAsciiCb.Checked = true;
             this.PasswordAsciiCb.CheckState = System.Windows.Forms.CheckState.Checked;
             this.helpProvider1.SetHelpString(this.PasswordAsciiCb, "Is password given in ASCII or Hex.");
-            this.PasswordAsciiCb.Location = new System.Drawing.Point(260, 115);
+            this.PasswordAsciiCb.Location = new System.Drawing.Point(369, 115);
             this.PasswordAsciiCb.Name = "PasswordAsciiCb";
             this.helpProvider1.SetShowHelp(this.PasswordAsciiCb, true);
             this.PasswordAsciiCb.Size = new System.Drawing.Size(53, 17);
@@ -1069,7 +1093,7 @@ namespace GXDLMSDirector
             this.VerboseModeCB.AutoSize = true;
             this.helpProvider1.SetHelpKeyword(this.VerboseModeCB, "VerboseMode");
             this.helpProvider1.SetHelpNavigator(this.VerboseModeCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.VerboseModeCB.Location = new System.Drawing.Point(293, 223);
+            this.VerboseModeCB.Location = new System.Drawing.Point(350, 223);
             this.VerboseModeCB.Name = "VerboseModeCB";
             this.helpProvider1.SetShowHelp(this.VerboseModeCB, true);
             this.VerboseModeCB.Size = new System.Drawing.Size(95, 17);
@@ -1080,7 +1104,7 @@ namespace GXDLMSDirector
             // UseLNCB
             // 
             this.UseLNCB.AutoSize = true;
-            this.UseLNCB.Location = new System.Drawing.Point(238, 61);
+            this.UseLNCB.Location = new System.Drawing.Point(266, 61);
             this.UseLNCB.Name = "UseLNCB";
             this.UseLNCB.Size = new System.Drawing.Size(152, 17);
             this.UseLNCB.TabIndex = 3;
@@ -1094,7 +1118,7 @@ namespace GXDLMSDirector
             this.ServerAddressTypeCB.FormattingEnabled = true;
             this.helpProvider1.SetHelpKeyword(this.ServerAddressTypeCB, "AddressType");
             this.helpProvider1.SetHelpNavigator(this.ServerAddressTypeCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.ServerAddressTypeCB.Location = new System.Drawing.Point(107, 169);
+            this.ServerAddressTypeCB.Location = new System.Drawing.Point(109, 169);
             this.ServerAddressTypeCB.Name = "ServerAddressTypeCB";
             this.helpProvider1.SetShowHelp(this.ServerAddressTypeCB, true);
             this.ServerAddressTypeCB.Size = new System.Drawing.Size(141, 21);
@@ -1113,7 +1137,7 @@ namespace GXDLMSDirector
             // ClientAddLbl
             // 
             this.ClientAddLbl.AutoSize = true;
-            this.ClientAddLbl.Location = new System.Drawing.Point(203, 89);
+            this.ClientAddLbl.Location = new System.Drawing.Point(266, 89);
             this.ClientAddLbl.Name = "ClientAddLbl";
             this.ClientAddLbl.Size = new System.Drawing.Size(77, 13);
             this.ClientAddLbl.TabIndex = 45;
@@ -1124,7 +1148,7 @@ namespace GXDLMSDirector
             this.helpProvider1.SetHelpKeyword(this.ClientAddTB, "ClientAddress");
             this.helpProvider1.SetHelpNavigator(this.ClientAddTB, System.Windows.Forms.HelpNavigator.Topic);
             this.ClientAddTB.Hexadecimal = true;
-            this.ClientAddTB.Location = new System.Drawing.Point(296, 86);
+            this.ClientAddTB.Location = new System.Drawing.Point(349, 86);
             this.ClientAddTB.Maximum = new decimal(new int[] {
             255,
             0,
@@ -1132,7 +1156,7 @@ namespace GXDLMSDirector
             0});
             this.ClientAddTB.Name = "ClientAddTB";
             this.helpProvider1.SetShowHelp(this.ClientAddTB, true);
-            this.ClientAddTB.Size = new System.Drawing.Size(85, 20);
+            this.ClientAddTB.Size = new System.Drawing.Size(105, 20);
             this.ClientAddTB.TabIndex = 6;
             this.ClientAddTB.Value = new decimal(new int[] {
             8,
@@ -1146,10 +1170,10 @@ namespace GXDLMSDirector
             this.StartProtocolCB.FormattingEnabled = true;
             this.helpProvider1.SetHelpKeyword(this.StartProtocolCB, "StartProtocol");
             this.helpProvider1.SetHelpNavigator(this.StartProtocolCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.StartProtocolCB.Location = new System.Drawing.Point(111, 58);
+            this.StartProtocolCB.Location = new System.Drawing.Point(109, 58);
             this.StartProtocolCB.Name = "StartProtocolCB";
             this.helpProvider1.SetShowHelp(this.StartProtocolCB, true);
-            this.StartProtocolCB.Size = new System.Drawing.Size(85, 21);
+            this.StartProtocolCB.Size = new System.Drawing.Size(137, 21);
             this.StartProtocolCB.TabIndex = 2;
             this.StartProtocolCB.SelectedIndexChanged += new System.EventHandler(this.StartProtocolCB_SelectedIndexChanged);
             // 
@@ -1167,7 +1191,7 @@ namespace GXDLMSDirector
             this.helpProvider1.SetHelpKeyword(this.LogicalServerAddressTB, "LogicalServer");
             this.helpProvider1.SetHelpNavigator(this.LogicalServerAddressTB, System.Windows.Forms.HelpNavigator.Topic);
             this.LogicalServerAddressTB.Hexadecimal = true;
-            this.LogicalServerAddressTB.Location = new System.Drawing.Point(298, 197);
+            this.LogicalServerAddressTB.Location = new System.Drawing.Point(109, 194);
             this.LogicalServerAddressTB.Maximum = new decimal(new int[] {
             0,
             1,
@@ -1175,7 +1199,7 @@ namespace GXDLMSDirector
             0});
             this.LogicalServerAddressTB.Name = "LogicalServerAddressTB";
             this.helpProvider1.SetShowHelp(this.LogicalServerAddressTB, true);
-            this.LogicalServerAddressTB.Size = new System.Drawing.Size(85, 20);
+            this.LogicalServerAddressTB.Size = new System.Drawing.Size(140, 20);
             this.LogicalServerAddressTB.TabIndex = 13;
             this.LogicalServerAddressTB.Value = new decimal(new int[] {
             1,
@@ -1186,7 +1210,7 @@ namespace GXDLMSDirector
             // LogicalServerAddressLbl
             // 
             this.LogicalServerAddressLbl.AutoSize = true;
-            this.LogicalServerAddressLbl.Location = new System.Drawing.Point(206, 199);
+            this.LogicalServerAddressLbl.Location = new System.Drawing.Point(6, 196);
             this.LogicalServerAddressLbl.Name = "LogicalServerAddressLbl";
             this.LogicalServerAddressLbl.Size = new System.Drawing.Size(78, 13);
             this.LogicalServerAddressLbl.TabIndex = 41;
@@ -1197,7 +1221,7 @@ namespace GXDLMSDirector
             this.helpProvider1.SetHelpKeyword(this.PhysicalServerAddressTB, "PhysicalServer");
             this.helpProvider1.SetHelpNavigator(this.PhysicalServerAddressTB, System.Windows.Forms.HelpNavigator.Topic);
             this.PhysicalServerAddressTB.Hexadecimal = true;
-            this.PhysicalServerAddressTB.Location = new System.Drawing.Point(108, 194);
+            this.PhysicalServerAddressTB.Location = new System.Drawing.Point(350, 194);
             this.PhysicalServerAddressTB.Maximum = new decimal(new int[] {
             0,
             1,
@@ -1205,7 +1229,7 @@ namespace GXDLMSDirector
             0});
             this.PhysicalServerAddressTB.Name = "PhysicalServerAddressTB";
             this.helpProvider1.SetShowHelp(this.PhysicalServerAddressTB, true);
-            this.PhysicalServerAddressTB.Size = new System.Drawing.Size(85, 20);
+            this.PhysicalServerAddressTB.Size = new System.Drawing.Size(104, 20);
             this.PhysicalServerAddressTB.TabIndex = 12;
             this.PhysicalServerAddressTB.Value = new decimal(new int[] {
             1,
@@ -1216,7 +1240,7 @@ namespace GXDLMSDirector
             // PhysicalServerAddressLbl
             // 
             this.PhysicalServerAddressLbl.AutoSize = true;
-            this.PhysicalServerAddressLbl.Location = new System.Drawing.Point(6, 199);
+            this.PhysicalServerAddressLbl.Location = new System.Drawing.Point(266, 199);
             this.PhysicalServerAddressLbl.Name = "PhysicalServerAddressLbl";
             this.PhysicalServerAddressLbl.Size = new System.Drawing.Size(83, 13);
             this.PhysicalServerAddressLbl.TabIndex = 39;
@@ -1237,10 +1261,10 @@ namespace GXDLMSDirector
             this.ManufacturerCB.FormattingEnabled = true;
             this.helpProvider1.SetHelpKeyword(this.ManufacturerCB, "Manufacturer");
             this.helpProvider1.SetHelpNavigator(this.ManufacturerCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.ManufacturerCB.Location = new System.Drawing.Point(110, 31);
+            this.ManufacturerCB.Location = new System.Drawing.Point(109, 31);
             this.ManufacturerCB.Name = "ManufacturerCB";
             this.helpProvider1.SetShowHelp(this.ManufacturerCB, true);
-            this.ManufacturerCB.Size = new System.Drawing.Size(271, 21);
+            this.ManufacturerCB.Size = new System.Drawing.Size(344, 21);
             this.ManufacturerCB.TabIndex = 1;
             this.ManufacturerCB.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ManufacturerCB_DrawItem);
             this.ManufacturerCB.SelectedIndexChanged += new System.EventHandler(this.ManufacturerCB_SelectedIndexChanged);
@@ -1262,7 +1286,7 @@ namespace GXDLMSDirector
             this.PasswordTB.Location = new System.Drawing.Point(109, 115);
             this.PasswordTB.Name = "PasswordTB";
             this.helpProvider1.SetShowHelp(this.PasswordTB, true);
-            this.PasswordTB.Size = new System.Drawing.Size(138, 20);
+            this.PasswordTB.Size = new System.Drawing.Size(139, 20);
             this.PasswordTB.TabIndex = 7;
             // 
             // NameTB
@@ -1272,7 +1296,7 @@ namespace GXDLMSDirector
             this.NameTB.Location = new System.Drawing.Point(109, 5);
             this.NameTB.Name = "NameTB";
             this.helpProvider1.SetShowHelp(this.NameTB, true);
-            this.NameTB.Size = new System.Drawing.Size(274, 20);
+            this.NameTB.Size = new System.Drawing.Size(345, 20);
             this.NameTB.TabIndex = 0;
             // 
             // PasswordLbl
@@ -1293,7 +1317,7 @@ namespace GXDLMSDirector
             this.AuthenticationCB.Location = new System.Drawing.Point(109, 85);
             this.AuthenticationCB.Name = "AuthenticationCB";
             this.helpProvider1.SetShowHelp(this.AuthenticationCB, true);
-            this.AuthenticationCB.Size = new System.Drawing.Size(87, 21);
+            this.AuthenticationCB.Size = new System.Drawing.Size(139, 21);
             this.AuthenticationCB.TabIndex = 5;
             this.AuthenticationCB.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.AuthenticationCB_DrawItem);
             this.AuthenticationCB.SelectedIndexChanged += new System.EventHandler(this.AuthenticationCB_SelectedIndexChanged);
@@ -1322,10 +1346,10 @@ namespace GXDLMSDirector
             this.MediasCB.FormattingEnabled = true;
             this.helpProvider1.SetHelpKeyword(this.MediasCB, "Media");
             this.helpProvider1.SetHelpNavigator(this.MediasCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.MediasCB.Location = new System.Drawing.Point(107, 219);
+            this.MediasCB.Location = new System.Drawing.Point(109, 219);
             this.MediasCB.Name = "MediasCB";
             this.helpProvider1.SetShowHelp(this.MediasCB, true);
-            this.MediasCB.Size = new System.Drawing.Size(85, 21);
+            this.MediasCB.Size = new System.Drawing.Size(141, 21);
             this.MediasCB.TabIndex = 14;
             this.MediasCB.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.MediasCB_DrawItem);
             this.MediasCB.SelectedIndexChanged += new System.EventHandler(this.MediasCB_SelectedIndexChanged);
@@ -1333,7 +1357,7 @@ namespace GXDLMSDirector
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(17, 222);
+            this.label1.Location = new System.Drawing.Point(6, 222);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(39, 13);
             this.label1.TabIndex = 25;
@@ -1561,8 +1585,6 @@ namespace GXDLMSDirector
             // 
             // AdvancedTab
             // 
-            this.AdvancedTab.Controls.Add(this.InterfaceCb);
-            this.AdvancedTab.Controls.Add(this.InterfaceLbl);
             this.AdvancedTab.Controls.Add(this.InactivityTimeoutTb);
             this.AdvancedTab.Controls.Add(this.InactivityTimeoutLbl);
             this.AdvancedTab.Controls.Add(this.ServiceClassCb);
@@ -1587,27 +1609,6 @@ namespace GXDLMSDirector
             this.AdvancedTab.TabIndex = 3;
             this.AdvancedTab.Text = "Advanced";
             this.AdvancedTab.UseVisualStyleBackColor = true;
-            // 
-            // InterfaceCb
-            // 
-            this.InterfaceCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.InterfaceCb.FormattingEnabled = true;
-            this.helpProvider1.SetHelpKeyword(this.InterfaceCb, "Manufacturer");
-            this.helpProvider1.SetHelpNavigator(this.InterfaceCb, System.Windows.Forms.HelpNavigator.Topic);
-            this.InterfaceCb.Location = new System.Drawing.Point(159, 246);
-            this.InterfaceCb.Name = "InterfaceCb";
-            this.helpProvider1.SetShowHelp(this.InterfaceCb, true);
-            this.InterfaceCb.Size = new System.Drawing.Size(93, 21);
-            this.InterfaceCb.TabIndex = 60;
-            // 
-            // InterfaceLbl
-            // 
-            this.InterfaceLbl.AutoSize = true;
-            this.InterfaceLbl.Location = new System.Drawing.Point(16, 251);
-            this.InterfaceLbl.Name = "InterfaceLbl";
-            this.InterfaceLbl.Size = new System.Drawing.Size(52, 13);
-            this.InterfaceLbl.TabIndex = 61;
-            this.InterfaceLbl.Text = "Interface:";
             // 
             // InactivityTimeoutTb
             // 
@@ -1645,7 +1646,7 @@ namespace GXDLMSDirector
             this.StandardCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.helpProvider1.SetHelpKeyword(this.StandardCb, "Standard");
             this.helpProvider1.SetHelpNavigator(this.StandardCb, System.Windows.Forms.HelpNavigator.Topic);
-            this.StandardCb.Location = new System.Drawing.Point(159, 348);
+            this.StandardCb.Location = new System.Drawing.Point(159, 321);
             this.StandardCb.Name = "StandardCb";
             this.helpProvider1.SetShowHelp(this.StandardCb, true);
             this.StandardCb.Size = new System.Drawing.Size(93, 21);
@@ -1674,7 +1675,7 @@ namespace GXDLMSDirector
             // StandardLbl
             // 
             this.StandardLbl.AutoSize = true;
-            this.StandardLbl.Location = new System.Drawing.Point(16, 352);
+            this.StandardLbl.Location = new System.Drawing.Point(16, 325);
             this.StandardLbl.Name = "StandardLbl";
             this.StandardLbl.Size = new System.Drawing.Size(53, 13);
             this.StandardLbl.TabIndex = 58;
@@ -1693,7 +1694,7 @@ namespace GXDLMSDirector
             // 
             this.helpProvider1.SetHelpKeyword(this.UserIdTb, "UserId");
             this.helpProvider1.SetHelpNavigator(this.UserIdTb, System.Windows.Forms.HelpNavigator.Topic);
-            this.UserIdTb.Location = new System.Drawing.Point(159, 322);
+            this.UserIdTb.Location = new System.Drawing.Point(159, 295);
             this.UserIdTb.Name = "UserIdTb";
             this.helpProvider1.SetShowHelp(this.UserIdTb, true);
             this.UserIdTb.Size = new System.Drawing.Size(93, 20);
@@ -1702,7 +1703,7 @@ namespace GXDLMSDirector
             // UserIDLbl
             // 
             this.UserIDLbl.AutoSize = true;
-            this.UserIDLbl.Location = new System.Drawing.Point(16, 326);
+            this.UserIDLbl.Location = new System.Drawing.Point(16, 299);
             this.UserIDLbl.Name = "UserIDLbl";
             this.UserIDLbl.Size = new System.Drawing.Size(46, 13);
             this.UserIDLbl.TabIndex = 54;
@@ -1712,7 +1713,7 @@ namespace GXDLMSDirector
             // 
             this.helpProvider1.SetHelpKeyword(this.MaxPduTb, "MaxPdu");
             this.helpProvider1.SetHelpNavigator(this.MaxPduTb, System.Windows.Forms.HelpNavigator.Topic);
-            this.MaxPduTb.Location = new System.Drawing.Point(159, 296);
+            this.MaxPduTb.Location = new System.Drawing.Point(159, 269);
             this.MaxPduTb.Name = "MaxPduTb";
             this.helpProvider1.SetShowHelp(this.MaxPduTb, true);
             this.MaxPduTb.Size = new System.Drawing.Size(93, 20);
@@ -1721,7 +1722,7 @@ namespace GXDLMSDirector
             // MaxPduLbl
             // 
             this.MaxPduLbl.AutoSize = true;
-            this.MaxPduLbl.Location = new System.Drawing.Point(16, 300);
+            this.MaxPduLbl.Location = new System.Drawing.Point(16, 273);
             this.MaxPduLbl.Name = "MaxPduLbl";
             this.MaxPduLbl.Size = new System.Drawing.Size(77, 13);
             this.MaxPduLbl.TabIndex = 48;
@@ -1864,7 +1865,7 @@ namespace GXDLMSDirector
             this.UseUtcTimeZone.AutoSize = true;
             this.helpProvider1.SetHelpKeyword(this.UseUtcTimeZone, "UseUTC");
             this.helpProvider1.SetHelpNavigator(this.UseUtcTimeZone, System.Windows.Forms.HelpNavigator.Topic);
-            this.UseUtcTimeZone.Location = new System.Drawing.Point(20, 273);
+            this.UseUtcTimeZone.Location = new System.Drawing.Point(16, 246);
             this.UseUtcTimeZone.Name = "UseUtcTimeZone";
             this.helpProvider1.SetShowHelp(this.UseUtcTimeZone, true);
             this.UseUtcTimeZone.Size = new System.Drawing.Size(183, 17);
@@ -2211,10 +2212,10 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label PhysicalDeviceAddressLbl;
         private System.Windows.Forms.CheckBox UseGatewayCb;
         private System.Windows.Forms.CheckBox FrameSizeCb;
-        private System.Windows.Forms.ComboBox InterfaceCb;
-        private System.Windows.Forms.Label InterfaceLbl;
         private System.Windows.Forms.NumericUpDown ResendTb;
         private System.Windows.Forms.Label ResendLbl;
         private System.Windows.Forms.DateTimePicker WaitTimeTB;
+        private System.Windows.Forms.ComboBox InterfaceCb;
+        private System.Windows.Forms.Label InterfaceLbl;
     }
 }

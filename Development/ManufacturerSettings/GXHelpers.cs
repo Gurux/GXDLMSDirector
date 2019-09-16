@@ -217,18 +217,26 @@ namespace GXDLMS.Common
         {
             if (data is byte[])
             {
-                return Gurux.Common.GXCommon.ToHex((byte[]) data);
+                return Gurux.Common.GXCommon.ToHex((byte[])data);
             }
             List<object> arr;
             if (data is List<object>)
             {
                 arr = (List<object>)data;
             }
+            else if (data is object[])
+            {
+                arr = new List<object>();
+                arr.AddRange((object[])data);
+            }
             else
             {
                 arr = new List<object>();
-                arr.AddRange((object[]) data);
-            }            
+                foreach (object it in (System.Collections.IEnumerable) data)
+                {
+                    arr.Add(it);
+                }
+            }
             string str = null;
             foreach (object it in arr)
             {
@@ -243,7 +251,7 @@ namespace GXDLMS.Common
                 if (it != null && (it is List<object> || it.GetType().IsArray))
                 {
                     str += GetArrayAsString(it);
-                }                
+                }
                 else
                 {
                     str += Convert.ToString(it);

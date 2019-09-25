@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10970 $,
-//                  $Date: 2019-09-10 11:12:32 +0300 (ti, 10 syys 2019) $
+// Version:         $Revision: 11005 $,
+//                  $Date: 2019-09-25 13:22:19 +0300 (ke, 25 syys 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1358,7 +1358,7 @@ namespace GXDLMSDirector
                         }
                         else
                         {
-                            traceTranslator.ServerSystemTitle = dev.Comm.client.ServerSystemTitle;
+                            traceTranslator.ServerSystemTitle = dev.Comm.client.SourceSystemTitle;
                         }
                         traceTranslator.DedicatedKey = dev.Comm.client.Ciphering.DedicatedKey;
                     }
@@ -1393,7 +1393,7 @@ namespace GXDLMSDirector
                     }
                     else
                     {
-                        traceTranslator.ServerSystemTitle = dev.Comm.client.ServerSystemTitle;
+                        traceTranslator.ServerSystemTitle = dev.Comm.client.SourceSystemTitle;
                     }
                     traceTranslator.DedicatedKey = dev.Comm.client.Ciphering.DedicatedKey;
                     GXDlmsUi.ObjectChanged(SelectedView, tmp as GXDLMSObject, true);
@@ -4469,6 +4469,7 @@ namespace GXDLMSDirector
                     traceTranslator.InvocationCounter = newDev.InvocationCounter;
                     DedicatedKeyTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.DedicatedKey));
                     AuthenticationTb.Text = newDev.Authentication.ToString();
+                    traceTranslator.DedicatedKey = GXCommon.HexToBytes(newDev.DedicatedKey);
                     if (newDev.PreEstablished)
                     {
                         traceTranslator.ServerSystemTitle = GXCommon.HexToBytes(newDev.ServerSystemTitle);
@@ -4478,7 +4479,7 @@ namespace GXDLMSDirector
                         GXDLMSDevice d = newDev as GXDLMSDevice;
                         if (d != null)
                         {
-                            traceTranslator.ServerSystemTitle = d.Comm.client.ServerSystemTitle;
+                            traceTranslator.ServerSystemTitle = d.Comm.client.SourceSystemTitle;
                         }
                     }
                     if (newDev.Security != Security.None || newDev.Authentication == Authentication.HighGMAC ||

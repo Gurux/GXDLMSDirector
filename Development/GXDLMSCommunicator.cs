@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10970 $,
-//                  $Date: 2019-09-10 11:12:32 +0300 (ti, 10 syys 2019) $
+// Version:         $Revision: 11017 $,
+//                  $Date: 2019-10-14 10:04:42 +0300 (ma, 14 loka 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1033,7 +1033,7 @@ namespace GXDLMSDirector
                             GXDLMSData d = new GXDLMSData(parent.FrameCounter);
                             ReadDLMSPacket(Read(d, 2), reply);
                             client.UpdateValue(d, 2, reply.Value);
-                            client.Ciphering.InvocationCounter = parent.InvocationCounter = Convert.ToUInt32(d.Value);
+                            client.Ciphering.InvocationCounter = parent.InvocationCounter = 1 + Convert.ToUInt32(d.Value);
                             reply.Clear();
                             ReadDataBlock(DisconnectRequest(), "Disconnect request", reply);
                         }

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11005 $,
-//                  $Date: 2019-09-25 13:22:19 +0300 (ke, 25 syys 2019) $
+// Version:         $Revision: 11026 $,
+//                  $Date: 2019-10-15 08:26:37 +0300 (ti, 15 loka 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -527,7 +527,14 @@ namespace GXDLMSDirector
                         it.Hide();
                     }
                     ObjectPanelFrame.Controls.Clear();
-                    SelectedView.Target = (GXDLMSObject)obj;
+                    try
+                    {
+                        SelectedView.Target = (GXDLMSObject)obj;
+                    }
+                    catch (Exception ex)
+                    {
+                        GXDLMS.Common.Error.ShowError(this, ex);
+                    }
                     SelectedView.Target.OnChange += new ObjectChangeEventHandler(DLMSItemOnChange);
                     DeviceState s = DeviceState.Connected;
                     if (d != null)

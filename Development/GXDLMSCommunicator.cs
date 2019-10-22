@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 11017 $,
-//                  $Date: 2019-10-14 10:04:42 +0300 (ma, 14 loka 2019) $
+// Version:         $Revision: 11030 $,
+//                  $Date: 2019-10-22 12:49:43 +0300 (ti, 22 loka 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -977,6 +977,10 @@ namespace GXDLMSDirector
                 }
                 else
                 {
+                    if (media is IGXMedia2)
+                    {
+                        ((IGXMedia2)media).AsyncWaitTime = (uint) parent.WaitTime;
+                    }
                     media.Open();
                 }
             }
@@ -1058,12 +1062,12 @@ namespace GXDLMSDirector
                     try
                     {
                         reply.Clear();
-                        ReadDataBlock(data, "Send SNRM request.", 1, 1, reply);
+                        ReadDataBlock(data, "Send SNRM request.", 1, parent.ResendCount, reply);
                     }
                     catch (TimeoutException)
                     {
                         reply.Clear();
-                        ReadDataBlock(DisconnectRequest(true), "Send Disconnect request.", 1, 1, reply);
+                        ReadDataBlock(DisconnectRequest(true), "Send Disconnect request.", 1, parent.ResendCount, reply);
                         reply.Clear();
                         ReadDataBlock(data, "Send SNRM request.", reply);
                     }

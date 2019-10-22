@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10795 $,
-//                  $Date: 2019-06-13 11:14:08 +0300 (to, 13 kesä 2019) $
+// Version:         $Revision: 11030 $,
+//                  $Date: 2019-10-22 12:49:43 +0300 (ti, 22 loka 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -320,6 +320,13 @@ namespace GXDLMSDirector
                 }
                 if (Comm.media.IsOpen && m_Status != DeviceState.Disconnecting)
                 {
+                    if (Comm.media is IGXMedia2)
+                    {
+                        if (((IGXMedia2)Comm.media).AsyncWaitHandle != null)
+                        {
+                            ((IGXMedia2)Comm.media).AsyncWaitHandle.Set();
+                        }
+                    }
                     UpdateStatus(DeviceState.Disconnecting);
                     communicator.Disconnect();
                 }

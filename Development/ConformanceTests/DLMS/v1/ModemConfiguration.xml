@@ -62,4 +62,18 @@
       </AttributeDescriptor>
     </GetRequestNormal>
   </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <InvokeIdAndPriority Value="*" />
+      <Result>
+        <Data>
+          <Array Qty="*" >
+            <Structure Qty="1" >
+              <OctetString Value="*" />
+            </Structure>
+          </Array>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
 </Messages>

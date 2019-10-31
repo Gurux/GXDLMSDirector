@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10926 $,
-//                  $Date: 2019-08-22 09:32:57 +0300 (to, 22 elo 2019) $
+// Version:         $Revision: 11066 $,
+//                  $Date: 2019-10-31 10:06:31 +0200 (to, 31 loka 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -124,13 +124,13 @@ namespace GXDLMSDirector
                     {
                         ManufacturerCB.SelectedIndex = pos;
                     }
-                    Device.Conformance = (int) GXDLMSClient.GetInitialConformance(UseLNCB.Checked);
+                    Device.Conformance = (int)GXDLMSClient.GetInitialConformance(UseLNCB.Checked);
                     FrameCounterTb.ReadOnly = true;
-                    UpdateDeviceSettings(Device, true);
+                    UpdateDeviceSettings(Device);
                 }
                 else
                 {
-                    UpdateDeviceSettings(Device, false);
+                    UpdateDeviceSettings(Device);
                 }
                 ManufacturerCB.DrawMode = MediasCB.DrawMode = DrawMode.OwnerDrawFixed;
                 UpdateMediaSettings();
@@ -287,27 +287,20 @@ namespace GXDLMSDirector
             HostNameTB.ReadOnly = PortTB.ReadOnly = PasswordTB.ReadOnly = ResendTb.ReadOnly = PhysicalServerAddressTB.ReadOnly = NameTB.ReadOnly = bConnected;
 
         }
-        private void UpdateDeviceSettings(GXDLMSMeter device, bool first)
+        private void UpdateDeviceSettings(GXDLMSMeter device)
         {
-            if (first)
+            Device = device;
+            foreach (GXManufacturer it in this.ManufacturerCB.Items)
             {
-                this.ManufacturerCB.SelectedIndex = 0;
+                if (string.Compare(it.Identification, device.Manufacturer, true) == 0)
+                {
+                    this.ManufacturerCB.SelectedItem = it;
+                    break;
+                }
             }
-            else
+            if (this.ManufacturerCB.SelectedItem == null)
             {
-                Device = device;
-                foreach (GXManufacturer it in this.ManufacturerCB.Items)
-                {
-                    if (string.Compare(it.Identification, device.Manufacturer, true) == 0)
-                    {
-                        this.ManufacturerCB.SelectedItem = it;
-                        break;
-                    }
-                }
-                if (this.ManufacturerCB.SelectedItem == null)
-                {
-                    throw new Exception("Invalid manufacturer. " + device.Manufacturer);
-                }
+                throw new Exception("Invalid manufacturer. " + device.Manufacturer);
             }
             StandardCb.SelectedItem = device.Standard;
             if (IsAscii(GXCommon.HexToBytes(device.SystemTitle)))
@@ -423,7 +416,7 @@ namespace GXDLMSDirector
             this.UseLNCB.CheckedChanged -= new System.EventHandler(this.UseLNCB_CheckedChanged);
             this.UseLNCB.Checked = device.UseLogicalNameReferencing;
             this.UseLNCB.CheckedChanged += new System.EventHandler(this.UseLNCB_CheckedChanged);
-            ShowConformance((Conformance) device.Conformance);
+            ShowConformance((Conformance)device.Conformance);
 
             InterfaceCb.SelectedItem = device.InterfaceType;
             MaxInfoTXTb.Text = device.MaxInfoTX.ToString();
@@ -441,7 +434,7 @@ namespace GXDLMSDirector
             if (device.ServerAddressSize == 0)
             {
                 //If server address is not used.
-                ServerAddressSizeCb.SelectedIndex = 0;
+                ServerAddressSizeCb.SelectedIndex = -1;
             }
             else
             {
@@ -650,7 +643,7 @@ namespace GXDLMSDirector
                     c |= Conformance.ParameterizedAccess;
                 }
             }
-            Device.Conformance = (int) c;
+            Device.Conformance = (int)c;
         }
 
         private void MediasCB_SelectedIndexChanged(object sender, EventArgs e)
@@ -757,7 +750,7 @@ namespace GXDLMSDirector
             {
                 device.Password = "";
             }
-            device.InterfaceType = (InterfaceType) InterfaceCb.SelectedItem;
+            device.InterfaceType = (InterfaceType)InterfaceCb.SelectedItem;
             if (MaxInfoTXTb.Text == "")
             {
                 device.MaxInfoTX = 128;
@@ -846,7 +839,7 @@ namespace GXDLMSDirector
                 (device as GXDLMSDevice).Media = SelectedMedia;
             }
             device.Manufacturer = man.Identification;
-            device.WaitTime = (int) (WaitTimeTB.Value - WaitTimeTB.Value.Date).TotalSeconds;
+            device.WaitTime = (int)(WaitTimeTB.Value - WaitTimeTB.Value.Date).TotalSeconds;
             device.ResendCount = Convert.ToInt32(ResendTb.Value);
             device.Verbose = VerboseModeCB.Checked;
             device.MaximumBaudRate = 0;
@@ -1372,6 +1365,18 @@ namespace GXDLMSDirector
             PhysicalServerAddressTB.Hexadecimal = server.HDLCAddress != HDLCAddressType.SerialNumber;
             this.PhysicalServerAddressTB.Value = Convert.ToDecimal(server.PhysicalAddress);
             this.LogicalServerAddressTB.Value = server.LogicalAddress;
+
+            if (server.Size == 0)
+            {
+                //If server address is not used.
+                ServerAddressSizeCb.SelectedIndex = -1;
+            }
+            else
+            {
+                //Forse to use server address size.
+                ServerAddressSizeCb.SelectedItem = Convert.ToByte(server.Size);
+            }
+
             if (!PhysicalServerAddressTB.Hexadecimal)
             {
                 PhysicalServerAddressLbl.Text = "Serial Number:";
@@ -1685,7 +1690,7 @@ namespace GXDLMSDirector
                         using (XmlReader reader = XmlReader.Create(ms))
                         {
                             CopyDevice = (GXDLMSDevice)x.Deserialize(reader);
-                            UpdateDeviceSettings(CopyDevice, false);
+                            UpdateDeviceSettings(CopyDevice);
                             UpdateMediaSettings();
                         }
                     }

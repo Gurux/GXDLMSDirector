@@ -138,11 +138,11 @@
     <Reference Include="Gurux.Common, Version=8.1.1907.301, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Common.8.1.1907.301\lib\net45\Gurux.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=9.0.1910.1401, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.9.0.1910.1401\lib\net45\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=9.0.1910.2802, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.9.0.1910.2802\lib\net45\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=9.0.1910.2201, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.9.0.1910.2201\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=9.0.1910.2801, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.9.0.1910.2801\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.MQTT, Version=8.1.1910.2201, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.MQTT.8.1.1910.2201\lib\net46\Gurux.MQTT.dll</HintPath>
@@ -150,8 +150,8 @@
     <Reference Include="Gurux.Net, Version=8.1.1909.601, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Net.8.1.1909.601\lib\net45\Gurux.Net.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.Serial, Version=8.1.1909.601, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Serial.8.1.1909.601\lib\net45\Gurux.Serial.dll</HintPath>
+    <Reference Include="Gurux.Serial, Version=8.1.1910.3102, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Serial.8.1.1910.3102\lib\net45\Gurux.Serial.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.Terminal, Version=8.1.1909.1201, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Terminal.8.1.1909.1201\lib\net45\Gurux.Terminal.dll</HintPath>
@@ -450,7 +450,7 @@
     <EmbeddedResource Include="ConformanceTests\DLMS\MacAddressSetup.xml" />
     <EmbeddedResource Include="ConformanceTests\DLMS\MBusClient.xml" />
     <EmbeddedResource Include="ConformanceTests\DLMS\MBusMasterPortSetup.xml" />
-    <EmbeddedResource Include="ConformanceTests\DLMS\ModemConfiguration.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\v1\ModemConfiguration.xml" />
     <EmbeddedResource Include="ConformanceTests\DLMS\PPPSetup.xml" />
     <EmbeddedResource Include="ConformanceTests\DLMS\ProfileGeneric.xml" />
     <EmbeddedResource Include="ConformanceTests\DLMS\PushSetup.xml" />
@@ -477,6 +477,7 @@
     <EmbeddedResource Include="ConformanceTests\SaudiArabia\ExtendedRegister.xml" />
     <EmbeddedResource Include="ConformanceTests\DLMS\v0\GSMDiagnostic.xml" />
     <EmbeddedResource Include="ConformanceTests\DLMS\v1\GSMDiagnostic.xml" />
+    <EmbeddedResource Include="ConformanceTests\DLMS\v0\ModemConfiguration.xml" />
     <Content Include="GXDLMSDirector.ico" />
     <None Include="Resources\NotifyMnu.bmp" />
     <None Include="Resources\cct.png" />

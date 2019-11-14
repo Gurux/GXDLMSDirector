@@ -247,7 +247,7 @@
       <InvokeIdAndPriority Value="*" />
       <Result>
         <Data>
-          <OctetString Value="*" />
+          <DateTime Value="*" />
         </Data>
       </Result>
     </GetResponseNormal>

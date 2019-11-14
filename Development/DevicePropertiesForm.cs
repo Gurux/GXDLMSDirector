@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11066 $,
-//                  $Date: 2019-10-31 10:06:31 +0200 (to, 31 loka 2019) $
+// Version:         $Revision: 11099 $,
+//                  $Date: 2019-11-11 19:57:34 +0200 (ma, 11 marras 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -913,11 +913,11 @@ namespace GXDLMSDirector
             device.ClientAddress = Convert.ToInt32(ClientAddTB.Value);
             if (device.HDLCAddressing == HDLCAddressType.SerialNumber)
             {
-                device.PhysicalAddress = PhysicalServerAddressTB.Value;
+                device.PhysicalAddress = (int)PhysicalServerAddressTB.Value;
             }
             else
             {
-                device.PhysicalAddress = Convert.ChangeType(PhysicalServerAddressTB.Value, server.PhysicalAddress.GetType());
+                device.PhysicalAddress = (int)PhysicalServerAddressTB.Value;
             }
             device.UseLogicalNameReferencing = this.UseLNCB.Checked;
             device.LogicalAddress = Convert.ToInt32(LogicalServerAddressTB.Value);

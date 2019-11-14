@@ -239,4 +239,7 @@ All rights reserved.</value>
   <data name="ValuesFilterTxt" xml:space="preserve">
     <value>Gurux GXDLMSDirector values (*.xml)|*.xml|All files (*.*)|*.*</value>
   </data>
+  <data name="ActionImplemented" xml:space="preserve">
+    <value>Action Implemented.</value>
+  </data>
 </root>

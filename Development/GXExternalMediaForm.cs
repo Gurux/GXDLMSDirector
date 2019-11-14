@@ -33,6 +33,7 @@
 using Gurux.Common;
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
@@ -248,7 +249,28 @@ namespace GXDLMSDirector
                         w.Write(ms.GetBuffer(), 0, length);
                         w.Close();
                     }
-                    Assembly.LoadFile(path);
+#if (NET46)
+                    if (Path.GetExtension(path) == ".zip")
+                    {
+                        using (ZipArchive archive = ZipFile.OpenRead(path))
+                        {
+                            foreach (ZipArchiveEntry entry in archive.Entries)
+                            {
+                                // Gets the full path to ensure that relative segments are removed.
+                                string destinationPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(path), entry.FullName));
+                                entry.ExtractToFile(destinationPath, true);
+                                if (Path.GetExtension(destinationPath) == ".dll")
+                                {
+                                    Assembly.LoadFile(destinationPath);
+                                }
+                            }
+                        }
+                    }
+                    else
+#endif
+                    {
+                        Assembly.LoadFile(path);
+                    }
                 }
                 catch (Exception)
                 {
@@ -290,6 +312,7 @@ namespace GXDLMSDirector
             }
             catch (Exception Ex)
             {
+                this.DialogResult = DialogResult.None;
                 GXDLMS.Common.Error.ShowError(this, Ex);
             }
         }

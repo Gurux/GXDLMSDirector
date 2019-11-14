@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11026 $,
-//                  $Date: 2019-10-15 08:26:37 +0300 (ti, 15 loka 2019) $
+// Version:         $Revision: 11125 $,
+//                  $Date: 2019-11-14 12:00:13 +0200 (to, 14 marras 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -56,6 +56,7 @@ using System.Text;
 using static System.Windows.Forms.ListView;
 using System.Reflection;
 using System.Deployment.Application;
+using Gurux.DLMS.Objects.Enums;
 
 namespace GXDLMSDirector
 {
@@ -120,7 +121,14 @@ namespace GXDLMSDirector
         {
             //Dirty is not used with DC.
             Dirty = dirty && activeDC == null;
-            this.Text = Properties.Resources.GXDLMSDirectorTxt + " " + path;
+            if (activeDC != null)
+            {
+                this.Text = activeDC.Name;
+            }
+            else
+            {
+                this.Text = Properties.Resources.GXDLMSDirectorTxt + " " + path;
+            }
             if (Dirty)
             {
                 this.Text += " *";
@@ -178,8 +186,8 @@ namespace GXDLMSDirector
             traceTranslator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
 
             Devices = new GXDLMSMeterCollection();
-            ObjectValueView.Visible = DeviceInfoView.Visible = DeviceList.Visible = false;
-            ObjectValueView.Dock = tabControl2.Dock = DeviceList.Dock = DeviceInfoView.Dock = DockStyle.Fill;
+            ObjectValueView.Visible = DeviceListView.Visible = DeviceInfoView.Visible = false;
+            ObjectValueView.Dock = tabControl2.Dock = DeviceListView.Dock = DeviceInfoView.Dock = DockStyle.Fill;
             ProgressBar.Visible = false;
             UpdateDeviceUI(null, DeviceState.None);
             NewMnu_Click(null, null);
@@ -301,9 +309,11 @@ namespace GXDLMSDirector
                 DisconnectCMnu.Enabled = DisconnectMnu.Enabled = ConnectBtn.Checked = false;
                 DeleteCMnu.Enabled = DeleteMnu.Enabled = DeleteBtn.Enabled = OptionsBtn.Enabled = true;
                 ReadObjectMnu.Enabled = false;
+                AddToScheduleMenu.Visible = true;
             }
             else
             {
+                AddToScheduleMenu.Visible = false;
                 if (selectedDevice != null && selectedDevice != device)
                 {
                     receivedTraceData.Clear();
@@ -333,30 +343,68 @@ namespace GXDLMSDirector
         {
             try
             {
-                if (activeDC != null && !(obj is GXDLMSMeterCollection))
+                if (activeDC != null)
                 {
-                    DeviceInfoView.TabPages.Clear();
-                    if (addInForms != null)
+                    if ((obj is GXDLMSMeterCollection))
                     {
-                        foreach (Form it in addInForms)
+                        DeviceListView.TabPages.Clear();
+                        if (addInForms != null)
                         {
-                            it.Close();
-                            it.Dispose();
+                            foreach (Form it in addInForms)
+                            {
+                                it.Close();
+                                it.Dispose();
+                            }
+                        }
+                        addInForms = activeDC.CustomPages(obj, activeDC);
+                        if (addInForms != null)
+                        {
+                            DeviceListView.Visible = true;
+                            DeviceInfoView.Visible = tabControl2.Visible = ObjectValueView.Visible = false;
+                            foreach (Form f in addInForms)
+                            {
+                                TabPage tp = new TabPage(f.Text);
+                                DeviceListView.TabPages.Add(tp);
+                                foreach (Control it in f.Controls)
+                                {
+                                    tp.Controls.Add(it);
+                                }
+                                if (f is IGXDataConcentratorView)
+                                {
+                                    ((IGXDataConcentratorView)f).Initialize();
+                                }
+                            }
                         }
                     }
-                    addInForms = activeDC.CustomPages(obj, activeDC);
-                    if (addInForms != null)
+                    else
                     {
-                        DeviceInfoView.Visible = true;
                         DeviceInfoView.TabPages.Clear();
-                        DeviceList.Visible = tabControl2.Visible = ObjectValueView.Visible = false;
-                        foreach (Form f in addInForms)
+                        if (addInForms != null)
                         {
-                            TabPage tp = new TabPage(f.Text);
-                            DeviceInfoView.TabPages.Add(tp);
-                            foreach (Control it in f.Controls)
+                            foreach (Form it in addInForms)
                             {
-                                tp.Controls.Add(it);
+                                it.Close();
+                                it.Dispose();
+                            }
+                        }
+                        addInForms = activeDC.CustomPages(obj, activeDC);
+                        if (addInForms != null)
+                        {
+                            DeviceInfoView.Visible = true;
+                            DeviceInfoView.TabPages.Clear();
+                            DeviceListView.Visible = tabControl2.Visible = ObjectValueView.Visible = false;
+                            foreach (Form f in addInForms)
+                            {
+                                TabPage tp = new TabPage(f.Text);
+                                DeviceInfoView.TabPages.Add(tp);
+                                foreach (Control it in f.Controls)
+                                {
+                                    tp.Controls.Add(it);
+                                }
+                                if (f is IGXDataConcentratorView)
+                                {
+                                    ((IGXDataConcentratorView)f).Initialize();
+                                }
                             }
                         }
                     }
@@ -380,18 +428,24 @@ namespace GXDLMSDirector
                     }
                 }
 
-                DeviceList.Visible = obj is GXDLMSMeterCollection;
+                DeviceListView.Visible = obj is GXDLMSMeterCollection;
                 //If device is selected.
                 DeviceInfoView.Visible = obj is GXDLMSMeter;
                 tabControl2.Visible = obj is GXDLMSObject;
                 ObjectValueView.Visible = obj is GXDLMSObjectCollection;
-                if (DeviceList.Visible)
+                if (DeviceListView.Visible)
                 {
+                    if (activeDC == null)
+                    {
+                        DeviceListView.TabPages.Clear();
+                        DeviceListView.TabPages.Add(DevicesTab);
+                    }
+
                     SaveAsTemplateBtn.Enabled = false;
                     DeviceState state = Devices.Count == 0 ? DeviceState.None : DeviceState.Initialized;
                     UpdateDeviceUI(null, state);
                     DeleteMnu.Enabled = DeleteBtn.Enabled = OptionsBtn.Enabled = false;
-                    DeviceList.BringToFront();
+                    DeviceInfoView.BringToFront();
                 }
                 else if (DeviceInfoView.Visible)
                 {
@@ -506,8 +560,11 @@ namespace GXDLMSDirector
                             GXDLMSObject obj2 = items[0] as GXDLMSObject;
                             if (obj2.Parent != null)
                             {
-                                GXDLMSDevice dev = obj2.Parent.Tag as GXDLMSDevice;
-                                UpdateDeviceUI(dev, dev.Status);
+                                if (obj2.Parent.Tag is GXDLMSDevice)
+                                {
+                                    GXDLMSDevice dev = obj2.Parent.Tag as GXDLMSDevice;
+                                    UpdateDeviceUI(dev, dev.Status);
+                                }
                             }
                         }
                     }
@@ -521,7 +578,12 @@ namespace GXDLMSDirector
                     tabControl2.BringToFront();
                     SaveAsTemplateBtn.Enabled = true;
                     GXDLMSDevice d = GetDevice((GXDLMSObject)obj);
-                    SelectedView = GXDlmsUi.GetView(Views, (GXDLMSObject)obj, d.Standard);
+                    Standard st = Standard.DLMS;
+                    if (d != null)
+                    {
+                        st = d.Standard;
+                    }
+                    SelectedView = GXDlmsUi.GetView(Views, (GXDLMSObject)obj, st);
                     foreach (Control it in ObjectPanelFrame.Controls)
                     {
                         it.Hide();
@@ -824,6 +886,10 @@ namespace GXDLMSDirector
                 ve.Client = dev.Comm.client;
                 dev.KeepAliveStop();
             }
+            else
+            {
+                ve.Client = new GXDLMSClient();
+            }
             ve.Action = btn.Action;
             GXDlmsUi.UpdateAccessRights(btn.View, btn.Target, false);
             try
@@ -909,8 +975,8 @@ namespace GXDLMSDirector
                             {
                                 if (dev == null)
                                 {
-                                    List<KeyValuePair<GXDLMSObject, byte>> list = new List<KeyValuePair<GXDLMSObject, byte>>();
-                                    list.Add(new KeyValuePair<GXDLMSObject, byte>(ve.Target, (byte)ve.Index));
+                                    List<GXActionParameter> list = new List<GXActionParameter>();
+                                    list.Add(new GXActionParameter() { Target = ve.Target, Index = ve.Index, Data = ve.Value });
                                     activeDC.MethodObjects(new GXDLMSMeter[] { m }, list);
                                 }
                                 else
@@ -981,6 +1047,21 @@ namespace GXDLMSDirector
                 }
                 TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, OnAction, OnError, null, new object[] { sender });
                 TransactionWork.Start();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message);
+            }
+        }
+
+
+        delegate void ItemChangedEventHandler(object target);
+
+        void OnItemChanged(object target)
+        {
+            try
+            {
+                SelectItem(target);
             }
             catch (Exception ex)
             {
@@ -1124,7 +1205,17 @@ namespace GXDLMSDirector
                 GXDLMSMeter dev = GetSelectedDevice();
                 if (dev != null)
                 {
-                    ShowProperties(dev, false);
+                    if (activeDC != null)
+                    {
+                        if (activeDC.EditDevice(this, dev))
+                        {
+                            ((TreeNode)ObjectTreeItems[dev]).Text = dev.Name;
+                        }
+                    }
+                    else
+                    {
+                        ShowProperties(dev, false);
+                    }
                 }
             }
             catch (Exception Ex)
@@ -1880,9 +1971,9 @@ namespace GXDLMSDirector
                     //Do not try to refresh and read values at the same time.
                     return;
                 }
+                List<KeyValuePair<GXDLMSObject, byte>> list = new List<KeyValuePair<GXDLMSObject, byte>>();
                 foreach (GXDLMSObject obj in d.Objects)
                 {
-                    List<KeyValuePair<GXDLMSObject, byte>> list = new List<KeyValuePair<GXDLMSObject, byte>>();
                     int[] indexes = (obj as IGXDLMSBase).GetAttributeIndexToRead(ForceRefreshBtn.Checked);
                     foreach (byte pos in indexes)
                     {
@@ -1890,7 +1981,11 @@ namespace GXDLMSDirector
                         list.Add(new KeyValuePair<GXDLMSObject, byte>(obj, pos));
                     }
                     OnBeforeRead(obj, 0, null);
-                    activeDC.ReadObjects(new GXDLMSMeter[] { obj.Parent.Tag as GXDLMSMeter }, list);
+                }
+                activeDC.ReadObjects(new GXDLMSMeter[] { d as GXDLMSMeter }, list);
+                foreach (GXDLMSObject obj in d.Objects)
+                {
+                    int[] indexes = (obj as IGXDLMSBase).GetAttributeIndexToRead(ForceRefreshBtn.Checked);
                     foreach (byte pos in indexes)
                     {
                         OnAfterRead(obj, pos, null);
@@ -2026,8 +2121,12 @@ namespace GXDLMSDirector
                     }
                     else if (SelectedView != null && SelectedView.Target == sender)
                     {
-                        GXDLMSProfileGeneric pg = sender as GXDLMSProfileGeneric;
-                        pg.Buffer.Clear();
+                        //Don't clear buffer when Gurux.DLMS.AMI is used.
+                        if (activeDC == null)
+                        {
+                            GXDLMSProfileGeneric pg = sender as GXDLMSProfileGeneric;
+                            pg.Buffer.Clear();
+                        }
                     }
                 }
             }
@@ -2124,14 +2223,20 @@ namespace GXDLMSDirector
                             int[] indexes = (obj as IGXDLMSBase).GetAttributeIndexToRead(ForceRefreshBtn.Checked);
                             foreach (byte pos in indexes)
                             {
-                                OnBeforeRead(obj, pos, null);
-                                list.Add(new KeyValuePair<GXDLMSObject, byte>(obj, pos));
+                                if (pos != 1)
+                                {
+                                    OnBeforeRead(obj, pos, null);
+                                    list.Add(new KeyValuePair<GXDLMSObject, byte>(obj, pos));
+                                }
                             }
                             OnBeforeRead(obj, 0, null);
                             activeDC.ReadObjects(new GXDLMSMeter[] { obj.Parent.Tag as GXDLMSMeter }, list);
                             foreach (byte pos in indexes)
                             {
-                                OnAfterRead(obj, pos, null);
+                                if (pos != 1)
+                                {
+                                    OnAfterRead(obj, pos, null);
+                                }
                             }
                             DLMSItemOnChange(obj, false, 0, null);
                         }
@@ -2182,14 +2287,20 @@ namespace GXDLMSDirector
                                 int[] indexes = (obj as IGXDLMSBase).GetAttributeIndexToRead(ForceRefreshBtn.Checked);
                                 foreach (byte pos in indexes)
                                 {
-                                    OnBeforeRead(obj, pos, null);
-                                    list.Add(new KeyValuePair<GXDLMSObject, byte>(obj, pos));
+                                    if (pos != 1)
+                                    {
+                                        OnBeforeRead(obj, pos, null);
+                                        list.Add(new KeyValuePair<GXDLMSObject, byte>(obj, pos));
+                                    }
                                 }
                                 OnBeforeRead(obj, 0, null);
                                 activeDC.ReadObjects(new GXDLMSMeter[] { obj.Parent.Tag as GXDLMSMeter }, list);
                                 foreach (byte pos in indexes)
                                 {
-                                    OnAfterRead(obj, pos, null);
+                                    if (pos != 1)
+                                    {
+                                        OnAfterRead(obj, pos, null);
+                                    }
                                 }
                                 DLMSItemOnChange(obj, false, 0, null);
                             }
@@ -2355,20 +2466,23 @@ namespace GXDLMSDirector
                                 activeDC.WriteObjects(new GXDLMSMeter[] { obj.Parent.Tag as GXDLMSMeter }, objects);
                             }
                         }
-                        GXDLMSDevice dev = obj.Parent.Tag as GXDLMSDevice;
-                        try
+                        else
                         {
-                            dev.KeepAliveStop();
-                            dev.Comm.OnError += new ReadEventHandler(OnError);
-                            OnProgress(dev, "Writing...", 0, 1);
-                            dev.Comm.Write(obj, 0);
-                            GXDlmsUi.UpdateProperty(obj as GXDLMSObject, 0, SelectedView, true, false);
-                            ShowLastErrors(obj);
-                        }
-                        finally
-                        {
-                            dev.Comm.OnError -= new ReadEventHandler(OnError);
-                            dev.KeepAliveStart();
+                            GXDLMSDevice dev = obj.Parent.Tag as GXDLMSDevice;
+                            try
+                            {
+                                dev.KeepAliveStop();
+                                dev.Comm.OnError += new ReadEventHandler(OnError);
+                                OnProgress(dev, "Writing...", 0, 1);
+                                dev.Comm.Write(obj, 0);
+                                GXDlmsUi.UpdateProperty(obj as GXDLMSObject, 0, SelectedView, true, false);
+                                ShowLastErrors(obj);
+                            }
+                            finally
+                            {
+                                dev.Comm.OnError -= new ReadEventHandler(OnError);
+                                dev.KeepAliveStart();
+                            }
                         }
                     }
                 }
@@ -2503,6 +2617,21 @@ namespace GXDLMSDirector
                         RemoveObject(dev.Objects[0]);
                     }
                 }
+                else if (target is GXDLMSMeter)
+                {
+                    GXDLMSMeter dev = target as GXDLMSMeter;
+                    Devices.Remove(dev);
+                    TreeNode node = (TreeNode)ObjectTreeItems[dev];
+                    node.Remove();
+                    ObjectTreeItems.Remove(dev);
+                    ListViewItem item = (ListViewItem)DeviceListViewItems[dev];
+                    DeviceList.Items.Remove(item);
+                    DeviceListViewItems.Remove(dev);
+                    while (dev.Objects.Count != 0)
+                    {
+                        RemoveObject(dev.Objects[0]);
+                    }
+                }
             }
         }
 
@@ -2557,6 +2686,16 @@ namespace GXDLMSDirector
                                 RemoveDevice(it.Tag as GXDLMSDevice);
                             }
                         }
+                        else if (activeDC != null && obj is GXDLMSMeter)
+                        {
+                            if (MessageBox.Show(this, GXDLMSDirector.Properties.Resources.RemoveDeviceConfirmation, GXDLMSDirector.Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel) != DialogResult.Yes)
+                            {
+                                return;
+                            }
+                            activeDC.RemoveDevices(new GXDLMSMeter[] { (GXDLMSMeter)obj });
+                            RemoveObject(obj);
+                        }
+
                     }
                 }
                 else if (ObjectList.Focused && ObjectList.SelectedItems.Count != 0)
@@ -2636,7 +2775,7 @@ namespace GXDLMSDirector
                     d.OnStatusChanged += new StatusEventHandler(this.OnStatusChanged);
                 }
                 GXManufacturer m = Manufacturers.FindByIdentification(dev.Manufacturer);
-                if (first && m.ObisCodes != null)
+                if (first && m != null && m.ObisCodes != null)
                 {
                     GXDLMSConverter c = new GXDLMSConverter();
                     foreach (GXObisCode it in m.ObisCodes)
@@ -2684,6 +2823,8 @@ namespace GXDLMSDirector
             {
                 Devices.Clear();
                 Devices.AddRange(activeDC.GetDevices(null));
+                TreeNode node = ObjectTree.Nodes[0];
+                node.Tag = Devices;
             }
             else
             {
@@ -2759,31 +2900,28 @@ namespace GXDLMSDirector
             foreach (GXDLMSMeter dev in Devices)
             {
                 GXDLMSDevice d = dev as GXDLMSDevice;
-                d.Comm.client.Standard = dev.Standard;
-                //Conformance is new funtionality. Set default value if not set.
-                if (dev.UseLogicalNameReferencing && dev.Conformance == (int)GXDLMSClient.GetInitialConformance(false))
-                {
-                    dev.Conformance = (int)GXDLMSClient.GetInitialConformance(dev.UseLogicalNameReferencing);
-                }
                 if (d != null)
                 {
+                    d.Comm.client.Standard = dev.Standard;
+                    //Conformance is new funtionality. Set default value if not set.
+                    if (dev.UseLogicalNameReferencing && dev.Conformance == (int)GXDLMSClient.GetInitialConformance(false))
+                    {
+                        dev.Conformance = (int)GXDLMSClient.GetInitialConformance(dev.UseLogicalNameReferencing);
+                    }
                     d.Comm.parentForm = this;
                     d.Manufacturers = this.Manufacturers;
-                }
-                GXManufacturer m = Manufacturers.FindByIdentification(dev.Manufacturer);
-                if (m == null)
-                {
-                    throw new Exception("Load failed. Invalid manufacturer: " + dev.Manufacturer);
-                }
-                if (version == 0)
-                {
-                    dev.UseLogicalNameReferencing = m.UseLogicalNameReferencing;
-                }
-                dev.Objects.Tag = dev;
-                if (d != null)
-                {
+                    GXManufacturer m = Manufacturers.FindByIdentification(dev.Manufacturer);
+                    if (m == null)
+                    {
+                        throw new Exception("Load failed. Invalid manufacturer: " + dev.Manufacturer);
+                    }
+                    if (version == 0)
+                    {
+                        dev.UseLogicalNameReferencing = m.UseLogicalNameReferencing;
+                    }
                     d.ObisCodes = m.ObisCodes;
                 }
+                dev.Objects.Tag = dev;
                 AddDevice(dev, false, false);
                 RefreshDevice(dev, false);
                 //Update association views.
@@ -2796,7 +2934,10 @@ namespace GXDLMSDirector
             GroupItems(GroupsMnu.Checked, null);
             this.path = path;
             SetDirty(false);
-            mruManager.Insert(0, path);
+            if (path != null)
+            {
+                mruManager.Insert(0, path);
+            }
         }
 
         /// <summary>
@@ -2934,16 +3075,18 @@ namespace GXDLMSDirector
                     for (int pos = 0; pos != cnt; ++pos)
                     {
                         GXDLMSObject it = dev.Objects[pos];
-                        GXObisCode obj = m.ObisCodes.FindByLN(it.ObjectType, it.LogicalName, null);
-                        if (obj != null)
+                        if (m != null)
                         {
-                            UpdateFromObisCode(it, obj);
+                            GXObisCode obj = m.ObisCodes.FindByLN(it.ObjectType, it.LogicalName, null);
+                            if (obj != null)
+                            {
+                                UpdateFromObisCode(it, obj);
+                            }
+                            else
+                            {
+                                continue;
+                            }
                         }
-                        else
-                        {
-                            continue;
-                        }
-
                         //Update association views.
                         if (it is GXDLMSAssociationLogicalName && it.LogicalName == "0.0.40.0.4.255")
                         {
@@ -2962,8 +3105,8 @@ namespace GXDLMSDirector
                                 dev.InactivityTimeout = it.InactivityTimeout - 10;
                             }
                         }
-                        this.OnProgress(dev, "Reading scalers and units.", cnt, cnt);
                     }
+                    this.OnProgress(dev, "Reading scalers and units.", cnt, cnt);
                     GroupItems(GroupsMnu.Checked, dev);
                 }
             }
@@ -2977,9 +3120,12 @@ namespace GXDLMSDirector
             }
             finally
             {
-                if (d != null && bRefresh)
+                if (bRefresh)
                 {
-                    d.KeepAliveStart();
+                    if (d != null)
+                    {
+                        d.KeepAliveStart();
+                    }
                     UpdateTransaction(false);
                 }
             }
@@ -3064,73 +3210,185 @@ namespace GXDLMSDirector
                 else if (parameters[0] is GXDLMSMeter)
                 {
                     GXDLMSMeter dev = (GXDLMSMeter)parameters[0];
-                    RefreshDevice(dev, true);
+                    if (activeDC != null && dev.Objects.Count != 0)
+                    {
+                        List<KeyValuePair<GXDLMSObject, byte>> list = new List<KeyValuePair<GXDLMSObject, byte>>();
+                        foreach (GXDLMSObject obj in dev.Objects)
+                        {
+                            foreach (byte index in (obj as IGXDLMSBase).GetAttributeIndexToRead(ForceRefreshBtn.Checked))
+                            {
+                                list.Add(new KeyValuePair<GXDLMSObject, byte>((GXDLMSObject)obj, index));
+                            }
+                        }
+                        activeDC.GetValues(new GXDLMSMeter[] { dev }, list, true);
+                        this.Invoke(new ItemChangedEventHandler(OnItemChanged), dev);
+                    }
+                    else
+                    {
+                        RefreshDevice(dev, true);
+                    }
                 }
                 else if (parameters[0] is GXDLMSObjectCollection)
                 {
-                    bool oneProfileGeneric = false;
-                    bool allProfileGeneric = true;
-                    //If only profile generics are selected update only them not whole device.
                     GXDLMSObjectCollection items = parameters[0] as GXDLMSObjectCollection;
-                    foreach (GXDLMSObject it in items)
+                    if (activeDC != null)
                     {
-                        if (!(it is GXDLMSProfileGeneric))
+                        GXDLMSMeter dev = items.Tag as GXDLMSMeter;
+                        List<KeyValuePair<GXDLMSObject, byte>> list = new List<KeyValuePair<GXDLMSObject, byte>>();
+                        foreach (GXDLMSObject obj in items)
                         {
-                            allProfileGeneric = false;
-                            if (oneProfileGeneric)
+                            foreach (byte index in (obj as IGXDLMSBase).GetAttributeIndexToRead(ForceRefreshBtn.Checked))
                             {
-                                break;
+                                if (!(obj is GXDLMSProfileGeneric) || (index != 2 || (obj as GXDLMSProfileGeneric).AccessSelector == AccessRange.All))
+                                {
+                                    list.Add(new KeyValuePair<GXDLMSObject, byte>((GXDLMSObject)obj, index));
+                                }
                             }
                         }
-                        else
+                        activeDC.GetValues(new GXDLMSMeter[] { dev }, list, false);
+                        //Read profile generic buffers.
+                        foreach (GXDLMSObject obj in items)
                         {
-                            oneProfileGeneric = true;
-                        }
-                    }
-                    if (oneProfileGeneric && allProfileGeneric)
-                    {
-                        foreach (GXDLMSProfileGeneric pg in items)
-                        {
-                            GXDLMSDevice dev = pg.Parent.Tag as GXDLMSDevice;
-                            dev.UpdateColumns(pg, dev.Manufacturers.FindByIdentification(dev.Manufacturer));
-                            if (items.Count != 1)
+                            if (obj is GXDLMSProfileGeneric)
                             {
-                                ListViewItem it = ObjectListItems[pg] as ListViewItem;
-                                it.Selected = false;
+                                GXDLMSProfileGeneric pg = (GXDLMSProfileGeneric)obj;
+                                if (pg.AccessSelector == AccessRange.Entry)
+                                {
+                                    activeDC.GetRowsByEntry((GXDLMSMeter)((GXDLMSObject)pg).Parent.Parent, pg, Convert.ToUInt64(pg.From), Convert.ToUInt64(pg.To));
+                                }
+                                else if (pg.AccessSelector == AccessRange.Range ||
+                                    pg.AccessSelector == AccessRange.Last)
+                                {
+                                    DateTime start = Convert.ToDateTime(pg.From);
+                                    DateTime end = Convert.ToDateTime(pg.To);
+                                    //Set seconds to zero.
+                                    start = start.AddSeconds(-start.Second);
+                                    end = end.AddSeconds(-end.Second);
+                                    activeDC.GetRowsByRange((GXDLMSMeter)((GXDLMSObject)pg).Parent.Parent, pg, start, end);
+                                }
                             }
                         }
+                        this.Invoke(new ItemChangedEventHandler(OnItemChanged), items);
                     }
-                    else if (items.Count != 0)//If other than profile generics are selected read meter.
+                    else
                     {
-                        GXDLMSMeter dev = items[0].Parent.Tag as GXDLMSMeter;
-                        Refresh(sender, work, new object[] { dev });
+                        bool oneProfileGeneric = false;
+                        bool allProfileGeneric = true;
+                        //If only profile generics are selected update only them not whole device.
+                        foreach (GXDLMSObject it in items)
+                        {
+                            if (!(it is GXDLMSProfileGeneric))
+                            {
+                                allProfileGeneric = false;
+                                if (oneProfileGeneric)
+                                {
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                oneProfileGeneric = true;
+                            }
+                        }
+                        if (oneProfileGeneric && allProfileGeneric)
+                        {
+                            foreach (GXDLMSProfileGeneric pg in items)
+                            {
+                                GXDLMSDevice dev = pg.Parent.Tag as GXDLMSDevice;
+                                dev.UpdateColumns(pg, dev.Manufacturers.FindByIdentification(dev.Manufacturer));
+                                if (items.Count != 1)
+                                {
+                                    ListViewItem it = ObjectListItems[pg] as ListViewItem;
+                                    it.Selected = false;
+                                }
+                            }
+                        }
+                        else if (items.Count != 0)//If other than profile generics are selected read meter.
+                        {
+                            GXDLMSMeter dev = items[0].Parent.Tag as GXDLMSMeter;
+                            Refresh(sender, work, new object[] { dev });
+                        }
                     }
                 }
                 else if (parameters[0] is GXDLMSProfileGeneric)
                 {
+                    bool connected = true;
                     ClearTrace();
                     GXDLMSProfileGeneric pg = (GXDLMSProfileGeneric)parameters[0];
-                    GXDLMSDevice dev = pg.Parent.Tag as GXDLMSDevice;
-                    dev.UpdateColumns(pg, dev.Manufacturers.FindByIdentification(dev.Manufacturer));
-                    ((GXDLMSProfileGenericView)SelectedView).Target = parameters[0] as GXDLMSProfileGeneric;
-                    if (InvokeRequired)
+                    if (activeDC != null)
                     {
-                        this.Invoke(new ValueChangedEventHandler(OnValueChanged), new object[] { SelectedView, 3, null, false, (dev.Status & DeviceState.Connected) != 0 });
+                        List<KeyValuePair<GXDLMSObject, byte>> list = new List<KeyValuePair<GXDLMSObject, byte>>();
+                        //Buffer is updated after all else is updated.
+                        foreach (byte index in (pg as IGXDLMSBase).GetAttributeIndexToRead(true))
+                        {
+                            if (index != 2 || pg.AccessSelector == AccessRange.All)
+                            {
+                                list.Add(new KeyValuePair<GXDLMSObject, byte>((GXDLMSObject)pg, index));
+                            }
+                        }
+                        activeDC.GetValues(new GXDLMSMeter[] { (GXDLMSMeter)((GXDLMSObject)pg).Parent.Parent }, list, false);
+                        if (pg.AccessSelector == AccessRange.Entry)
+                        {
+                            activeDC.GetRowsByEntry((GXDLMSMeter)((GXDLMSObject)pg).Parent.Parent, pg, Convert.ToUInt64(pg.From), Convert.ToUInt64(pg.To));
+                        }
+                        else if (pg.AccessSelector == AccessRange.Range ||
+                            pg.AccessSelector == AccessRange.Last)
+                        {
+                            DateTime start = Convert.ToDateTime(pg.From);
+                            DateTime end = Convert.ToDateTime(pg.To);
+                            //Set seconds to zero.
+                            start = start.AddSeconds(-start.Second);
+                            end = end.AddSeconds(-end.Second);
+                            activeDC.GetRowsByRange((GXDLMSMeter)((GXDLMSObject)pg).Parent.Parent, pg, start, end);
+                        }
+                        //If user hasn't change the target.
+                        if (SelectedView.Target == pg)
+                        {
+                            this.Invoke(new ItemChangedEventHandler(OnItemChanged), pg);
+                        }
                     }
                     else
                     {
-                        SelectedView.OnValueChanged(3, null, false, (dev.Status & DeviceState.Connected) != 0);
+                        GXDLMSDevice dev = pg.Parent.Tag as GXDLMSDevice;
+                        dev.UpdateColumns(pg, dev.Manufacturers.FindByIdentification(dev.Manufacturer));
+                        connected = (dev.Status & DeviceState.Connected) != 0;
+                    }
+                    ((GXDLMSProfileGenericView)SelectedView).Target = parameters[0] as GXDLMSProfileGeneric;
+                    if (InvokeRequired)
+                    {
+                        this.Invoke(new ValueChangedEventHandler(OnValueChanged), new object[] { SelectedView, 3, null, false, connected });
+                    }
+                    else
+                    {
+                        SelectedView.OnValueChanged(3, null, false, connected);
                     }
                 }
                 else
                 {
                     GXDLMSObject obj = parameters[0] as GXDLMSObject;
-                    GXDLMSMeter dev = obj.Parent.Tag as GXDLMSMeter;
-                    if (!this.InvokeRequired)
+                    if (activeDC != null)
                     {
-                        ObjectTree.SelectedNode = ObjectTreeItems[dev] as TreeNode;
+                        List<KeyValuePair<GXDLMSObject, byte>> list = new List<KeyValuePair<GXDLMSObject, byte>>();
+                        foreach (byte index in (obj as IGXDLMSBase).GetAttributeIndexToRead(ForceRefreshBtn.Checked))
+                        {
+                            list.Add(new KeyValuePair<GXDLMSObject, byte>((GXDLMSObject)obj, index));
+                        }
+                        activeDC.GetValues(new GXDLMSMeter[] { (GXDLMSMeter)((GXDLMSObject)obj).Parent.Parent }, list, false);
+                        //If user hasn't change the target.
+                        if (SelectedView.Target == obj)
+                        {
+                            this.Invoke(new ItemChangedEventHandler(OnItemChanged), obj);
+                        }
                     }
-                    RefreshDevice(dev, true);
+                    else
+                    {
+                        GXDLMSMeter dev = obj.Parent.Tag as GXDLMSMeter;
+                        if (!this.InvokeRequired)
+                        {
+                            ObjectTree.SelectedNode = ObjectTreeItems[dev] as TreeNode;
+                        }
+                        RefreshDevice(dev, true);
+                    }
                 }
                 SetDirty(true);
             }
@@ -3147,40 +3405,47 @@ namespace GXDLMSDirector
         /// <param name="e"></param>
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (activeDC != null)
+            if (tabControl1.SelectedIndex == 0)
             {
-                Refresh(null, null, new object[] { ObjectTree.SelectedNode.Tag });
+                TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Refresh, OnError, null, new object[] { ObjectTree.SelectedNode.Tag });
             }
             else
             {
-                if (tabControl1.SelectedIndex == 0)
+                GXDLMSObjectCollection items = new GXDLMSObjectCollection();
+                foreach (ListViewItem it in ObjectList.SelectedItems)
                 {
-                    TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Refresh, OnError, null, new object[] { ObjectTree.SelectedNode.Tag });
+                    items.Add(it.Tag as GXDLMSObject);
                 }
-                else
-                {
-                    GXDLMSObjectCollection items = new GXDLMSObjectCollection();
-                    foreach (ListViewItem it in ObjectList.SelectedItems)
-                    {
-                        items.Add(it.Tag as GXDLMSObject);
-                    }
-                    TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Refresh, OnError, null, new object[] { items });
-                }
-                TransactionWork.Start();
+                TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Refresh, OnError, null, new object[] { items });
             }
+            TransactionWork.Start();
         }
 
         private void AddDevice(GXDLMSDevice dev)
         {
-            DevicePropertiesForm dlg = new DevicePropertiesForm(this.Manufacturers, dev);
-            if (dlg.ShowDialog(this) == DialogResult.OK)
+            if (activeDC != null)
             {
-                (dlg.Device as GXDLMSDevice).Manufacturers = this.Manufacturers;
-                (dlg.Device as GXDLMSDevice).Comm.parentForm = this;
-                AddDevice((GXDLMSDevice)dlg.Device, false, dev == null);
-                Devices.Add((GXDLMSDevice)dlg.Device);
-                GroupItems(GroupsMnu.Checked, null);
-                SetDirty(true);
+                GXDLMSMeter dev2 = activeDC.AddDevice(this);
+                if (dev2 != null)
+                {
+                    dev2.Objects.Tag = dev2;
+                    AddDevice(dev2, false, false);
+                    Devices.Add(dev2);
+                    GroupItems(GroupsMnu.Checked, null);
+                }
+            }
+            else
+            {
+                DevicePropertiesForm dlg = new DevicePropertiesForm(this.Manufacturers, dev);
+                if (dlg.ShowDialog(this) == DialogResult.OK)
+                {
+                    (dlg.Device as GXDLMSDevice).Manufacturers = this.Manufacturers;
+                    (dlg.Device as GXDLMSDevice).Comm.parentForm = this;
+                    AddDevice((GXDLMSDevice)dlg.Device, false, dev == null);
+                    Devices.Add((GXDLMSDevice)dlg.Device);
+                    GroupItems(GroupsMnu.Checked, null);
+                    SetDirty(true);
+                }
             }
         }
 
@@ -3189,8 +3454,6 @@ namespace GXDLMSDirector
             try
             {
                 AddDevice(null);
-                //Add OBIS codes.
-
             }
             catch (Exception Ex)
             {
@@ -3710,7 +3973,6 @@ namespace GXDLMSDirector
         {
             ToolStripMenuItem it = sender as ToolStripMenuItem;
             it.Checked = !it.Checked;
-            NewMnu_Click(null, null);
             if (it.Checked)
             {
                 if (activeDC != null)
@@ -3734,6 +3996,7 @@ namespace GXDLMSDirector
                 activeDC = null;
                 Properties.Settings.Default.ActiveDC = "";
             }
+            NewMnu_Click(null, null);
             StatusLbl.Text = GetReadyText();
             UpdateDeviceUI(null, DeviceState.None);
             notificationsToolStripMenuItem.Enabled = mruManager.Enabled = RecentFilesMnu.Enabled = activeDC == null;
@@ -6012,6 +6275,26 @@ namespace GXDLMSDirector
             {
                 Error.ShowError(this, Ex);
             }
+        }
+
+        private void AddToScheduleMenu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (this.ObjectTree.SelectedNode != null)
+                {
+                    activeDC.AddToSchedule(this, this.ObjectTree.SelectedNode.Tag);
+                }
+            }
+            catch (Exception Ex)
+            {
+                Error.ShowError(this, Ex);
+            }
+        }
+
+        private void DataConcentratorsMnu_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

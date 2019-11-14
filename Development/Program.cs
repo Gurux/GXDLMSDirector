@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 10764 $,
-//                  $Date: 2019-06-04 11:01:51 +0300 (ti, 04 kesä 2019) $
+// Version:         $Revision: 11125 $,
+//                  $Date: 2019-11-14 12:00:13 +0200 (to, 14 marras 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -146,8 +146,11 @@ namespace GXDLMSDirector
                     try
                     {
                         new Gurux.MQTT.GXMqtt();
+                        //Make AMI visible.
+                        new Gurux.DLMS.AMI.UI.GXDlmsAmi();
+
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         System.Diagnostics.Debug.WriteLine(ex.Message);
                     }

@@ -30,7 +30,6 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <UpdateUrl>http://localhost/GXDLMSDirector/</UpdateUrl>
     <SupportUrl>http://gurux.fi/GXDLMSDirectorHelp</SupportUrl>
     <ErrorReportUrl>http://gurux.fi/project/issues/GXDLMSDirector</ErrorReportUrl>
     <ProductName>GXDLMSDirector</ProductName>

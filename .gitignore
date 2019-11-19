@@ -225,3 +225,6 @@ Development/.vs/config/applicationhost.config
 *.zip
 Development/.vs/GXDLMSDirector/DesignTimeBuild/.dtbcache
 Development/.vs/GXDLMSDirector46/DesignTimeBuild/.dtbcache
+*.testlog
+*.manifest
+Development/.vs/GXDLMSDirector46/config/applicationhost.config

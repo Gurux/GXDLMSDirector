@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10926 $,
-//                  $Date: 2019-08-22 09:32:57 +0300 (to, 22 elo 2019) $
+// Version:         $Revision: 11156 $,
+//                  $Date: 2019-11-19 13:18:00 +0200 (ti, 19 marras 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -215,6 +215,7 @@ namespace GXDLMSDirector
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.helpProvider1 = new System.Windows.Forms.HelpProvider();
             this.conformanceHelpProvider = new System.Windows.Forms.HelpProvider();
+            this.UseProtectedReleaseCb = new System.Windows.Forms.CheckBox();
             this.SupportedServicesTab.SuspendLayout();
             this.SNSettings.SuspendLayout();
             this.LNSettings.SuspendLayout();
@@ -1585,6 +1586,7 @@ namespace GXDLMSDirector
             // 
             // AdvancedTab
             // 
+            this.AdvancedTab.Controls.Add(this.UseProtectedReleaseCb);
             this.AdvancedTab.Controls.Add(this.InactivityTimeoutTb);
             this.AdvancedTab.Controls.Add(this.InactivityTimeoutLbl);
             this.AdvancedTab.Controls.Add(this.ServiceClassCb);
@@ -2009,6 +2011,18 @@ namespace GXDLMSDirector
             // 
             this.conformanceHelpProvider.HelpNamespace = "https://www.gurux.fi/Gurux.DLMS.Conformance";
             // 
+            // UseProtectedReleaseCb
+            // 
+            this.UseProtectedReleaseCb.AutoSize = true;
+            this.helpProvider1.SetHelpString(this.UseProtectedReleaseCb, "Is protected release used.");
+            this.UseProtectedReleaseCb.Location = new System.Drawing.Point(16, 351);
+            this.UseProtectedReleaseCb.Name = "UseProtectedReleaseCb";
+            this.helpProvider1.SetShowHelp(this.UseProtectedReleaseCb, true);
+            this.UseProtectedReleaseCb.Size = new System.Drawing.Size(130, 17);
+            this.UseProtectedReleaseCb.TabIndex = 59;
+            this.UseProtectedReleaseCb.Text = "Use protected release";
+            this.UseProtectedReleaseCb.UseVisualStyleBackColor = true;
+            // 
             // DevicePropertiesForm
             // 
             this.AcceptButton = this.OKBtn;
@@ -2217,5 +2231,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.DateTimePicker WaitTimeTB;
         private System.Windows.Forms.ComboBox InterfaceCb;
         private System.Windows.Forms.Label InterfaceLbl;
+        private System.Windows.Forms.CheckBox UseProtectedReleaseCb;
     }
 }

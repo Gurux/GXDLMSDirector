@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 11030 $,
-//                  $Date: 2019-10-22 12:49:43 +0300 (ti, 22 loka 2019) $
+// Version:         $Revision: 11213 $,
+//                  $Date: 2019-11-27 15:47:25 +0200 (ke, 27 marras 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -320,7 +320,6 @@ namespace GXDLMSDirector
                 }
                 while (!succeeded && pos != tryCount);
                 rd = new GXByteBuffer(p.Reply);
-                int msgPos = 0;
                 try
                 {
                     pos = 0;
@@ -337,7 +336,7 @@ namespace GXDLMSDirector
                                 {
                                     parent.OnEvent(media, new ReceiveEventArgs(rd.Array(), media.ToString()));
                                 }
-                                msgPos = rd.Position;
+                                rd.Trim();
                                 notify.Clear();
                                 p.Eop = eop;
                             }
@@ -346,7 +345,7 @@ namespace GXDLMSDirector
                         //If Eop is not set read one byte at time.
                         if (p.Eop == null)
                         {
-                            p.Count = 1;
+                            p.Count = client.GetFrameSize(rd);
                         }
                         if (!media.IsOpen)
                         {
@@ -377,7 +376,6 @@ namespace GXDLMSDirector
                             throw new TimeoutException(err);
                         }
                         rd.Set(p.Reply);
-                        rd.Position = msgPos;
                     }
                 }
                 catch (Exception ex)

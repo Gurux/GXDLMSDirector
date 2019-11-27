@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11125 $,
-//                  $Date: 2019-11-14 12:00:13 +0200 (to, 14 marras 2019) $
+// Version:         $Revision: 11213 $,
+//                  $Date: 2019-11-27 15:47:25 +0200 (ke, 27 marras 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -2050,7 +2050,7 @@ namespace GXDLMSDirector
                         TraceView.AppendText(trace + " " + GXCommon.ToHex(data, true) + Environment.NewLine);
                     }
                 }
-                else if (data != null && (traceLevel == 2 || traceLevel == 3))
+                else if (data != null && data.Length != 0 && (traceLevel == 2 || traceLevel == 3))
                 {
                     //Show data as xml or pdu.
                     receivedTraceData.Set(data);
@@ -3237,7 +3237,7 @@ namespace GXDLMSDirector
                         List<KeyValuePair<GXDLMSObject, byte>> list = new List<KeyValuePair<GXDLMSObject, byte>>();
                         foreach (GXDLMSObject obj in items)
                         {
-                            foreach (byte index in (obj as IGXDLMSBase).GetAttributeIndexToRead(ForceRefreshBtn.Checked))
+                            foreach (byte index in (obj as IGXDLMSBase).GetAttributeIndexToRead(true))
                             {
                                 if (!(obj is GXDLMSProfileGeneric) || (index != 2 || (obj as GXDLMSProfileGeneric).AccessSelector == AccessRange.All))
                                 {

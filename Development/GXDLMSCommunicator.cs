@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 11213 $,
-//                  $Date: 2019-11-27 15:47:25 +0200 (ke, 27 marras 2019) $
+// Version:         $Revision: 11239 $,
+//                  $Date: 2019-12-03 16:38:53 +0200 (ti, 03 joulu 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1630,9 +1630,9 @@ namespace GXDLMSDirector
             {
                 ReadDataBlock(it, "", 1, 1, reply);
                 //Value is null if data is send in multiple frames.
-                if (reply.Value is List<object>)
+                if (reply.Value is IEnumerable<object>)
                 {
-                    values.AddRange((List<object>)reply.Value);
+                    values.AddRange((IEnumerable<object>)reply.Value);
                 }
                 reply.Clear();
             }

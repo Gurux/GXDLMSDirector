@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10624 $,
-//                  $Date: 2019-04-24 13:56:09 +0300 (ke, 24 huhti 2019) $
+// Version:         $Revision: 11324 $,
+//                  $Date: 2020-01-12 17:20:31 +0200 (Sun, 12 Jan 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -120,10 +120,7 @@ namespace GXDLMSDirector
         {
             try
             {
-                if (!GXDLMSObject.ValidateLogicalName(Target.LogicalName))
-                {
-                    throw new Exception("Invalid logical name.");
-                }
+                GXDLMSObject.ValidateLogicalName(Target.LogicalName);
                 OriginalTarget.Description = Target.Description;
                 OriginalTarget.ObjectType = Target.ObjectType;
                 OriginalTarget.LogicalName = Target.LogicalName.Trim();

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 11239 $,
-//                  $Date: 2019-12-03 16:38:53 +0200 (ti, 03 joulu 2019) $
+// Version:         $Revision: 11324 $,
+//                  $Date: 2020-01-12 17:20:31 +0200 (Sun, 12 Jan 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -977,7 +977,7 @@ namespace GXDLMSDirector
                 {
                     if (media is IGXMedia2)
                     {
-                        ((IGXMedia2)media).AsyncWaitTime = (uint) parent.WaitTime;
+                        ((IGXMedia2)media).AsyncWaitTime = (uint)parent.WaitTime;
                     }
                     media.Open();
                 }
@@ -1442,7 +1442,7 @@ namespace GXDLMSDirector
                         }
                         else if (CurrentProfileGeneric.AccessSelector == AccessRange.Entry)
                         {
-                            tmp = client.ReadRowsByEntry(CurrentProfileGeneric, Convert.ToInt32(CurrentProfileGeneric.From), Convert.ToInt32(CurrentProfileGeneric.To));
+                            tmp = client.ReadRowsByEntry(CurrentProfileGeneric, Convert.ToUInt32(CurrentProfileGeneric.From), Convert.ToUInt32(CurrentProfileGeneric.To));
                             ReadDataBlock(tmp, "Reading profile generic data " + CurrentProfileGeneric.Name, 1, reply);
                         }
                         else //Read all.

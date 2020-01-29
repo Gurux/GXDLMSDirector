@@ -508,6 +508,15 @@ namespace GXDLMSDirector
 
         }
 #endif //DEBUG
+
+        [Description("Exclude Profile Generic Tests.")]
+        [DefaultValue(false)]
+        [Category("Accessibility")]
+        public bool ExcludeProfileGenericTests
+        {
+            get;
+            set;
+        }
     }
 
     public enum CloseApp

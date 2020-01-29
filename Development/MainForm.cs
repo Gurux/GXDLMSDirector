@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11213 $,
-//                  $Date: 2019-11-27 15:47:25 +0200 (ke, 27 marras 2019) $
+// Version:         $Revision: 11407 $,
+//                  $Date: 2020-01-29 19:59:41 +0200 (ke, 29 tammi 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -2822,7 +2822,7 @@ namespace GXDLMSDirector
             if (activeDC != null)
             {
                 Devices.Clear();
-                Devices.AddRange(activeDC.GetDevices(null));
+                Devices.AddRange((GXDLMSMeter[])activeDC.GetDevices(null));
                 TreeNode node = ObjectTree.Nodes[0];
                 node.Tag = Devices;
             }
@@ -3185,7 +3185,14 @@ namespace GXDLMSDirector
 
         void OnGetDevices(string path)
         {
-            LoadFile(null);
+            try
+            {
+                LoadFile(null);
+            }
+            catch (Exception ex)
+            {
+                GXDLMS.Common.Error.ShowError(this, ex);
+            }
         }
 
 
@@ -3425,7 +3432,7 @@ namespace GXDLMSDirector
         {
             if (activeDC != null)
             {
-                GXDLMSMeter dev2 = activeDC.AddDevice(this);
+                GXDLMSMeter dev2 = (GXDLMSMeter)activeDC.AddDevice(this);
                 if (dev2 != null)
                 {
                     dev2.Objects.Tag = dev2;

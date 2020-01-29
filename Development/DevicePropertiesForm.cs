@@ -6,7 +6,7 @@
 //
 //
 // Version:         $Revision: 11156 $,
-//                  $Date: 2019-11-19 13:18:00 +0200 (ti, 19 marras 2019) $
+//                  $Date: 2019-11-19 13:18:00 +0200 (Tue, 19 Nov 2019) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd

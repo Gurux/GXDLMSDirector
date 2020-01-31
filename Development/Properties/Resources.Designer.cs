@@ -79,6 +79,15 @@ namespace GXDLMSDirector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Block Cipher Key.
+        /// </summary>
+        internal static string BlockCipherKeyTxt {
+            get {
+                return ResourceManager.GetString("BlockCipherKeyTxt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap cct {
@@ -392,6 +401,15 @@ namespace GXDLMSDirector.Properties {
         internal static string String1 {
             get {
                 return ResourceManager.GetString("String1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to System title.
+        /// </summary>
+        internal static string SystemTitleTxt {
+            get {
+                return ResourceManager.GetString("SystemTitleTxt", resourceCulture);
             }
         }
         

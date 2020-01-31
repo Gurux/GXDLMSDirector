@@ -138,17 +138,17 @@
     <Reference Include="Gurux.Common, Version=8.1.2001.2404, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Common.8.1.2001.2404\lib\net46\Gurux.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=9.0.2001.3001, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.9.0.2001.3001\lib\net46\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=9.0.2001.3101, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.9.0.2001.3101\lib\net46\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.AMI.Messages, Version=8.1.2001.3001, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.AMI.Messages.8.1.2001.3001\lib\net46\Gurux.DLMS.AMI.Messages.dll</HintPath>
+    <Reference Include="Gurux.DLMS.AMI.Messages, Version=8.1.2001.3101, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.AMI.Messages.8.1.2001.3101\lib\net46\Gurux.DLMS.AMI.Messages.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.AMI.UI, Version=8.1.2001.3001, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.AMI.UI.8.1.2001.3001\lib\net46\Gurux.DLMS.AMI.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.AMI.UI, Version=8.1.2001.3101, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.AMI.UI.8.1.2001.3101\lib\net46\Gurux.DLMS.AMI.UI.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=9.0.2001.3001, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.9.0.2001.3001\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=9.0.2001.3101, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.9.0.2001.3101\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.MQTT, Version=8.1.1910.2201, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.MQTT.8.1.1910.2201\lib\net46\Gurux.MQTT.dll</HintPath>
@@ -365,6 +365,12 @@
       <DependentUpon>DevicePropertiesForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DLMSTranslatorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DLMSTranslatorForm.Designer.cs">
+      <DependentUpon>DLMSTranslatorForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="GXValuesDlg.resx">
       <DependentUpon>GXValuesDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -420,6 +426,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="DLMSTranslatorForm.resx">
+      <DependentUpon>DLMSTranslatorForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />

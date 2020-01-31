@@ -1,7 +1,7 @@
 ﻿//
 // --------------------------------------------------------------------------
 //  Gurux Ltd
-// 
+//
 //
 //
 //
@@ -18,20 +18,21 @@
 // This file is a part of Gurux Device Framework.
 //
 // Gurux Device Framework is Open Source software; you can redistribute it
-// and/or modify it under the terms of the GNU General Public License 
+// and/or modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; version 2 of the License.
 // Gurux Device Framework is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
 //
 // More information of Gurux DLMS/COSEM Director: https://www.gurux.org/GXDLMSDirector
 //
-// This code is licensed under the GNU General Public License v2. 
+// This code is licensed under the GNU General Public License v2.
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
 using Gurux.Common;
+using Gurux.DLMS;
 using Gurux.Net;
 using System;
 using System.Collections.Generic;
@@ -45,6 +46,7 @@ namespace GXDLMSDirector
 {
     public partial class GXSettingsDlg : Form
     {
+        GXDLMSTranslator _eventsTranslator;
         Form notifications;
         List<IGXSettingsPage> MediaPropertiesForm;
         Gurux.Common.GXAsyncWork checkUpdates;
@@ -71,15 +73,16 @@ namespace GXDLMSDirector
         /// Constructor.
         /// </summary>
         /// <param name="media"></param>
-        public GXSettingsDlg(GXNet media)
+        public GXSettingsDlg(GXNet media, GXDLMSTranslator eventsTranslator)
         {
+            _eventsTranslator = eventsTranslator;
             InitializeComponent();
             try
             {
                 //Show notification settings.
                 notifications = media.PropertiesForm;
                 (notifications as IGXPropertyPage).Initialize();
-                Move2(notifications.Controls, NotificationsTab.Controls, !media.IsOpen);
+                Move2(notifications.Controls, NotificationsView.Controls, !media.IsOpen);
                 //Show custom settings.
                 MediaPropertiesForm = new List<IGXSettingsPage>();
                 foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
@@ -111,13 +114,39 @@ namespace GXDLMSDirector
                 {
                     AddMedia(it);
                 }
+                if (IsAscii(eventsTranslator.SystemTitle))
+                {
+                    SystemTitleAsciiCb.CheckedChanged -= SystemTitleAsciiCb_CheckedChanged;
+                    SystemTitleAsciiCb.Checked = true;
+                    SystemTitleAsciiCb.CheckedChanged += SystemTitleAsciiCb_CheckedChanged;
+                    SystemTitleTB.Text = ASCIIEncoding.ASCII.GetString(eventsTranslator.SystemTitle);
+                }
+                else
+                {
+                    SystemTitleAsciiCb.CheckedChanged -= SystemTitleAsciiCb_CheckedChanged;
+                    SystemTitleAsciiCb.Checked = false;
+                    SystemTitleAsciiCb.CheckedChanged += SystemTitleAsciiCb_CheckedChanged;
+                    SystemTitleTB.Text = GXCommon.ToHex(eventsTranslator.SystemTitle);
+                }
+                if (IsAscii(eventsTranslator.BlockCipherKey))
+                {
+                    BlockCipherKeyAsciiCb.CheckedChanged -= BlockCipherKeyAsciiCb_CheckedChanged;
+                    BlockCipherKeyAsciiCb.Checked = true;
+                    BlockCipherKeyAsciiCb.CheckedChanged += BlockCipherKeyAsciiCb_CheckedChanged;
+                    BlockCipherKeyTB.Text = ASCIIEncoding.ASCII.GetString(eventsTranslator.BlockCipherKey);
+                }
+                else
+                {
+                    BlockCipherKeyAsciiCb.CheckedChanged -= BlockCipherKeyAsciiCb_CheckedChanged;
+                    BlockCipherKeyAsciiCb.Checked = false;
+                    BlockCipherKeyAsciiCb.CheckedChanged += BlockCipherKeyAsciiCb_CheckedChanged;
+                    BlockCipherKeyTB.Text = GXCommon.ToHex(eventsTranslator.BlockCipherKey);
+                }
             }
             catch (Exception Ex)
             {
                 GXDLMS.Common.Error.ShowError(this, Ex);
             }
-
-
         }
 
         private void AddMedia(string it)
@@ -148,6 +177,16 @@ namespace GXDLMSDirector
             }
         }
 
+        public static string GetAsHex(string value, bool ascii)
+        {
+            if (ascii)
+            {
+                return GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(value), false);
+            }
+            return GXCommon.ToHex(GXCommon.HexToBytes(value), false);
+        }
+
+
         /// <summary>
         /// Accept changes.
         /// </summary>
@@ -157,6 +196,9 @@ namespace GXDLMSDirector
         {
             try
             {
+                _eventsTranslator.SystemTitle = GXCommon.HexToBytes(GetAsHex(SystemTitleTB.Text, SystemTitleAsciiCb.Checked));
+                _eventsTranslator.BlockCipherKey = GXCommon.HexToBytes(GetAsHex(BlockCipherKeyTB.Text, BlockCipherKeyAsciiCb.Checked));
+
                 (notifications as IGXPropertyPage).Apply();
                 foreach (IGXSettingsPage it in MediaPropertiesForm)
                 {
@@ -250,7 +292,7 @@ namespace GXDLMSDirector
         {
             if (InvokeRequired)
             {
-                BeginInvoke(new Gurux.Common.ErrorEventHandler(OnError), sender, ex); 
+                BeginInvoke(new Gurux.Common.ErrorEventHandler(OnError), sender, ex);
             }
             else
             {
@@ -348,6 +390,74 @@ namespace GXDLMSDirector
             catch (Exception Ex)
             {
                 GXDLMS.Common.Error.ShowError(this, Ex);
+            }
+        }
+
+        public static bool IsAscii(byte[] value)
+        {
+            if (value == null)
+            {
+                return false;
+            }
+            foreach (byte it in value)
+            {
+                if (it < 0x21 || it > 0x7E)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private void SystemTitleAsciiCb_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (SystemTitleAsciiCb.Checked)
+                {
+                    if (!IsAscii(GXCommon.HexToBytes(SystemTitleTB.Text)))
+                    {
+                        SystemTitleAsciiCb.CheckedChanged -= SystemTitleAsciiCb_CheckedChanged;
+                        SystemTitleAsciiCb.Checked = !SystemTitleAsciiCb.Checked;
+                        SystemTitleAsciiCb.CheckedChanged += SystemTitleAsciiCb_CheckedChanged;
+                        throw new ArgumentOutOfRangeException(Properties.Resources.InvalidASCII);
+                    }
+                    SystemTitleTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(SystemTitleTB.Text));
+                }
+                else
+                {
+                    SystemTitleTB.Text = GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(SystemTitleTB.Text), true);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message);
+            }
+        }
+
+        private void BlockCipherKeyAsciiCb_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (BlockCipherKeyAsciiCb.Checked)
+                {
+                    if (!IsAscii(GXCommon.HexToBytes(BlockCipherKeyTB.Text)))
+                    {
+                        BlockCipherKeyAsciiCb.CheckedChanged -= BlockCipherKeyAsciiCb_CheckedChanged;
+                        BlockCipherKeyAsciiCb.Checked = !BlockCipherKeyAsciiCb.Checked;
+                        BlockCipherKeyAsciiCb.CheckedChanged += BlockCipherKeyAsciiCb_CheckedChanged;
+                        throw new ArgumentOutOfRangeException(Properties.Resources.InvalidASCII);
+                    }
+                    BlockCipherKeyTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(BlockCipherKeyTB.Text));
+                }
+                else
+                {
+                    BlockCipherKeyTB.Text = GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(BlockCipherKeyTB.Text), true);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message);
             }
         }
     }

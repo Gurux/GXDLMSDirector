@@ -132,11 +132,11 @@
     <Reference Include="Gurux.Common, Version=8.1.2001.2404, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Common.8.1.2001.2404\lib\net40\Gurux.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=9.0.2001.3001, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.9.0.2001.3001\lib\net40\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=9.0.2001.3101, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.9.0.2001.3101\lib\net40\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=9.0.2001.3001, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.9.0.2001.3001\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=9.0.2001.3101, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.9.0.2001.3101\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.Net, Version=8.1.2001.2702, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Net.8.1.2001.2702\lib\net40\Gurux.Net.dll</HintPath>
@@ -168,6 +168,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DLMSTranslatorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DLMSTranslatorForm.Designer.cs">
+      <DependentUpon>DLMSTranslatorForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="GXConformanceEditor.cs" />
     <Compile Include="GXConformanceValueConverter.cs" />
     <Compile Include="GXConformanceValueDescriptorCollection.cs" />
@@ -266,6 +272,9 @@
       <DependentUpon>DevicePropertiesForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="DLMSTranslatorForm.resx">
+      <DependentUpon>DLMSTranslatorForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GXValuesDlg.resx">
       <DependentUpon>GXValuesDlg.cs</DependentUpon>
       <SubType>Designer</SubType>

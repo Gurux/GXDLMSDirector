@@ -12,7 +12,7 @@ namespace GXDLMSDirector.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.9.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.4.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -344,6 +344,174 @@ namespace GXDLMSDirector.Properties {
             }
             set {
                 this["ActiveDC"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("000102030405060708090A0B0C0D0E0F")]
+        public string NotifyBlockCipherKey {
+            get {
+                return ((string)(this["NotifyBlockCipherKey"]));
+            }
+            set {
+                this["NotifyBlockCipherKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("47 75 72 75 78 31 32 33")]
+        public string NotifySystemTitle {
+            get {
+                return ((string)(this["NotifySystemTitle"]));
+            }
+            set {
+                this["NotifySystemTitle"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Pdu {
+            get {
+                return ((string)(this["Pdu"]));
+            }
+            set {
+                this["Pdu"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Message {
+            get {
+                return ((string)(this["Message"]));
+            }
+            set {
+                this["Message"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Notify {
+            get {
+                return ((string)(this["Notify"]));
+            }
+            set {
+                this["Notify"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("None")]
+        public string Security {
+            get {
+                return ((string)(this["Security"]));
+            }
+            set {
+                this["Security"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("4D4D4D0000BC614E")]
+        public string SystemTitle {
+            get {
+                return ((string)(this["SystemTitle"]));
+            }
+            set {
+                this["SystemTitle"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("000102030405060708090A0B0C0D0E0F")]
+        public string BlockCipherKey {
+            get {
+                return ((string)(this["BlockCipherKey"]));
+            }
+            set {
+                this["BlockCipherKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("D0D1D2D3D4D5D6D7D8D9DADBDCDDDEDF")]
+        public string AuthenticationKey {
+            get {
+                return ((string)(this["AuthenticationKey"]));
+            }
+            set {
+                this["AuthenticationKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public ulong InvocationCounter {
+            get {
+                return ((ulong)(this["InvocationCounter"]));
+            }
+            set {
+                this["InvocationCounter"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Challenge {
+            get {
+                return ((string)(this["Challenge"]));
+            }
+            set {
+                this["Challenge"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Data {
+            get {
+                return ((string)(this["Data"]));
+            }
+            set {
+                this["Data"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ServerSystemTitle {
+            get {
+                return ((string)(this["ServerSystemTitle"]));
+            }
+            set {
+                this["ServerSystemTitle"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DedicatedKey {
+            get {
+                return ((string)(this["DedicatedKey"]));
+            }
+            set {
+                this["DedicatedKey"] = value;
             }
         }
     }

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11407 $,
-//                  $Date: 2020-01-29 19:59:41 +0200 (ke, 29 tammi 2020) $
+// Version:         $Revision: 11421 $,
+//                  $Date: 2020-01-31 14:53:39 +0200 (pe, 31 tammi 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -182,6 +182,9 @@ namespace GXDLMSDirector
         public MainForm()
         {
             InitializeComponent();
+            eventsTranslator.SystemTitle = GXCommon.HexToBytes(Properties.Settings.Default.NotifySystemTitle);
+            eventsTranslator.BlockCipherKey = GXCommon.HexToBytes(Properties.Settings.Default.NotifyBlockCipherKey);
+
             CancelBtn.Enabled = false;
             traceTranslator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
 
@@ -4692,10 +4695,12 @@ namespace GXDLMSDirector
         {
             try
             {
-                GXSettingsDlg dlg = new GXSettingsDlg(events);
+                GXSettingsDlg dlg = new GXSettingsDlg(events, eventsTranslator);
                 if (dlg.ShowDialog(this) == DialogResult.OK)
                 {
                     Properties.Settings.Default.EventsSettings = events.Settings;
+                    Properties.Settings.Default.NotifySystemTitle = GXCommon.ToHex(eventsTranslator.SystemTitle, false);
+                    Properties.Settings.Default.NotifyBlockCipherKey = GXCommon.ToHex(eventsTranslator.BlockCipherKey, false);
                 }
             }
             catch (Exception Ex)
@@ -6302,6 +6307,19 @@ namespace GXDLMSDirector
         private void DataConcentratorsMnu_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void dLMSTranslatorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DLMSTranslatorForm dlg = new DLMSTranslatorForm();
+                dlg.ShowDialog(this);
+            }
+            catch (Exception Ex)
+            {
+                Error.ShowError(this, Ex);
+            }
         }
     }
 }

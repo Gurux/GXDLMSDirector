@@ -83,5 +83,47 @@
     <Setting Name="ActiveDC" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="NotifyBlockCipherKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)">000102030405060708090A0B0C0D0E0F</Value>
+    </Setting>
+    <Setting Name="NotifySystemTitle" Type="System.String" Scope="User">
+      <Value Profile="(Default)">47 75 72 75 78 31 32 33</Value>
+    </Setting>
+    <Setting Name="Pdu" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Message" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Notify" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Security" Type="System.String" Scope="User">
+      <Value Profile="(Default)">None</Value>
+    </Setting>
+    <Setting Name="SystemTitle" Type="System.String" Scope="User">
+      <Value Profile="(Default)">4D4D4D0000BC614E</Value>
+    </Setting>
+    <Setting Name="BlockCipherKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)">000102030405060708090A0B0C0D0E0F</Value>
+    </Setting>
+    <Setting Name="AuthenticationKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)">D0D1D2D3D4D5D6D7D8D9DADBDCDDDEDF</Value>
+    </Setting>
+    <Setting Name="InvocationCounter" Type="System.UInt64" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="Challenge" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Data" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ServerSystemTitle" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="DedicatedKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

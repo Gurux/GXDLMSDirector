@@ -325,6 +325,7 @@
             this.DedicatedKeyAsciiCb.TabIndex = 78;
             this.DedicatedKeyAsciiCb.Text = "ASCII";
             this.DedicatedKeyAsciiCb.UseVisualStyleBackColor = true;
+            this.DedicatedKeyAsciiCb.CheckedChanged += new System.EventHandler(this.DedicatedKeyAsciiCb_CheckedChanged);
             // 
             // DedicatedKeyTb
             // 
@@ -352,6 +353,7 @@
             this.ServerSystemTitleAsciiCb.TabIndex = 67;
             this.ServerSystemTitleAsciiCb.Text = "ASCII";
             this.ServerSystemTitleAsciiCb.UseVisualStyleBackColor = true;
+            this.ServerSystemTitleAsciiCb.CheckedChanged += new System.EventHandler(this.ServerSystemTitleAsciiCb_CheckedChanged);
             // 
             // ServerSystemTitleTB
             // 
@@ -381,6 +383,7 @@
             this.ChallengeAsciiCb.TabIndex = 64;
             this.ChallengeAsciiCb.Text = "ASCII";
             this.ChallengeAsciiCb.UseVisualStyleBackColor = true;
+            this.ChallengeAsciiCb.CheckedChanged += new System.EventHandler(this.ChallengeAsciiCb_CheckedChanged);
             // 
             // ChallengeTb
             // 
@@ -438,6 +441,7 @@
             this.SystemTitleAsciiCb.TabIndex = 58;
             this.SystemTitleAsciiCb.Text = "ASCII";
             this.SystemTitleAsciiCb.UseVisualStyleBackColor = true;
+            this.SystemTitleAsciiCb.CheckedChanged += new System.EventHandler(this.SystemTitleAsciiCb_CheckedChanged);
             // 
             // BlockCipherKeyAsciiCb
             // 
@@ -449,6 +453,7 @@
             this.BlockCipherKeyAsciiCb.TabIndex = 57;
             this.BlockCipherKeyAsciiCb.Text = "ASCII";
             this.BlockCipherKeyAsciiCb.UseVisualStyleBackColor = true;
+            this.BlockCipherKeyAsciiCb.CheckedChanged += new System.EventHandler(this.BlockCipherKeyAsciiCb_CheckedChanged);
             // 
             // AuthenticationKeyAsciiCb
             // 
@@ -460,6 +465,7 @@
             this.AuthenticationKeyAsciiCb.TabIndex = 56;
             this.AuthenticationKeyAsciiCb.Text = "ASCII";
             this.AuthenticationKeyAsciiCb.UseVisualStyleBackColor = true;
+            this.AuthenticationKeyAsciiCb.CheckedChanged += new System.EventHandler(this.AuthenticationKeyAsciiCb_CheckedChanged);
             // 
             // SecurityCB
             // 
@@ -585,6 +591,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Gurux DLMS Transfer";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.tabControl1.ResumeLayout(false);

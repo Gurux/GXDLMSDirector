@@ -158,10 +158,13 @@ namespace GXDLMSDirector
             MessageXmlTB.Text = "";
             StringBuilder sb = new StringBuilder();
             GXByteBuffer bb = new GXByteBuffer();
+            //TODO: This can remove later.
+            Security s = translator.Security;
             try
             {
                 translator.Clear();
                 UpdateSecurity();
+                translator.Security = Security.Authentication;
 
                 translator.PduOnly = PduOnlyCB.Checked;
                 GXByteBuffer pdu = new GXByteBuffer();
@@ -178,9 +181,11 @@ namespace GXDLMSDirector
                     pdu.Clear();
                 }
                 MessageXmlTB.Text = sb.ToString();
+                translator.Security = s;
             }
             catch (Exception ex)
             {
+                translator.Security = s;
                 MessageXmlTB.AppendText(sb.ToString());
                 MessageXmlTB.AppendText("\r\n");
                 MessageXmlTB.AppendText(bb.RemainingHexString(true));

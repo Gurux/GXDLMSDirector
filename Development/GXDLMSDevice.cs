@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 11030 $,
-//                  $Date: 2019-10-22 12:49:43 +0300 (ti, 22 loka 2019) $
+// Version:         $Revision: 11463 $,
+//                  $Date: 2020-02-11 14:13:52 +0200 (ti, 11 helmi 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -562,11 +562,6 @@ namespace GXDLMSDirector
                 list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.1.1.0.255", 2));
                 list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.36.255", 2, DataType.DateTime));
                 list.Add(CreateColumn(objects, obisCodes, ObjectType.MacAddressSetup, "0.1.25.2.0.255", 2));
-                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.35.255", 2));
-                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.35.255", 2));
-                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.35.255", 2));
-                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.35.255", 2));
-                list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.35.255", 2));
                 list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.35.255", 2));
                 list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.23.255", 2));
                 list.Add(CreateColumn(objects, obisCodes, ObjectType.Data, "0.0.94.39.34.255", 2));

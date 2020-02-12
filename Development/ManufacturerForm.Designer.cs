@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10624 $,
-//                  $Date: 2019-04-24 13:56:09 +0300 (ke, 24 huhti 2019) $
+// Version:         $Revision: 11471 $,
+//                  $Date: 2020-02-12 13:07:50 +0200 (ke, 12 helmi 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -93,6 +93,8 @@ namespace GXDLMSDirector
             this.WebAddressLbl = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.StandardCb = new System.Windows.Forms.ComboBox();
+            this.StandardLbl = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.BlockCipherKeyAsciiCb = new System.Windows.Forms.CheckBox();
             this.AuthenticationKeyAsciiCb = new System.Windows.Forms.CheckBox();
@@ -107,8 +109,7 @@ namespace GXDLMSDirector
             this.SecurityLbl = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.InfoTB = new System.Windows.Forms.TextBox();
-            this.StandardCb = new System.Windows.Forms.ComboBox();
-            this.StandardLbl = new System.Windows.Forms.Label();
+            this.UseUtcTimeZone = new System.Windows.Forms.CheckBox();
             this.AddressingGB.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ClientAddTB)).BeginInit();
@@ -125,7 +126,7 @@ namespace GXDLMSDirector
             // 
             this.OKBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.OKBtn.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.OKBtn.Location = new System.Drawing.Point(247, 404);
+            this.OKBtn.Location = new System.Drawing.Point(247, 407);
             this.OKBtn.Name = "OKBtn";
             this.OKBtn.Size = new System.Drawing.Size(75, 23);
             this.OKBtn.TabIndex = 19;
@@ -137,7 +138,7 @@ namespace GXDLMSDirector
             // 
             this.CancelBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelBtn.Location = new System.Drawing.Point(328, 404);
+            this.CancelBtn.Location = new System.Drawing.Point(328, 407);
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.Size = new System.Drawing.Size(75, 23);
             this.CancelBtn.TabIndex = 20;
@@ -222,9 +223,9 @@ namespace GXDLMSDirector
             this.AddressingGB.Controls.Add(this.groupBox1);
             this.AddressingGB.Controls.Add(this.AuthenticationCB);
             this.AddressingGB.Controls.Add(this.AuthenticationLbl);
-            this.AddressingGB.Location = new System.Drawing.Point(3, 124);
+            this.AddressingGB.Location = new System.Drawing.Point(3, 146);
             this.AddressingGB.Name = "AddressingGB";
-            this.AddressingGB.Size = new System.Drawing.Size(395, 246);
+            this.AddressingGB.Size = new System.Drawing.Size(395, 223);
             this.AddressingGB.TabIndex = 5;
             this.AddressingGB.TabStop = false;
             this.AddressingGB.Text = "Addressing";
@@ -281,7 +282,7 @@ namespace GXDLMSDirector
             this.groupBox1.Controls.Add(this.LogicalServerAddLbl);
             this.groupBox1.Location = new System.Drawing.Point(2, 81);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(331, 158);
+            this.groupBox1.Size = new System.Drawing.Size(331, 136);
             this.groupBox1.TabIndex = 13;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Server Address:";
@@ -431,11 +432,12 @@ namespace GXDLMSDirector
             this.tabControl1.Location = new System.Drawing.Point(1, 2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(412, 398);
+            this.tabControl1.Size = new System.Drawing.Size(412, 399);
             this.tabControl1.TabIndex = 48;
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.UseUtcTimeZone);
             this.tabPage1.Controls.Add(this.StandardCb);
             this.tabPage1.Controls.Add(this.StandardLbl);
             this.tabPage1.Controls.Add(this.AddressingGB);
@@ -452,10 +454,28 @@ namespace GXDLMSDirector
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(404, 372);
+            this.tabPage1.Size = new System.Drawing.Size(404, 373);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // StandardCb
+            // 
+            this.StandardCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.StandardCb.FormattingEnabled = true;
+            this.StandardCb.Location = new System.Drawing.Point(119, 55);
+            this.StandardCb.Name = "StandardCb";
+            this.StandardCb.Size = new System.Drawing.Size(194, 21);
+            this.StandardCb.TabIndex = 41;
+            // 
+            // StandardLbl
+            // 
+            this.StandardLbl.AutoSize = true;
+            this.StandardLbl.Location = new System.Drawing.Point(10, 58);
+            this.StandardLbl.Name = "StandardLbl";
+            this.StandardLbl.Size = new System.Drawing.Size(53, 13);
+            this.StandardLbl.TabIndex = 42;
+            this.StandardLbl.Text = "Standard:";
             // 
             // tabPage3
             // 
@@ -603,23 +623,16 @@ namespace GXDLMSDirector
             this.InfoTB.Size = new System.Drawing.Size(398, 366);
             this.InfoTB.TabIndex = 1;
             // 
-            // StandardCb
+            // UseUtcTimeZone
             // 
-            this.StandardCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.StandardCb.FormattingEnabled = true;
-            this.StandardCb.Location = new System.Drawing.Point(119, 55);
-            this.StandardCb.Name = "StandardCb";
-            this.StandardCb.Size = new System.Drawing.Size(194, 21);
-            this.StandardCb.TabIndex = 41;
-            // 
-            // StandardLbl
-            // 
-            this.StandardLbl.AutoSize = true;
-            this.StandardLbl.Location = new System.Drawing.Point(10, 58);
-            this.StandardLbl.Name = "StandardLbl";
-            this.StandardLbl.Size = new System.Drawing.Size(53, 13);
-            this.StandardLbl.TabIndex = 42;
-            this.StandardLbl.Text = "Standard:";
+            this.UseUtcTimeZone.AutoSize = true;
+            this.UseUtcTimeZone.Location = new System.Drawing.Point(6, 127);
+            this.UseUtcTimeZone.Name = "UseUtcTimeZone";
+            this.UseUtcTimeZone.Size = new System.Drawing.Size(183, 17);
+            this.UseUtcTimeZone.TabIndex = 43;
+            this.UseUtcTimeZone.Text = "Use UTC time zone, not standard";
+            this.UseUtcTimeZone.UseVisualStyleBackColor = true;
+            this.UseUtcTimeZone.CheckedChanged += new System.EventHandler(this.UseUtcTimeZone_CheckedChanged);
             // 
             // ManufacturerForm
             // 
@@ -627,7 +640,7 @@ namespace GXDLMSDirector
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.CancelBtn;
-            this.ClientSize = new System.Drawing.Size(416, 439);
+            this.ClientSize = new System.Drawing.Size(416, 442);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.OKBtn);
             this.Controls.Add(this.CancelBtn);
@@ -705,5 +718,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label SizeLbl;
         private System.Windows.Forms.ComboBox StandardCb;
         private System.Windows.Forms.Label StandardLbl;
+        private System.Windows.Forms.CheckBox UseUtcTimeZone;
     }
 }

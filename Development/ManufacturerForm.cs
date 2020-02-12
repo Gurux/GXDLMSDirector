@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10624 $,
-//                  $Date: 2019-04-24 13:56:09 +0300 (ke, 24 huhti 2019) $
+// Version:         $Revision: 11471 $,
+//                  $Date: 2020-02-12 13:07:50 +0200 (ke, 12 helmi 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -169,6 +169,7 @@ namespace GXDLMSDirector
             {
                 AuthenticationKeyTB.Text = GXCommon.ToHex(manufacturer.AuthenticationKey, true);
             }
+            UseUtcTimeZone.Checked = manufacturer.UtcTimeZone;
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
@@ -197,7 +198,7 @@ namespace GXDLMSDirector
                 Manufacturer.UseIEC47 = UseIEC47CB.Checked;
                 Manufacturer.StartProtocol = (StartProtocolType)StartProtocolCB.SelectedItem;
                 Manufacturer.Standard = (Standard)StandardCb.SelectedItem;
-
+                Manufacturer.UtcTimeZone = UseUtcTimeZone.Checked;
 
                 GXAuthentication authentication = Manufacturer.GetActiveAuthentication();
                 authentication.ClientAddress = Convert.ToInt32(this.ClientAddTB.Value);
@@ -358,6 +359,11 @@ namespace GXDLMSDirector
             {
                 GXDLMS.Common.Error.ShowError(this, Ex);
             }
+        }
+
+        private void UseUtcTimeZone_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11461 $,
-//                  $Date: 2020-02-10 18:06:07 +0200 (ma, 10 helmi 2020) $
+// Version:         $Revision: 11471 $,
+//                  $Date: 2020-02-12 13:07:50 +0200 (ke, 12 helmi 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1201,6 +1201,7 @@ namespace GXDLMSDirector
                             Device.InterfaceType = InterfaceType.WRAPPER;
                         }
                         Device.Standard = man.Standard;
+                        Device.UtcTimeZone = man.UtcTimeZone;
                         StandardCb.SelectedItem = man.Standard;
                     }
                     foreach (GXServerAddress it in ((GXManufacturer)ManufacturerCB.SelectedItem).ServerSettings)

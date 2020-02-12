@@ -147,8 +147,8 @@
     <Reference Include="Gurux.DLMS.AMI.UI, Version=8.1.2002.1001, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.DLMS.AMI.UI.8.1.2002.1001\lib\net46\Gurux.DLMS.AMI.UI.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=9.0.2002.1001, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.9.0.2002.1001\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=9.0.2002.1201, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.9.0.2002.1201\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.MQTT, Version=8.1.1910.2201, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.MQTT.8.1.1910.2201\lib\net46\Gurux.MQTT.dll</HintPath>

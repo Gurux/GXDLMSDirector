@@ -412,6 +412,7 @@
             this.PasswordBtn.TabIndex = 61;
             this.PasswordBtn.Text = "Generate password";
             this.PasswordBtn.UseVisualStyleBackColor = true;
+            this.PasswordBtn.Click += new System.EventHandler(this.PasswordBtn_Click);
             // 
             // InvocationCounterTB
             // 

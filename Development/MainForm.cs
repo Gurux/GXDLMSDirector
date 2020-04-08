@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11421 $,
-//                  $Date: 2020-01-31 14:53:39 +0200 (pe, 31 tammi 2020) $
+// Version:         $Revision: 11614 $,
+//                  $Date: 2020-04-08 17:59:34 +0300 (ke, 08 huhti 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -638,6 +638,10 @@ namespace GXDLMSDirector
                             else
                             {
                                 GXDLMSAttributeSettings a = list[pos + 1];
+                                if (a.Type == DataType.None)
+                                {
+                                    a.Type = (obj as IGXDLMSBase).GetDataType(a.Index);
+                                }
                                 if (string.IsNullOrEmpty(a.Name))
                                 {
                                     a.Name = names[pos];
@@ -2059,6 +2063,20 @@ namespace GXDLMSDirector
                     receivedTraceData.Set(data);
                     try
                     {
+                        if (receivedTraceData.GetUInt8(0) == '\t')
+                        {
+                            int pos = 1;
+                            while (pos < receivedTraceData.Size)
+                            {
+                                if (receivedTraceData.GetUInt8(pos) == 0)
+                                {
+                                    OnAddNotification(time.ToString("HH:mm:ss") + ASCIIEncoding.ASCII.GetString(receivedTraceData.SubArray(0, pos)));
+                                    receivedTraceData.Position = pos;
+                                    break;
+                                }
+                                ++pos;
+                            }
+                        }
                         GXByteBuffer pdu = new GXByteBuffer();
                         InterfaceType type = GXDLMSTranslator.GetDlmsFraming(receivedTraceData);
                         while (traceTranslator.FindNextFrame(receivedTraceData, pdu, type))
@@ -4096,6 +4114,8 @@ namespace GXDLMSDirector
             }
         }
 
+        StringBuilder trace = new StringBuilder();
+
         /// <summary>
         /// Meter sends event notification.
         /// </summary>
@@ -4107,6 +4127,21 @@ namespace GXDLMSDirector
             }
             else
             {
+                if (e.Data is byte[])
+                {
+                    //If this is trace from the meter.
+                    if (trace.Length != 0 || ((byte[])e.Data)[0] == '\t')
+                    {
+                        trace.Append(ASCIIEncoding.ASCII.GetString((byte[])e.Data));
+                        if (trace[trace.Length - 1] == '\0')
+                        {
+                            //Remove \t:
+                            OnAddNotification(DateTime.Now.ToString() + Environment.NewLine + trace.Remove(0, 2).ToString().Trim());
+                            trace.Length = 0;
+                        }
+                        return;
+                    }
+                }
                 if (e.Data is string)
                 {
                     OnAddNotification(DateTime.Now.ToString() + Environment.NewLine + e.Data);

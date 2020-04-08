@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 11324 $,
-//                  $Date: 2020-01-12 17:20:31 +0200 (Sun, 12 Jan 2020) $
+// Version:         $Revision: 11614 $,
+//                  $Date: 2020-04-08 17:59:34 +0300 (ke, 08 huhti 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -375,6 +375,7 @@ namespace GXDLMSDirector
                             }
                             throw new TimeoutException(err);
                         }
+                        rd.Position = 0;
                         rd.Set(p.Reply);
                     }
                 }

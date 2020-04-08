@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Messages>
+  <GetRequest>
+    <GetRequestNormal>
+      <!--Priority: HIGH ServiceClass: CONFIRMED invokeID: 1-->
+      <InvokeIdAndPriority Value="*"/>
+      <AttributeDescriptor>
+        <ClassId Value="84"/>
+        <!--0.0.28.4.0.255-->
+        <InstanceId Value="00001C0400FF"/>
+        <AttributeId Value="2"/>
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <!--Priority: HIGH ServiceClass: CONFIRMED invokeID: 1-->
+      <InvokeIdAndPriority Value="*"/>
+      <Result>
+        <Data>
+          <UInt32 Value="*"/>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <!--Priority: HIGH ServiceClass: CONFIRMED invokeID: 1-->
+      <InvokeIdAndPriority Value="*"/>
+      <AttributeDescriptor>
+        <ClassId Value="84"/>
+        <!--0.0.28.4.0.255-->
+        <InstanceId Value="00001C0400FF"/>
+        <AttributeId Value="3"/>
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <!--Priority: HIGH ServiceClass: CONFIRMED invokeID: 1-->
+      <InvokeIdAndPriority Value="*"/>
+      <Result>
+        <Data>
+          <UInt32 Value="*"/>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <!--Priority: HIGH ServiceClass: CONFIRMED invokeID: 1-->
+      <InvokeIdAndPriority Value="*"/>
+      <AttributeDescriptor>
+        <ClassId Value="84"/>
+        <!--0.0.28.4.0.255-->
+        <InstanceId Value="00001C0400FF"/>
+        <AttributeId Value="4"/>
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <!--Priority: HIGH ServiceClass: CONFIRMED invokeID: 1-->
+      <InvokeIdAndPriority Value="*"/>
+      <Result>
+        <Data>
+          <UInt32 Value="*"/>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <!--Priority: HIGH ServiceClass: CONFIRMED invokeID: 1-->
+      <InvokeIdAndPriority Value="*"/>
+      <AttributeDescriptor>
+        <ClassId Value="84"/>
+        <!--0.0.28.4.0.255-->
+        <InstanceId Value="00001C0400FF"/>
+        <AttributeId Value="5"/>
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <!--Priority: HIGH ServiceClass: CONFIRMED invokeID: 1-->
+      <InvokeIdAndPriority Value="*"/>
+      <Result>
+        <Data>
+          <UInt32 Value="*"/>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <!--Priority: HIGH ServiceClass: CONFIRMED invokeID: 1-->
+      <InvokeIdAndPriority Value="*"/>
+      <AttributeDescriptor>
+        <ClassId Value="84"/>
+        <!--0.0.28.4.0.255-->
+        <InstanceId Value="00001C0400FF"/>
+        <AttributeId Value="6"/>
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <!--Priority: HIGH ServiceClass: CONFIRMED invokeID: 1-->
+      <InvokeIdAndPriority Value="*"/>
+      <Result>
+        <Data>
+          <UInt32 Value="*"/>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <!--Priority: HIGH ServiceClass: CONFIRMED invokeID: 1-->
+      <InvokeIdAndPriority Value="*"/>
+      <AttributeDescriptor>
+        <ClassId Value="84"/>
+        <!--0.0.28.4.0.255-->
+        <InstanceId Value="00001C0400FF"/>
+        <AttributeId Value="7"/>
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <!--Priority: HIGH ServiceClass: CONFIRMED invokeID: 1-->
+      <InvokeIdAndPriority Value="*"/>
+      <Result>
+        <Data>
+          <UInt32 Value="*"/>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+</Messages>

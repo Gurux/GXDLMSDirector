@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Messages>
+  <GetRequest>
+    <GetRequestNormal>
+      <!--Priority: HIGH ServiceClass: CONFIRMED invokeID: 1-->
+      <InvokeIdAndPriority Value="*"/>
+      <AttributeDescriptor>
+        <ClassId Value="86"/>
+        <!--0.0.28.7.0.255-->
+        <InstanceId Value="00001C0700FF"/>
+        <AttributeId Value="2"/>
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <!--Priority: HIGH ServiceClass: CONFIRMED invokeID: 1-->
+      <InvokeIdAndPriority Value="*"/>
+      <Result>
+        <Data>
+          <OctetString Value="*"/>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <!--Priority: HIGH ServiceClass: CONFIRMED invokeID: 1-->
+      <InvokeIdAndPriority Value="*"/>
+      <AttributeDescriptor>
+        <ClassId Value="86"/>
+        <!--0.0.28.7.0.255-->
+        <InstanceId Value="00001C0700FF"/>
+        <AttributeId Value="3"/>
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <!--Priority: HIGH ServiceClass: CONFIRMED invokeID: 1-->
+      <InvokeIdAndPriority Value="*"/>
+      <Result>
+        <Data>
+          <UInt16 Value="*"/>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+  <GetRequest>
+    <GetRequestNormal>
+      <!--Priority: HIGH ServiceClass: CONFIRMED invokeID: 1-->
+      <InvokeIdAndPriority Value="*"/>
+      <AttributeDescriptor>
+        <ClassId Value="86"/>
+        <!--0.0.28.7.0.255-->
+        <InstanceId Value="00001C0700FF"/>
+        <AttributeId Value="4"/>
+      </AttributeDescriptor>
+    </GetRequestNormal>
+  </GetRequest>
+  <GetResponse>
+    <GetResponseNormal>
+      <!--Priority: HIGH ServiceClass: CONFIRMED invokeID: 1-->
+      <InvokeIdAndPriority Value="*"/>
+      <Result>
+        <Data>
+          <UInt16 Value="*"/>
+        </Data>
+      </Result>
+    </GetResponseNormal>
+  </GetResponse>
+</Messages>

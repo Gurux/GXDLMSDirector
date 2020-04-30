@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11614 $,
-//                  $Date: 2020-04-08 17:59:34 +0300 (ke, 08 huhti 2020) $
+// Version:         $Revision: 11679 $,
+//                  $Date: 2020-04-30 16:07:04 +0300 (to, 30 huhti 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -2037,6 +2037,29 @@ namespace GXDLMSDirector
 
         delegate void UpdateTransactionEventHandler(bool start);
 
+
+        private bool HandleTrace(DateTime time, GXByteBuffer bb)
+        {
+            int pos = 0;
+            while (pos < bb.Size && bb.GetUInt8(pos) == '\t')
+            {
+                pos = 1;
+                while (pos < bb.Size)
+                {
+                    if (bb.GetUInt8(pos) == 0)
+                    {
+                        OnAddNotification(time.ToString("HH:mm:ss") + ASCIIEncoding.ASCII.GetString(bb.SubArray(0, pos)));
+                        bb.Position = 1 + pos;
+                        bb.Trim();
+                        pos = 0;
+                        break;
+                    }
+                    ++pos;
+                }
+            }
+            return bb.Size != 0;
+        }
+
         void OnTrace(DateTime time, GXDLMSDevice sender, string trace, byte[] data, int length, string path, int duration)
         {
             if (InvokeRequired)
@@ -2063,19 +2086,9 @@ namespace GXDLMSDirector
                     receivedTraceData.Set(data);
                     try
                     {
-                        if (receivedTraceData.GetUInt8(0) == '\t')
+                        if (!HandleTrace(time, receivedTraceData))
                         {
-                            int pos = 1;
-                            while (pos < receivedTraceData.Size)
-                            {
-                                if (receivedTraceData.GetUInt8(pos) == 0)
-                                {
-                                    OnAddNotification(time.ToString("HH:mm:ss") + ASCIIEncoding.ASCII.GetString(receivedTraceData.SubArray(0, pos)));
-                                    receivedTraceData.Position = pos;
-                                    break;
-                                }
-                                ++pos;
-                            }
+                            return;
                         }
                         GXByteBuffer pdu = new GXByteBuffer();
                         InterfaceType type = GXDLMSTranslator.GetDlmsFraming(receivedTraceData);
@@ -4114,32 +4127,43 @@ namespace GXDLMSDirector
             }
         }
 
-        StringBuilder trace = new StringBuilder();
+        GXByteBuffer trace = new GXByteBuffer();
 
         /// <summary>
         /// Meter sends event notification.
         /// </summary>
         private void Events_OnReceived(object sender, ReceiveEventArgs e)
         {
+            if (e.Data is byte[] && ((byte[])e.Data).Length == 0)
+            {
+                return;
+            }
             if (this.InvokeRequired)
             {
                 BeginInvoke(new ReceivedEventHandler(Events_OnReceived), sender, e);
             }
             else
             {
-                if (e.Data is byte[])
+                if (eventsData.Size == 0 && e.Data is byte[] && ((byte[])e.Data).Length != 0)
                 {
                     //If this is trace from the meter.
-                    if (trace.Length != 0 || ((byte[])e.Data)[0] == '\t')
+                    if (trace.Size != 0 || ((byte[])e.Data)[0] == '\t')
                     {
-                        trace.Append(ASCIIEncoding.ASCII.GetString((byte[])e.Data));
-                        if (trace[trace.Length - 1] == '\0')
+                        //Show data as xml or pdu.
+                        trace.Set((byte[])e.Data);
+                        if (!HandleTrace(DateTime.Now, trace))
                         {
-                            //Remove \t:
-                            OnAddNotification(DateTime.Now.ToString() + Environment.NewLine + trace.Remove(0, 2).ToString().Trim());
-                            trace.Length = 0;
+                            return;
                         }
-                        return;
+                        if (trace.GetUInt8(0) == '\t')
+                        {
+                            return;
+                        }
+                        if (trace.GetUInt8(0) == 0x7e)
+                        {
+                            eventsData.Set(trace);
+                            trace.Clear();
+                        }
                     }
                 }
                 if (e.Data is string)
@@ -4165,26 +4189,35 @@ namespace GXDLMSDirector
                         {
                             sb.Append(eventsTranslator.MessageToXml(eventsData));
                             pdu.Clear();
-                        }
-                        if (eventsData.Size == eventsData.Position)
-                        {
-                            eventsData.Clear();
+                            if (eventsData.Size == eventsData.Position)
+                            {
+                                eventsData.Clear();
+                            }
                         }
                         if (AutoReset.Checked)
                         {
                             EventsView.ResetText();
                         }
-                        if (NotificationTimeMnu.Checked)
+                        if (sb.Length != 0)
                         {
-                            OnAddNotification(DateTime.Now.ToString() + Environment.NewLine + sb.ToString());
-                        }
-                        else
-                        {
-                            OnAddNotification(sb.ToString());
+                            if (NotificationTimeMnu.Checked)
+                            {
+                                OnAddNotification(DateTime.Now.ToString() + Environment.NewLine + sb.ToString());
+                            }
+                            else
+                            {
+                                OnAddNotification(sb.ToString());
+                            }
                         }
                     }
                     catch (Exception ex)
                     {
+                        if (trace.Size != 0)
+                        {
+                            OnAddNotification(DateTime.Now.ToString("HH:mm:ss") + Environment.NewLine + ASCIIEncoding.ASCII.GetString(trace.Array()));
+                            trace.Clear();
+                            return;
+                        }
                         eventsData.Clear();
                         OnAddNotification(ex.Message);
                     }
@@ -6349,12 +6382,26 @@ namespace GXDLMSDirector
             try
             {
                 DLMSTranslatorForm dlg = new DLMSTranslatorForm();
-                dlg.ShowDialog(this);
+                dlg.Show(this);
             }
             catch (Exception Ex)
             {
                 Error.ShowError(this, Ex);
             }
+        }
+
+        private void serialMonitorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                GXSerialMonitor dlg = new GXSerialMonitor();
+                dlg.Show(this);
+            }
+            catch (Exception Ex)
+            {
+                Error.ShowError(this, Ex);
+            }
+
         }
     }
 }

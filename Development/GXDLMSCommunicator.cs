@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 11614 $,
-//                  $Date: 2020-04-08 17:59:34 +0300 (ke, 08 huhti 2020) $
+// Version:         $Revision: 11648 $,
+//                  $Date: 2020-04-21 11:52:25 +0300 (ti, 21 huhti 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -323,6 +323,27 @@ namespace GXDLMSDirector
                 try
                 {
                     pos = 0;
+                    while (rd.GetUInt8(0) == '\t')
+                    {
+                        pos = 1;
+                        while (pos < rd.Size)
+                        {
+                            if (rd.GetUInt8(pos) == 0)
+                            {
+                                ++pos;
+                                if (parent.OnEvent != null)
+                                {
+                                    parent.OnEvent(media, new ReceiveEventArgs(rd.SubArray(0, pos), media.ToString()));
+                                }
+                                rd.Position = pos;
+                                rd.Trim();
+                                break;
+                            }
+                            ++pos;
+                        }
+                        pos = 0;
+                    }
+
                     //Loop until whole COSEM packet is received.
                     while (!client.GetData(rd, reply, notify))
                     {

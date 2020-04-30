@@ -53,7 +53,7 @@ namespace GXDLMSDirector
             string xml = null;
             try
             {
-                if (tabControl1.SelectedIndex == 4)
+                if (tabControl1.SelectedIndex == 3)
                 {
                     translator.DataToXml(DataPdu.Text, out xml);
                 }

@@ -455,7 +455,7 @@ namespace GXDLMSDirector
                                 str = GXCommon.ToHex((byte[])value);
                             }
                         }
-                        else if (value is Object[])
+                        else if (value is object[])
                         {
                             //TODO: str = GXDLMSTranslator.ValueToXml(value); Profile Generic capture objects causes problem at the moment.
                             str = GXHelpers.GetArrayAsString(value);
@@ -1132,9 +1132,11 @@ namespace GXDLMSDirector
                             test.OnError(test, ex);
                         }
                     }
+
                     if (!settings.ExcludeBasicTests)
                     {
                         TestAssociationLn(settings, dev, output);
+
                     }
 #if DEBUG
                     if (!settings.ExcludeClockTests)
@@ -1142,6 +1144,10 @@ namespace GXDLMSDirector
                         TestClock(settings, dev, output);
                     }
 #endif //DEBUG
+                    if (!settings.ExcludeProfileGenericTests)
+                    {
+                        TestProfileGeneric(settings, dev, output);
+                    }
 
                     if (dev.Comm.payload != 0)
                     {
@@ -1188,6 +1194,259 @@ namespace GXDLMSDirector
                     if (cp != null && Interlocked.Decrement(ref cp.numberOfTasks) == 0)
                     {
                         cp.finished.Set();
+                    }
+                }
+            }
+        }
+
+        private static void ReadRowsByEntry(GXDLMSDevice dev, GXDLMSProfileGeneric pg, UInt32 index, UInt32 count, List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> columns)
+        {
+            GXReplyData reply = new GXReplyData();
+            byte[][] data = dev.Comm.client.ReadRowsByEntry(pg, index, count, columns);
+            dev.Comm.ReadDataBlock(data, "Read rows by entry", 2, reply);
+            dev.Comm.client.UpdateValue(pg, 2, reply.Value);
+        }
+
+        private static void ReadRowsByRange(GXDLMSDevice dev, GXDLMSProfileGeneric pg, DateTime start, DateTime end,
+                                        List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> columns)
+        {
+            GXReplyData reply = new GXReplyData();
+            byte[][] data = dev.Comm.client.ReadRowsByRange(pg, start, end, columns);
+            dev.Comm.ReadDataBlock(data, "Read rows by range", 2, reply);
+            dev.Comm.client.UpdateValue(pg, 2, reply.Value);
+        }
+
+        /// <summary>
+        /// Test profile generic.
+        /// </summary>
+        /// <param name="settings">Conformance settings.</param>
+        /// <param name="dev">DLMS device.</param>
+        /// <param name="output"></param>
+        private static void TestProfileGeneric(GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output)
+        {
+            GXDLMSObjectCollection objects = dev.Comm.client.Objects.GetObjects(ObjectType.ProfileGeneric);
+            foreach (GXDLMSProfileGeneric pg in objects)
+            {
+                //Check that capture objects are equal
+                if (pg.CaptureObjects.Count != 0)
+                {
+                    List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> catureObjects = new List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>>();
+                    catureObjects.AddRange(pg.CaptureObjects);
+                    dev.Comm.ReadValue(pg, 3);
+                    if (pg.CaptureObjects.Count != catureObjects.Count)
+                    {
+                        output.Errors.Add("Profile generic " + pg.LogicalName + " failed. Amount of the capture objects is different.");
+                    }
+                    //else
+                    {
+                        IEnumerator<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> e = catureObjects.GetEnumerator();
+                        foreach (GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject> it in pg.CaptureObjects)
+                        {
+                            e.MoveNext();
+                            if (e.Current.Key.LogicalName != it.Key.LogicalName)
+                            {
+                                output.Errors.Add("Profile generic " + pg.LogicalName + " failed. Logical name is " + it.Key.LogicalName + " and it should be " + e.Current.Key.LogicalName);
+                            }
+                            else if (e.Current.Key.GetType() != it.Key.GetType())
+                            {
+                                output.Errors.Add("Profile generic " + pg.LogicalName + " failed. Logical name is " + it.Key.GetType() + " and it should be " + e.Current.Key.GetType());
+                            }
+                            else if (e.Current.Value.AttributeIndex != it.Value.AttributeIndex)
+                            {
+                                output.Errors.Add("Profile generic " + pg.LogicalName + " failed. Attribute index is " + it.Value.AttributeIndex + " and it should be " + e.Current.Value.AttributeIndex);
+                            }
+                            else if (e.Current.Value.DataIndex != it.Value.DataIndex)
+                            {
+                                output.Errors.Add("Profile generic " + pg.LogicalName + " failed. Data index is " + it.Value.DataIndex + " and it should be " + e.Current.Value.DataIndex);
+                            }
+                        }
+                    }
+                }
+                //MIKKO
+                continue;
+
+
+                bool passed = true;
+                //Read EntriesInUse
+                dev.Comm.ReadValue(pg, 7);
+                UInt32 entriesInUse = pg.EntriesInUse;
+                if (entriesInUse == 0)
+                {
+                    output.Warnings.Add("Failed to test Profile Generic " + pg.LogicalName + " because buffer is empty.");
+                }
+                else
+                {
+                    try
+                    {
+                        dev.Comm.ReadValue(pg, 3);
+                    }
+                    catch (Exception)
+                    {
+                        output.Errors.Add("Profile generic " + pg.LogicalName + " failed. Failed to read capture objects.");
+                        continue;
+                    }
+                    if (pg.CaptureObjects.Count == 0)
+                    {
+                        output.Info.Add("Profile generic " + pg.LogicalName + " failed. Capture objects is empty.");
+                        continue;
+                    }
+                    try
+                    {
+                        //Numbering of entries and selected values starts from 1.
+                        ReadRowsByEntry(dev, pg, 0, 1, null);
+                        passed = false;
+                    }
+                    catch (Exception)
+                    {
+                        //This should fail.
+                    }
+                    if (passed)
+                    {
+                        output.Info.Add("Testing Profile Generic " + pg.LogicalName + " read by entry #0 succeeded.");
+                    }
+                    else
+                    {
+                        output.Errors.Add("Testing Profile Generic " + pg.LogicalName + " read by entry #0 failed.");
+                    }
+                    //Read first two lines and read by range and check the values.
+                    try
+                    {
+                        if (entriesInUse < 3)
+                        {
+                            output.Info.Add("Profile generic " + pg.LogicalName + " skipped. Amount ot the rows is too small.");
+                        }
+                        else if (pg.CaptureObjects[0].Key is GXDLMSClock)
+                        {
+                            ReadRowsByEntry(dev, pg, 1, 2, null);
+                            List<object[]> rows = pg.Buffer;
+                            GXDateTime start = (GXDateTime)rows[0][0];
+                            GXDateTime end = (GXDateTime)rows[1][0];
+                            ReadRowsByRange(dev, pg, start, end, null);
+                            if (pg.Buffer.Count < 2)
+                            {
+                                output.Errors.Add("Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned wrong amount of rows.");
+                            }
+                            else
+                            {
+                                foreach (object[] it in pg.Buffer)
+                                {
+                                    GXDateTime dt = (GXDateTime)it[0];
+                                    if (dt.Value < start.Value || dt.Value > end.Value)
+                                    {
+                                        output.Info.Add("Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned wrong item. Start time: " + start + " End time: " + end + " Actual time: " + dt);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        output.Errors.Add("Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
+                    }
+                    //Read last row.
+                    try
+                    {
+                        if (pg.CaptureObjects[0].Key is GXDLMSClock)
+                        {
+                            ReadRowsByEntry(dev, pg, entriesInUse, entriesInUse, null);
+                            List<object[]> rows = pg.Buffer;
+                            GXDateTime start = (GXDateTime)rows[0][0];
+                            ReadRowsByRange(dev, pg, start, DateTime.MaxValue, null);
+                            if (pg.Buffer.Count != 1)
+                            {
+                                output.Errors.Add("Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid amount of rows when last one was read.");
+                            }
+                            else
+                            {
+                                GXDateTime dt = (GXDateTime)pg.Buffer[0][0];
+                                if (dt.Value != start.Value)
+                                {
+                                    output.Errors.Add("Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid row when last one was read.");
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        output.Errors.Add("Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
+                    }
+                    //Read last row using end index #0.
+                    try
+                    {
+                        if (pg.CaptureObjects[0].Key is GXDLMSClock)
+                        {
+                            ReadRowsByEntry(dev, pg, entriesInUse, 0, null);
+                            if (pg.Buffer.Count != 1)
+                            {
+                                output.Errors.Add("Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid amount of rows when last one was read using Zero as end index.");
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        output.Errors.Add("Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
+                    }
+                    //Read after last row.
+                    try
+                    {
+                        if (pg.CaptureObjects[0].Key is GXDLMSClock)
+                        {
+                            ReadRowsByEntry(dev, pg, entriesInUse, entriesInUse, null);
+                            List<object[]> rows = pg.Buffer;
+                            GXDateTime start = (GXDateTime)rows[0][0];
+                            ReadRowsByRange(dev, pg, start.Value.LocalDateTime.AddHours(1), DateTime.MaxValue, null);
+                            if (pg.Buffer.Count != 0)
+                            {
+                                output.Errors.Add("Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid amount of rows when last one was read.");
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        output.Errors.Add("Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
+                    }
+
+                    //Read only first column.
+                    if (entriesInUse < 1)
+                    {
+                        output.Info.Add("Profile generic " + pg.LogicalName + " skipped. Amount ot the rows is too small.");
+                    }
+                    else
+                    {
+                        List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> columns = new List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>>();
+                        columns.Add(pg.CaptureObjects[0]);
+                        try
+                        {
+                            ReadRowsByEntry(dev, pg, 1, 1, columns);
+                            if (pg.Buffer.Count != 0 || pg.Buffer[0].Length != 1)
+                            {
+                                output.Errors.Add("Profile generic " + pg.LogicalName + " failed. ReadRowsByEntry returned invalid amount of columns when only first one was read.");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            output.Errors.Add("Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
+                        }
+                        try
+                        {
+                            if (pg.CaptureObjects[0].Key is GXDLMSClock)
+                            {
+                                ReadRowsByEntry(dev, pg, 1, 1, null);
+                                List<object[]> rows = pg.Buffer;
+                                GXDateTime start = (GXDateTime)rows[0][0];
+                                ReadRowsByRange(dev, pg, start.Value.LocalDateTime, start.Value.LocalDateTime.AddHours(1), columns);
+                                if (pg.Buffer.Count != 0)
+                                {
+                                    output.Errors.Add("Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid amount of columns when only first one was read.");
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            output.Errors.Add("Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
+                        }
                     }
                 }
             }
@@ -1462,7 +1721,10 @@ namespace GXDLMSDirector
             try
             {
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #1. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
             }
             catch (GXDLMSException ex)
             {
@@ -1484,7 +1746,10 @@ namespace GXDLMSDirector
             {
                 reply.Clear();
                 dev.Comm.ReadDataBlock(dev.Comm.SNRMRequest(), "HDLC test #1. SNRM request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
                 output.Info.Add("SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.Limits.MaxInfoTX +
                     " MaxInfoLengthReceive: " + dev.Comm.client.Limits.MaxInfoRX + " WindowSizeTransmit: " +
                     dev.Comm.client.Limits.WindowSizeTX + " WindowSizeReceive: " + dev.Comm.client.Limits.WindowSizeRX);
@@ -1532,7 +1797,10 @@ namespace GXDLMSDirector
                 {
                     reply.Clear();
                     dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #1. Disconnect request", 1, tryCount, reply);
-                    dev.Comm.ParseUAResponse(reply.Data);
+                    if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                    {
+                        dev.Comm.ParseUAResponse(reply.Data);
+                    }
                 }
                 catch (GXDLMSException ex)
                 {
@@ -1552,7 +1820,10 @@ namespace GXDLMSDirector
             {
                 reply.Clear();
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #1. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
                 passed = false;
             }
             catch (GXDLMSException ex)
@@ -1600,7 +1871,10 @@ namespace GXDLMSDirector
             {
                 reply.Clear();
                 dev.Comm.ReadDataBlock(dev.Comm.SNRMRequest(), "HDLC test #2. SNRM request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
                 output.Info.Add("SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.Limits.MaxInfoTX +
                     " MaxInfoLengthReceive: " + dev.Comm.client.Limits.MaxInfoRX + " WindowSizeTransmit: " +
                     dev.Comm.client.Limits.WindowSizeTX + " WindowSizeReceive: " + dev.Comm.client.Limits.WindowSizeRX);
@@ -1644,7 +1918,10 @@ namespace GXDLMSDirector
             {
                 reply.Clear();
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #2. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
             }
             catch (GXDLMSException ex)
             {
@@ -1698,7 +1975,10 @@ namespace GXDLMSDirector
                 try
                 {
                     dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #1. Disconnect request", 1, tryCount, reply);
-                    dev.Comm.ParseUAResponse(reply.Data);
+                    if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                    {
+                        dev.Comm.ParseUAResponse(reply.Data);
+                    }
                 }
                 catch (GXDLMSException ex)
                 {
@@ -2213,7 +2493,10 @@ namespace GXDLMSDirector
                 reply.Clear();
                 byte[] data = dev.Comm.SNRMRequest();
                 dev.Comm.ReadDataBlock(data, "HDLC test #8. SNRM request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
             }
             catch (GXDLMSException ex)
             {
@@ -2260,7 +2543,10 @@ namespace GXDLMSDirector
                 reply.Clear();
                 byte[] data = dev.Comm.SNRMRequest();
                 dev.Comm.ReadDataBlock(data, "HDLC test #8. SNRM request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
             }
             catch (GXDLMSException ex)
             {
@@ -2282,7 +2568,10 @@ namespace GXDLMSDirector
             {
                 reply.Clear();
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #8. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
             }
             catch (Exception ex)
             {
@@ -3921,7 +4210,10 @@ namespace GXDLMSDirector
             try
             {
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(), "HDLC test #1. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
             }
             catch (GXDLMSException ex)
             {
@@ -3981,7 +4273,10 @@ namespace GXDLMSDirector
             {
                 reply.Clear();
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "COSEM Application test #1. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
                 Thread.Sleep(1000);
             }
             catch (GXDLMSException ex)
@@ -4070,7 +4365,10 @@ namespace GXDLMSDirector
                     try
                     {
                         dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #4. Disconnect request", 1, tryCount, reply);
-                        dev.Comm.ParseUAResponse(reply.Data);
+                        if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                        {
+                            dev.Comm.ParseUAResponse(reply.Data);
+                        }
                     }
                     catch (GXDLMSException ex)
                     {
@@ -4144,7 +4442,10 @@ namespace GXDLMSDirector
             try
             {
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #4. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
             }
             catch (GXDLMSException ex)
             {
@@ -4198,7 +4499,10 @@ namespace GXDLMSDirector
                 {
                     reply.Clear();
                     dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #4. Disconnect request", 1, tryCount, reply);
-                    dev.Comm.ParseUAResponse(reply.Data);
+                    if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                    {
+                        dev.Comm.ParseUAResponse(reply.Data);
+                    }
                     reply.Clear();
                 }
                 catch (Exception ex)
@@ -4228,7 +4532,7 @@ namespace GXDLMSDirector
                 }
                 catch (GXDLMSException ex)
                 {
-                    if (ex.Result == AssociationResult.TransientRejected && ex.Diagnostic == (byte)AcseServiceProvider.NoCommonAcseVersion)
+                    if (ex.Result == AssociationResult.PermanentRejected && ex.Diagnostic == (byte)AcseServiceProvider.NoCommonAcseVersion)
                     {
                         output.Info.Add("COSEM Application tests #4 Invalid Protocol-version succeeded. " + ex.Message);
                     }
@@ -4248,7 +4552,10 @@ namespace GXDLMSDirector
             {
                 reply.Clear();
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #4. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
                 reply.Clear();
             }
             catch (Exception ex)
@@ -4284,7 +4591,10 @@ namespace GXDLMSDirector
             try
             {
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #5. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
             }
             catch (GXDLMSException ex)
             {
@@ -4310,8 +4620,16 @@ namespace GXDLMSDirector
                 dev.Comm.ParseUAResponse(reply.Data);
                 reply.Clear();
                 GXByteBuffer bb = new GXByteBuffer();
-                bb.SetHexString("E6E600601DA10906075F857504070203BE10040E01000000065F1F04007C1BA0FFFF");
-                dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0x10, bb), "COSEM Application test #5. AARQ", 1, tryCount, reply);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    bb.SetHexString("E6E600601DA10906075F857504070203BE10040E01000000065F1F04007C1BA0FFFF");
+                    //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(Command.Aarq, bb), "COSEM Application test #5. AARQ", 1, tryCount, reply);
+                }
+                else
+                {
+                    bb.SetHexString("601DA10906075F857504070203BE10040E01000000065F1F04007C1BA0FFFF");
+                    //TODO: MIKKO  dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(Command.Aarq, bb), "COSEM Application test #5. AARQ", 1, tryCount, reply);
+                }
                 dev.Comm.ParseAAREResponse(reply.Data);
                 reply.Clear();
                 throw new Exception("UNKNOWN ApplicationContextName failed.");
@@ -4431,7 +4749,10 @@ namespace GXDLMSDirector
             {
                 reply.Clear();
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #5. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
                 reply.Clear();
             }
             catch (Exception ex)
@@ -4460,6 +4781,39 @@ namespace GXDLMSDirector
         /// <param name="output"></param>
         private static void AppTest6(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output, int tryCount)
         {
+            string xml2 = "<AssociationRequest>\n" +
+                             "<ApplicationContextName Value=\"LN\" />\n" +
+                             "<CalledAPTitle Value=\"44\" />\n" +
+                             "<CalledAEQualifier Value=\"44\" />\n" +
+                             "<CalledAPInvocationId Value=\"00\" />\n" +
+                             "<CalledAEInvocationId Value=\"00\" />\n" +
+                             "<CallingApInvocationId Value=\"00\" />\n" +
+                             "<InitiateRequest>\n" +
+                               "<ProposedDlmsVersionNumber Value=\"06\" />\n" +
+                               "<ProposedConformance>\n" +
+                                 "<ConformanceBit Name=\"Action\" />\n" +
+                                 "<ConformanceBit Name=\"EventNotification\" />\n" +
+                                 "<ConformanceBit Name=\"SelectiveAccess\" />\n" +
+                                 "<ConformanceBit Name=\"Set\" />\n" +
+                                 "<ConformanceBit Name=\"Get\" />\n" +
+                                 "<ConformanceBit Name=\"Access\" />\n" +
+                                 "<ConformanceBit Name=\"DataNotification\" />\n" +
+                                 "<ConformanceBit Name=\"MultipleReferences\" />\n" +
+                                 "<ConformanceBit Name=\"BlockTransferWithAction\" />\n" +
+                                 "<ConformanceBit Name=\"BlockTransferWithSetOrWrite\" />\n" +
+                                 "<ConformanceBit Name=\"BlockTransferWithGetOrRead\" />\n" +
+                                 "<ConformanceBit Name=\"Attribute0SupportedWithGet\" />\n" +
+                                 "<ConformanceBit Name=\"PriorityMgmtSupported\" />\n" +
+                                 "<ConformanceBit Name=\"Attribute0SupportedWithSet\" />\n" +
+                                 "<ConformanceBit Name=\"GeneralBlockTransfer\" />\n" +
+                                 "<ConformanceBit Name=\"GeneralProtection\" />\n" +
+                               "</ProposedConformance>\n" +
+                               "<ProposedMaxPduSize Value=\"FFFF\" />\n" +
+                             "</InitiateRequest>\n" +
+                           "</AssociationRequest>";
+
+            (dev.Comm.client as GXDLMSXmlClient).LoadXml(xml2);
+
             GXReplyData reply = new GXReplyData();
             byte[] data;
             bool passed = true;
@@ -4467,7 +4821,10 @@ namespace GXDLMSDirector
             try
             {
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #6. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
             }
             catch (GXDLMSException ex)
             {
@@ -4495,10 +4852,50 @@ namespace GXDLMSDirector
                 dev.Comm.ParseUAResponse(reply.Data);
                 reply.Clear();
                 GXByteBuffer bb = new GXByteBuffer();
-                bb.SetHexString("E6E6006036A109060760857405080101A203040144A303040144A403020100A503020100A803020100BE10040E01000000065F1F040060FEDFFFFF");
-                dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0x10, bb), "COSEM Application test #6. AARQ", 1, tryCount, reply);
-                dev.Comm.ParseAAREResponse(reply.Data);
+                string xml = "<AssociationRequest>\n" +
+                              "<ApplicationContextName Value=\"LN\" />\n" +
+                              "<CalledAPTitle Value=\"44\" />\n" +
+                              "<CalledAEQualifier Value=\"44\" />\n" +
+                              "<CalledAPInvocationId Value=\"00\" />\n" +
+                              "<CalledAEInvocationId Value=\"00\" />\n" +
+                              "<CallingApInvocationId Value=\"00\" />\n" +
+                              "<InitiateRequest>\n" +
+                                "<ProposedDlmsVersionNumber Value=\"06\" />\n" +
+                                "<ProposedConformance>\n" +
+                                  "<ConformanceBit Name=\"Action\" />\n" +
+                                  "<ConformanceBit Name=\"EventNotification\" />\n" +
+                                  "<ConformanceBit Name=\"SelectiveAccess\" />\n" +
+                                  "<ConformanceBit Name=\"Set\" />\n" +
+                                  "<ConformanceBit Name=\"Get\" />\n" +
+                                  "<ConformanceBit Name=\"Access\" />\n" +
+                                  "<ConformanceBit Name=\"DataNotification\" />\n" +
+                                  "<ConformanceBit Name=\"MultipleReferences\" />\n" +
+                                  "<ConformanceBit Name=\"BlockTransferWithAction\" />\n" +
+                                  "<ConformanceBit Name=\"BlockTransferWithSetOrWrite\" />\n" +
+                                  "<ConformanceBit Name=\"BlockTransferWithGetOrRead\" />\n" +
+                                  "<ConformanceBit Name=\"Attribute0SupportedWithGet\" />\n" +
+                                  "<ConformanceBit Name=\"PriorityMgmtSupported\" />\n" +
+                                  "<ConformanceBit Name=\"Attribute0SupportedWithSet\" />\n" +
+                                  "<ConformanceBit Name=\"GeneralBlockTransfer\" />\n" +
+                                  "<ConformanceBit Name=\"GeneralProtection\" />\n" +
+                                "</ProposedConformance>\n" +
+                                "<ProposedMaxPduSize Value=\"FFFF\" />\n" +
+                              "</InitiateRequest>\n" +
+                            "</AssociationRequest>";
+
+                (dev.Comm.client as GXDLMSXmlClient).LoadXml(xml);
                 GXDLMSTranslator t = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    //Mikko bb.SetHexString("E6E6006036A109060760857405080101A203040144A303040144A403020100A503020100A803020100BE10040E01000000065F1F040060FEDFFFFF");
+                    //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(Command.Aarq, bb), "COSEM Application test #6. AARQ", 1, tryCount, reply);
+                }
+                else
+                {
+                    bb.SetHexString("6036A109060760857405080101A203040144A303040144A403020100A503020100A803020100BE10040E01000000065F1F040060FEDFFFFF");
+                    //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(Command.Aarq, bb), "COSEM Application test #6. AARQ", 1, tryCount, reply);
+                }
+                dev.Comm.ParseAAREResponse(reply.Data);
                 reply.Data.Position = 0;
                 string str = t.PduToXml(reply.Data);
                 if (str.Contains("RespondingAeInvocationId"))
@@ -4536,7 +4933,10 @@ namespace GXDLMSDirector
                 {
                     reply.Clear();
                     dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #6. Disconnect request", 1, tryCount, reply);
-                    dev.Comm.ParseUAResponse(reply.Data);
+                    if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                    {
+                        dev.Comm.ParseUAResponse(reply.Data);
+                    }
                 }
                 catch (GXDLMSException ex)
                 {
@@ -4595,7 +4995,10 @@ namespace GXDLMSDirector
                 {
                     reply.Clear();
                     dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #6. Disconnect request", 1, tryCount, reply);
-                    dev.Comm.ParseUAResponse(reply.Data);
+                    if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                    {
+                        dev.Comm.ParseUAResponse(reply.Data);
+                    }
                 }
                 catch (GXDLMSException ex)
                 {
@@ -4650,7 +5053,10 @@ namespace GXDLMSDirector
             {
                 reply.Clear();
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #6. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
             }
             catch (GXDLMSException ex)
             {
@@ -4720,7 +5126,10 @@ namespace GXDLMSDirector
             try
             {
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #7. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
             }
             catch (GXDLMSException ex)
             {
@@ -4748,8 +5157,16 @@ namespace GXDLMSDirector
                 dev.Comm.ParseUAResponse(reply.Data);
                 reply.Clear();
                 GXByteBuffer bb = new GXByteBuffer();
-                bb.SetHexString("E6E6006036A109060760857405080101A203040144A303040144A403020100A503020100A803020100BE10040E01000000065F1F040060FE9FFFFF");
-                dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0x10, bb), "COSEM Application test #7. AARQ", 1, tryCount, reply);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    bb.SetHexString("E6E6006036A109060760857405080101A203040144A303040144A403020100A503020100A803020100BE10040E01000000065F1F040060FE9FFFFF");
+                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0x10, bb), "COSEM Application test #7. AARQ", 1, tryCount, reply);
+                }
+                else
+                {
+                    bb.SetHexString("6036A109060760857405080101A203040144A303040144A403020100A503020100A803020100BE10040E01000000065F1F040060FE9FFFFF");
+                    //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #7. AARQ", 1, tryCount, reply);
+                }
                 dev.Comm.ParseAAREResponse(reply.Data);
                 reply.Clear();
             }
@@ -4763,7 +5180,10 @@ namespace GXDLMSDirector
             {
                 reply.Clear();
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #7. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
             }
             catch (GXDLMSException ex)
             {
@@ -4818,7 +5238,7 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// T_APPL_OPEN_9. Test for dedicated key.
+        /// T_APPL_OPEN_9. Send dedicated key when ciphering is not used.
         /// </summary>
         /// <param name="test"></param>
         /// <param name="settings"></param>
@@ -4833,7 +5253,10 @@ namespace GXDLMSDirector
             try
             {
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #9. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
             }
             catch (GXDLMSException ex)
             {
@@ -4852,9 +5275,11 @@ namespace GXDLMSDirector
                 passed = false;
                 output.Info.Add("COSEM Application tests #9 failed. " + ex.Message);
             }
+            Security s = dev.Comm.client.Ciphering.Security;
             try
             {
                 reply.Clear();
+                dev.Comm.client.Ciphering.Security = Security.None;
                 data = dev.Comm.client.SNRMRequest();
                 dev.Comm.ReadDataBlock(data, "COSEM Application test #9. SNRM", 1, tryCount, reply);
                 dev.Comm.ParseUAResponse(reply.Data);
@@ -4863,14 +5288,15 @@ namespace GXDLMSDirector
                 dev.Comm.client.Ciphering.DedicatedKey = null;
                 dev.Comm.ParseAAREResponse(reply.Data);
                 reply.Clear();
-            }
-            catch (Exception ex)
-            {
                 passed = false;
-                output.Errors.Add("COSEM Application tests #9 failed. " + ex.Message);
+            }
+            catch (Exception)
+            {
+                //This test should fail.
             }
             finally
             {
+                dev.Comm.client.Ciphering.Security = s;
                 dev.Comm.client.Ciphering.DedicatedKey = null;
             }
             if (passed)
@@ -4901,7 +5327,10 @@ namespace GXDLMSDirector
             try
             {
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #11. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
                 reply.Clear();
                 data = dev.Comm.client.SNRMRequest();
                 dev.Comm.ReadDataBlock(data, "COSEM Application test #11. SNRM", 1, tryCount, reply);
@@ -4936,7 +5365,10 @@ namespace GXDLMSDirector
             {
                 reply.Clear();
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #11. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
             }
             catch (Exception)
             {
@@ -4970,7 +5402,10 @@ namespace GXDLMSDirector
             try
             {
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #12. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
             }
             catch (GXDLMSException ex)
             {
@@ -5016,8 +5451,16 @@ namespace GXDLMSDirector
             try
             {
                 GXByteBuffer bb = new GXByteBuffer();
-                bb.SetHexString("E6E600601DA109060760857405080101BE10040E01000000055F1F040060FE9FFFFF");
-                dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0x10, bb), "COSEM Application test #12. AARQ", 1, tryCount, reply);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    bb.SetHexString("E6E600601DA109060760857405080101BE10040E01000000055F1F040060FE9FFFFF");
+                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0x10, bb), "COSEM Application test #12. AARQ", 1, tryCount, reply);
+                }
+                else
+                {
+                    bb.SetHexString("601DA109060760857405080101BE10040E01000000055F1F040060FE9FFFFF");
+                    //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #12. AARQ", 1, tryCount, reply);
+                }
                 dev.Comm.ParseAAREResponse(reply.Data);
             }
             catch (GXDLMSConfirmedServiceError ex)
@@ -5039,7 +5482,10 @@ namespace GXDLMSDirector
             {
                 reply.Clear();
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #12. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
             }
             catch (Exception)
             {
@@ -5062,8 +5508,16 @@ namespace GXDLMSDirector
             try
             {
                 GXByteBuffer bb = new GXByteBuffer();
-                bb.SetHexString("E6E600601DA109060760857405080101BE10040E01000000075F1F040060FE9FFFFF");
-                dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0x10, bb), "COSEM Application test #12. AARQ", 1, tryCount, reply);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    bb.SetHexString("E6E600601DA109060760857405080101BE10040E01000000075F1F040060FE9FFFFF");
+                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0x10, bb), "COSEM Application test #12. AARQ", 1, tryCount, reply);
+                }
+                else
+                {
+                    bb.SetHexString("601DA109060760857405080101BE10040E01000000075F1F040060FE9FFFFF");
+                    //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #12. AARQ", 1, tryCount, reply);
+                }
                 dev.Comm.ParseAAREResponse(reply.Data);
             }
             catch (GXDLMSConfirmedServiceError ex)
@@ -5085,7 +5539,10 @@ namespace GXDLMSDirector
             {
                 reply.Clear();
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #12. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
             }
             catch (Exception)
             {
@@ -5119,7 +5576,10 @@ namespace GXDLMSDirector
             try
             {
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #14. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
             }
             catch (GXDLMSException ex)
             {
@@ -5154,8 +5614,16 @@ namespace GXDLMSDirector
             try
             {
                 GXByteBuffer bb = new GXByteBuffer();
-                bb.SetHexString("E6E600601DA109060760857405080101BE10040E01000000065F1F040060FE9F000B");
-                dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0x10, bb), "COSEM Application test #14. AARQ", 1, tryCount, reply);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    bb.SetHexString("E6E600601DA109060760857405080101BE10040E01000000065F1F040060FE9F000B");
+                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0x10, bb), "COSEM Application test #14. AARQ", 1, tryCount, reply);
+                }
+                else
+                {
+                    bb.SetHexString("601DA109060760857405080101BE10040E01000000065F1F040060FE9F000B");
+                    //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #14. AARQ", 1, tryCount, reply);
+                }
                 dev.Comm.ParseAAREResponse(reply.Data);
                 passed = false;
                 output.Errors.Add("COSEM Application tests #14 failed with PDU size 11.");
@@ -5179,7 +5647,10 @@ namespace GXDLMSDirector
             {
                 reply.Clear();
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #14. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
             }
             catch (Exception)
             {
@@ -5190,7 +5661,10 @@ namespace GXDLMSDirector
                 reply.Clear();
                 data = dev.Comm.client.SNRMRequest();
                 dev.Comm.ReadDataBlock(data, "COSEM Application test #14. SNRM", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
                 reply.Clear();
             }
             catch (Exception ex)
@@ -5202,8 +5676,16 @@ namespace GXDLMSDirector
             try
             {
                 GXByteBuffer bb = new GXByteBuffer();
-                bb.SetHexString("E6E600601DA109060760857405080101BE10040E01000000065F1F040060FE9FFFFF");
-                dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0x10, bb), "COSEM Application test #14. AARQ", 1, tryCount, reply);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    bb.SetHexString("E6E600601DA109060760857405080101BE10040E01000000065F1F040060FE9FFFFF");
+                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0x10, bb), "COSEM Application test #14. AARQ", 1, tryCount, reply);
+                }
+                else
+                {
+                    bb.SetHexString("601DA109060760857405080101BE10040E01000000065F1F040060FE9FFFFF");
+                    //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #14. AARQ", 1, tryCount, reply);
+                }
                 dev.Comm.ParseAAREResponse(reply.Data);
             }
             catch (Exception ex)
@@ -5238,7 +5720,10 @@ namespace GXDLMSDirector
             try
             {
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #15. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
             }
             catch (GXDLMSException ex)
             {
@@ -5261,7 +5746,10 @@ namespace GXDLMSDirector
                 reply.Clear();
                 data = dev.Comm.client.SNRMRequest();
                 dev.Comm.ReadDataBlock(data, "COSEM Application test #15. SNRM", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
                 reply.Clear();
             }
             catch (Exception ex)
@@ -5295,13 +5783,17 @@ namespace GXDLMSDirector
                 {
                     reply.Clear();
                     GXByteBuffer bb = new GXByteBuffer();
+                    (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
                     if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
                     {
-                        bb.SetHexString("E6E600");
+                        bb.SetHexString("E6E600C004C1000F0000280000FF0100");
+                        dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0, bb), "COSEM Application test #15. Invalid Get request.", 1, tryCount, reply);
                     }
-                    bb.SetHexString("C004C1000F0000280000FF0100");
-                    (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
-                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0, bb), "COSEM Application test #15. Invalid Get request.", 1, tryCount, reply);
+                    else
+                    {
+                        bb.SetHexString("C004C1000F0000280000FF0100");
+                        //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #15. Invalid Get request.", 1, tryCount, reply);
+                    }
                     passed = false;
                 }
                 catch (GXDLMSException ex)
@@ -5328,13 +5820,17 @@ namespace GXDLMSDirector
                 {
                     reply.Clear();
                     GXByteBuffer bb = new GXByteBuffer();
+                    (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
                     if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
                     {
-                        bb.SetHexString("E6E600");
+                        bb.SetHexString("E6E600C001C1000028000100");
+                        dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0, bb), "COSEM Application test #15. Invalid Get request.", 1, tryCount, reply);
                     }
-                    bb.SetHexString("C001C1000028000100");
-                    (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
-                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0, bb), "COSEM Application test #15. Invalid Get request.", 1, tryCount, reply);
+                    else
+                    {
+                        bb.SetHexString("C001C1000028000100");
+                        //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #15. Invalid Get request.", 1, tryCount, reply);
+                    }
                     passed = false;
                 }
                 catch (GXDLMSException ex)
@@ -5354,12 +5850,37 @@ namespace GXDLMSDirector
                     passed = false;
                 }
             }
+            //Subtest 3: Get-Request for a non-existing object (illegal logical name)
+            if (passed)
+            {
+                try
+                {
+                    reply.Clear();
+                    GXByteBuffer bb = new GXByteBuffer();
+                    (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
+                    GXDLMSAssociationLogicalName a = new GXDLMSAssociationLogicalName("255.255.255.255.255.255");
+                    byte[] data2 = dev.Comm.Read(a, 1);
+                    dev.Comm.ReadDataBlock(data2, "Read non-existing object", 1, reply);
+                    passed = false;
+                }
+                catch (GXDLMSException ex)
+                {
+                    output.Info.Add("COSEM Application tests #15 Invalid Get request non-existing object succeeded.");
+                }
+                catch (Exception ex)
+                {
+                    passed = false;
+                }
+            }
             (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = false;
             try
             {
                 reply.Clear();
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #15. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
             }
             catch (Exception)
             {
@@ -5371,7 +5892,10 @@ namespace GXDLMSDirector
                 reply.Clear();
                 data = dev.Comm.client.SNRMRequest();
                 dev.Comm.ReadDataBlock(data, "COSEM Application test #15. SNRM", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
                 dev.Comm.ReadDataBlock(dev.Comm.client.AARQRequest(), "HDLC test #15. AARQRequest.", 1, tryCount, reply);
             }
             catch (Exception ex)
@@ -5384,13 +5908,17 @@ namespace GXDLMSDirector
             {
 
                 GXByteBuffer bb = new GXByteBuffer();
+                (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
                 if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
                 {
-                    bb.SetHexString("E6E600");
+                    bb.SetHexString("E6E600050102FA00");
+                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0x32, bb), "COSEM Application test #15. Read service", 1, tryCount, reply);
                 }
-                bb.SetHexString("050102FA00");
-                (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
-                dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0x32, bb), "COSEM Application test #15. Read service", 1, tryCount, reply);
+                else
+                {
+                    bb.SetHexString("050102FA00");
+                    //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #15. Read service", 1, tryCount, reply);
+                }
                 passed = false;
                 output.Errors.Add("COSEM Application tests #15 failed using read service.");
             }
@@ -5438,7 +5966,10 @@ namespace GXDLMSDirector
             try
             {
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #16. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
             }
             catch (GXDLMSException ex)
             {
@@ -5461,7 +5992,10 @@ namespace GXDLMSDirector
                 reply.Clear();
                 data = dev.Comm.client.SNRMRequest();
                 dev.Comm.ReadDataBlock(data, "COSEM Application test #16. SNRM", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
                 reply.Clear();
             }
             catch (Exception ex)
@@ -5495,13 +6029,17 @@ namespace GXDLMSDirector
                 {
                     reply.Clear();
                     GXByteBuffer bb = new GXByteBuffer();
+                    (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
                     if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
                     {
-                        bb.SetHexString("E6E600");
+                        bb.SetHexString("E6E600C106C1000F0000280000FF010009060000280000FF");
+                        dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0, bb), "COSEM Application test #16. Invalid Set request.", 1, tryCount, reply);
                     }
-                    bb.SetHexString("C106C1000F0000280000FF010009060000280000FF");
-                    (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
-                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0, bb), "COSEM Application test #16. Invalid Set request.", 1, tryCount, reply);
+                    else
+                    {
+                        bb.SetHexString("C106C1000F0000280000FF010009060000280000FF");
+                        //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #16. Invalid Set request.", 1, tryCount, reply);
+                    }
                     passed = false;
                 }
                 catch (GXDLMSException ex)
@@ -5528,13 +6066,17 @@ namespace GXDLMSDirector
                 {
                     reply.Clear();
                     GXByteBuffer bb = new GXByteBuffer();
+                    (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
                     if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
                     {
-                        bb.SetHexString("E6E600");
+                        bb.SetHexString("E6E600C101C1000F0000280000");
+                        dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0, bb), "COSEM Application test #16. Invalid Set request.", 1, tryCount, reply);
                     }
-                    bb.SetHexString("C101C1000F0000280000");
-                    (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
-                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0, bb), "COSEM Application test #16. Invalid Set request.", 1, tryCount, reply);
+                    else
+                    {
+                        bb.SetHexString("C101C1000F0000280000");
+                        //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #16. Invalid Set request.", 1, tryCount, reply);
+                    }
                     passed = false;
                 }
                 catch (GXDLMSException ex)
@@ -5559,7 +6101,10 @@ namespace GXDLMSDirector
             {
                 reply.Clear();
                 dev.Comm.ReadDataBlock(dev.Comm.DisconnectRequest(true), "HDLC test #16. Disconnect request", 1, tryCount, reply);
-                dev.Comm.ParseUAResponse(reply.Data);
+                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                {
+                    dev.Comm.ParseUAResponse(reply.Data);
+                }
             }
             catch (Exception)
             {

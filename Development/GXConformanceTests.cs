@@ -45,6 +45,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Xml;
@@ -127,7 +128,7 @@ namespace GXDLMSDirector
                 }
             }
             //Load external tests.
-            GXDLMSXmlClient client = new GXDLMSXmlClient(TranslatorOutputType.SimpleXml);
+            GXDLMSXmlClient client = new GXDLMSXmlClient(TranslatorOutputType.SimpleXml, true);
             string[] list = GetExternalTests(settings);
             foreach (string it in list)
             {
@@ -312,15 +313,15 @@ namespace GXDLMSDirector
                             if (ex.ErrorCode != 0)
                             {
                                 ErrorCode e = (ErrorCode)ex.ErrorCode;
-                                output.Errors.Add("<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " failed: <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.ErrorCodes?" + e + ">" + e + "</a>)");
+                                AddError(test, null, output.Errors, "<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " failed: <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.ErrorCodes?" + e + ">" + e + "</a>)");
                                 test.OnTrace(test, e + "\r\n");
                             }
                             else
                             {
-                                output.Errors.Add("<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " <div class=\"tooltip\">failed:" + ex.Message);
-                                output.Errors.Add("<span class=\"tooltiptext\">");
-                                output.Errors.Add(ex.ToString());
-                                output.Errors.Add("</span></div>");
+                                AddError(test, null, output.Errors, "<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " <div class=\"tooltip\">failed:" + ex.Message);
+                                AddError(test, null, output.Errors, "<span class=\"tooltiptext\">");
+                                AddError(test, null, output.Errors, ex.ToString());
+                                AddError(test, null, output.Errors, "</span></div>");
                                 test.OnTrace(test, ex.Message + "\r\n");
                             }
                         }
@@ -340,10 +341,10 @@ namespace GXDLMSDirector
                                 writer.WriteLine(DateTime.Now + ";" + ot + ";" + ln + ";" + indexStr + ";" + index + ";" + ex.Message);
                             }
                         }
-                        output.Errors.Add("<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " <div class=\"tooltip\">failed:" + ex.Message);
-                        output.Errors.Add("<span class=\"tooltiptext\">");
-                        output.Errors.Add(ex.ToString());
-                        output.Errors.Add("</span></div>");
+                        AddError(test, null, output.Errors, "<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " <div class=\"tooltip\">failed:" + ex.Message);
+                        AddError(test, null, output.Errors, "<span class=\"tooltiptext\">");
+                        AddError(test, null, output.Errors, ex.ToString());
+                        AddError(test, null, output.Errors, "</span></div>");
                         test.OnTrace(test, ex.Message + "\r\n");
                     }
                 }
@@ -374,7 +375,7 @@ namespace GXDLMSDirector
                         {
                             foreach (string err in list)
                             {
-                                output.Errors.Add(err);
+                                AddError(test, null, output.Errors, err);
                             }
                         }
                         else
@@ -382,19 +383,19 @@ namespace GXDLMSDirector
                             if (lastExternalException != null)
                             {
                                 ErrorCode e = (ErrorCode)lastExternalException.ErrorCode;
-                                output.Errors.Add("<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " failed: <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.ErrorCodes?" + e + ">" + e + "</a>)");
+                                AddError(test, null, output.Errors, "<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " failed: <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.ErrorCodes?" + e + ">" + e + "</a>)");
                                 test.OnTrace(test, e + "\r\n");
                                 lastExternalException = null;
                             }
                             else
                             {
-                                output.Errors.Add(" <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " " + indexStr + " " + index + " is <div class=\"tooltip\">invalid.");
-                                output.Errors.Add("<span class=\"tooltiptext\">");
-                                output.Errors.Add("Expected:</b><br/>");
-                                output.Errors.Add(it.PduAsXml.Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
-                                output.Errors.Add("<br/><b>Actual:</b><br/>");
-                                output.Errors.Add(reply.ToString().Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
-                                output.Errors.Add("</span></div>");
+                                AddError(test, null, output.Errors, " <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " " + indexStr + " " + index + " is <div class=\"tooltip\">invalid.");
+                                AddError(test, null, output.Errors, "<span class=\"tooltiptext\">");
+                                AddError(test, null, output.Errors, "Expected:</b><br/>");
+                                AddError(test, null, output.Errors, it.PduAsXml.Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
+                                AddError(test, null, output.Errors, "<br/><b>Actual:</b><br/>");
+                                AddError(test, null, output.Errors, reply.ToString().Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
+                                AddError(test, null, output.Errors, "</span></div>");
                             }
                         }
                     }
@@ -430,10 +431,10 @@ namespace GXDLMSDirector
                                         writer.WriteLine(DateTime.Now + ";" + ot + ";" + ln + ";" + indexStr + ";" + index + ";" + ex.Message);
                                     }
                                 }
-                                output.Errors.Add("<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " <div class=\"tooltip\">failed:" + ex.Message);
-                                output.Errors.Add("<span class=\"tooltiptext\">");
-                                output.Errors.Add(ex.ToString());
-                                output.Errors.Add("</span></div>");
+                                AddError(test, null, output.Errors, "<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + indexStr + index + " <div class=\"tooltip\">failed:" + ex.Message);
+                                AddError(test, null, output.Errors, "<span class=\"tooltiptext\">");
+                                AddError(test, null, output.Errors, ex.ToString());
+                                AddError(test, null, output.Errors, "</span></div>");
                                 test.OnTrace(test, ex.Message + "\r\n");
                                 continue;
                             }
@@ -495,7 +496,7 @@ namespace GXDLMSDirector
             if (lastExternalException != null)
             {
                 ErrorCode e = (ErrorCode)lastExternalException.ErrorCode;
-                output.Errors.Add("<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " failed: <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.ErrorCodes?" + e + ">" + e + "</a>)");
+                AddError(test, null, output.Errors, "<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " failed: <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.ErrorCodes?" + e + ">" + e + "</a>)");
                 test.OnTrace(test, e + "\r\n");
                 lastExternalException = null;
             }
@@ -510,7 +511,7 @@ namespace GXDLMSDirector
                 }
                 sb.Append("</span></div>");
                 sb.Append("&nbsp;" + converter.GetDescription(ln, succeeded[0].Key)[0] + "&nbsp;" + "<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a>.");
-                output.Info.Add(sb.ToString());
+                AddInfo(test, null, output.Info, sb.ToString());
             }
             if (obj != null)
             {
@@ -715,7 +716,7 @@ namespace GXDLMSDirector
                     dev.Comm.LogFile = Path.Combine(test.Results, "Trace.txt");
                     GXDLMSClient cl = dev.Comm.client;
                     converter = new GXDLMSConverter(dev.Standard);
-                    dev.Comm.client = new GXDLMSXmlClient(TranslatorOutputType.SimpleXml);
+                    dev.Comm.client = new GXDLMSXmlClient(TranslatorOutputType.SimpleXml, true);
                     dev.Comm.client.Ciphering.TestMode = true;
                     cl.CopyTo(dev.Comm.client);
                     test.Device = dev;
@@ -848,7 +849,7 @@ namespace GXDLMSDirector
                         {
                             if (it.Description == "Invalid")
                             {
-                                output.Errors.Add("Invalid OBIS code " + it.LogicalName + " for <a target=\"_blank\" href=https://www.gurux.fi/" + it.GetType().FullName + ">" + it.ObjectType + "</a>.");
+                                AddError(test, dev, output.Errors, "Invalid OBIS code " + it.LogicalName + " for <a target=\"_blank\" href=https://www.gurux.fi/" + it.GetType().FullName + ">" + it.ObjectType + "</a>.");
                                 Console.WriteLine("------------------------------------------------------------");
                                 Console.WriteLine(it.LogicalName + ": Invalid OBIS code.");
                             }
@@ -856,7 +857,7 @@ namespace GXDLMSDirector
                     }
                     if (!settings.ExcludeMeterInfo)
                     {
-                        ReadLogicalDeviceName(settings, dev, output);
+                        ReadLogicalDeviceName(test, settings, dev, output);
                         GXDLMSData firmware = new GXDLMSData("1.0.0.2.0.255");
                         try
                         {
@@ -870,7 +871,7 @@ namespace GXDLMSDirector
                         }
                         catch (Exception)
                         {
-                            output.Info.Add("Firmware version is not available.");
+                            AddInfo(test, dev, output.Info, "Firmware version is not available.");
                         }
                         GXDLMSClock time = new GXDLMSClock("0.0.1.0.0.255");
                         try
@@ -946,7 +947,7 @@ namespace GXDLMSDirector
                                 catch (Exception e)
                                 {
                                     string errStr = "Failed to load exteranal test " + it + ". " + e.Message;
-                                    output.Errors.Add(errStr);
+                                    AddError(test, dev, output.Errors, errStr);
                                     test.OnTrace(test, errStr + "\r\n");
                                 }
 
@@ -1042,17 +1043,17 @@ namespace GXDLMSDirector
                                             //Check that value is not changed.
                                             if (Convert.ToString(expected) != Convert.ToString(actual))
                                             {
-                                                output.Errors.Add("Write <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " is <div class=\"tooltip\">failed.");
-                                                output.Errors.Add("<span class=\"tooltiptext\">");
-                                                output.Errors.Add("Expected:</b><br/>");
-                                                output.Errors.Add(Convert.ToString(expected).Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
-                                                output.Errors.Add("<br/><b>Actual:</b><br/>");
-                                                output.Errors.Add(Convert.ToString(actual).Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
-                                                output.Errors.Add("</span></div>");
+                                                AddError(test, dev, output.Errors, "Write <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " is <div class=\"tooltip\">failed.");
+                                                AddError(test, dev, output.Errors, "<span class=\"tooltiptext\">");
+                                                AddError(test, dev, output.Errors, "Expected:</b><br/>");
+                                                AddError(test, dev, output.Errors, Convert.ToString(expected).Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
+                                                AddError(test, dev, output.Errors, "<br/><b>Actual:</b><br/>");
+                                                AddError(test, dev, output.Errors, Convert.ToString(actual).Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
+                                                AddError(test, dev, output.Errors, "</span></div>");
                                             }
                                             else
                                             {
-                                                output.Info.Add("Write" + ot + " " + ln + " attribute " + index + " Succeeded.");
+                                                AddInfo(test, dev, output.Info, "Write" + ot + " " + ln + " attribute " + index + " Succeeded.");
                                             }
                                         }
                                         catch (GXDLMSException ex)
@@ -1060,22 +1061,22 @@ namespace GXDLMSDirector
                                             if (ex.ErrorCode != 0)
                                             {
                                                 ErrorCode e = (ErrorCode)ex.ErrorCode;
-                                                output.Errors.Add("<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " failed: <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.ErrorCodes?" + e + ">" + e + "</a>)");
+                                                AddError(test, dev, output.Errors, "<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " failed: <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.ErrorCodes?" + e + ">" + e + "</a>)");
                                             }
                                             else
                                             {
-                                                output.Errors.Add("<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " <div class=\"tooltip\">failed:" + ex.Message);
-                                                output.Errors.Add("<span class=\"tooltiptext\">");
-                                                output.Errors.Add(ex.ToString().Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
-                                                output.Errors.Add("</span></div>");
+                                                AddError(test, dev, output.Errors, "<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " <div class=\"tooltip\">failed:" + ex.Message);
+                                                AddError(test, dev, output.Errors, "<span class=\"tooltiptext\">");
+                                                AddError(test, dev, output.Errors, ex.ToString().Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
+                                                AddError(test, dev, output.Errors, "</span></div>");
                                             }
                                         }
                                         catch (Exception ex)
                                         {
-                                            output.Errors.Add("Write <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " <div class=\"tooltip\">failed. " + ex.Message);
-                                            output.Errors.Add("<span class=\"tooltiptext\">");
-                                            output.Errors.Add(ex.ToString().Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
-                                            output.Errors.Add("</span></div>");
+                                            AddError(test, dev, output.Errors, "Write <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + ot + ">" + ot + "</a> " + ln + " attribute " + index + " <div class=\"tooltip\">failed. " + ex.Message);
+                                            AddError(test, dev, output.Errors, "<span class=\"tooltiptext\">");
+                                            AddError(test, dev, output.Errors, ex.ToString().Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
+                                            AddError(test, dev, output.Errors, "</span></div>");
                                         }
                                     }
                                 }
@@ -1086,14 +1087,14 @@ namespace GXDLMSDirector
                         {
                             if ((dev.Comm.client.NegotiatedConformance & Conformance.MultipleReferences) == 0)
                             {
-                                output.Info.Add("Meter don't support multiple references.");
+                                AddInfo(test, dev, output.Info, "Meter don't support multiple references.");
                             }
                             else
                             {
                                 GXDLMSObjectCollection objs = dev.Objects.GetObjects(ObjectType.Data);
                                 if (objs.Count != 0)
                                 {
-                                    output.Info.Add("Testing multiple references support using " + objs.Count + " data object(s).");
+                                    AddInfo(test, dev, output.Info, "Testing multiple references support using " + objs.Count + " data object(s).");
                                     List<KeyValuePair<GXDLMSObject, int>> list = new List<KeyValuePair<GXDLMSObject, int>>();
                                     foreach (GXDLMSObject it in objs)
                                     {
@@ -1108,7 +1109,7 @@ namespace GXDLMSDirector
                                     {
                                         (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = false;
                                     }
-                                    output.Info.Add("Multiple references support succeeded.");
+                                    AddInfo(test, dev, output.Info, "Multiple references support succeeded.");
                                 }
                             }
                         }
@@ -1119,7 +1120,7 @@ namespace GXDLMSDirector
                         }
                         catch (Exception ex)
                         {
-                            output.Errors.Add(ex.Message);
+                            AddError(test, dev, output.Errors, ex.Message);
                             test.OnError(test, ex);
                         }
                         try
@@ -1128,7 +1129,7 @@ namespace GXDLMSDirector
                         }
                         catch (Exception ex)
                         {
-                            output.Errors.Add(ex.Message);
+                            AddError(test, dev, output.Errors, ex.Message);
                             test.OnError(test, ex);
                         }
                     }
@@ -1141,12 +1142,12 @@ namespace GXDLMSDirector
 #if DEBUG
                     if (!settings.ExcludeClockTests)
                     {
-                        TestClock(settings, dev, output);
+                        TestClock(test, settings, dev, output);
                     }
 #endif //DEBUG
                     if (!settings.ExcludeProfileGenericTests)
                     {
-                        TestProfileGeneric(settings, dev, output);
+                        TestProfileGeneric(test, settings, dev, output);
                     }
 
                     if (dev.Comm.payload != 0)
@@ -1170,7 +1171,7 @@ namespace GXDLMSDirector
                 }
                 catch (Exception ex)
                 {
-                    output.Errors.Add(ex.Message);
+                    AddError(test, dev, output.Errors, ex.Message);
                     test.ErrorLevel = 2;
                     test.OnError(test, ex);
                     using (Stream stream = File.Open(Path.Combine(test.Results, "error.txt"), FileMode.Append))
@@ -1222,7 +1223,7 @@ namespace GXDLMSDirector
         /// <param name="settings">Conformance settings.</param>
         /// <param name="dev">DLMS device.</param>
         /// <param name="output"></param>
-        private static void TestProfileGeneric(GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output)
+        private static void TestProfileGeneric(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output)
         {
             GXDLMSObjectCollection objects = dev.Comm.client.Objects.GetObjects(ObjectType.ProfileGeneric);
             foreach (GXDLMSProfileGeneric pg in objects)
@@ -1235,7 +1236,7 @@ namespace GXDLMSDirector
                     dev.Comm.ReadValue(pg, 3);
                     if (pg.CaptureObjects.Count != catureObjects.Count)
                     {
-                        output.Errors.Add("Profile generic " + pg.LogicalName + " failed. Amount of the capture objects is different.");
+                        AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. Amount of the capture objects is different.");
                     }
                     //else
                     {
@@ -1245,27 +1246,23 @@ namespace GXDLMSDirector
                             e.MoveNext();
                             if (e.Current.Key.LogicalName != it.Key.LogicalName)
                             {
-                                output.Errors.Add("Profile generic " + pg.LogicalName + " failed. Logical name is " + it.Key.LogicalName + " and it should be " + e.Current.Key.LogicalName);
+                                AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. Logical name is " + it.Key.LogicalName + " and it should be " + e.Current.Key.LogicalName);
                             }
                             else if (e.Current.Key.GetType() != it.Key.GetType())
                             {
-                                output.Errors.Add("Profile generic " + pg.LogicalName + " failed. Logical name is " + it.Key.GetType() + " and it should be " + e.Current.Key.GetType());
+                                AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. Logical name is " + it.Key.GetType() + " and it should be " + e.Current.Key.GetType());
                             }
                             else if (e.Current.Value.AttributeIndex != it.Value.AttributeIndex)
                             {
-                                output.Errors.Add("Profile generic " + pg.LogicalName + " failed. Attribute index is " + it.Value.AttributeIndex + " and it should be " + e.Current.Value.AttributeIndex);
+                                AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. Attribute index is " + it.Value.AttributeIndex + " and it should be " + e.Current.Value.AttributeIndex);
                             }
                             else if (e.Current.Value.DataIndex != it.Value.DataIndex)
                             {
-                                output.Errors.Add("Profile generic " + pg.LogicalName + " failed. Data index is " + it.Value.DataIndex + " and it should be " + e.Current.Value.DataIndex);
+                                AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. Data index is " + it.Value.DataIndex + " and it should be " + e.Current.Value.DataIndex);
                             }
                         }
                     }
                 }
-                //MIKKO
-                continue;
-
-
                 bool passed = true;
                 //Read EntriesInUse
                 dev.Comm.ReadValue(pg, 7);
@@ -1282,12 +1279,12 @@ namespace GXDLMSDirector
                     }
                     catch (Exception)
                     {
-                        output.Errors.Add("Profile generic " + pg.LogicalName + " failed. Failed to read capture objects.");
+                        AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. Failed to read capture objects.");
                         continue;
                     }
                     if (pg.CaptureObjects.Count == 0)
                     {
-                        output.Info.Add("Profile generic " + pg.LogicalName + " failed. Capture objects is empty.");
+                        AddInfo(test, dev, output.Info, "Profile generic " + pg.LogicalName + " failed. Capture objects is empty.");
                         continue;
                     }
                     try
@@ -1302,18 +1299,18 @@ namespace GXDLMSDirector
                     }
                     if (passed)
                     {
-                        output.Info.Add("Testing Profile Generic " + pg.LogicalName + " read by entry #0 succeeded.");
+                        AddInfo(test, dev, output.Info, "Testing Profile Generic " + pg.LogicalName + " read by entry #0 succeeded.");
                     }
                     else
                     {
-                        output.Errors.Add("Testing Profile Generic " + pg.LogicalName + " read by entry #0 failed.");
+                        AddError(test, dev, output.Errors, "Testing Profile Generic " + pg.LogicalName + " read by entry #0 failed.");
                     }
                     //Read first two lines and read by range and check the values.
                     try
                     {
                         if (entriesInUse < 3)
                         {
-                            output.Info.Add("Profile generic " + pg.LogicalName + " skipped. Amount ot the rows is too small.");
+                            AddInfo(test, dev, output.Info, "Profile generic " + pg.LogicalName + " skipped. Amount ot the rows is too small.");
                         }
                         else if (pg.CaptureObjects[0].Key is GXDLMSClock)
                         {
@@ -1324,7 +1321,7 @@ namespace GXDLMSDirector
                             ReadRowsByRange(dev, pg, start, end, null);
                             if (pg.Buffer.Count < 2)
                             {
-                                output.Errors.Add("Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned wrong amount of rows.");
+                                AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned wrong amount of rows.");
                             }
                             else
                             {
@@ -1333,7 +1330,7 @@ namespace GXDLMSDirector
                                     GXDateTime dt = (GXDateTime)it[0];
                                     if (dt.Value < start.Value || dt.Value > end.Value)
                                     {
-                                        output.Info.Add("Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned wrong item. Start time: " + start + " End time: " + end + " Actual time: " + dt);
+                                        AddInfo(test, dev, output.Info, "Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned wrong item. Start time: " + start + " End time: " + end + " Actual time: " + dt);
                                         break;
                                     }
                                 }
@@ -1342,7 +1339,7 @@ namespace GXDLMSDirector
                     }
                     catch (Exception ex)
                     {
-                        output.Errors.Add("Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
+                        AddError(test, dev, output.Errors, "Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
                     }
                     //Read last row.
                     try
@@ -1355,14 +1352,14 @@ namespace GXDLMSDirector
                             ReadRowsByRange(dev, pg, start, DateTime.MaxValue, null);
                             if (pg.Buffer.Count != 1)
                             {
-                                output.Errors.Add("Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid amount of rows when last one was read.");
+                                AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid amount of rows when last one was read.");
                             }
                             else
                             {
                                 GXDateTime dt = (GXDateTime)pg.Buffer[0][0];
                                 if (dt.Value != start.Value)
                                 {
-                                    output.Errors.Add("Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid row when last one was read.");
+                                    AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid row when last one was read.");
                                     break;
                                 }
                             }
@@ -1370,7 +1367,7 @@ namespace GXDLMSDirector
                     }
                     catch (Exception ex)
                     {
-                        output.Errors.Add("Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
+                        AddError(test, dev, output.Errors, "Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
                     }
                     //Read last row using end index #0.
                     try
@@ -1380,13 +1377,13 @@ namespace GXDLMSDirector
                             ReadRowsByEntry(dev, pg, entriesInUse, 0, null);
                             if (pg.Buffer.Count != 1)
                             {
-                                output.Errors.Add("Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid amount of rows when last one was read using Zero as end index.");
+                                AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid amount of rows when last one was read using Zero as end index.");
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        output.Errors.Add("Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
+                        AddError(test, dev, output.Errors, "Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
                     }
                     //Read after last row.
                     try
@@ -1399,19 +1396,19 @@ namespace GXDLMSDirector
                             ReadRowsByRange(dev, pg, start.Value.LocalDateTime.AddHours(1), DateTime.MaxValue, null);
                             if (pg.Buffer.Count != 0)
                             {
-                                output.Errors.Add("Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid amount of rows when last one was read.");
+                                AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid amount of rows when last one was read.");
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        output.Errors.Add("Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
+                        AddError(test, dev, output.Errors, "Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
                     }
 
                     //Read only first column.
                     if (entriesInUse < 1)
                     {
-                        output.Info.Add("Profile generic " + pg.LogicalName + " skipped. Amount ot the rows is too small.");
+                        AddInfo(test, dev, output.Info, "Profile generic " + pg.LogicalName + " skipped. Amount ot the rows is too small.");
                     }
                     else
                     {
@@ -1422,12 +1419,12 @@ namespace GXDLMSDirector
                             ReadRowsByEntry(dev, pg, 1, 1, columns);
                             if (pg.Buffer.Count != 0 || pg.Buffer[0].Length != 1)
                             {
-                                output.Errors.Add("Profile generic " + pg.LogicalName + " failed. ReadRowsByEntry returned invalid amount of columns when only first one was read.");
+                                AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. ReadRowsByEntry returned invalid amount of columns when only first one was read.");
                             }
                         }
                         catch (Exception ex)
                         {
-                            output.Errors.Add("Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
+                            AddError(test, dev, output.Errors, "Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
                         }
                         try
                         {
@@ -1439,13 +1436,13 @@ namespace GXDLMSDirector
                                 ReadRowsByRange(dev, pg, start.Value.LocalDateTime, start.Value.LocalDateTime.AddHours(1), columns);
                                 if (pg.Buffer.Count != 0)
                                 {
-                                    output.Errors.Add("Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid amount of columns when only first one was read.");
+                                    AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid amount of columns when only first one was read.");
                                 }
                             }
                         }
                         catch (Exception ex)
                         {
-                            output.Errors.Add("Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
+                            AddError(test, dev, output.Errors, "Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
                         }
                     }
                 }
@@ -1593,7 +1590,7 @@ namespace GXDLMSDirector
         /// <param name="settings">Conformance settings.</param>
         /// <param name="dev">DLMS device.</param>
         /// <param name="output"></param>
-        private static void ReadLogicalDeviceName(GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output)
+        private static void ReadLogicalDeviceName(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output)
         {
             GXReplyData reply = new GXReplyData();
             try
@@ -1610,7 +1607,7 @@ namespace GXDLMSDirector
             }
             catch (Exception)
             {
-                output.Errors.Add("Logical Device Name is not implemented.");
+                AddError(test, dev, output.Errors, "Logical Device Name is not implemented.");
                 return;
             }
             try
@@ -1659,6 +1656,25 @@ namespace GXDLMSDirector
             {
                 output.Errors.Insert(0, "Login failed after wrong password.");
             }
+        }
+
+        static void AddError(GXConformanceTest test, GXDLMSDevice dev, List<string> list, string str)
+        {
+            if (dev != null && dev.OnTrace != null)
+            {
+                dev.OnTrace(DateTime.Now, dev, str, null, 0, dev.Comm.LogFile, 0);
+            }
+            test.OnTrace(test, str);
+            list.Add(str);
+        }
+
+        static void AddInfo(GXConformanceTest test, GXDLMSDevice dev, List<string> list, string str)
+        {
+            if (dev != null && dev.OnTrace != null)
+            {
+                dev.OnTrace(DateTime.Now, dev, str, null, 0, dev.Comm.LogFile, 0);
+            }
+            list.Add(str);
         }
 
         /// <summary>
@@ -1730,15 +1746,22 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
             }
-            catch (Exception)
+            catch(TimeoutException)
             {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
+            }
+            catch (Exception ex)
+            {
+                AddError(test, dev, output.Errors, ex.Message);
                 passed = false;
             }
             //SubTest 1: Move the IUT to NRM
@@ -1750,7 +1773,7 @@ namespace GXDLMSDirector
                 {
                     dev.Comm.ParseUAResponse(reply.Data);
                 }
-                output.Info.Add("SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.Limits.MaxInfoTX +
+                AddInfo(test, dev, output.Info, "SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.Limits.MaxInfoTX +
                     " MaxInfoLengthReceive: " + dev.Comm.client.Limits.MaxInfoRX + " WindowSizeTransmit: " +
                     dev.Comm.client.Limits.WindowSizeTX + " WindowSizeReceive: " + dev.Comm.client.Limits.WindowSizeRX);
             }
@@ -1769,24 +1792,24 @@ namespace GXDLMSDirector
                     dev.Comm.ReadDataBlock(dev.Comm.client.ReceiverReady(RequestTypes.None), "HDLC test #1. Receiver Ready ", 1, tryCount, reply);
                     if ((reply.FrameId & 0xF) != 1)
                     {
-                        output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc1\">Test #1 failed</a>. Send sequence number is not 0");
+                        AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc1\">Test #1 failed</a>. Send sequence number is not 0");
                         passed = false;
                     }
                     if ((reply.FrameId & 0x10) != 0x10)
                     {
-                        output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc1\">Test #1 failed</a>. P/F is 0");
+                        AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc1\">Test #1 failed</a>. P/F is 0");
                         passed = false;
                     }
                     if ((reply.FrameId & 0xF0) != 0x10)
                     {
-                        output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc1\">Test #1 failed</a>. Receive sequence number is not 0");
+                        AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc1\">Test #1 failed</a>. Receive sequence number is not 0");
                         passed = false;
                     }
                 }
                 catch (Exception)
                 {
                     passed = false;
-                    output.Errors.Add("Receiver Ready failed.");
+                    AddError(test, dev, output.Errors, "Receiver Ready failed.");
                 }
             }
             //SubTest 3: Move the IUT to NDM
@@ -1806,8 +1829,13 @@ namespace GXDLMSDirector
                 {
                     if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                     {
-                        output.Info.Add("Meter returns DisconnectMode.");
+                        AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                     }
+                    passed = false;
+                }
+                catch (TimeoutException)
+                {
+                    AddError(test, dev, output.Errors, "Timeout.");
                     passed = false;
                 }
                 catch (Exception)
@@ -1830,12 +1858,18 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception)
             {
@@ -1848,7 +1882,7 @@ namespace GXDLMSDirector
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc1\">Test #1 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc1\">Test #1 failed.</a>");
             }
         }
 
@@ -1875,13 +1909,13 @@ namespace GXDLMSDirector
                 {
                     dev.Comm.ParseUAResponse(reply.Data);
                 }
-                output.Info.Add("SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.Limits.MaxInfoTX +
+                AddInfo(test, dev, output.Info, "SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.Limits.MaxInfoTX +
                     " MaxInfoLengthReceive: " + dev.Comm.client.Limits.MaxInfoRX + " WindowSizeTransmit: " +
                     dev.Comm.client.Limits.WindowSizeTX + " WindowSizeReceive: " + dev.Comm.client.Limits.WindowSizeRX);
             }
             catch (Exception ex)
             {
-                output.Errors.Add("SNRM request failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "SNRM request failed. " + ex.Message);
                 passed = false;
             }
             try
@@ -1890,12 +1924,17 @@ namespace GXDLMSDirector
                 GXByteBuffer bb = new GXByteBuffer(dev.Comm.DisconnectRequest(true));
                 --bb.Size;
                 dev.Comm.ReadDataBlock(bb.Array(), "HDLC test #2. Illegal frame.", 1, tryCount, reply);
-                output.Info.Add("Illegal frame failed.");
+                AddInfo(test, dev, output.Info, "Illegal frame failed.");
+                passed = false;
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
                 passed = false;
             }
             catch (Exception)
             {
-                output.Info.Add("Illegal frame succeeded.");
+                AddInfo(test, dev, output.Info, "Illegal frame succeeded.");
             }
             Thread.Sleep(2000);
             //Check that meter is Normal Response Mode.
@@ -1907,7 +1946,7 @@ namespace GXDLMSDirector
                 if (reply.FrameId != 0x11)
                 {
                     passed = false;
-                    output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc2\">Test #2 failed</a>. Response is not RR.");
+                    AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc2\">Test #2 failed</a>. Response is not RR.");
                 }
             }
             catch (Exception)
@@ -1927,12 +1966,18 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception)
             {
@@ -1945,7 +1990,7 @@ namespace GXDLMSDirector
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc2\">Test #2 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc2\">Test #2 failed.</a>");
             }
         }
 
@@ -1984,12 +2029,18 @@ namespace GXDLMSDirector
                 {
                     if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                     {
-                        output.Info.Add("Meter returns DisconnectMode.");
+                        AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                     }
                     else
                     {
+                        AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                         passed = false;
                     }
+                }
+                catch (TimeoutException)
+                {
+                    AddError(test, dev, output.Errors, "Timeout.");
+                    passed = false;
                 }
                 catch (Exception)
                 {
@@ -2001,7 +2052,7 @@ namespace GXDLMSDirector
                     reply.Clear();
                     dev.Comm.ReadDataBlock(dev.Comm.SNRMRequest(), "HDLC test #1. SNRM request", 1, tryCount, reply);
                     dev.Comm.ParseUAResponse(reply.Data);
-                    output.Info.Add("SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.Limits.MaxInfoTX +
+                    AddInfo(test, dev, output.Info, "SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.Limits.MaxInfoTX +
                         " MaxInfoLengthReceive: " + dev.Comm.client.Limits.MaxInfoRX + " WindowSizeTransmit: " +
                         dev.Comm.client.Limits.WindowSizeTX + " WindowSizeReceive: " + dev.Comm.client.Limits.WindowSizeRX);
                     dev.Comm.ReadDataBlock(dev.Comm.client.AARQRequest(), "HDLC test #14. AARQRequest.", 1, tryCount, reply);
@@ -2020,7 +2071,7 @@ namespace GXDLMSDirector
                     }
                     catch (Exception ex)
                     {
-                        output.Errors.Add("Failed to read inactivity timeout value." + ex.Message);
+                        AddError(test, dev, output.Errors, "Failed to read inactivity timeout value." + ex.Message);
                     }
                     output.PreInfo.Add("HDLC Setup default inactivity timeout value is " + s.InactivityTimeout + " seconds.");
                 }
@@ -2037,13 +2088,13 @@ namespace GXDLMSDirector
                             reply.Clear();
                             dev.Comm.ReadDataBlock(dev.Comm.SNRMRequest(), "HDLC test #3. SNRM request", 1, tryCount, reply);
                             dev.Comm.ParseUAResponse(reply.Data);
-                            output.Info.Add("Disconect SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.Limits.MaxInfoTX +
+                            AddInfo(test, dev, output.Info, "Disconect SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.Limits.MaxInfoTX +
                                 " MaxInfoLengthReceive: " + dev.Comm.client.Limits.MaxInfoRX + " WindowSizeTransmit: " +
                                 dev.Comm.client.Limits.WindowSizeTX + " WindowSizeReceive: " + dev.Comm.client.Limits.WindowSizeRX);
                         }
                         catch (Exception ex)
                         {
-                            output.Errors.Add("SNRM request failed. " + ex.Message);
+                            AddError(test, dev, output.Errors, "SNRM request failed. " + ex.Message);
                             passed = false;
                         }
                         test.OnTrace(test, "Testing inactivity timeout and sleeping for " + s.InactivityTimeout + " seconds.\r\n");
@@ -2058,16 +2109,22 @@ namespace GXDLMSDirector
                         {
                             if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                             {
-                                output.Info.Add("Meter returns DisconnectMode.");
+                                AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                             }
                             else
                             {
+                                AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                                 passed = false;
                             }
                         }
+                        catch (TimeoutException)
+                        {
+                            AddError(test, dev, output.Errors, "Timeout.");
+                            passed = false;
+                        }
                         catch (Exception ex)
                         {
-                            output.Errors.Add("SNRM request failed. " + ex.Message);
+                            AddError(test, dev, output.Errors, "SNRM request failed. " + ex.Message);
                             passed = false;
                         }
                     }
@@ -2078,7 +2135,7 @@ namespace GXDLMSDirector
                     else
                     {
                         test.OnTrace(test, "Failed.\r\n");
-                        output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc3\">Test #3 failed.</a>");
+                        AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc3\">Test #3 failed.</a>");
                     }
                 }
             }
@@ -2108,22 +2165,27 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("HDLC Test #4. Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "HDLC Test #4. Meter returns DisconnectMode.");
                 }
                 else if (ex.ErrorCode == (int)ErrorCode.Rejected)
                 {
                     passed = false;
-                    output.Info.Add("HDLC Test #4. Meter returns Rejected.");
+                    AddInfo(test, dev, output.Info, "HDLC Test #4. Meter returns Rejected.");
                 }
                 else
                 {
                     passed = false;
                 }
             }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
+            }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("HDLC Test #4. DisconnectRequest failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "HDLC Test #4. DisconnectRequest failed. " + ex.Message);
             }
 
             //Opening flag missing
@@ -2134,12 +2196,12 @@ namespace GXDLMSDirector
                 GXByteBuffer bb = new GXByteBuffer(dev.Comm.SNRMRequest());
                 bb.Move(1, 0, bb.Size - 1);
                 dev.Comm.ReadDataBlock(bb.Array(), "HDLC test #4. Opening flag missing.", 1, tryCount, reply);
-                output.Errors.Add("HDLC Test #4. Opening flag missing failed.");
+                AddError(test, dev, output.Errors, "HDLC Test #4. Opening flag missing failed.");
                 passed = false;
             }
             catch (Exception)
             {
-                output.Info.Add("HDLC Test #4. Opening flag missing succeeded.");
+                AddInfo(test, dev, output.Info, "HDLC Test #4. Opening flag missing succeeded.");
             }
 
             //Closing flag missing.
@@ -2150,12 +2212,12 @@ namespace GXDLMSDirector
                 GXByteBuffer bb = new GXByteBuffer(dev.Comm.SNRMRequest());
                 --bb.Size;
                 dev.Comm.ReadDataBlock(bb.Array(), "HDLC test #4. Closing flag missing.", 1, tryCount, reply);
-                output.Errors.Add("HDLC Test #4. Closing flag missing failed.");
+                AddError(test, dev, output.Errors, "HDLC Test #4. Closing flag missing failed.");
                 passed = false;
             }
             catch (Exception)
             {
-                output.Info.Add("HDLC Test #4. Closing flag missing succeeded.");
+                AddInfo(test, dev, output.Info, "HDLC Test #4. Closing flag missing succeeded.");
             }
 
             //Both flags are missing.
@@ -2167,12 +2229,12 @@ namespace GXDLMSDirector
                 bb.Move(1, 0, bb.Size - 1);
                 --bb.Size;
                 dev.Comm.ReadDataBlock(bb.Array(), "HDLC test #4. Both flags missing.", 1, tryCount, reply);
-                output.Errors.Add("HDLC Test #4. Both flags missing failed.");
+                AddError(test, dev, output.Errors, "HDLC Test #4. Both flags missing failed.");
                 passed = false;
             }
             catch (Exception)
             {
-                output.Info.Add("HDLC Test #4. Both flags missing succeeded.");
+                AddInfo(test, dev, output.Info, "HDLC Test #4. Both flags missing succeeded.");
             }
             //Check that the IUT is in NDM.
             try
@@ -2185,21 +2247,26 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("HDLC Test #4. Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "HDLC Test #4. Meter returns DisconnectMode.");
                 }
                 else if (ex.ErrorCode == (int)ErrorCode.Rejected)
                 {
                     passed = false;
-                    output.Info.Add("HDLC Test #4. Meter returns Rejected.");
+                    AddInfo(test, dev, output.Info, "HDLC Test #4. Meter returns Rejected.");
                 }
                 else
                 {
                     passed = false;
                 }
             }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
+            }
             catch (Exception)
             {
-                output.Errors.Add("HDLC Test #4. Disconnect request failed.");
+                AddError(test, dev, output.Errors, "HDLC Test #4. Disconnect request failed.");
                 passed = false;
             }
             if (passed)
@@ -2209,7 +2276,7 @@ namespace GXDLMSDirector
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc4\">Test #4 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc4\">Test #4 failed.</a>");
             }
         }
 
@@ -2237,20 +2304,27 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else if (ex.ErrorCode == (int)ErrorCode.Rejected)
                 {
-                    output.Info.Add("Meter rejects Disconnect Request.");
+                    AddInfo(test, dev, output.Info, "Meter rejects Disconnect Request.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
             }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
+            }
             catch (Exception ex)
             {
-                output.Errors.Add("DisconnectRequest failed. " + ex.Message);
+                passed = false;
+                AddError(test, dev, output.Errors, "DisconnectRequest failed. " + ex.Message);
             }
 
             //Remove content one byte at the time.
@@ -2289,13 +2363,13 @@ namespace GXDLMSDirector
                 reply.Clear();
                 dev.Comm.ReadDataBlock(dev.Comm.SNRMRequest(), "HDLC test #5. SNRM request", 1, tryCount, reply);
                 dev.Comm.ParseUAResponse(reply.Data);
-                output.Info.Add("Disconect SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.Limits.MaxInfoTX +
+                AddInfo(test, dev, output.Info, "Disconect SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.Limits.MaxInfoTX +
                     " MaxInfoLengthReceive: " + dev.Comm.client.Limits.MaxInfoRX + " WindowSizeTransmit: " +
                     dev.Comm.client.Limits.WindowSizeTX + " WindowSizeReceive: " + dev.Comm.client.Limits.WindowSizeRX);
             }
             catch (Exception ex)
             {
-                output.Errors.Add("SNRM request failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "SNRM request failed. " + ex.Message);
                 passed = false;
             }
 
@@ -2306,7 +2380,7 @@ namespace GXDLMSDirector
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc5\">Test #5 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc5\">Test #5 failed.</a>");
             }
         }
 
@@ -2334,12 +2408,17 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
-                output.Errors.Add("Disconnect request failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "Disconnect request failed. " + ex.Message);
                 passed = false;
             }
             try
@@ -2348,12 +2427,12 @@ namespace GXDLMSDirector
                 byte[] data = dev.Comm.SNRMRequest();
                 data[1] = 0;
                 dev.Comm.ReadDataBlock(data, "HDLC test #6. SNRM request", 1, tryCount, reply);
-                output.Errors.Add("SNRM request failed.");
+                AddError(test, dev, output.Errors, "SNRM request failed.");
                 passed = false;
             }
             catch (TimeoutException)
             {
-                output.Info.Add("SNRM request succeeded.");
+                AddInfo(test, dev, output.Info, "SNRM request succeeded.");
             }
             catch (Exception)
             {
@@ -2368,17 +2447,23 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("SNRM request failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "SNRM request failed. " + ex.Message);
             }
             if (passed)
             {
@@ -2387,7 +2472,7 @@ namespace GXDLMSDirector
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc6\">Test #6 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc6\">Test #6 failed.</a>");
             }
         }
 
@@ -2415,13 +2500,18 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("Disconnect request failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "Disconnect request failed. " + ex.Message);
             }
             try
             {
@@ -2429,12 +2519,12 @@ namespace GXDLMSDirector
                 byte[] data = dev.Comm.SNRMRequest();
                 ++data[2];
                 dev.Comm.ReadDataBlock(data, "HDLC test #7. SNRM request", 1, tryCount, reply);
-                output.Errors.Add("SNRM request failed. ");
+                AddError(test, dev, output.Errors, "SNRM request failed. ");
                 passed = false;
             }
             catch (TimeoutException)
             {
-                output.Info.Add("Illegal frame succeeded.");
+                AddInfo(test, dev, output.Info, "Illegal frame succeeded.");
             }
             catch (Exception)
             {
@@ -2449,17 +2539,23 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("Disconnect request failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "Disconnect request failed. " + ex.Message);
             }
 
             if (passed)
@@ -2469,7 +2565,7 @@ namespace GXDLMSDirector
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc7\">Test #7 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc7\">Test #7 failed.</a>");
             }
         }
 
@@ -2502,17 +2598,18 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("Disconnect request failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "Disconnect request failed. " + ex.Message);
             }
             //SubTest 1: Unknown command identifier
             try
@@ -2526,7 +2623,7 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.UnacceptableFrame)
                 {
-                    output.Info.Add("Unknown command succeeded. " + ex.Message);
+                    AddInfo(test, dev, output.Info, "Unknown command succeeded. " + ex.Message);
                 }
                 else
                 {
@@ -2552,17 +2649,18 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("Disconnect request failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "Disconnect request failed. " + ex.Message);
             }
             try
             {
@@ -2573,10 +2671,15 @@ namespace GXDLMSDirector
                     dev.Comm.ParseUAResponse(reply.Data);
                 }
             }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
+            }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("Disconnect request failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "Disconnect request failed. " + ex.Message);
             }
 
             if (passed)
@@ -2586,7 +2689,7 @@ namespace GXDLMSDirector
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc8\">Test #8 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc8\">Test #8 failed.</a>");
             }
         }
 
@@ -2614,17 +2717,23 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("Disconnect request failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "Disconnect request failed. " + ex.Message);
             }
             try
             {
@@ -2638,11 +2747,11 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.Rejected)
                 {
-                    output.Info.Add("Unknown command succeeded. (Meter rejects the frame)");
+                    AddInfo(test, dev, output.Info, "Unknown command succeeded. (Meter rejects the frame)");
                 }
                 else if (ex.ErrorCode == (int)ErrorCode.UnacceptableFrame)
                 {
-                    output.Info.Add("Unknown command succeeded. (Unacceptable Frame)");
+                    AddInfo(test, dev, output.Info, "Unknown command succeeded. (Unacceptable Frame)");
                 }
                 else
                 {
@@ -2651,7 +2760,7 @@ namespace GXDLMSDirector
             }
             catch (Exception)
             {
-                output.Info.Add("Unknown command succeeded (timeout).");
+                AddInfo(test, dev, output.Info, "Unknown command succeeded (timeout).");
             }
             try
             {
@@ -2662,20 +2771,26 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else if (ex.ErrorCode == (int)ErrorCode.Rejected)
                 {
-                    output.Info.Add("Meter rejects the frame.");
+                    AddInfo(test, dev, output.Info, "Meter rejects the frame.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
             }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
+            }
             catch (Exception)
             {
-                output.Info.Add("Disconnect request failed (timeout).");
+                AddInfo(test, dev, output.Info, "Disconnect request failed (timeout).");
                 passed = false;
             }
 
@@ -2697,7 +2812,7 @@ namespace GXDLMSDirector
             }
             catch (TimeoutException)
             {
-                output.Info.Add("Unknown command succeeded (timeout).");
+                AddInfo(test, dev, output.Info, "Unknown command succeeded (timeout).");
             }
             catch (Exception ex)
             {
@@ -2710,7 +2825,7 @@ namespace GXDLMSDirector
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc9\">Test #9 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc9\">Test #9 failed.</a>");
             }
         }
 
@@ -2738,17 +2853,23 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("Disconnect request failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "Disconnect request failed. " + ex.Message);
             }
             try
             {
@@ -2760,7 +2881,7 @@ namespace GXDLMSDirector
             }
             catch (TimeoutException)
             {
-                output.Info.Add("Invalid frame succeeded..");
+                AddInfo(test, dev, output.Info, "Invalid frame succeeded..");
             }
             catch (Exception)
             {
@@ -2775,12 +2896,18 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception)
             {
@@ -2793,7 +2920,7 @@ namespace GXDLMSDirector
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc10\">Test #10 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc10\">Test #10 failed.</a>");
             }
         }
 
@@ -2817,17 +2944,23 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("Disconnect request failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "Disconnect request failed. " + ex.Message);
             }
             try
             {
@@ -2840,7 +2973,7 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.UnacceptableFrame)
                 {
-                    output.Info.Add("Meter returns Unacceptable Frame.");
+                    AddInfo(test, dev, output.Info, "Meter returns Unacceptable Frame.");
                 }
                 else
                 {
@@ -2864,12 +2997,18 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception)
             {
@@ -2882,7 +3021,7 @@ namespace GXDLMSDirector
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc11\">Test #11 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc11\">Test #11 failed.</a>");
             }
         }
 
@@ -2910,17 +3049,23 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("Disconnect request failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "Disconnect request failed. " + ex.Message);
             }
             try
             {
@@ -2947,12 +3092,18 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception)
             {
@@ -2965,7 +3116,7 @@ namespace GXDLMSDirector
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc12\">Test #12 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc12\">Test #12 failed.</a>");
             }
         }
 
@@ -2993,17 +3144,23 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("Disconnect request failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "Disconnect request failed. " + ex.Message);
             }
             try
             {
@@ -3030,12 +3187,18 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception)
             {
@@ -3048,7 +3211,7 @@ namespace GXDLMSDirector
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc13\">Test #13 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc13\">Test #13 failed.</a>");
             }
         }
 
@@ -3076,17 +3239,23 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("Disconnect request failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "Disconnect request failed. " + ex.Message);
             }
             try
             {
@@ -3120,12 +3289,18 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception)
             {
@@ -3138,7 +3313,7 @@ namespace GXDLMSDirector
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc14\">Test #14 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc14\">Test #14 failed.</a>");
             }
         }
 
@@ -3166,17 +3341,23 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("Disconnect request failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "Disconnect request failed. " + ex.Message);
             }
             try
             {
@@ -3215,12 +3396,18 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception)
             {
@@ -3233,7 +3420,7 @@ namespace GXDLMSDirector
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc15\">Test #15 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc15\">Test #15 failed.</a>");
             }
         }
 
@@ -3261,17 +3448,23 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("Disconnect request failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "Disconnect request failed. " + ex.Message);
             }
             try
             {
@@ -3290,7 +3483,8 @@ namespace GXDLMSDirector
                 {
                     reply.Clear();
                     GXByteBuffer bb = new GXByteBuffer();
-                    bb.Capacity = dev.Comm.client.Limits.MaxInfoTX + 1;
+                    ++dev.Comm.client.Limits.MaxInfoTX;
+                    bb.Capacity = dev.Comm.client.Limits.MaxInfoTX;
                     bb.Size = bb.Capacity;
                     byte[] data = dev.Comm.client.CustomHdlcFrameRequest(0x10, bb);
                     dev.Comm.ReadDataBlock(data, "HDLC test #16. AARQRequest.", 1, tryCount, reply);
@@ -3306,6 +3500,10 @@ namespace GXDLMSDirector
                 catch (Exception)
                 {
                     passed = false;
+                }
+                finally
+                {
+                    --dev.Comm.client.Limits.MaxInfoTX;
                 }
             }
             try
@@ -3331,12 +3529,18 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception)
             {
@@ -3349,7 +3553,7 @@ namespace GXDLMSDirector
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc16\">Test #16 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc16\">Test #16 failed.</a>");
             }
         }
 
@@ -3377,17 +3581,23 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("Disconnect request failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "Disconnect request failed. " + ex.Message);
             }
             try
             {
@@ -3444,12 +3654,18 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception)
             {
@@ -3462,7 +3678,7 @@ namespace GXDLMSDirector
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc17\">Test #17 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc17\">Test #17 failed.</a>");
             }
         }
 
@@ -3490,17 +3706,23 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("Disconnect request failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "Disconnect request failed. " + ex.Message);
             }
             try
             {
@@ -3563,12 +3785,18 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception)
             {
@@ -3581,7 +3809,7 @@ namespace GXDLMSDirector
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc18\">Test #18 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc18\">Test #18 failed.</a>");
             }
         }
 
@@ -3609,17 +3837,23 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("Disconnect request failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "Disconnect request failed. " + ex.Message);
             }
             try
             {
@@ -3631,16 +3865,17 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
             }
             catch (TimeoutException)
             {
-                output.Info.Add("Unknown command succeeded (timeout).");
+                AddInfo(test, dev, output.Info, "Unknown command succeeded (timeout).");
             }
             catch (Exception)
             {
@@ -3655,12 +3890,18 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception)
             {
@@ -3673,7 +3914,7 @@ namespace GXDLMSDirector
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc19\">Test #19 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc19\">Test #19 failed.</a>");
             }
         }
 
@@ -3701,17 +3942,23 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("Disconnect request failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "Disconnect request failed. " + ex.Message);
             }
             try
             {
@@ -3725,7 +3972,7 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.UnacceptableFrame)
                 {
-                    output.Info.Add("Meter returns UnacceptableFrame.");
+                    AddInfo(test, dev, output.Info, "Meter returns UnacceptableFrame.");
                 }
                 else
                 {
@@ -3734,7 +3981,7 @@ namespace GXDLMSDirector
             }
             catch (TimeoutException)
             {
-                output.Info.Add("Invalid CRC succeeded (timeout).");
+                AddInfo(test, dev, output.Info, "Invalid CRC succeeded (timeout).");
             }
             catch (Exception)
             {
@@ -3749,12 +3996,18 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception)
             {
@@ -3767,7 +4020,7 @@ namespace GXDLMSDirector
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc20\">Test 20 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc20\">Test 20 failed.</a>");
             }
         }
 
@@ -3795,17 +4048,23 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("Disconnect request failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "Disconnect request failed. " + ex.Message);
             }
             int serverAddress = dev.Comm.client.ServerAddress;
             try
@@ -3819,7 +4078,7 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.UnacceptableFrame)
                 {
-                    output.Info.Add("Meter returns UnacceptableFrame.");
+                    AddInfo(test, dev, output.Info, "Meter returns UnacceptableFrame.");
                 }
                 else
                 {
@@ -3828,7 +4087,7 @@ namespace GXDLMSDirector
             }
             catch (TimeoutException)
             {
-                output.Info.Add("Invalid destination succeeded (timeout).");
+                AddInfo(test, dev, output.Info, "Invalid destination succeeded (timeout).");
             }
             catch (Exception)
             {
@@ -3848,7 +4107,7 @@ namespace GXDLMSDirector
                 {
                     if (ex.ErrorCode == (int)ErrorCode.UnacceptableFrame)
                     {
-                        output.Info.Add("Meter returns UnacceptableFrame.");
+                        AddInfo(test, dev, output.Info, "Meter returns UnacceptableFrame.");
                     }
                     else
                     {
@@ -3857,7 +4116,7 @@ namespace GXDLMSDirector
                 }
                 catch (TimeoutException)
                 {
-                    output.Info.Add("Invalid destination succeeded (timeout).");
+                    AddInfo(test, dev, output.Info, "Invalid destination succeeded (timeout).");
                 }
                 catch (Exception)
                 {
@@ -3876,12 +4135,18 @@ namespace GXDLMSDirector
                 {
                     if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                     {
-                        output.Info.Add("Meter returns DisconnectMode.");
+                        AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                     }
                     else
                     {
+                        AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                         passed = false;
                     }
+                }
+                catch (TimeoutException)
+                {
+                    AddError(test, dev, output.Errors, "Timeout.");
+                    passed = false;
                 }
                 catch (Exception)
                 {
@@ -3895,7 +4160,7 @@ namespace GXDLMSDirector
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc21\">Test 21 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc21\">Test 21 failed.</a>");
             }
         }
 
@@ -3920,17 +4185,23 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("Disconnect request failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "Disconnect request failed. " + ex.Message);
             }
             try
             {
@@ -3950,7 +4221,7 @@ namespace GXDLMSDirector
                 dev.Comm.ReadDataBlock(data, "HDLC test #101. Read LDN #2", 1, reply);
                 if ((reply.FrameId & 0xC) != 0)
                 {
-                    output.Info.Add("Meter Don't return ReceiveReady.");
+                    AddInfo(test, dev, output.Info, "Meter Don't return ReceiveReady.");
                     passed = false;
                 }
                 reply.Clear();
@@ -3963,7 +4234,7 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.UnacceptableFrame)
                 {
-                    output.Info.Add("Meter returns Unacceptable Frame.");
+                    AddInfo(test, dev, output.Info, "Meter returns Unacceptable Frame.");
                 }
                 else
                 {
@@ -3983,12 +4254,18 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception)
             {
@@ -4001,7 +4278,7 @@ namespace GXDLMSDirector
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc101\">Test #101 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#hdlc101\">Test #101 failed.</a>");
             }
         }
 
@@ -4219,17 +4496,23 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #5 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #1 failed. " + ex.Message);
             }
             try
             {
@@ -4249,8 +4532,13 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode != (int)ErrorCode.UnacceptableFrame)
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddInfo(test, dev, output.Info, "Timeout.");
             }
             catch (GXDLMSConfirmedServiceError ex)
             {
@@ -4258,13 +4546,14 @@ namespace GXDLMSDirector
                     ex.ServiceError != ServiceError.Service ||
                     ex.ServiceErrorValue != 2)
                 {
+                    AddError(test, dev, output.Errors, string.Format("ConfirmedServiceError error returned {0}.", ex.Message));
                     passed = false;
                 }
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("COSEM Application tests #1 failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "COSEM Application tests #1 failed. " + ex.Message);
             }
             (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = false;
 
@@ -4283,12 +4572,18 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception)
             {
@@ -4307,15 +4602,17 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                AddError(test, dev, output.Errors, "COSEM Application tests #1 DisconnectMode failed. " + ex.Message);
                 passed = false;
             }
             try
@@ -4335,8 +4632,9 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
+                AddError(test, dev, output.Errors, string.Format("Meter returns {0}.", (ErrorCode)ex.ErrorCode));
                 passed = false;
             }
             //SubTest 2.Check that the AA has been established
@@ -4349,7 +4647,7 @@ namespace GXDLMSDirector
                     string ln = GXDLMSConverter.ToLogicalName(reply.Value);
                     if (ln != "0.0.40.0.0.255")
                     {
-                        output.Info.Add("Check Associated State: Unexpected Data value. Expected: 0.0.40.0.0.255, actual: " + ln);
+                        AddInfo(test, dev, output.Info, "Check Associated State: Unexpected Data value. Expected: 0.0.40.0.0.255, actual: " + ln);
                         passed = false;
                     }
                     reply.Clear();
@@ -4357,7 +4655,7 @@ namespace GXDLMSDirector
                 catch (Exception ex)
                 {
                     passed = false;
-                    output.Errors.Add("COSEM Application tests #1 failed. " + ex.Message);
+                    AddError(test, dev, output.Errors, "COSEM Application tests #1 failed. " + ex.Message);
                 }
                 //SubTest 3.Release the AA
                 if (passed)
@@ -4374,17 +4672,23 @@ namespace GXDLMSDirector
                     {
                         if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                         {
-                            output.Info.Add("Meter returns DisconnectMode.");
+                            AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                         }
                         else
                         {
+                            AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                             passed = false;
                         }
+                    }
+                    catch (TimeoutException)
+                    {
+                        AddError(test, dev, output.Errors, "Timeout.");
+                        passed = false;
                     }
                     catch (Exception ex)
                     {
                         passed = false;
-                        output.Info.Add("COSEM Application tests #1 failed. " + ex.Message);
+                        AddInfo(test, dev, output.Info, "COSEM Application tests #1 failed. " + ex.Message);
                     }
                     if (passed)
                     {
@@ -4400,10 +4704,11 @@ namespace GXDLMSDirector
                         {
                             if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                             {
-                                output.Info.Add("Meter returns DisconnectMode.");
+                                AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                             }
                             else
                             {
+                                AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                                 passed = false;
                             }
                         }
@@ -4414,16 +4719,15 @@ namespace GXDLMSDirector
                     }
                 }
             }
-
             if (passed)
             {
                 test.OnTrace(test, "Passed.\r\n");
-                output.Info.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app1\">COSEM Application test #1 passed.</a>");
+                AddInfo(test, dev, output.Info, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app1\">COSEM Application test #1 passed.</a>");
             }
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app1\">COSEM Application test #1 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app1\">COSEM Application test #1 failed.</a>");
             }
         }
 
@@ -4451,17 +4755,23 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #4 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #4 failed. " + ex.Message);
             }
             //Protocol-version present and containing the default value.
             try
@@ -4491,7 +4801,7 @@ namespace GXDLMSDirector
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #4 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #4 failed. " + ex.Message);
             }
             if (passed)
             {
@@ -4504,6 +4814,11 @@ namespace GXDLMSDirector
                         dev.Comm.ParseUAResponse(reply.Data);
                     }
                     reply.Clear();
+                }
+                catch (TimeoutException)
+                {
+                    AddError(test, dev, output.Errors, "Timeout.");
+                    passed = false;
                 }
                 catch (Exception ex)
                 {
@@ -4534,18 +4849,18 @@ namespace GXDLMSDirector
                 {
                     if (ex.Result == AssociationResult.PermanentRejected && ex.Diagnostic == (byte)AcseServiceProvider.NoCommonAcseVersion)
                     {
-                        output.Info.Add("COSEM Application tests #4 Invalid Protocol-version succeeded. " + ex.Message);
+                        AddInfo(test, dev, output.Info, "COSEM Application tests #4 Invalid Protocol-version succeeded. " + ex.Message);
                     }
                     else
                     {
                         passed = false;
-                        output.Errors.Add("COSEM Application tests #4 failed. " + ex.Message);
+                        AddError(test, dev, output.Errors, "COSEM Application tests #4 failed. " + ex.Message);
                     }
                 }
                 catch (Exception ex)
                 {
                     passed = false;
-                    output.Errors.Add("COSEM Application tests #4 failed. " + ex.Message);
+                    AddError(test, dev, output.Errors, "COSEM Application tests #4 failed. " + ex.Message);
                 }
             }
             try
@@ -4558,6 +4873,11 @@ namespace GXDLMSDirector
                 }
                 reply.Clear();
             }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
+            }
             catch (Exception ex)
             {
                 passed = false;
@@ -4566,12 +4886,12 @@ namespace GXDLMSDirector
             if (passed)
             {
                 test.OnTrace(test, "Passed.\r\n");
-                output.Info.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app4\">COSEM Application test #4 passed.</a>");
+                AddInfo(test, dev, output.Info, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app4\">COSEM Application test #4 passed.</a>");
             }
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app4\">COSEM Application test #4 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app4\">COSEM Application test #4 failed.</a>");
             }
         }
 
@@ -4600,17 +4920,23 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #5 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #5 failed. " + ex.Message);
             }
             try
             {
@@ -4623,12 +4949,12 @@ namespace GXDLMSDirector
                 if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
                 {
                     bb.SetHexString("E6E600601DA10906075F857504070203BE10040E01000000065F1F04007C1BA0FFFF");
-                    //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(Command.Aarq, bb), "COSEM Application test #5. AARQ", 1, tryCount, reply);
+                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(Command.Aarq, bb), "COSEM Application test #5. AARQ", 1, tryCount, reply);
                 }
                 else
                 {
                     bb.SetHexString("601DA10906075F857504070203BE10040E01000000065F1F04007C1BA0FFFF");
-                    //TODO: MIKKO  dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(Command.Aarq, bb), "COSEM Application test #5. AARQ", 1, tryCount, reply);
+                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(Command.Aarq, bb), "COSEM Application test #5. AARQ", 1, tryCount, reply);
                 }
                 dev.Comm.ParseAAREResponse(reply.Data);
                 reply.Clear();
@@ -4638,18 +4964,18 @@ namespace GXDLMSDirector
             {
                 if (ex.Result == AssociationResult.PermanentRejected && ex.Diagnostic == (byte)SourceDiagnostic.ApplicationContextNameNotSupported)
                 {
-                    output.Info.Add("COSEM Application tests #5 UNKNOWN ApplicationContextName succeeded. " + ex.Message);
+                    AddInfo(test, dev, output.Info, "COSEM Application tests #5 UNKNOWN ApplicationContextName succeeded. " + ex.Message);
                 }
                 else
                 {
                     passed = false;
-                    output.Errors.Add("COSEM Application tests #5 failed. " + ex.Message);
+                    AddError(test, dev, output.Errors, "COSEM Application tests #5 failed. " + ex.Message);
                 }
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("COSEM Application tests #5 failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "COSEM Application tests #5 failed. " + ex.Message);
             }
             /*
             //SubTest 1: Unused AARQ fields are present with a dummy value
@@ -4663,7 +4989,7 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
@@ -4673,7 +4999,7 @@ namespace GXDLMSDirector
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #5 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #5 failed. " + ex.Message);
             }
             try
             {
@@ -4687,17 +5013,19 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
+
                     passed = false;
                 }
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #5 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #5 failed. " + ex.Message);
             }
             try
             {
@@ -4755,6 +5083,11 @@ namespace GXDLMSDirector
                 }
                 reply.Clear();
             }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
+            }
             catch (Exception ex)
             {
                 passed = false;
@@ -4763,12 +5096,12 @@ namespace GXDLMSDirector
             if (passed)
             {
                 test.OnTrace(test, "Passed.\r\n");
-                output.Info.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app5\">COSEM Application test #5 passed.</a>");
+                AddInfo(test, dev, output.Info, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app5\">COSEM Application test #5 passed.</a>");
             }
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app5\">COSEM Application test #5 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app5\">COSEM Application test #5 failed.</a>");
             }
         }
 
@@ -4830,18 +5163,23 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
-                    output.Info.Add("COSEM Application tests #6 failed. " + ex.Message);
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #6 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #6 failed. " + ex.Message);
             }
             //SubTest 1: Unused AARQ fields are present with a dummy value
             try
@@ -4887,13 +5225,13 @@ namespace GXDLMSDirector
                 GXDLMSTranslator t = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
                 if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
                 {
-                    //Mikko bb.SetHexString("E6E6006036A109060760857405080101A203040144A303040144A403020100A503020100A803020100BE10040E01000000065F1F040060FEDFFFFF");
-                    //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(Command.Aarq, bb), "COSEM Application test #6. AARQ", 1, tryCount, reply);
+                    bb.SetHexString("E6E6006036A109060760857405080101A203040144A303040144A403020100A503020100A803020100BE10040E01000000065F1F040060FEDFFFFF");
+                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(Command.Aarq, bb), "COSEM Application test #6. AARQ", 1, tryCount, reply);
                 }
                 else
                 {
                     bb.SetHexString("6036A109060760857405080101A203040144A303040144A403020100A503020100A803020100BE10040E01000000065F1F040060FEDFFFFF");
-                    //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(Command.Aarq, bb), "COSEM Application test #6. AARQ", 1, tryCount, reply);
+                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(Command.Aarq, bb), "COSEM Application test #6. AARQ", 1, tryCount, reply);
                 }
                 dev.Comm.ParseAAREResponse(reply.Data);
                 reply.Data.Position = 0;
@@ -4912,18 +5250,18 @@ namespace GXDLMSDirector
             {
                 if (ex.Result == AssociationResult.PermanentRejected && ex.Diagnostic != (byte)SourceDiagnostic.None)
                 {
-                    output.Info.Add("COSEM Application tests #5 UNKNOWN ApplicationContextName succeeded. " + ex.Message);
+                    AddInfo(test, dev, output.Info, "COSEM Application tests #5 UNKNOWN ApplicationContextName succeeded. " + ex.Message);
                 }
                 else
                 {
                     passed = false;
-                    output.Errors.Add("COSEM Application tests #6 failed. " + ex.Message);
+                    AddError(test, dev, output.Errors, "COSEM Application tests #6 failed. " + ex.Message);
                 }
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("COSEM Application tests #6 failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "COSEM Application tests #6 failed. " + ex.Message);
             }
             //SubTest 2: AARQ.calling-AP-title too short
             if (passed && (dev.Comm.client.Authentication == Authentication.HighGMAC ||
@@ -4942,17 +5280,18 @@ namespace GXDLMSDirector
                 {
                     if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                     {
-                        output.Info.Add("Meter returns DisconnectMode.");
+                        AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                     }
                     else
                     {
+                        AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                         passed = false;
                     }
                 }
                 catch (Exception ex)
                 {
                     passed = false;
-                    output.Info.Add("COSEM Application tests #6 failed. " + ex.Message);
+                    AddInfo(test, dev, output.Info, "COSEM Application tests #6 failed. " + ex.Message);
                 }
                 byte[] st = dev.Comm.client.Ciphering.SystemTitle;
                 try
@@ -4972,18 +5311,18 @@ namespace GXDLMSDirector
                 {
                     if (ex.Result == AssociationResult.PermanentRejected && ex.Diagnostic == (byte)SourceDiagnostic.CallingApTitleNotRecognized)
                     {
-                        output.Info.Add("COSEM Application tests #6 AARQ.calling-AP-title too short succeeded. " + ex.Message);
+                        AddInfo(test, dev, output.Info, "COSEM Application tests #6 AARQ.calling-AP-title too short succeeded. " + ex.Message);
                     }
                     else
                     {
                         passed = false;
-                        output.Errors.Add("COSEM Application tests #6 AARQ.calling-AP-title too short failed. " + ex.Message);
+                        AddError(test, dev, output.Errors, "COSEM Application tests #6 AARQ.calling-AP-title too short failed. " + ex.Message);
                     }
                 }
                 catch (Exception ex)
                 {
                     passed = false;
-                    output.Errors.Add("COSEM Application tests #6 failed. " + ex.Message);
+                    AddError(test, dev, output.Errors, "COSEM Application tests #6 failed. " + ex.Message);
                 }
                 dev.Comm.client.Ciphering.SystemTitle = st;
             }
@@ -5004,17 +5343,18 @@ namespace GXDLMSDirector
                 {
                     if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                     {
-                        output.Info.Add("Meter returns DisconnectMode.");
+                        AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                     }
                     else
                     {
+                        AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                         passed = false;
                     }
                 }
                 catch (Exception ex)
                 {
                     passed = false;
-                    output.Info.Add("COSEM Application tests #6 failed. " + ex.Message);
+                    AddInfo(test, dev, output.Info, "COSEM Application tests #6 failed. " + ex.Message);
                 }
                 byte[] st = dev.Comm.client.Ciphering.SystemTitle;
                 try
@@ -5034,18 +5374,18 @@ namespace GXDLMSDirector
                 {
                     if (ex.Result == AssociationResult.PermanentRejected && ex.Diagnostic == (byte)SourceDiagnostic.CallingApTitleNotRecognized)
                     {
-                        output.Info.Add("COSEM Application tests #6 AARQ.calling-AP-title too long succeeded. " + ex.Message);
+                        AddInfo(test, dev, output.Info, "COSEM Application tests #6 AARQ.calling-AP-title too long succeeded. " + ex.Message);
                     }
                     else
                     {
                         passed = false;
-                        output.Errors.Add("COSEM Application tests #6 AARQ.calling-AP-title too long failed. " + ex.Message);
+                        AddError(test, dev, output.Errors, "COSEM Application tests #6 AARQ.calling-AP-title too long failed. " + ex.Message);
                     }
                 }
                 catch (Exception ex)
                 {
                     passed = false;
-                    output.Errors.Add("COSEM Application tests #6 AARQ.calling-AP-title too long failed. " + ex.Message);
+                    AddError(test, dev, output.Errors, "COSEM Application tests #6 AARQ.calling-AP-title too long failed. " + ex.Message);
                 }
                 dev.Comm.client.Ciphering.SystemTitle = st;
             }
@@ -5062,17 +5402,23 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #6 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #6 failed. " + ex.Message);
             }
             try
             {
@@ -5086,27 +5432,28 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #6 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #6 failed. " + ex.Message);
             }
             if (passed)
             {
                 test.OnTrace(test, "Passed.\r\n");
-                output.Info.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app6\">COSEM Application test #6 passed.</a>");
+                AddInfo(test, dev, output.Info, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app6\">COSEM Application test #6 passed.</a>");
             }
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app6\">COSEM Application test #6 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app6\">COSEM Application test #6 failed.</a>");
             }
         }
 
@@ -5135,18 +5482,23 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
-                    output.Info.Add("COSEM Application tests #7 failed. " + ex.Message);
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #7 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #7 failed. " + ex.Message);
             }
             //Unused AARQ fields are present with a dummy value
             try
@@ -5165,7 +5517,7 @@ namespace GXDLMSDirector
                 else
                 {
                     bb.SetHexString("6036A109060760857405080101A203040144A303040144A403020100A503020100A803020100BE10040E01000000065F1F040060FE9FFFFF");
-                    //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #7. AARQ", 1, tryCount, reply);
+                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #7. AARQ", 1, tryCount, reply);
                 }
                 dev.Comm.ParseAAREResponse(reply.Data);
                 reply.Clear();
@@ -5173,7 +5525,7 @@ namespace GXDLMSDirector
             catch (Exception ex)
             {
                 passed = false;
-                output.Errors.Add("COSEM Application tests #7 failed. " + ex.Message);
+                AddError(test, dev, output.Errors, "COSEM Application tests #7 failed. " + ex.Message);
             }
             //SubTest 1: Unused AARQ fields are present with a dummy value. Authentication is not used.
             try
@@ -5185,21 +5537,27 @@ namespace GXDLMSDirector
                     dev.Comm.ParseUAResponse(reply.Data);
                 }
             }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
+            }
             catch (GXDLMSException ex)
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #7 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #7 failed. " + ex.Message);
             }
             try
             {
@@ -5213,27 +5571,28 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #7 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #7 failed. " + ex.Message);
             }
             if (passed)
             {
                 test.OnTrace(test, "Passed.\r\n");
-                output.Info.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app7\">COSEM Application test #7 passed.</a>");
+                AddInfo(test, dev, output.Info, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app7\">COSEM Application test #7 passed.</a>");
             }
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app7\">COSEM Application test #7 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app7\">COSEM Application test #7 failed.</a>");
             }
         }
 
@@ -5262,18 +5621,23 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
-                    output.Info.Add("COSEM Application tests #9 failed. " + ex.Message);
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #9 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #9 failed. " + ex.Message);
             }
             Security s = dev.Comm.client.Ciphering.Security;
             try
@@ -5302,12 +5666,12 @@ namespace GXDLMSDirector
             if (passed)
             {
                 test.OnTrace(test, "Passed.\r\n");
-                output.Info.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app9\">COSEM Application test #9 passed.</a>");
+                AddInfo(test, dev, output.Info, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app9\">COSEM Application test #9 passed.</a>");
             }
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app9\">COSEM Application test #9 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app9\">COSEM Application test #9 failed.</a>");
             }
         }
 
@@ -5337,10 +5701,15 @@ namespace GXDLMSDirector
                 dev.Comm.ParseUAResponse(reply.Data);
                 reply.Clear();
             }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
+            }
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #11 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #11 failed. " + ex.Message);
             }
             reply.Clear();
             try
@@ -5352,7 +5721,7 @@ namespace GXDLMSDirector
                 if (dev.Comm.client.QualityOfService != 1)
                 {
                     passed = false;
-                    output.Info.Add("COSEM Application tests #11 failed. Quality of service field not found.");
+                    AddInfo(test, dev, output.Info, "COSEM Application tests #11 failed. Quality of service field not found.");
                 }
                 reply.Clear();
             }
@@ -5370,6 +5739,11 @@ namespace GXDLMSDirector
                     dev.Comm.ParseUAResponse(reply.Data);
                 }
             }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
+            }
             catch (Exception)
             {
                 passed = false;
@@ -5377,12 +5751,12 @@ namespace GXDLMSDirector
             if (passed)
             {
                 test.OnTrace(test, "Passed.\r\n");
-                output.Info.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app11\">COSEM Application test #11 passed.</a>");
+                AddInfo(test, dev, output.Info, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app11\">COSEM Application test #11 passed.</a>");
             }
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app11\">COSEM Application test #11 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app11\">COSEM Application test #11 failed.</a>");
             }
         }
 
@@ -5407,21 +5781,27 @@ namespace GXDLMSDirector
                     dev.Comm.ParseUAResponse(reply.Data);
                 }
             }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
+            }
             catch (GXDLMSException ex)
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #12 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #12 failed. " + ex.Message);
             }
             try
             {
@@ -5435,17 +5815,18 @@ namespace GXDLMSDirector
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #12 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #12 failed. " + ex.Message);
             }
             reply.Clear();
             try
@@ -5459,7 +5840,7 @@ namespace GXDLMSDirector
                 else
                 {
                     bb.SetHexString("601DA109060760857405080101BE10040E01000000055F1F040060FE9FFFFF");
-                    //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #12. AARQ", 1, tryCount, reply);
+                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #12. AARQ", 1, tryCount, reply);
                 }
                 dev.Comm.ParseAAREResponse(reply.Data);
             }
@@ -5467,11 +5848,11 @@ namespace GXDLMSDirector
             {
                 if (ex.ServiceError == ServiceError.Initiate && ex.ServiceErrorValue == 1)
                 {
-                    output.Info.Add("COSEM Application tests #12 succeeded with DMLS version 5.");
+                    AddInfo(test, dev, output.Info, "COSEM Application tests #12 succeeded with DMLS version 5.");
                 }
                 else
                 {
-                    output.Info.Add("COSEM Application tests #12 failed. " + ex.Message);
+                    AddInfo(test, dev, output.Info, "COSEM Application tests #12 failed. " + ex.Message);
                 }
             }
             catch (Exception ex)
@@ -5486,6 +5867,11 @@ namespace GXDLMSDirector
                 {
                     dev.Comm.ParseUAResponse(reply.Data);
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception)
             {
@@ -5502,7 +5888,7 @@ namespace GXDLMSDirector
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #12 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #12 failed. " + ex.Message);
             }
             reply.Clear();
             try
@@ -5516,7 +5902,7 @@ namespace GXDLMSDirector
                 else
                 {
                     bb.SetHexString("601DA109060760857405080101BE10040E01000000075F1F040060FE9FFFFF");
-                    //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #12. AARQ", 1, tryCount, reply);
+                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #12. AARQ", 1, tryCount, reply);
                 }
                 dev.Comm.ParseAAREResponse(reply.Data);
             }
@@ -5524,11 +5910,11 @@ namespace GXDLMSDirector
             {
                 if (ex.ServiceError == ServiceError.Initiate && ex.ServiceErrorValue == 1)
                 {
-                    output.Info.Add("COSEM Application tests #12 succeeded with DMLS version 7.");
+                    AddInfo(test, dev, output.Info, "COSEM Application tests #12 succeeded with DMLS version 7.");
                 }
                 else
                 {
-                    output.Info.Add("COSEM Application tests #12 failed. " + ex.Message);
+                    AddInfo(test, dev, output.Info, "COSEM Application tests #12 failed. " + ex.Message);
                 }
             }
             catch (Exception ex)
@@ -5544,6 +5930,11 @@ namespace GXDLMSDirector
                     dev.Comm.ParseUAResponse(reply.Data);
                 }
             }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
+            }
             catch (Exception)
             {
                 passed = false;
@@ -5551,12 +5942,12 @@ namespace GXDLMSDirector
             if (passed)
             {
                 test.OnTrace(test, "Passed.\r\n");
-                output.Info.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app12\">COSEM Application test #12 passed.</a>");
+                AddInfo(test, dev, output.Info, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app12\">COSEM Application test #12 passed.</a>");
             }
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app12\">COSEM Application test #12 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app12\">COSEM Application test #12 failed.</a>");
             }
         }
 
@@ -5581,21 +5972,27 @@ namespace GXDLMSDirector
                     dev.Comm.ParseUAResponse(reply.Data);
                 }
             }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
+            }
             catch (GXDLMSException ex)
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #14 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #14 failed. " + ex.Message);
             }
             try
             {
@@ -5608,7 +6005,7 @@ namespace GXDLMSDirector
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #14 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #14 failed. " + ex.Message);
             }
             reply.Clear();
             try
@@ -5622,21 +6019,21 @@ namespace GXDLMSDirector
                 else
                 {
                     bb.SetHexString("601DA109060760857405080101BE10040E01000000065F1F040060FE9F000B");
-                    //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #14. AARQ", 1, tryCount, reply);
+                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #14. AARQ", 1, tryCount, reply);
                 }
                 dev.Comm.ParseAAREResponse(reply.Data);
                 passed = false;
-                output.Errors.Add("COSEM Application tests #14 failed with PDU size 11.");
+                AddError(test, dev, output.Errors, "COSEM Application tests #14 failed with PDU size 11.");
             }
             catch (GXDLMSConfirmedServiceError ex)
             {
                 if (ex.ServiceError == ServiceError.Initiate && ex.ServiceErrorValue == 3)
                 {
-                    output.Info.Add("COSEM Application tests #14 succeeded with PDU size 11.");
+                    AddInfo(test, dev, output.Info, "COSEM Application tests #14 succeeded with PDU size 11.");
                 }
                 else
                 {
-                    output.Info.Add("COSEM Application tests #14 failed. " + ex.Message);
+                    AddInfo(test, dev, output.Info, "COSEM Application tests #14 failed. " + ex.Message);
                 }
             }
             catch (Exception ex)
@@ -5651,6 +6048,11 @@ namespace GXDLMSDirector
                 {
                     dev.Comm.ParseUAResponse(reply.Data);
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception)
             {
@@ -5670,7 +6072,7 @@ namespace GXDLMSDirector
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #14 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #14 failed. " + ex.Message);
             }
             reply.Clear();
             try
@@ -5684,7 +6086,7 @@ namespace GXDLMSDirector
                 else
                 {
                     bb.SetHexString("601DA109060760857405080101BE10040E01000000065F1F040060FE9FFFFF");
-                    //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #14. AARQ", 1, tryCount, reply);
+                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #14. AARQ", 1, tryCount, reply);
                 }
                 dev.Comm.ParseAAREResponse(reply.Data);
             }
@@ -5695,12 +6097,12 @@ namespace GXDLMSDirector
             if (passed)
             {
                 test.OnTrace(test, "Passed.\r\n");
-                output.Info.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app14\">COSEM Application test #14 passed.</a>");
+                AddInfo(test, dev, output.Info, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app14\">COSEM Application test #14 passed.</a>");
             }
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app14\">COSEM Application test #14 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app14\">COSEM Application test #14 failed.</a>");
             }
         }
 
@@ -5725,21 +6127,27 @@ namespace GXDLMSDirector
                     dev.Comm.ParseUAResponse(reply.Data);
                 }
             }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
+            }
             catch (GXDLMSException ex)
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #15 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #15 failed. " + ex.Message);
             }
             try
             {
@@ -5755,7 +6163,7 @@ namespace GXDLMSDirector
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #15 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #15 failed. " + ex.Message);
             }
             reply.Clear();
 
@@ -5792,7 +6200,7 @@ namespace GXDLMSDirector
                     else
                     {
                         bb.SetHexString("C004C1000F0000280000FF0100");
-                        //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #15. Invalid Get request.", 1, tryCount, reply);
+                         dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #15. Invalid Get request.", 1, tryCount, reply);
                     }
                     passed = false;
                 }
@@ -5800,11 +6208,11 @@ namespace GXDLMSDirector
                 {
                     if (ex.ErrorCode == (int)ErrorCode.ReadWriteDenied)
                     {
-                        output.Info.Add("COSEM Application tests #15 Invalid Get request succeeded.");
+                        AddInfo(test, dev, output.Info, "COSEM Application tests #15 Invalid Get request succeeded.");
                     }
                     else
                     {
-                        output.Errors.Add("COSEM Application tests #15 failed. " + ex.Message);
+                        AddError(test, dev, output.Errors, "COSEM Application tests #15 failed. " + ex.Message);
                         passed = false;
                     }
                 }
@@ -5829,7 +6237,7 @@ namespace GXDLMSDirector
                     else
                     {
                         bb.SetHexString("C001C1000028000100");
-                        //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #15. Invalid Get request.", 1, tryCount, reply);
+                        dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #15. Invalid Get request.", 1, tryCount, reply);
                     }
                     passed = false;
                 }
@@ -5837,11 +6245,11 @@ namespace GXDLMSDirector
                 {
                     if (ex.ErrorCode == (int)ErrorCode.ReadWriteDenied)
                     {
-                        output.Info.Add("COSEM Application tests #15 Invalid Get request succeeded.");
+                        AddInfo(test, dev, output.Info, "COSEM Application tests #15 Invalid Get request succeeded.");
                     }
                     else
                     {
-                        output.Errors.Add("COSEM Application tests #15 failed. " + ex.Message);
+                        AddError(test, dev, output.Errors, "COSEM Application tests #15 failed. " + ex.Message);
                         passed = false;
                     }
                 }
@@ -5865,7 +6273,7 @@ namespace GXDLMSDirector
                 }
                 catch (GXDLMSException ex)
                 {
-                    output.Info.Add("COSEM Application tests #15 Invalid Get request non-existing object succeeded.");
+                    AddInfo(test, dev, output.Info, "COSEM Application tests #15 Invalid Get request non-existing object succeeded.");
                 }
                 catch (Exception ex)
                 {
@@ -5881,6 +6289,11 @@ namespace GXDLMSDirector
                 {
                     dev.Comm.ParseUAResponse(reply.Data);
                 }
+            }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
             }
             catch (Exception)
             {
@@ -5901,7 +6314,7 @@ namespace GXDLMSDirector
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #15 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #15 failed. " + ex.Message);
             }
             reply.Clear();
             try
@@ -5917,20 +6330,20 @@ namespace GXDLMSDirector
                 else
                 {
                     bb.SetHexString("050102FA00");
-                    //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #15. Read service", 1, tryCount, reply);
+                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #15. Read service", 1, tryCount, reply);
                 }
                 passed = false;
-                output.Errors.Add("COSEM Application tests #15 failed using read service.");
+                AddError(test, dev, output.Errors, "COSEM Application tests #15 failed using read service.");
             }
             catch (GXDLMSConfirmedServiceError ex)
             {
                 if (ex.ServiceError == ServiceError.Service && ex.ServiceErrorValue == 2)
                 {
-                    output.Info.Add("COSEM Application tests #15 succeeded when Short Name referencing is used.");
+                    AddInfo(test, dev, output.Info, "COSEM Application tests #15 succeeded when Short Name referencing is used.");
                 }
                 else
                 {
-                    output.Info.Add("COSEM Application tests #15 failed for Short Name referencing. " + ex.Message);
+                    AddInfo(test, dev, output.Info, "COSEM Application tests #15 failed for Short Name referencing. " + ex.Message);
                 }
             }
             catch (Exception ex)
@@ -5941,12 +6354,12 @@ namespace GXDLMSDirector
             if (passed)
             {
                 test.OnTrace(test, "Passed.\r\n");
-                output.Info.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app15\">COSEM Application test #15 passed.</a>");
+                AddInfo(test, dev, output.Info, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app15\">COSEM Application test #15 passed.</a>");
             }
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app15\">COSEM Application test #15 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app15\">COSEM Application test #15 failed.</a>");
             }
         }
 
@@ -5971,21 +6384,27 @@ namespace GXDLMSDirector
                     dev.Comm.ParseUAResponse(reply.Data);
                 }
             }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
+            }
             catch (GXDLMSException ex)
             {
                 if (ex.ErrorCode == (int)ErrorCode.DisconnectMode)
                 {
-                    output.Info.Add("Meter returns DisconnectMode.");
+                    AddInfo(test, dev, output.Info, "Meter returns DisconnectMode.");
                 }
                 else
                 {
+                    AddError(test, dev, output.Errors, string.Format("DisconnectMode expected, but meter returns {0}.", (ErrorCode)ex.ErrorCode));
                     passed = false;
                 }
             }
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #16 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #16 failed. " + ex.Message);
             }
             try
             {
@@ -6001,7 +6420,7 @@ namespace GXDLMSDirector
             catch (Exception ex)
             {
                 passed = false;
-                output.Info.Add("COSEM Application tests #16 failed. " + ex.Message);
+                AddInfo(test, dev, output.Info, "COSEM Application tests #16 failed. " + ex.Message);
             }
             reply.Clear();
 
@@ -6038,7 +6457,7 @@ namespace GXDLMSDirector
                     else
                     {
                         bb.SetHexString("C106C1000F0000280000FF010009060000280000FF");
-                        //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #16. Invalid Set request.", 1, tryCount, reply);
+                        dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #16. Invalid Set request.", 1, tryCount, reply);
                     }
                     passed = false;
                 }
@@ -6046,11 +6465,11 @@ namespace GXDLMSDirector
                 {
                     if (ex.ErrorCode == (int)ErrorCode.ReadWriteDenied)
                     {
-                        output.Info.Add("COSEM Application tests #16 Invalid Set request succeeded.");
+                        AddInfo(test, dev, output.Info, "COSEM Application tests #16 Invalid Set request succeeded.");
                     }
                     else
                     {
-                        output.Errors.Add("COSEM Application tests #16 failed. " + ex.Message);
+                        AddError(test, dev, output.Errors, "COSEM Application tests #16 failed. " + ex.Message);
                         passed = false;
                     }
                 }
@@ -6075,7 +6494,7 @@ namespace GXDLMSDirector
                     else
                     {
                         bb.SetHexString("C101C1000F0000280000");
-                        //TODO: MIKKO dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #16. Invalid Set request.", 1, tryCount, reply);
+                        dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #16. Invalid Set request.", 1, tryCount, reply);
                     }
                     passed = false;
                 }
@@ -6083,11 +6502,11 @@ namespace GXDLMSDirector
                 {
                     if (ex.ErrorCode == (int)ErrorCode.ReadWriteDenied)
                     {
-                        output.Info.Add("COSEM Application tests #16 Invalid Set request succeeded.");
+                        AddInfo(test, dev, output.Info, "COSEM Application tests #16 Invalid Set request succeeded.");
                     }
                     else
                     {
-                        output.Errors.Add("COSEM Application tests #16 failed. " + ex.Message);
+                        AddError(test, dev, output.Errors, "COSEM Application tests #16 failed. " + ex.Message);
                         passed = false;
                     }
                 }
@@ -6106,6 +6525,11 @@ namespace GXDLMSDirector
                     dev.Comm.ParseUAResponse(reply.Data);
                 }
             }
+            catch (TimeoutException)
+            {
+                AddError(test, dev, output.Errors, "Timeout.");
+                passed = false;
+            }
             catch (Exception)
             {
                 passed = false;
@@ -6113,12 +6537,12 @@ namespace GXDLMSDirector
             if (passed)
             {
                 test.OnTrace(test, "Passed.\r\n");
-                output.Info.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app16\">COSEM Application test #16 passed.</a>");
+                AddInfo(test, dev, output.Info, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app16\">COSEM Application test #16 passed.</a>");
             }
             else
             {
                 test.OnTrace(test, "Failed.\r\n");
-                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app16\">COSEM Application test #16 failed.</a>");
+                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#app16\">COSEM Application test #16 failed.</a>");
             }
         }
 
@@ -6222,7 +6646,7 @@ namespace GXDLMSDirector
             }
         }
 
-        private static void TestClock(GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output)
+        private static void TestClock(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output)
         {
             GXDLMSObjectCollection objects = dev.Comm.client.Objects.GetObjects(ObjectType.Clock);
             foreach (GXDLMSClock it in objects)
@@ -6251,7 +6675,7 @@ namespace GXDLMSDirector
                             {
                                 it.TimeZone = -(int)TimeZoneInfo.Local.BaseUtcOffset.TotalMinutes;
                             }
-                            output.Info.Add("Set new Time zone:" + it.TimeZone);
+                            AddInfo(test, dev, output.Info, "Set new Time zone:" + it.TimeZone);
                             dev.Comm.Write(it, 3);
                             dev.Comm.Write(it, 2);
                             newTime.Skip |= DateTimeSkips.Second;
@@ -6259,17 +6683,17 @@ namespace GXDLMSDirector
                             time = it.Time;
                             if (newTime.Compare(it.Time.Value.Add(DateTime.Now - start).LocalDateTime) != 0)
                             {
-                                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock1\">Clock test #1 failed</a>. Failed to set new time using current time zone. Expected: " + newTime + " Actual: " + it.Time.Value.Add(DateTime.Now - start).LocalDateTime);
+                                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock1\">Clock test #1 failed</a>. Failed to set new time using current time zone. Expected: " + newTime + " Actual: " + it.Time.Value.Add(DateTime.Now - start).LocalDateTime);
                                 start = time = DateTime.Now;
                             }
                             else
                             {
-                                output.Info.Add("Setting new time succeeded using current time zone.");
+                                AddInfo(test, dev, output.Info, "Setting new time succeeded using current time zone.");
                             }
                         }
                         catch (Exception ex)
                         {
-                            output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock1\">Clock test #1 failed</a>. Failed to set new time using current time zone. Meter returns exception. " + ex.Message);
+                            AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock1\">Clock test #1 failed</a>. Failed to set new time using current time zone. Meter returns exception. " + ex.Message);
                             start = time = DateTime.Now;
                         }
                         //Update new time using UTC time.
@@ -6282,16 +6706,16 @@ namespace GXDLMSDirector
                             dev.Comm.ReadValue(it, 2);
                             if (newTime.Compare(it.Time.Value.Add(DateTime.Now - start).LocalDateTime) != 0)
                             {
-                                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock2\">Clock test #2 failed</a>. Failed to set new time using UTC time. Expected: " + newTime + " Actual: " + it.Time.Value.Add(DateTime.Now - start).LocalDateTime);
+                                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock2\">Clock test #2 failed</a>. Failed to set new time using UTC time. Expected: " + newTime + " Actual: " + it.Time.Value.Add(DateTime.Now - start).LocalDateTime);
                             }
                             else
                             {
-                                output.Info.Add("Setting new time succeeded using UTC time zone.");
+                                AddInfo(test, dev, output.Info, "Setting new time succeeded using UTC time zone.");
                             }
                         }
                         catch (Exception ex)
                         {
-                            output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock2\">Clock test #2 failed</a>. Failed to set new time using UTC time zone. Meter returns exception. " + ex.Message);
+                            AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock2\">Clock test #2 failed</a>. Failed to set new time using UTC time zone. Meter returns exception. " + ex.Message);
                         }
 
                         /*
@@ -6301,7 +6725,7 @@ namespace GXDLMSDirector
                         dev.Comm.ReadValue(it, 2);
                         if (newTime.Compare(it.Time.Value.Add(DateTime.Now - start).DateTime) != 0)
                         {
-                            output.Errors.Add("Failed to set new time using without time zone. Expected: " + newTime + " Actual: " + it.Time.Value.Add(DateTime.Now - start).DateTime);
+                            AddError(test, dev, output.Errors, "Failed to set new time using without time zone. Expected: " + newTime + " Actual: " + it.Time.Value.Add(DateTime.Now - start).DateTime);
                         }
                         */
 
@@ -6314,11 +6738,11 @@ namespace GXDLMSDirector
                             int deviation = it.Deviation;
                             if (dst)
                             {
-                                output.Info.Add("DST is in use and deviation is " + deviation + ".");
+                                AddInfo(test, dev, output.Info, "DST is in use and deviation is " + deviation + ".");
                             }
                             else
                             {
-                                output.Info.Add("DST is not in use. Devitation is " + deviation + ".");
+                                AddInfo(test, dev, output.Info, "DST is not in use. Devitation is " + deviation + ".");
                             }
                             if (deviation != 0)
                             {
@@ -6330,7 +6754,7 @@ namespace GXDLMSDirector
                                 }
                                 catch (Exception)
                                 {
-                                    output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock3\">Clock test #3 failed</a>. Clock test failed. Failed to enable DST.");
+                                    AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock3\">Clock test #3 failed</a>. Clock test failed. Failed to enable DST.");
                                 }
                                 //Read time.
                                 dev.Comm.ReadValue(it, 2);
@@ -6339,11 +6763,11 @@ namespace GXDLMSDirector
                                 if (tmp.Compare(time.Add(DateTime.Now - start)) != 0)
                                 {
                                     //Setting current time
-                                    output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock3\">Clock test #3 failed</a>. Clock test failed. Time is not valid if DST is changed. Expected: " + time.Add(DateTime.Now - start) + " Actual: " + tmp);
+                                    AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock3\">Clock test #3 failed</a>. Clock test failed. Time is not valid if DST is changed. Expected: " + time.Add(DateTime.Now - start) + " Actual: " + tmp);
                                 }
                                 else
                                 {
-                                    output.Info.Add("Meter can change DST and time is updated correctly.");
+                                    AddInfo(test, dev, output.Info, "Meter can change DST and time is updated correctly.");
                                 }
                                 //Enable DST back.
                                 if (!it.Enabled)
@@ -6355,7 +6779,7 @@ namespace GXDLMSDirector
                                     }
                                     catch (Exception)
                                     {
-                                        output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock3\">Clock test #3 failed</a>. Clock test failed. Failed to set DST.");
+                                        AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock3\">Clock test #3 failed</a>. Clock test failed. Failed to set DST.");
                                     }
                                 }
                             }
@@ -6373,10 +6797,10 @@ namespace GXDLMSDirector
                                 GXDateTime tmp = new GXDateTime(it.Time);
                                 if (begin.Compare(tmp) != 1 && end.Compare(tmp) != -1)
                                 {
-                                    output.Info.Add("Meter is in DST time.");
+                                    AddInfo(test, dev, output.Info, "Meter is in DST time.");
                                     if ((it.Status & ClockStatus.DaylightSavingActive) == 0)
                                     {
-                                        output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 failed</a>. Meter is in DST, but DST status flag is not set.");
+                                        AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 failed</a>. Meter is in DST, but DST status flag is not set.");
                                     }
                                     //Move meter to normal time.
                                     it.Time = new GXDateTime(end.Value.AddDays(7));
@@ -6384,10 +6808,10 @@ namespace GXDLMSDirector
                                 }
                                 else
                                 {
-                                    output.Info.Add("Meter is in normal time.");
+                                    AddInfo(test, dev, output.Info, "Meter is in normal time.");
                                     if ((it.Status & ClockStatus.DaylightSavingActive) != 0)
                                     {
-                                        output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 failed</a>. Meter is in normal time, but DST status flag is set.");
+                                        AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 failed</a>. Meter is in normal time, but DST status flag is set.");
                                     }
                                     //Move meter to DST time.
                                     it.Time = new GXDateTime(begin.Value.AddDays(7));
@@ -6402,22 +6826,22 @@ namespace GXDLMSDirector
                                 {
                                     if (dst1)
                                     {
-                                        output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 failed</a>. Meter is in DST, but DST status flag is not set.");
+                                        AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 failed</a>. Meter is in DST, but DST status flag is not set.");
                                     }
                                     else
                                     {
-                                        output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 failed</a>. Meter is in normal time, but DST status flag is set.");
+                                        AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 failed</a>. Meter is in normal time, but DST status flag is set.");
                                     }
                                 }
                                 else
                                 {
                                     if (dst1)
                                     {
-                                        output.Info.Add("Time is changed to DST time, and DST status flag is set.");
+                                        AddInfo(test, dev, output.Info, "Time is changed to DST time, and DST status flag is set.");
                                     }
                                     else
                                     {
-                                        output.Info.Add("Time is changed to normal time and DST status flag is not set.");
+                                        AddInfo(test, dev, output.Info, "Time is changed to normal time and DST status flag is not set.");
                                     }
                                 }
                                 //Move meter to current time.
@@ -6426,7 +6850,7 @@ namespace GXDLMSDirector
                             }
                             else
                             {
-                                output.Info.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 is not tested</a>. Changind DST begin and end time is not tested.");
+                                AddInfo(test, dev, output.Info, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 is not tested</a>. Changind DST begin and end time is not tested.");
                             }
                             //Return DST back.
                             it.Enabled = dst;
@@ -6436,13 +6860,13 @@ namespace GXDLMSDirector
                             }
                             catch (Exception)
                             {
-                                output.Errors.Add("Clock test failed. Failed to set DST.");
+                                AddError(test, dev, output.Errors, "Clock test failed. Failed to set DST.");
                             }
                         }
                         //Change time zone to UTC.
                         if (it.TimeZone != 0)
                         {
-                            output.Info.Add("Time zone of the meter:" + it.TimeZone);
+                            AddInfo(test, dev, output.Info, "Time zone of the meter:" + it.TimeZone);
                             it.TimeZone = 0;
                             dev.Comm.Write(it, 3);
                             //Read time.
@@ -6452,17 +6876,17 @@ namespace GXDLMSDirector
                             if (tmp.Compare(time.Add(DateTime.Now - start)) != 0)
                             {
                                 //Setting UTC time
-                                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock5\">Clock test #5 failed</a>. Clock test failed. Time is not valid if time zone is changed to UTC. Expected: " + time.Add(DateTime.Now - start) + " Actual: " + tmp);
+                                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock5\">Clock test #5 failed</a>. Clock test failed. Time is not valid if time zone is changed to UTC. Expected: " + time.Add(DateTime.Now - start) + " Actual: " + tmp);
                             }
                             else
                             {
-                                output.Info.Add("Meter can change time zone to UTC and time is updated correctly.");
+                                AddInfo(test, dev, output.Info, "Meter can change time zone to UTC and time is updated correctly.");
                             }
                         }
                         else
                         {
                             it.TimeZone = (int)TimeZoneInfo.Utc.GetUtcOffset(DateTime.Now).TotalMinutes;
-                            output.Info.Add("Time zone of the meter is UTC. Try to set it to " + it.TimeZone);
+                            AddInfo(test, dev, output.Info, "Time zone of the meter is UTC. Try to set it to " + it.TimeZone);
                             dev.Comm.Write(it, 3);
                             //Read time.
                             dev.Comm.ReadValue(it, 2);
@@ -6471,25 +6895,25 @@ namespace GXDLMSDirector
                             if (tmp.Compare(time.Add(DateTime.Now - start)) != 0)
                             {
                                 //Setting current time
-                                output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock5\">Clock test #5 failed</a>.  Clock test failed. Time is not valid if time zone is changed from UTC. Expected: " + time.Add(DateTime.Now - start) + " Actual: " + tmp);
+                                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock5\">Clock test #5 failed</a>.  Clock test failed. Time is not valid if time zone is changed from UTC. Expected: " + time.Add(DateTime.Now - start) + " Actual: " + tmp);
                             }
                             else
                             {
-                                output.Info.Add("Meter can change time zone from UTC and time is updated correctly.");
+                                AddInfo(test, dev, output.Info, "Meter can change time zone from UTC and time is updated correctly.");
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        output.Errors.Add("<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock1\">Clock test failed</a>. " + ex.Message);
+                        AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock1\">Clock test failed</a>. " + ex.Message);
                     }
                     it.TimeZone = timeZone;
                     dev.Comm.Write(it, 3);
                 }
                 else
                 {
-                    output.Info.Add("Clock time access for " + it.LogicalName + " is " + it.GetAccess(2));
-                    output.Info.Add("Clock time zone access for " + it.LogicalName + " is " + it.GetAccess(3));
+                    AddInfo(test, dev, output.Info, "Clock time access for " + it.LogicalName + " is " + it.GetAccess(2));
+                    AddInfo(test, dev, output.Info, "Clock time zone access for " + it.LogicalName + " is " + it.GetAccess(3));
                 }
             }
         }
@@ -6518,7 +6942,7 @@ namespace GXDLMSDirector
                     {
                         //Step 1. BB: 4.4.6.4
                         dev.Comm.ReadValue(img, 2);
-                        output.Info.Add("Image block size is " + img.ImageBlockSize + " bytes.");
+                        AddInfo(test, dev, output.Info, "Image block size is " + img.ImageBlockSize + " bytes.");
                         byte[] image = null;
                         if (string.Compare(Path.GetExtension(settings.ImageFile), ".xml", true) == 0)
                         {
@@ -6561,7 +6985,7 @@ namespace GXDLMSDirector
                                 if (it != '0')
                                 {
                                     error = true;
-                                    output.Errors.Add("Image transferred blocks status is wrong. It's " + img.ImageTransferredBlocksStatus + " and it shoud be zilled with 0.");
+                                    AddError(test, dev, output.Errors, "Image transferred blocks status is wrong. It's " + img.ImageTransferredBlocksStatus + " and it shoud be zilled with 0.");
                                 }
                             }
                         }
@@ -6574,7 +6998,7 @@ namespace GXDLMSDirector
                         if (img.ImageTransferStatus != ImageTransferStatus.TransferInitiated)
                         {
                             error = true;
-                            output.Errors.Add("Image transfer status is wrong. It's " + img.ImageTransferStatus + " and it shoud be TransferInitiated.");
+                            AddError(test, dev, output.Errors, "Image transfer status is wrong. It's " + img.ImageTransferStatus + " and it shoud be TransferInitiated.");
                         }
                         //Check ImageFirstNotTransferredBlockNumber.
                         if (!Continue)
@@ -6585,7 +7009,7 @@ namespace GXDLMSDirector
                         if (img.ImageFirstNotTransferredBlockNumber != 0)
                         {
                             error = true;
-                            output.Errors.Add("Image first not transferred block number wrong. It's " + img.ImageFirstNotTransferredBlockNumber + " and it shoud be 0.");
+                            AddError(test, dev, output.Errors, "Image first not transferred block number wrong. It's " + img.ImageFirstNotTransferredBlockNumber + " and it shoud be 0.");
                         }
                         //Check ImageActivateInfo.
                         if (!Continue)
@@ -6596,11 +7020,11 @@ namespace GXDLMSDirector
                         if (img.ImageActivateInfo != null && img.ImageActivateInfo.Length != 0)
                         {
                             error = true;
-                            output.Errors.Add("Image activate info is not reset.");
+                            AddError(test, dev, output.Errors, "Image activate info is not reset.");
                         }
                         if (!error)
                         {
-                            output.Info.Add("Image activation Step 2 succeeded.");
+                            AddInfo(test, dev, output.Info, "Image activation Step 2 succeeded.");
                         }
                         //Step 3. BB: 4.4.6.4
                         DateTime start = DateTime.Now;
@@ -6632,8 +7056,8 @@ namespace GXDLMSDirector
                         }
                         if (!error)
                         {
-                            output.Info.Add("Image transfer (Step 3) succeeded.");
-                            output.Info.Add("Image transfer takes " + (DateTime.Now - start).ToString(@"hh\:mm\:ss"));
+                            AddInfo(test, dev, output.Info, "Image transfer (Step 3) succeeded.");
+                            AddInfo(test, dev, output.Info, "Image transfer takes " + (DateTime.Now - start).ToString(@"hh\:mm\:ss"));
                         }
                         //Step 4. BB: 4.4.6.4
                         error = false;
@@ -6653,7 +7077,7 @@ namespace GXDLMSDirector
                             else
                             {
                                 error = true;
-                                output.Errors.Add("Image first not transferred block number wrong. It's " + img.ImageFirstNotTransferredBlockNumber + " and it shoud be " + blocks.Length + ".");
+                                AddError(test, dev, output.Errors, "Image first not transferred block number wrong. It's " + img.ImageFirstNotTransferredBlockNumber + " and it shoud be " + blocks.Length + ".");
                             }
                         }
                         //Check ImageTransferredBlocksStatus.
@@ -6665,7 +7089,7 @@ namespace GXDLMSDirector
                         if (img.ImageTransferredBlocksStatus == null)
                         {
                             error = true;
-                            output.Errors.Add("Image Transferred blocks status is not implemented.");
+                            AddError(test, dev, output.Errors, "Image Transferred blocks status is not implemented.");
                         }
                         else
                         {
@@ -6678,7 +7102,7 @@ namespace GXDLMSDirector
                                 else
                                 {
                                     error = true;
-                                    output.Errors.Add("Image Transferred blocks status is wrong. Amount of bits is different than block size. (" + img.ImageTransferredBlocksStatus.Length + "/" + blocks.Length + ")");
+                                    AddError(test, dev, output.Errors, "Image Transferred blocks status is wrong. Amount of bits is different than block size. (" + img.ImageTransferredBlocksStatus.Length + "/" + blocks.Length + ")");
                                 }
                             }
                             foreach (char it in img.ImageTransferredBlocksStatus)
@@ -6686,14 +7110,14 @@ namespace GXDLMSDirector
                                 if (it != '1')
                                 {
                                     error = true;
-                                    output.Errors.Add("Image transferred blocks status is not set.");
+                                    AddError(test, dev, output.Errors, "Image transferred blocks status is not set.");
                                     break;
                                 }
                             }
                         }
                         if (!error)
                         {
-                            output.Info.Add("Image completeness Step 4 succeeded.");
+                            AddInfo(test, dev, output.Info, "Image completeness Step 4 succeeded.");
                         }
 
                         if (settings.ImageVerify)
@@ -6744,7 +7168,7 @@ namespace GXDLMSDirector
                                 dev.Comm.ReadValue(img, 6);
                                 if (img.ImageTransferStatus == ImageTransferStatus.VerificationFailed)
                                 {
-                                    output.Errors.Add("Image verification failed.");
+                                    AddError(test, dev, output.Errors, "Image verification failed.");
                                     return;
                                 }
                                 if (img.ImageTransferStatus != ImageTransferStatus.VerificationSuccessful)
@@ -6754,8 +7178,8 @@ namespace GXDLMSDirector
                                 }
                             } while ((img.ImageTransferStatus != ImageTransferStatus.VerificationSuccessful));
                         }
-                        output.Info.Add("Image verify succeeded (Step 5).");
-                        output.Info.Add("Verify takes " + (DateTime.Now - start).ToString(@"hh\:mm\:ss"));
+                        AddInfo(test, dev, output.Info, "Image verify succeeded (Step 5).");
+                        AddInfo(test, dev, output.Info, "Verify takes " + (DateTime.Now - start).ToString(@"hh\:mm\:ss"));
 
                         reply.Clear();
                         if (settings.ImageActivate)
@@ -6824,8 +7248,8 @@ namespace GXDLMSDirector
                                     }
                                 } while ((img.ImageTransferStatus != ImageTransferStatus.ActivationSuccessful));
                             }
-                            output.Info.Add("Image activation succeeded (Step 6).");
-                            output.Info.Add("Activation takes " + (DateTime.Now - start).ToString(@"hh\:mm\:ss"));
+                            AddInfo(test, dev, output.Info, "Image activation succeeded (Step 6).");
+                            AddInfo(test, dev, output.Info, "Activation takes " + (DateTime.Now - start).ToString(@"hh\:mm\:ss"));
 
                         }
                     }

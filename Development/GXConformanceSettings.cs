@@ -497,7 +497,6 @@ namespace GXDLMSDirector
             set;
         }
 
-#if DEBUG
         [Description("Exclude clock Tests.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -507,7 +506,6 @@ namespace GXDLMSDirector
             set;
 
         }
-#endif //DEBUG
 
         [Description("Exclude Profile Generic Tests.")]
         [DefaultValue(false)]

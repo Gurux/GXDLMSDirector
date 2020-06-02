@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11679 $,
-//                  $Date: 2020-04-30 16:07:04 +0300 (to, 30 huhti 2020) $
+// Version:         $Revision: 11785 $,
+//                  $Date: 2020-06-02 12:19:18 +0300 (ti, 02 kesä 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -57,6 +57,8 @@ using static System.Windows.Forms.ListView;
 using System.Reflection;
 using System.Deployment.Application;
 using Gurux.DLMS.Objects.Enums;
+using GXDLMSDirector.Macro;
+using System.Xml.Schema;
 
 namespace GXDLMSDirector
 {
@@ -68,7 +70,7 @@ namespace GXDLMSDirector
         /// Active DC.
         /// </summary>
         IGXDataConcentrator activeDC;
-
+        GXMacroView MacroEditor;
         /// <summary>
         /// Events translator.
         /// </summary>
@@ -184,7 +186,7 @@ namespace GXDLMSDirector
             InitializeComponent();
             eventsTranslator.SystemTitle = GXCommon.HexToBytes(Properties.Settings.Default.NotifySystemTitle);
             eventsTranslator.BlockCipherKey = GXCommon.HexToBytes(Properties.Settings.Default.NotifyBlockCipherKey);
-
+            eventsTranslator.AuthenticationKey = GXCommon.HexToBytes(Properties.Settings.Default.NotifyAuthenticationKey);
             CancelBtn.Enabled = false;
             traceTranslator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
 
@@ -267,6 +269,20 @@ namespace GXDLMSDirector
 
         public void StatusChanged(object sender, DeviceState state)
         {
+            if (state == DeviceState.Connecting)
+            {
+                if (MacroEditor.Record)
+                {
+                    MacroEditor.AddAction(new GXMacro() { Type = UserActionType.Connect });
+                }
+            }
+            else if (state == DeviceState.Disconnecting)
+            {
+                if (MacroEditor.Record)
+                {
+                    MacroEditor.AddAction(new GXMacro() { Type = UserActionType.Disconnecting });
+                }
+            }
             UpdateDeviceUI((GXDLMSDevice)sender, state);
         }
 
@@ -877,6 +893,11 @@ namespace GXDLMSDirector
             }
         }
 
+        void OnPduEventHandler(object sender, byte[] value)
+        {
+
+        }
+
         /// <summary>
         /// User is executing action.
         /// </summary>
@@ -885,6 +906,10 @@ namespace GXDLMSDirector
             ClearTrace();
             UpdateTransaction(true);
             GXButton btn = parameters[0] as GXButton;
+            if (btn.Target.Parent == null)
+            {
+                return;
+            }
             GXDLMSMeter m = btn.Target.Parent.Tag as GXDLMSMeter;
             GXDLMSDevice dev = m as GXDLMSDevice;
             GXActionArgs ve = new GXActionArgs(btn.Target, btn.Index);
@@ -903,7 +928,50 @@ namespace GXDLMSDirector
             {
                 do
                 {
-                    btn.View.PreAction(ve);
+                    GXDLMSTranslator t = new GXDLMSTranslator();
+                    string xml = null;
+                    object xmlValue = null;
+                    PduEventHandler p = new PduEventHandler(delegate (object sender1, byte[] value)
+                    {
+                        try
+                        {
+                            switch (ve.Action)
+                            {
+                                case ActionType.Action:
+                                    {
+                                        xml = t.PduToXml(value);
+                                        XmlDocument doc2 = new XmlDocument();
+                                        doc2.LoadXml(xml);
+                                        xml = doc2.GetElementsByTagName("MethodInvocationParameters")[0].InnerXml;
+                                        xmlValue = GXDLMSTranslator.XmlToValue(xml);
+                                    }
+                                    break;
+                                case ActionType.Write:
+                                    {
+                                        xml = t.PduToXml(value);
+                                        XmlDocument doc2 = new XmlDocument();
+                                        doc2.LoadXml(xml);
+                                        xml = doc2.GetElementsByTagName("Value")[0].InnerXml;
+                                        xmlValue = GXDLMSTranslator.XmlToValue(xml);
+                                    }
+                                    break;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Error.ShowError(this, ex);
+                        }
+                    });
+
+                    ve.Client.OnPdu += p;
+                    try
+                    {
+                        btn.View.PreAction(ve);
+                    }
+                    finally
+                    {
+                        ve.Client.OnPdu -= p;
+                    }
                     if (ve.Exception != null)
                     {
                         throw ve.Exception;
@@ -927,16 +995,39 @@ namespace GXDLMSDirector
                                 }
                                 else
                                 {
-                                    int pos = 0, cnt = ((byte[][])ve.Value).Length;
-                                    foreach (byte[] it in (byte[][])ve.Value)
+                                    UserActionType ua = UserActionType.None;
+                                    switch (ve.Action)
                                     {
-                                        if (cnt != 1)
-                                        {
-                                            OnProgress(null, ve.Text, ++pos, cnt);
-                                        }
-                                        reply.Clear();
-                                        dev.Comm.ReadDataBlock(it, ve.Text, 1, reply);
+                                        case ActionType.Action:
+                                            ua = UserActionType.Action;
+                                            break;
+                                        case ActionType.Read:
+                                            ua = UserActionType.Get;
+                                            break;
+                                        case ActionType.Write:
+                                            ua = UserActionType.Set;
+                                            break;
                                     }
+                                    try
+                                    {
+                                        int pos = 0, cnt = ((byte[][])ve.Value).Length;
+                                        foreach (byte[] it in (byte[][])ve.Value)
+                                        {
+                                            if (cnt != 1)
+                                            {
+                                                OnProgress(null, ve.Text, ++pos, cnt);
+                                            }
+                                            reply.Clear();
+                                            dev.Comm.ReadDataBlock(it, ve.Text, 1, reply);
+                                        }
+                                        InvokeAction(dev.Comm.client, ua, ve.Target, ve.Index, xmlValue, xml, null, null);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        InvokeAction(dev.Comm.client, ua, ve.Target, ve.Index, null, null, null, ex);
+                                        throw;
+                                    }
+
                                 }
                             }
                             else if (ve.Action == ActionType.Read)
@@ -952,7 +1043,17 @@ namespace GXDLMSDirector
                                     //Is reading allowed.
                                     if ((ve.Target.GetAccess(ve.Index) & AccessMode.Read) != 0)
                                     {
-                                        dev.Comm.ReadValue(ve.Target, ve.Index);
+                                        OnBeforeRead(dev.Comm.client, ve.Target, ve.Index, null, null, null);
+                                        try
+                                        {
+                                            object data = dev.Comm.ReadValue(ve.Target, ve.Index);
+                                            OnAfterRead(dev.Comm.client, ve.Target, ve.Index, data, null, null);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            OnAfterRead(dev.Comm.client, ve.Target, ve.Index, null, null, ex);
+                                            throw;
+                                        }
                                     }
                                 }
                             }
@@ -967,9 +1068,24 @@ namespace GXDLMSDirector
                                 else
                                 {
                                     //Is writing allowed.
-                                    if ((ve.Target.GetAccess(ve.Index) & AccessMode.Read) != 0)
+                                    if ((ve.Target.GetAccess(ve.Index) & AccessMode.Write) != 0)
                                     {
-                                        dev.Comm.Write(ve.Target, ve.Index);
+                                        try
+                                        {
+                                            if (ve.Value != null)
+                                            {
+                                                xmlValue = ve.Value.ToString();
+                                                xml = GXDLMSTranslator.ValueToXml(ve.Value);
+                                            }
+                                            dev.Comm.Write(ve.Target, ve.Index);
+                                            //Invoke action is called after execution because action might fail.
+                                            InvokeAction(dev.Comm.client, UserActionType.Set, ve.Target, ve.Index, xmlValue, xml, null, null);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            InvokeAction(dev.Comm.client, UserActionType.Set, ve.Target, ve.Index, null, null, null, ex);
+                                            throw;
+                                        }
                                         //Update UI.
                                         if (SelectedView != null && SelectedView.Target == ve.Target)
                                         {
@@ -991,7 +1107,20 @@ namespace GXDLMSDirector
                                     //Is action allowed.
                                     if (ve.Index < 0 || ve.Target.GetMethodAccess(ve.Index) != MethodAccessMode.NoAccess)
                                     {
-                                        dev.Comm.MethodRequest(ve.Target, ve.Index, ve.Value, ve.Text, reply);
+                                        try
+                                        {
+                                            xmlValue = ve.Value.ToString();
+                                            xml = GXDLMSTranslator.ValueToXml(ve.Value);
+                                            dev.Comm.MethodRequest(ve.Target, ve.Index, ve.Value, ve.Text, reply);
+                                            //Invoke action is called after execution because action might fail.
+                                            InvokeAction(dev.Comm.client, UserActionType.Action, ve.Target, ve.Index, xmlValue, xml, null, null);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            InvokeAction(dev.Comm.client, UserActionType.Action, ve.Target, ve.Index, null, null, null, ex);
+                                            throw;
+                                        }
+
                                     }
                                 }
                             }
@@ -1984,10 +2113,10 @@ namespace GXDLMSDirector
                     int[] indexes = (obj as IGXDLMSBase).GetAttributeIndexToRead(ForceRefreshBtn.Checked);
                     foreach (byte pos in indexes)
                     {
-                        OnBeforeRead(obj, pos, null);
+                        OnBeforeRead(null, obj, pos, null, null, null);
                         list.Add(new KeyValuePair<GXDLMSObject, byte>(obj, pos));
                     }
-                    OnBeforeRead(obj, 0, null);
+                    OnBeforeRead(null, obj, 0, null, null, null);
                 }
                 activeDC.ReadObjects(new GXDLMSMeter[] { d as GXDLMSMeter }, list);
                 foreach (GXDLMSObject obj in d.Objects)
@@ -1995,7 +2124,7 @@ namespace GXDLMSDirector
                     int[] indexes = (obj as IGXDLMSBase).GetAttributeIndexToRead(ForceRefreshBtn.Checked);
                     foreach (byte pos in indexes)
                     {
-                        OnAfterRead(obj, pos, null);
+                        OnAfterRead(null, obj, pos, null, null, null);
                     }
                     DLMSItemOnChange(obj, false, 0, null);
                 }
@@ -2094,13 +2223,14 @@ namespace GXDLMSDirector
                         InterfaceType type = GXDLMSTranslator.GetDlmsFraming(receivedTraceData);
                         while (traceTranslator.FindNextFrame(receivedTraceData, pdu, type))
                         {
+                            string xml = traceTranslator.MessageToXml(receivedTraceData);
                             if (TraceTimeMnu.Checked)
                             {
-                                TraceView.AppendText(Environment.NewLine + time.ToString("HH:mm:ss") + Environment.NewLine + traceTranslator.MessageToXml(receivedTraceData));
+                                TraceView.AppendText(Environment.NewLine + time.ToString("HH:mm:ss") + Environment.NewLine + xml);
                             }
                             else
                             {
-                                TraceView.AppendText(Environment.NewLine + traceTranslator.MessageToXml(receivedTraceData));
+                                TraceView.AppendText(Environment.NewLine + xml);
                             }
                             receivedTraceData.Trim();
                         }
@@ -2143,23 +2273,26 @@ namespace GXDLMSDirector
             }
         }
 
-        public void OnBeforeRead(GXDLMSObject sender, int index, Exception ex)
+        public void OnBeforeRead(GXDLMSClient client, GXDLMSObject sender, int index, object data, object parameters, Exception ex)
         {
             try
             {
-                if ((index == 2 || index == 3) && !this.IsDisposed && sender is GXDLMSProfileGeneric)
+                if (this.InvokeRequired)
                 {
-                    if (this.InvokeRequired)
+                    this.Invoke(new ReadEventHandler(OnBeforeRead), new object[] { client, sender, index, data, parameters, ex });
+                }
+                else
+                {
+                    if ((index == 2 || index == 3) && !this.IsDisposed && sender is GXDLMSProfileGeneric)
                     {
-                        this.Invoke(new ReadEventHandler(OnBeforeRead), new object[] { sender, index, ex });
-                    }
-                    else if (SelectedView != null && SelectedView.Target == sender)
-                    {
-                        //Don't clear buffer when Gurux.DLMS.AMI is used.
-                        if (activeDC == null)
+                        if (SelectedView != null && SelectedView.Target == sender)
                         {
-                            GXDLMSProfileGeneric pg = sender as GXDLMSProfileGeneric;
-                            pg.Buffer.Clear();
+                            //Don't clear buffer when Gurux.DLMS.AMI is used.
+                            if (activeDC == null)
+                            {
+                                GXDLMSProfileGeneric pg = sender as GXDLMSProfileGeneric;
+                                pg.Buffer.Clear();
+                            }
                         }
                     }
                 }
@@ -2188,14 +2321,168 @@ namespace GXDLMSDirector
             }
         }
 
-        public void OnAfterRead(GXDLMSObject sender, int index, Exception ex)
+        private static string ConvertToString(object value)
+        {
+            string tmp;
+            if (value == null || value is string)
+            {
+                tmp = (string)value;
+            }
+            else if (value is byte[] v)
+            {
+                tmp = GXCommon.ToHex(v);
+            }
+            else if (value is System.Collections.IEnumerable)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("{");
+                foreach (object it in (System.Collections.IEnumerable)value)
+                {
+                    sb.Append(ConvertToString(it));
+                    sb.Append(", ");
+                }
+                if (sb.Length != 1)
+                {
+                    sb.Length -= 2;
+                }
+                sb.Append("}");
+                tmp = sb.ToString();
+            }
+            else if (value.GetType().IsGenericType)
+            {
+                Type baseType = value.GetType().GetGenericTypeDefinition();
+                if (baseType == typeof(KeyValuePair<,>))
+                {
+                    tmp = value.GetType().GetProperty("Key").GetValue(value, null).ToString() +
+                        "/" + value.GetType().GetProperty("Value").GetValue(value, null).ToString();
+                }
+                else
+                {
+                    tmp = Convert.ToString(value);
+                }
+            }
+            else
+            {
+                tmp = Convert.ToString(value);
+            }
+            return tmp;
+        }
+
+        private void InvokeAction(GXDLMSClient cl, UserActionType type, GXDLMSObject sender, int index, object value, object data, object parameters, Exception ex)
+        {
+            string external = null;
+            string name;
+            if (type == UserActionType.Action)
+            {
+                name = sender.ToString() + " " + sender.LogicalName + ":" + (sender as IGXDLMSBase).GetMethodNames()[index - 1] + " (" + index + ")";
+            }
+            else
+            {
+                name = sender.ToString() + " " + sender.LogicalName + ":" + (sender as IGXDLMSBase).GetNames()[index - 1] + " (" + index + ")";
+            }
+            if (type == UserActionType.Get)
+            {
+                if (value == null)
+                {
+                    value = sender.GetValues()[index - 1];
+                }
+                //Save capture objects for profile generic.
+                if (sender is GXDLMSProfileGeneric && index == 2)
+                {
+                    ValueEventArgs e = new ValueEventArgs(sender, 3, 0, null);
+                    GXByteBuffer bb = new GXByteBuffer((byte[])((IGXDLMSBase)sender).GetValue(cl.Settings, e));
+                    //Skip data type.
+                    bb.Position = 1;
+                    external = GXDLMSTranslator.ValueToXml(cl.ChangeType(bb, DataType.Array));
+                }
+                if (parameters != null)
+                {
+                    parameters = GXDLMSTranslator.ValueToXml(parameters);
+                }
+            }
+            else if (type == UserActionType.Set && value == null)
+            {
+                value = sender.GetValues()[index - 1];
+                ValueEventArgs e = new ValueEventArgs(sender, index, 0, null);
+                data = (sender as IGXDLMSBase).GetValue(null, e);
+                if (data != null && data.GetType().IsEnum)
+                {
+                    data = new GXEnum(Convert.ToByte(data));
+                }
+                if (data is byte[])
+                {
+                    DataType dt = sender.GetDataType(index);
+                    if (dt == DataType.Array || dt == DataType.Structure)
+                    {
+                        GXByteBuffer bb = new GXByteBuffer((byte[])data);
+                        //Skip data type.
+                        bb.Position = 1;
+                        data = cl.ChangeType(bb, dt);
+                    }
+                }
+                data = GXDLMSTranslator.ValueToXml(data);
+            }
+            if (MacroEditor.Record)
+            {
+                MacroEditor.AddAction(new GXMacro()
+                {
+                    ObjectType = (int)sender.ObjectType,
+                    LogicalName = sender.LogicalName,
+                    Index = index,
+                    Type = type,
+                    Name = name,
+                    DataType = (int)sender.GetDataType(index),
+                    UIDataType = (int)sender.GetUIDataType(index),
+                    Exception = ex != null ? ex.Message : null,
+                    Value = ConvertToString(value),
+                    Data = (string)data,
+                    External = external,
+                    Parameters = (string)parameters
+                });
+            }
+        }
+
+        public void OnAfterWrite(GXDLMSClient client, GXDLMSObject sender, int index, object data, Exception ex)
         {
             try
             {
                 if (this.InvokeRequired)
                 {
-                    this.Invoke(new ReadEventHandler(OnAfterRead), new object[] { sender, index, ex });
+                    this.Invoke(new WriteEventHandler(OnAfterWrite), new object[] { client, sender, index, data, ex });
+                }
+                else
+                {
+                    InvokeAction(client, UserActionType.Set, sender, index, null, null, null, ex);
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+        }
+
+        public void OnAfterRead(GXDLMSClient client, GXDLMSObject sender, int index, object data, object parameters, Exception ex)
+        {
+            try
+            {
+                if (this.InvokeRequired)
+                {
+                    this.Invoke(new ReadEventHandler(OnAfterRead), new object[] { client, sender, index, data, parameters, ex });
                     return;
+                }
+                if (sender is GXDLMSProfileGeneric && index == 2)
+                {
+                    if (data is GXByteBuffer)
+                    {
+                        GXByteBuffer tmp = (GXByteBuffer)data;
+                        byte type = tmp.GetUInt8();
+                        data = client.ChangeType((GXByteBuffer)data, (DataType)type);
+                        InvokeAction(client, UserActionType.Get, sender, index, null, GXDLMSTranslator.ValueToXml(data), parameters, ex);
+                    }
+                }
+                else
+                {
+                    InvokeAction(client, UserActionType.Get, sender, index, null, GXDLMSTranslator.ValueToXml(data), parameters, ex);
                 }
                 if (SelectedView != null && SelectedView.Target == sender)
                 {
@@ -2225,7 +2512,6 @@ namespace GXDLMSDirector
                 ClearTrace();
                 UpdateTransaction(true);
                 object item = parameters[0];
-                IGXDLMSView SelectedView = parameters[1] as IGXDLMSView;
                 if (item != null)
                 {
                     //Read all objects if device is selected.
@@ -2259,17 +2545,17 @@ namespace GXDLMSDirector
                             {
                                 if (pos != 1)
                                 {
-                                    OnBeforeRead(obj, pos, null);
+                                    OnBeforeRead(null, obj, pos, null, null, null);
                                     list.Add(new KeyValuePair<GXDLMSObject, byte>(obj, pos));
                                 }
                             }
-                            OnBeforeRead(obj, 0, null);
+                            OnBeforeRead(null, obj, 0, null, null, null);
                             activeDC.ReadObjects(new GXDLMSMeter[] { obj.Parent.Tag as GXDLMSMeter }, list);
                             foreach (byte pos in indexes)
                             {
                                 if (pos != 1)
                                 {
-                                    OnAfterRead(obj, pos, null);
+                                    OnAfterRead(null, obj, pos, null, null, null);
                                 }
                             }
                             DLMSItemOnChange(obj, false, 0, null);
@@ -2323,17 +2609,17 @@ namespace GXDLMSDirector
                                 {
                                     if (pos != 1)
                                     {
-                                        OnBeforeRead(obj, pos, null);
+                                        OnBeforeRead(null, obj, pos, null, null, null);
                                         list.Add(new KeyValuePair<GXDLMSObject, byte>(obj, pos));
                                     }
                                 }
-                                OnBeforeRead(obj, 0, null);
+                                OnBeforeRead(null, obj, 0, null, null, null);
                                 activeDC.ReadObjects(new GXDLMSMeter[] { obj.Parent.Tag as GXDLMSMeter }, list);
                                 foreach (byte pos in indexes)
                                 {
                                     if (pos != 1)
                                     {
-                                        OnAfterRead(obj, pos, null);
+                                        OnAfterRead(null, obj, pos, null, null, null);
                                     }
                                 }
                                 DLMSItemOnChange(obj, false, 0, null);
@@ -2463,7 +2749,8 @@ namespace GXDLMSDirector
                     {
                         GXDLMSObjectCollection objects = (GXDLMSObjectCollection)this.ObjectTree.SelectedNode.Tag;
                         GXDLMSDevice dev = objects.Tag as GXDLMSDevice;
-                        dev.Comm.OnError += new ReadEventHandler(OnError);
+                        dev.Comm.OnError += OnError;
+                        dev.Comm.OnAfterWrite += OnAfterWrite;
                         try
                         {
                             dev.KeepAliveStop();
@@ -2477,7 +2764,8 @@ namespace GXDLMSDirector
                         }
                         finally
                         {
-                            dev.Comm.OnError -= new ReadEventHandler(OnError);
+                            dev.Comm.OnAfterWrite -= OnAfterWrite;
+                            dev.Comm.OnError -= OnError;
                             dev.KeepAliveStart();
                         }
                     }
@@ -2506,7 +2794,8 @@ namespace GXDLMSDirector
                             try
                             {
                                 dev.KeepAliveStop();
-                                dev.Comm.OnError += new ReadEventHandler(OnError);
+                                dev.Comm.OnError += OnError;
+                                dev.Comm.OnAfterWrite += OnAfterWrite;
                                 OnProgress(dev, "Writing...", 0, 1);
                                 dev.Comm.Write(obj, 0);
                                 GXDlmsUi.UpdateProperty(obj as GXDLMSObject, 0, SelectedView, true, false);
@@ -2514,7 +2803,8 @@ namespace GXDLMSDirector
                             }
                             finally
                             {
-                                dev.Comm.OnError -= new ReadEventHandler(OnError);
+                                dev.Comm.OnError -= OnError;
+                                dev.Comm.OnAfterWrite -= OnAfterWrite;
                                 dev.KeepAliveStart();
                             }
                         }
@@ -2532,7 +2822,7 @@ namespace GXDLMSDirector
             }
         }
 
-        public void OnError(GXDLMSObject sender, int index, Exception ex)
+        public void OnError(GXDLMSObject sender, int index, object data, Exception ex)
         {
             GXDlmsUi.UpdateError(SelectedView, sender as GXDLMSObject, index, ex);
         }
@@ -3087,7 +3377,17 @@ namespace GXDLMSDirector
                     //Walk through object tree.
                     if (d != null)
                     {
-                        d.UpdateObjects();
+                        d.Comm.OnBeforeRead += new ReadEventHandler(OnBeforeRead);
+                        d.Comm.OnAfterRead += new ReadEventHandler(OnAfterRead);
+                        try
+                        {
+                            d.UpdateObjects();
+                        }
+                        finally
+                        {
+                            d.Comm.OnBeforeRead -= new ReadEventHandler(OnBeforeRead);
+                            d.Comm.OnAfterRead -= new ReadEventHandler(OnAfterRead);
+                        }
                     }
                     else
                     {
@@ -3699,7 +3999,13 @@ namespace GXDLMSDirector
                 LoadXmlPositioning();
 
                 Views = GXDlmsUi.GetViews(ObjectPanelFrame, OnHandleAction);
-
+                MacroEditor = new GXMacroView(Devices);
+                MacroEditor.OnConnect += ActionsView_OnConnect;
+                MacroEditor.OnDisconnect += ActionsView_OnDisconnect;
+                MacroEditor.OnGet += ActionsView_OnGet;
+                MacroEditor.OnSet += MacroEditor_OnSet;
+                MacroEditor.OnAction += MacroEditor_OnAction;
+                MacroEditor.OnExecuted += ActionsView_OnExecuted;
                 if (GXManufacturerCollection.IsFirstRun())
                 {
                     if (MessageBox.Show(this, GXDLMSDirector.Properties.Resources.InstallManufacturersOnlineTxt, GXDLMSDirector.Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
@@ -3917,6 +4223,168 @@ namespace GXDLMSDirector
             {
                 GXDLMS.Common.Error.ShowError(this, Ex);
             }
+        }
+
+        private void MacroEditor_OnAction(GXMacro act)
+        {
+            GXDLMSDevice dev = GetDevice(ObjectTree.SelectedNode) as GXDLMSDevice;
+            GXDLMSObject obj = GXDLMSClient.CreateObject((ObjectType)act.ObjectType);
+            if (obj != null)
+            {
+                obj.LogicalName = act.LogicalName;
+                obj.SetMethodAccess(act.Index, MethodAccessMode.Access);
+                GXReplyData reply = new GXReplyData();
+                dev.Comm.MethodRequest(obj, act.Index, GXDLMSTranslator.XmlToValue(act.Data), null, reply);
+            }
+        }
+
+        private void MacroEditor_OnSet(GXMacro act)
+        {
+            GXDLMSDevice dev = GetDevice(ObjectTree.SelectedNode) as GXDLMSDevice;
+            GXDLMSObject obj = GXDLMSClient.CreateObject((ObjectType)act.ObjectType);
+            if (obj != null)
+            {
+                obj.LogicalName = act.LogicalName;
+                obj.SetAccess(act.Index, AccessMode.ReadWrite);
+                if (act.DataType != 0)
+                {
+                    obj.SetDataType(act.Index, (DataType)act.DataType);
+                }
+                if (act.UIDataType != 0)
+                {
+                    obj.SetUIDataType(act.Index, (DataType)act.UIDataType);
+                }
+                dev.Comm.client.UpdateValue(obj, act.Index, GXDLMSTranslator.XmlToValue(act.Data));
+                dev.Comm.Write(obj, act.Index);
+            }
+        }
+
+        private void ActionsView_OnGet(GXMacro macro)
+        {
+            GXDLMSDevice dev = GetDevice(ObjectTree.SelectedNode) as GXDLMSDevice;
+            GXDLMSObject obj = GXDLMSClient.CreateObject((ObjectType)macro.ObjectType);
+            if (obj != null)
+            {
+                GXReplyData reply = new GXReplyData();
+                obj.LogicalName = macro.LogicalName;
+                obj.SetAccess(macro.Index, AccessMode.Read);
+                if (obj is GXDLMSProfileGeneric && macro.Index == 2 && macro.External != null)
+                {
+                    //Update capture objects.
+                    dev.Comm.client.UpdateValue(obj, 3, GXDLMSTranslator.XmlToValue(macro.External));
+                }
+                dev.Comm.ReadDataBlock(dev.Comm.Read(obj, macro.Index, macro.Parameters), null, 1, reply);
+                object value = reply.Value;
+                dev.Comm.client.UpdateValue(obj, macro.Index, value);
+                macro.DataType = (int)obj.GetDataType(macro.Index);
+                macro.UIDataType = (int)obj.GetUIDataType(macro.Index);
+                macro.Data = GXDLMSTranslator.ValueToXml(value);
+                if (macro.Data != null)
+                {
+                    macro.Data = macro.Data.Replace("\r\n", "\n");
+                }
+                object tmp = obj.GetValues()[macro.Index - 1];
+                if (!(tmp is object[][]))
+                {
+                    macro.Value = Convert.ToString(tmp);
+                }
+            }
+        }
+
+        private void ActionsView_OnDisconnect(GXMacro act)
+        {
+            GXDLMSDevice dev = GetDevice(ObjectTree.SelectedNode) as GXDLMSDevice;
+            if (!string.IsNullOrEmpty(act.Device))
+            {
+                foreach (GXDLMSMeter d in Devices)
+                {
+                    if (d.Name == act.Device)
+                    {
+                        dev = d as GXDLMSDevice;
+                        break;
+                    }
+                }
+            }
+            TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Disconnect, null, null, new object[] { dev });
+            TransactionWork.Start();
+            TransactionWork.Wait(-1);
+        }
+
+        private void ActionsView_OnConnect(GXMacro act)
+        {
+            GXDLMSDevice dev = GetDevice(ObjectTree.SelectedNode) as GXDLMSDevice;
+            if (!string.IsNullOrEmpty(act.Device))
+            {
+                foreach (GXDLMSMeter d in Devices)
+                {
+                    if (d.Name == act.Device)
+                    {
+                        dev = d as GXDLMSDevice;
+                        break;
+                    }
+                }
+            }
+            TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Connect, null, null, new object[] { dev });
+            TransactionWork.Start();
+            TransactionWork.Wait(-1);
+        }
+
+        /// <summary>
+        /// Execute actions.
+        /// </summary>
+        /// <param name="actions">List of actions to execute.</param>
+        private void ActionsView_OnExecuted(GXUserActionSettings settings)
+        {
+            foreach (GXMacro act in settings.Actions)
+            {
+                GXDLMSDevice dev = GetDevice(ObjectTree.SelectedNode) as GXDLMSDevice;
+                if (!string.IsNullOrEmpty(act.Device))
+                {
+                    foreach (GXDLMSMeter d in Devices)
+                    {
+                        if (d.Name == act.Device)
+                        {
+                            dev = d as GXDLMSDevice;
+                            break;
+                        }
+                    }
+                }
+                switch (act.Type)
+                {
+                    case UserActionType.Connect:
+                        TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Connect, OnError, null, new object[] { dev });
+                        break;
+                    case UserActionType.Disconnecting:
+                        TransactionWork = new GXAsyncWork(this, OnAsyncStateChange, Disconnect, OnError, null, new object[] { dev });
+                        break;
+                    case UserActionType.Get:
+                        {
+                            GXDLMSObject obj = GXDLMSClient.CreateObject((ObjectType)act.ObjectType);
+                            if (obj != null)
+                            {
+                                GXReplyData reply = new GXReplyData();
+                                obj.LogicalName = act.LogicalName;
+                                obj.SetAccess(act.Index, AccessMode.ReadWrite);
+                                dev.Comm.ReadDataBlock(dev.Comm.Read(obj, act.Index), null, 1, reply);
+                                object value = reply.Value;
+                                DataType type;
+                                if (value is byte[] && (type = obj.GetUIDataType(act.Index)) != DataType.None)
+                                {
+                                    value = GXDLMSClient.ChangeType((byte[])value, type, dev.Comm.client.UseUtc2NormalTime);
+                                }
+                                dev.Comm.client.UpdateValue(obj, act.Index, value);
+                            }
+                        }
+                        break;
+                    case UserActionType.Set:
+                        break;
+                    case UserActionType.Action:
+                        break;
+                    default:
+                        break;
+                }
+            }
+            TransactionWork.Start();
         }
 
         static int GetParameters(string[] args, List<string> files, out string output, out string settings, out bool showHelp, out CloseApp closeApp, out bool ctt)
@@ -4769,6 +5237,7 @@ namespace GXDLMSDirector
                     Properties.Settings.Default.EventsSettings = events.Settings;
                     Properties.Settings.Default.NotifySystemTitle = GXCommon.ToHex(eventsTranslator.SystemTitle, false);
                     Properties.Settings.Default.NotifyBlockCipherKey = GXCommon.ToHex(eventsTranslator.BlockCipherKey, false);
+                    Properties.Settings.Default.NotifyAuthenticationKey = GXCommon.ToHex(eventsTranslator.AuthenticationKey, false);
                 }
             }
             catch (Exception Ex)
@@ -4805,49 +5274,64 @@ namespace GXDLMSDirector
 
         private void ObjectTree_BeforeSelect(object sender, TreeViewCancelEventArgs e)
         {
-            GXDLMSMeter oldDev = GetDevice(ObjectTree.SelectedNode);
-            GXDLMSMeter newDev = GetDevice(e.Node);
-            if (oldDev != newDev)
+            try
             {
-                eventsTranslator.Clear();
-                if (newDev != null)
+                if (MacroEditor != null)
                 {
-                    traceTranslator.Security = newDev.Security;
-                    traceTranslator.SystemTitle = GXCommon.HexToBytes(newDev.SystemTitle);
-                    traceTranslator.BlockCipherKey = GXCommon.HexToBytes(newDev.BlockCipherKey);
-                    traceTranslator.AuthenticationKey = GXCommon.HexToBytes(newDev.AuthenticationKey);
-                    traceTranslator.InvocationCounter = newDev.InvocationCounter;
-                    DedicatedKeyTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.DedicatedKey));
-                    AuthenticationTb.Text = newDev.Authentication.ToString();
-                    traceTranslator.DedicatedKey = GXCommon.HexToBytes(newDev.DedicatedKey);
-                    if (newDev.PreEstablished)
+                    if (!MacroEditor.TargetChanged(e.Node.Tag))
                     {
-                        traceTranslator.ServerSystemTitle = GXCommon.HexToBytes(newDev.ServerSystemTitle);
+                        e.Cancel = true;
+                        throw new Exception("Can't change device while reconding or running macro.");
                     }
-                    else
-                    {
-                        GXDLMSDevice d = newDev as GXDLMSDevice;
-                        if (d != null)
-                        {
-                            traceTranslator.ServerSystemTitle = d.Comm.client.SourceSystemTitle;
-                        }
-                    }
-                    if (newDev.Security != Security.None || newDev.Authentication == Authentication.HighGMAC ||
-                        newDev.Authentication == Authentication.HighECDSA)
-                    {
-                        ClientSystemTitleTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.SystemTitle));
-                        ServerSystemTitleTb.Text = GXCommon.ToHex(traceTranslator.ServerSystemTitle);
-                        SecurityTb.Text = newDev.Security.ToString();
-                        AuthenticationKeyTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.AuthenticationKey));
-                        BlockCipherKeyTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.BlockCipherKey));
-                    }
-                    else
-                    {
-                        AuthenticationKeyTb.Text = BlockCipherKeyTb.Text = SecurityTb.Text = ClientSystemTitleTb.Text = ServerSystemTitleTb.Text = "";
-                    }
-                    NetworkIDTb.Text = newDev.NetworkId.ToString();
-                    PhysicalDeviceAddressTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.PhysicalDeviceAddress));
                 }
+                GXDLMSMeter oldDev = GetDevice(ObjectTree.SelectedNode);
+                GXDLMSMeter newDev = GetDevice(e.Node);
+                if (oldDev != newDev)
+                {
+                    eventsTranslator.Clear();
+                    if (newDev != null)
+                    {
+                        traceTranslator.Security = newDev.Security;
+                        traceTranslator.SystemTitle = GXCommon.HexToBytes(newDev.SystemTitle);
+                        traceTranslator.BlockCipherKey = GXCommon.HexToBytes(newDev.BlockCipherKey);
+                        traceTranslator.AuthenticationKey = GXCommon.HexToBytes(newDev.AuthenticationKey);
+                        traceTranslator.InvocationCounter = newDev.InvocationCounter;
+                        DedicatedKeyTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.DedicatedKey));
+                        AuthenticationTb.Text = newDev.Authentication.ToString();
+                        traceTranslator.DedicatedKey = GXCommon.HexToBytes(newDev.DedicatedKey);
+                        if (newDev.PreEstablished)
+                        {
+                            traceTranslator.ServerSystemTitle = GXCommon.HexToBytes(newDev.ServerSystemTitle);
+                        }
+                        else
+                        {
+                            GXDLMSDevice d = newDev as GXDLMSDevice;
+                            if (d != null)
+                            {
+                                traceTranslator.ServerSystemTitle = d.Comm.client.SourceSystemTitle;
+                            }
+                        }
+                        if (newDev.Security != Security.None || newDev.Authentication == Authentication.HighGMAC ||
+                            newDev.Authentication == Authentication.HighECDSA)
+                        {
+                            ClientSystemTitleTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.SystemTitle));
+                            ServerSystemTitleTb.Text = GXCommon.ToHex(traceTranslator.ServerSystemTitle);
+                            SecurityTb.Text = newDev.Security.ToString();
+                            AuthenticationKeyTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.AuthenticationKey));
+                            BlockCipherKeyTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.BlockCipherKey));
+                        }
+                        else
+                        {
+                            AuthenticationKeyTb.Text = BlockCipherKeyTb.Text = SecurityTb.Text = ClientSystemTitleTb.Text = ServerSystemTitleTb.Text = "";
+                        }
+                        NetworkIDTb.Text = newDev.NetworkId.ToString();
+                        PhysicalDeviceAddressTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.PhysicalDeviceAddress));
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                GXCommon.ShowError(Ex);
             }
         }
 
@@ -4896,9 +5380,13 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// OBIS code to search.
+        /// OBIS code to search for.
         /// </summary>
-        string search = null;
+        string searchLn = null;
+        /// <summary>
+        /// Text to search for.
+        /// </summary>
+        string searchText = null;
 
         private bool FindTreeNode(TreeNodeCollection nodes, string text, ref TreeNode first)
         {
@@ -4911,7 +5399,7 @@ namespace GXDLMSDirector
                         first = it;
                     }
                 }
-                else if (it.Tag is GXDLMSObject && (it.Tag as GXDLMSObject).LogicalName == search)
+                else if (it.Tag is GXDLMSObject && (it.Tag as GXDLMSObject).LogicalName == searchLn)
                 {
                     ObjectTree.SelectedNode = it;
                     return true;
@@ -4937,13 +5425,19 @@ namespace GXDLMSDirector
         private bool FindTreeNode(TreeNodeCollection nodes, string text, ref bool first)
         {
             TreeNode node = ObjectTree.SelectedNode;
+            if (searchText != null)
+            {
+                searchText = searchText.ToLower();
+            }
             foreach (TreeNode it in nodes)
             {
                 if (!first)
                 {
                     first = it == node;
                 }
-                else if (it.Tag is GXDLMSObject && (it.Tag as GXDLMSObject).LogicalName == search)
+                else if (it.Tag is GXDLMSObject obj && ((searchLn != null && obj.LogicalName == searchLn) ||
+                    (searchText != null && obj.Description.ToLower().Contains(searchText)) ||
+                    (searchText != null && obj.ObjectType.ToString().ToLower().Contains(searchText))))
                 {
                     ObjectTree.SelectedNode = it;
                     return true;
@@ -4967,12 +5461,19 @@ namespace GXDLMSDirector
             try
             {
                 bool first = false;
-                if (!FindTreeNode(ObjectTree.Nodes, search, ref first))
+                if (!FindTreeNode(ObjectTree.Nodes, searchLn, ref first))
                 {
                     first = true;
-                    if (!FindTreeNode(ObjectTree.Nodes, search, ref first))
+                    if (!FindTreeNode(ObjectTree.Nodes, searchLn, ref first))
                     {
-                        throw new Exception("OBIS code '" + search + "' not found!");
+                        if (searchLn != null)
+                        {
+                            throw new Exception("OBIS code '" + searchLn + "' not found!");
+                        }
+                        else
+                        {
+                            throw new Exception("Text '" + searchText + "' not found!");
+                        }
                     }
                 }
             }
@@ -4990,15 +5491,14 @@ namespace GXDLMSDirector
             try
             {
                 GXFindParameters p = new GXFindParameters();
+                p.ObisCode = searchLn;
+                p.Text = searchText;
                 if (GXDlmsUi.Find(this, p))
                 {
-                    search = p.ObisCode;
-                    bool tmp = string.IsNullOrEmpty(search);
-                    findNextToolStripMenuItem.Enabled = !tmp;
-                    if (!tmp)
-                    {
-                        findNextToolStripMenuItem_Click(null, null);
-                    }
+                    searchLn = p.ObisCode;
+                    searchText = p.Text;
+                    findNextToolStripMenuItem.Enabled = true;
+                    findNextToolStripMenuItem_Click(null, null);
                 }
             }
             catch (Exception Ex)
@@ -6402,6 +6902,24 @@ namespace GXDLMSDirector
                 Error.ShowError(this, Ex);
             }
 
+        }
+
+        /// <summary>
+        /// Show macro editor.
+        /// </summary>
+        private void ActionsMnu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!MacroEditor.Visible)
+                {
+                    MacroEditor.Show(this);
+                }
+            }
+            catch (Exception Ex)
+            {
+                Error.ShowError(this, Ex);
+            }
         }
     }
 }

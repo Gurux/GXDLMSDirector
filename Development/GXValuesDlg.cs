@@ -65,15 +65,15 @@ namespace GXDLMSDirector
 
         /// <summary>
         /// User has selected new OBIS code.
-        /// </summary>        
+        /// </summary>
         private void ObjectList_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             try
             {
                 GXDLMSObject obj = (GXDLMSObject)e.Item.Tag;
                 IGXDLMSView SelectedView = GXDlmsUi.GetView(Views, obj);
-                SelectedView.Target = (GXDLMSObject)obj;
-                GXDlmsUi.ObjectChanged(SelectedView, obj as GXDLMSObject, false);
+                SelectedView.Target = obj;
+                GXDlmsUi.ObjectChanged(SelectedView, obj, false);
                 ObjectPanelFrame.Controls.Add(((Form)SelectedView));
                 ((Form)SelectedView).Show();
             }

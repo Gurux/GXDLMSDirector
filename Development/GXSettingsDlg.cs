@@ -142,6 +142,20 @@ namespace GXDLMSDirector
                     BlockCipherKeyAsciiCb.CheckedChanged += BlockCipherKeyAsciiCb_CheckedChanged;
                     BlockCipherKeyTB.Text = GXCommon.ToHex(eventsTranslator.BlockCipherKey);
                 }
+                if (IsAscii(eventsTranslator.AuthenticationKey))
+                {
+                    AuthenticationKeyAsciiCb.CheckedChanged -= AuthenticationKeyAsciiCb_CheckedChanged;
+                    AuthenticationKeyAsciiCb.Checked = true;
+                    AuthenticationKeyAsciiCb.CheckedChanged += AuthenticationKeyAsciiCb_CheckedChanged;
+                    AuthenticationKeyTB.Text = ASCIIEncoding.ASCII.GetString(eventsTranslator.AuthenticationKey);
+                }
+                else
+                {
+                    AuthenticationKeyAsciiCb.CheckedChanged -= AuthenticationKeyAsciiCb_CheckedChanged;
+                    AuthenticationKeyAsciiCb.Checked = false;
+                    AuthenticationKeyAsciiCb.CheckedChanged += AuthenticationKeyAsciiCb_CheckedChanged;
+                    AuthenticationKeyTB.Text = GXCommon.ToHex(eventsTranslator.AuthenticationKey);
+                }
             }
             catch (Exception Ex)
             {
@@ -198,7 +212,7 @@ namespace GXDLMSDirector
             {
                 _eventsTranslator.SystemTitle = GXCommon.HexToBytes(GetAsHex(SystemTitleTB.Text, SystemTitleAsciiCb.Checked));
                 _eventsTranslator.BlockCipherKey = GXCommon.HexToBytes(GetAsHex(BlockCipherKeyTB.Text, BlockCipherKeyAsciiCb.Checked));
-
+                _eventsTranslator.AuthenticationKey = GXCommon.HexToBytes(GetAsHex(AuthenticationKeyTB.Text, AuthenticationKeyAsciiCb.Checked));
                 (notifications as IGXPropertyPage).Apply();
                 foreach (IGXSettingsPage it in MediaPropertiesForm)
                 {
@@ -453,6 +467,32 @@ namespace GXDLMSDirector
                 else
                 {
                     BlockCipherKeyTB.Text = GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(BlockCipherKeyTB.Text), true);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message);
+            }
+        }
+
+        private void AuthenticationKeyAsciiCb_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (AuthenticationKeyAsciiCb.Checked)
+                {
+                    if (!IsAscii(GXCommon.HexToBytes(AuthenticationKeyTB.Text)))
+                    {
+                        AuthenticationKeyAsciiCb.CheckedChanged -= AuthenticationKeyAsciiCb_CheckedChanged;
+                        AuthenticationKeyAsciiCb.Checked = !AuthenticationKeyAsciiCb.Checked;
+                        AuthenticationKeyAsciiCb.CheckedChanged += AuthenticationKeyAsciiCb_CheckedChanged;
+                        throw new ArgumentOutOfRangeException(Properties.Resources.InvalidASCII);
+                    }
+                    AuthenticationKeyTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(AuthenticationKeyTB.Text));
+                }
+                else
+                {
+                    AuthenticationKeyTB.Text = GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(AuthenticationKeyTB.Text), true);
                 }
             }
             catch (Exception ex)

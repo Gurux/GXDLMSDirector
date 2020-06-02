@@ -12,7 +12,7 @@ namespace GXDLMSDirector.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.5.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.6.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -524,6 +524,114 @@ namespace GXDLMSDirector.Properties {
             }
             set {
                 this["SerialMonitorSettings"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string MacroFiles {
+            get {
+                return ((string)(this["MacroFiles"]));
+            }
+            set {
+                this["MacroFiles"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MacroFollowLast {
+            get {
+                return ((bool)(this["MacroFollowLast"]));
+            }
+            set {
+                this["MacroFollowLast"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MacroRaw {
+            get {
+                return ((bool)(this["MacroRaw"]));
+            }
+            set {
+                this["MacroRaw"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool MacroBreakOnError {
+            get {
+                return ((bool)(this["MacroBreakOnError"]));
+            }
+            set {
+                this["MacroBreakOnError"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MacroHideSucceeded {
+            get {
+                return ((bool)(this["MacroHideSucceeded"]));
+            }
+            set {
+                this["MacroHideSucceeded"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MacroIHideVerified {
+            get {
+                return ((bool)(this["MacroIHideVerified"]));
+            }
+            set {
+                this["MacroIHideVerified"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MacroHideDisabled {
+            get {
+                return ((bool)(this["MacroHideDisabled"]));
+            }
+            set {
+                this["MacroHideDisabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MacroHideFailed {
+            get {
+                return ((bool)(this["MacroHideFailed"]));
+            }
+            set {
+                this["MacroHideFailed"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("D0D1D2D3D4D5D6D7D8D9DADBDCDDDEDF")]
+        public string NotifyAuthenticationKey {
+            get {
+                return ((string)(this["NotifyAuthenticationKey"]));
+            }
+            set {
+                this["NotifyAuthenticationKey"] = value;
             }
         }
     }

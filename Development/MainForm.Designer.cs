@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11679 $,
-//                  $Date: 2020-04-30 16:07:04 +0300 (to, 30 huhti 2020) $
+// Version:         $Revision: 11785 $,
+//                  $Date: 2020-06-02 12:19:18 +0300 (ti, 02 kesä 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -145,6 +145,8 @@ namespace GXDLMSDirector
             this.ManufacturersMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.OBISCodesMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.dLMSTranslatorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ActionsMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.serialMonitorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem13 = new System.Windows.Forms.ToolStripSeparator();
             this.settingsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.AddToScheduleMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -325,7 +327,6 @@ namespace GXDLMSDirector
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.DeviceListView = new System.Windows.Forms.TabControl();
             this.DevicesTab = new System.Windows.Forms.TabPage();
-            this.serialMonitorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -938,6 +939,7 @@ namespace GXDLMSDirector
             this.ManufacturersMnu,
             this.OBISCodesMnu,
             this.dLMSTranslatorToolStripMenuItem,
+            this.ActionsMnu,
             this.serialMonitorToolStripMenuItem,
             this.toolStripMenuItem13,
             this.settingsToolStripMenuItem1,
@@ -1035,6 +1037,20 @@ namespace GXDLMSDirector
             this.dLMSTranslatorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.dLMSTranslatorToolStripMenuItem.Text = "DLMS Translator...";
             this.dLMSTranslatorToolStripMenuItem.Click += new System.EventHandler(this.dLMSTranslatorToolStripMenuItem_Click);
+            // 
+            // ActionsMnu
+            // 
+            this.ActionsMnu.Name = "ActionsMnu";
+            this.ActionsMnu.Size = new System.Drawing.Size(180, 22);
+            this.ActionsMnu.Text = "Macro Editor";
+            this.ActionsMnu.Click += new System.EventHandler(this.ActionsMnu_Click);
+            // 
+            // serialMonitorToolStripMenuItem
+            // 
+            this.serialMonitorToolStripMenuItem.Name = "serialMonitorToolStripMenuItem";
+            this.serialMonitorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.serialMonitorToolStripMenuItem.Text = "Serial Monitor...";
+            this.serialMonitorToolStripMenuItem.Click += new System.EventHandler(this.serialMonitorToolStripMenuItem_Click);
             // 
             // toolStripMenuItem13
             // 
@@ -2613,13 +2629,6 @@ namespace GXDLMSDirector
             this.DevicesTab.Text = "Devices";
             this.DevicesTab.UseVisualStyleBackColor = true;
             // 
-            // serialMonitorToolStripMenuItem
-            // 
-            this.serialMonitorToolStripMenuItem.Name = "serialMonitorToolStripMenuItem";
-            this.serialMonitorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.serialMonitorToolStripMenuItem.Text = "Serial Monitor...";
-            this.serialMonitorToolStripMenuItem.Click += new System.EventHandler(this.serialMonitorToolStripMenuItem_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2949,6 +2958,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ToolStripMenuItem AddToScheduleMenu;
         private System.Windows.Forms.ToolStripMenuItem dLMSTranslatorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem serialMonitorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ActionsMnu;
     }
 }
 

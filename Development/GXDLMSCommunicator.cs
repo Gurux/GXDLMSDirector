@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 11648 $,
-//                  $Date: 2020-04-21 11:52:25 +0300 (ti, 21 huhti 2020) $
+// Version:         $Revision: 11785 $,
+//                  $Date: 2020-06-02 12:19:18 +0300 (ti, 02 kesä 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -46,6 +46,7 @@ using Gurux.DLMS.Objects.Enums;
 using System.Threading;
 using Gurux.DLMS.Secure;
 using System.Collections.Generic;
+using System.Xml;
 
 namespace GXDLMSDirector
 {
@@ -56,7 +57,9 @@ namespace GXDLMSDirector
 
     public delegate void ProgressEventHandler(object sender, string description, int current, int maximium);
     public delegate void StatusEventHandler(object sender, DeviceState status);
-    public delegate void ReadEventHandler(GXDLMSObject sender, int index, Exception ex);
+    public delegate void ErrorEventHandler(GXDLMSObject sender, int index, object data, Exception ex);
+    public delegate void ReadEventHandler(GXDLMSClient client, GXDLMSObject sender, int index, object data, object parameters, Exception ex);
+    public delegate void WriteEventHandler(GXDLMSClient client, GXDLMSObject sender, int index, object data, Exception ex);
     public delegate void MessageTraceEventHandler(DateTime time, GXDLMSDevice sender, string trace, byte[] data, int payload, string path, int duration);
 
     public class GXDLMSCommunicator
@@ -88,7 +91,8 @@ namespace GXDLMSDirector
         public ProgressEventHandler OnProgress;
         public ReadEventHandler OnBeforeRead;
         public ReadEventHandler OnAfterRead;
-        public ReadEventHandler OnError;
+        public ErrorEventHandler OnError;
+        public WriteEventHandler OnAfterWrite;
 
         public byte[] SNRMRequest()
         {
@@ -116,6 +120,29 @@ namespace GXDLMSDirector
             byte[] tmp = client.Read(it, attributeOrdinal)[0];
             GXLogWriter.WriteLog(string.Format("Reading object {0}, interface {1}", it.LogicalName, it.ObjectType), tmp);
             return tmp;
+        }
+
+        public byte[][] Read(GXDLMSObject it, int attributeOrdinal, string parameters)
+        {
+            if (it is GXDLMSProfileGeneric && attributeOrdinal == 2 && parameters != null)
+            {
+                GXStructure p = (GXStructure)GXDLMSTranslator.XmlToValue(parameters);
+                if ((int)p[0] == 1)
+                {
+                    GXStructure arr = (GXStructure)p[1];
+                    GXDateTime start = (GXDateTime)client.ChangeType(new GXByteBuffer((byte[])arr[1]), DataType.DateTime);
+                    GXDateTime end = (GXDateTime)client.ChangeType(new GXByteBuffer((byte[])arr[2]), DataType.DateTime);
+                    return client.ReadRowsByRange((GXDLMSProfileGeneric)it, start, end);
+                }
+                if ((int)p[0] == 2)
+                {
+                    GXStructure arr = (GXStructure)p[1];
+                    UInt32 index = (UInt32)arr[0];
+                    UInt32 count = (UInt32)arr[1] - index + 1;
+                    return client.ReadRowsByEntry((GXDLMSProfileGeneric)it, index, count);
+                }
+            }
+            return client.Read(it, attributeOrdinal);
         }
 
         public void MethodRequest(GXDLMSObject target, int methodIndex, object data, string text, GXReplyData reply)
@@ -741,7 +768,7 @@ namespace GXDLMSDirector
             }
             client.UseLogicalNameReferencing = this.parent.UseLogicalNameReferencing;
             client.ProposedConformance = (Conformance)parent.Conformance;
-            client.UtcTimeZone = parent.UtcTimeZone;
+            client.UseUtc2NormalTime = parent.UtcTimeZone;
             //Show media verbose.
             if (this.parent.Verbose && media.Trace != System.Diagnostics.TraceLevel.Verbose)
             {
@@ -878,7 +905,7 @@ namespace GXDLMSDirector
                 client.Password = CryptHelper.Decrypt(this.parent.HexPassword, Password.Key);
             }
             client.UseLogicalNameReferencing = this.parent.UseLogicalNameReferencing;
-            client.UtcTimeZone = parent.UtcTimeZone;
+            client.UseUtc2NormalTime = parent.UtcTimeZone;
             //Show media verbose.
             if (this.parent.Verbose && media.Trace != System.Diagnostics.TraceLevel.Verbose)
             {
@@ -1201,7 +1228,7 @@ namespace GXDLMSDirector
                 }
                 if (OnAfterRead != null)
                 {
-                    OnAfterRead(CurrentProfileGeneric, 2, null);
+                    OnAfterRead(null, CurrentProfileGeneric, 2, null, null, null);
                 }
             }
         }
@@ -1333,6 +1360,19 @@ namespace GXDLMSDirector
             GXReplyData reply = new GXReplyData();
             try
             {
+                if (OnBeforeRead != null)
+                {
+                    GXDLMSObject target;
+                    if (client.UseLogicalNameReferencing)
+                    {
+                        target = new GXDLMSAssociationLogicalName();
+                    }
+                    else
+                    {
+                        target = new GXDLMSAssociationShortName();
+                    }
+                    OnBeforeRead(client, target, 2, null, null, null);
+                }
                 ReadDataBlock(client.GetObjectsRequest(), "Collecting objects", 3, 1, reply);
             }
             catch (Exception Ex)
@@ -1383,6 +1423,17 @@ namespace GXDLMSDirector
                 }
             }
             objs = client.ParseObjects(reply.Data, true);
+            if (OnAfterRead != null)
+            {
+                if (client.UseLogicalNameReferencing)
+                {
+                    OnAfterRead(client, client.Objects.FindByLN(ObjectType.AssociationLogicalName, "0.0.40.0.0.255"), 2, reply.Data, null, null);
+                }
+                else
+                {
+                    OnAfterRead(client, client.Objects.FindBySN(0xFA00), 2, reply.Data, null, null);
+                }
+            }
             GXLogWriter.WriteLog("--- Collecting " + objs.Count.ToString() + " objects. ---");
             return objs;
         }
@@ -1404,8 +1455,8 @@ namespace GXDLMSDirector
         /// <summary>
         /// Read object.
         /// </summary>
-        /// <param name="InitialValues"></param>
-        /// <param name="obj"></param>
+        /// <param name="sender">Sender.</param>
+        /// <param name="obj">Object to read.</param>
         /// <param name="forceRead">Force all attributes read.</param>
         public void Read(object sender, GXDLMSObject obj, bool forceRead)
         {
@@ -1436,12 +1487,32 @@ namespace GXDLMSDirector
                 {
                     if (OnBeforeRead != null)
                     {
-                        OnBeforeRead(obj, it, null);
+                        OnBeforeRead(null, obj, it, null, null, null);
                     }
+                    object parameters = null;
+                    PduEventHandler p = new PduEventHandler(delegate (object sender1, byte[] value)
+                    {
+                        try
+                        {
+                            GXDLMSTranslator t = new GXDLMSTranslator();
+                            string xml = null;
+                            xml = t.PduToXml(value);
+                            XmlDocument doc2 = new XmlDocument();
+                            doc2.LoadXml(xml);
+                            xml = doc2.GetElementsByTagName("AccessParameters")[0].InnerXml;
+                            int type = int.Parse(doc2.GetElementsByTagName("AccessSelector")[0].Attributes[0].Value);
+                            parameters = new GXStructure() { type, GXDLMSTranslator.XmlToValue(xml) };
+                        }
+                        catch (Exception)
+                        {
+                            //Ignore error.
+                        }
+                    });
                     try
                     {
                         byte[][] tmp;
                         CurrentProfileGeneric = obj as GXDLMSProfileGeneric;
+                        client.OnPdu += p;
                         OnDataReceived += new GXDLMSCommunicator.DataReceivedEventHandler(this.OnProfileGenericDataReceived);
                         if (CurrentProfileGeneric.AccessSelector == AccessRange.Range ||
                                 CurrentProfileGeneric.AccessSelector == AccessRange.Last)
@@ -1472,6 +1543,7 @@ namespace GXDLMSDirector
                             tmp = client.Read(CurrentProfileGeneric, 2);
                             ReadDataBlock(tmp, "Reading profile generic data " + CurrentProfileGeneric.Name, 1, reply);
                         }
+                        OnAfterRead?.Invoke(client, obj, it, reply.Data, parameters, null);
                     }
                     catch (GXDLMSException ex)
                     {
@@ -1488,28 +1560,24 @@ namespace GXDLMSDirector
                             {
                                 obj.SetAccess(it, AccessMode.NoAccess);
                             }
-                            if (OnAfterRead != null)
-                            {
-                                OnAfterRead(obj, it, ex);
-                            }
+                            OnAfterRead?.Invoke(null, obj, it, null, null, ex);
                             continue;
                         }
                         else
                         {
+                            OnAfterRead?.Invoke(null, obj, it, null, null, ex);
                             throw ex;
                         }
                     }
                     catch (Exception ex)
                     {
+                        OnAfterRead?.Invoke(null, obj, it, null, null, ex);
                         obj.SetLastError(it, ex);
                         throw ex;
                     }
                     finally
                     {
-                        if (OnAfterRead != null)
-                        {
-                            OnAfterRead(obj, it, null);
-                        }
+                        client.OnPdu -= p;
                         OnDataReceived -= new GXDLMSCommunicator.DataReceivedEventHandler(OnProfileGenericDataReceived);
                     }
                     continue;
@@ -1518,7 +1586,7 @@ namespace GXDLMSDirector
                 {
                     if (OnBeforeRead != null)
                     {
-                        OnBeforeRead(obj, it, null);
+                        OnBeforeRead(client, obj, it, null, null, null);
                     }
                     byte[] data = client.Read(obj.Name, obj.ObjectType, it)[0];
                     try
@@ -1539,7 +1607,7 @@ namespace GXDLMSDirector
                             obj.SetAccess(it, AccessMode.NoAccess);
                             if (OnAfterRead != null)
                             {
-                                OnAfterRead(obj, it, ex);
+                                OnAfterRead(client, obj, it, null, null, ex);
                             }
                             continue;
                         }
@@ -1559,7 +1627,7 @@ namespace GXDLMSDirector
                         DataType type;
                         if (value is byte[] && (type = obj.GetUIDataType(it)) != DataType.None)
                         {
-                            value = GXDLMSClient.ChangeType((byte[])value, type, client.UtcTimeZone);
+                            value = GXDLMSClient.ChangeType((byte[])value, type, client.UseUtc2NormalTime);
                         }
                         if (reply.DataType != DataType.None && obj.GetDataType(it) == DataType.None)
                         {
@@ -1569,7 +1637,7 @@ namespace GXDLMSDirector
                     }
                     if (OnAfterRead != null)
                     {
-                        OnAfterRead(obj, it, null);
+                        OnAfterRead(client, obj, it, reply.Value, null, null);
                     }
                     obj.SetLastReadTime(it, DateTime.Now);
                 }
@@ -1609,13 +1677,14 @@ namespace GXDLMSDirector
                         try
                         {
                             ReadDataBlock(client.Write(obj, it), string.Format("Writing object {0}, interface {1}", obj.LogicalName, obj.ObjectType), reply);
+                            ValueEventArgs e1 = new ValueEventArgs(obj, it, 0, null);
+                            string xml = GXDLMSTranslator.ValueToXml(((IGXDLMSBase)obj).GetValue(client.Settings, e1));
+                            OnAfterWrite?.Invoke(client, obj, it, xml, null);
                         }
                         catch (GXDLMSException ex)
                         {
-                            if (OnError != null)
-                            {
-                                OnError(obj, it, ex);
-                            }
+                            OnError?.Invoke(obj, it, null, ex);
+                            OnAfterWrite?.Invoke(client, obj, it, null, ex);
                             throw ex;
                         }
                         //Read data once again to make sure it is updated.
@@ -1625,7 +1694,7 @@ namespace GXDLMSDirector
                         val = reply.Value;
                         if (val is byte[] && (type = obj.GetUIDataType(it)) != DataType.None)
                         {
-                            val = GXDLMSClient.ChangeType((byte[])val, type, client.UtcTimeZone);
+                            val = GXDLMSClient.ChangeType((byte[])val, type, client.UseUtc2NormalTime);
                         }
                         client.UpdateValue(obj, it, val);
                     }

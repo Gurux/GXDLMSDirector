@@ -449,7 +449,7 @@ namespace GXDLMSDirector
                             }
                             else if (dt == DataType.DateTime || dt == DataType.Date || dt == DataType.Time)
                             {
-                                str = GXDLMSClient.ChangeType((byte[])value, dt, test.Device.Comm.client.UtcTimeZone).ToString();
+                                str = GXDLMSClient.ChangeType((byte[])value, dt, test.Device.Comm.client.UseUtc2NormalTime).ToString();
                             }
                             else
                             {
@@ -6667,7 +6667,7 @@ namespace GXDLMSDirector
                         DateTime start = DateTime.Now;
                         try
                         {
-                            if (dev.Comm.client.UtcTimeZone)
+                            if (dev.Comm.client.UseUtc2NormalTime)
                             {
                                 it.TimeZone = (int)TimeZoneInfo.Local.BaseUtcOffset.TotalMinutes;
                             }

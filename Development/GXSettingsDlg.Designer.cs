@@ -55,6 +55,9 @@
             this.CheckUpdatesBtn = new System.Windows.Forms.Button();
             this.RemoveBtn = new System.Windows.Forms.Button();
             this.AddBtn = new System.Windows.Forms.Button();
+            this.AuthenticationKeyAsciiCb = new System.Windows.Forms.CheckBox();
+            this.AuthenticationKeyTB = new System.Windows.Forms.TextBox();
+            this.AuthenticationKeyLbl = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.Tabs.SuspendLayout();
             this.NotificationsTab.SuspendLayout();
@@ -71,14 +74,14 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel1.Location = new System.Drawing.Point(0, 280);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(399, 39);
+            this.panel1.Size = new System.Drawing.Size(423, 39);
             this.panel1.TabIndex = 1;
             // 
             // OKBtn
             // 
             this.OKBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.OKBtn.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.OKBtn.Location = new System.Drawing.Point(231, 6);
+            this.OKBtn.Location = new System.Drawing.Point(255, 6);
             this.OKBtn.Name = "OKBtn";
             this.OKBtn.Size = new System.Drawing.Size(75, 23);
             this.OKBtn.TabIndex = 11;
@@ -90,7 +93,7 @@
             // 
             this.CancelBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelBtn.Location = new System.Drawing.Point(312, 6);
+            this.CancelBtn.Location = new System.Drawing.Point(336, 6);
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.Size = new System.Drawing.Size(75, 23);
             this.CancelBtn.TabIndex = 12;
@@ -106,7 +109,7 @@
             this.Tabs.Location = new System.Drawing.Point(0, 0);
             this.Tabs.Name = "Tabs";
             this.Tabs.SelectedIndex = 0;
-            this.Tabs.Size = new System.Drawing.Size(399, 280);
+            this.Tabs.Size = new System.Drawing.Size(423, 280);
             this.Tabs.TabIndex = 2;
             // 
             // NotificationsTab
@@ -116,7 +119,7 @@
             this.NotificationsTab.Location = new System.Drawing.Point(4, 22);
             this.NotificationsTab.Name = "NotificationsTab";
             this.NotificationsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.NotificationsTab.Size = new System.Drawing.Size(391, 254);
+            this.NotificationsTab.Size = new System.Drawing.Size(415, 254);
             this.NotificationsTab.TabIndex = 1;
             this.NotificationsTab.Text = "Notifications";
             this.NotificationsTab.UseVisualStyleBackColor = true;
@@ -124,13 +127,16 @@
             // NotificationsView
             // 
             this.NotificationsView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.NotificationsView.Location = new System.Drawing.Point(3, 73);
+            this.NotificationsView.Location = new System.Drawing.Point(3, 96);
             this.NotificationsView.Name = "NotificationsView";
-            this.NotificationsView.Size = new System.Drawing.Size(385, 178);
+            this.NotificationsView.Size = new System.Drawing.Size(409, 155);
             this.NotificationsView.TabIndex = 1;
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.AuthenticationKeyAsciiCb);
+            this.panel3.Controls.Add(this.AuthenticationKeyTB);
+            this.panel3.Controls.Add(this.AuthenticationKeyLbl);
             this.panel3.Controls.Add(this.BlockCipherKeyAsciiCb);
             this.panel3.Controls.Add(this.SystemTitleAsciiCb);
             this.panel3.Controls.Add(this.SystemTitleLbl);
@@ -140,14 +146,14 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(3, 3);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(385, 70);
+            this.panel3.Size = new System.Drawing.Size(409, 93);
             this.panel3.TabIndex = 0;
             // 
             // BlockCipherKeyAsciiCb
             // 
             this.BlockCipherKeyAsciiCb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.BlockCipherKeyAsciiCb.AutoSize = true;
-            this.BlockCipherKeyAsciiCb.Location = new System.Drawing.Point(321, 35);
+            this.BlockCipherKeyAsciiCb.Location = new System.Drawing.Point(345, 35);
             this.BlockCipherKeyAsciiCb.Name = "BlockCipherKeyAsciiCb";
             this.BlockCipherKeyAsciiCb.Size = new System.Drawing.Size(53, 17);
             this.BlockCipherKeyAsciiCb.TabIndex = 6;
@@ -159,7 +165,7 @@
             // 
             this.SystemTitleAsciiCb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.SystemTitleAsciiCb.AutoSize = true;
-            this.SystemTitleAsciiCb.Location = new System.Drawing.Point(321, 8);
+            this.SystemTitleAsciiCb.Location = new System.Drawing.Point(345, 8);
             this.SystemTitleAsciiCb.Name = "SystemTitleAsciiCb";
             this.SystemTitleAsciiCb.Size = new System.Drawing.Size(53, 17);
             this.SystemTitleAsciiCb.TabIndex = 5;
@@ -180,9 +186,9 @@
             // 
             this.SystemTitleTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.SystemTitleTB.Location = new System.Drawing.Point(100, 7);
+            this.SystemTitleTB.Location = new System.Drawing.Point(111, 7);
             this.SystemTitleTB.Name = "SystemTitleTB";
-            this.SystemTitleTB.Size = new System.Drawing.Size(215, 20);
+            this.SystemTitleTB.Size = new System.Drawing.Size(228, 20);
             this.SystemTitleTB.TabIndex = 2;
             // 
             // BlockCipherKeyLbl
@@ -198,9 +204,9 @@
             // 
             this.BlockCipherKeyTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.BlockCipherKeyTB.Location = new System.Drawing.Point(101, 32);
+            this.BlockCipherKeyTB.Location = new System.Drawing.Point(111, 32);
             this.BlockCipherKeyTB.Name = "BlockCipherKeyTB";
-            this.BlockCipherKeyTB.Size = new System.Drawing.Size(214, 20);
+            this.BlockCipherKeyTB.Size = new System.Drawing.Size(228, 20);
             this.BlockCipherKeyTB.TabIndex = 0;
             // 
             // ExternalMediasTab
@@ -312,13 +318,40 @@
             this.AddBtn.UseVisualStyleBackColor = true;
             this.AddBtn.Click += new System.EventHandler(this.AddBtn_Click);
             // 
+            // AuthenticationKeyAsciiCb
+            // 
+            this.AuthenticationKeyAsciiCb.AutoSize = true;
+            this.AuthenticationKeyAsciiCb.Location = new System.Drawing.Point(345, 60);
+            this.AuthenticationKeyAsciiCb.Name = "AuthenticationKeyAsciiCb";
+            this.AuthenticationKeyAsciiCb.Size = new System.Drawing.Size(53, 17);
+            this.AuthenticationKeyAsciiCb.TabIndex = 47;
+            this.AuthenticationKeyAsciiCb.Text = "ASCII";
+            this.AuthenticationKeyAsciiCb.UseVisualStyleBackColor = true;
+            this.AuthenticationKeyAsciiCb.CheckedChanged += new System.EventHandler(this.AuthenticationKeyAsciiCb_CheckedChanged);
+            // 
+            // AuthenticationKeyTB
+            // 
+            this.AuthenticationKeyTB.Location = new System.Drawing.Point(111, 58);
+            this.AuthenticationKeyTB.Name = "AuthenticationKeyTB";
+            this.AuthenticationKeyTB.Size = new System.Drawing.Size(226, 20);
+            this.AuthenticationKeyTB.TabIndex = 46;
+            // 
+            // AuthenticationKeyLbl
+            // 
+            this.AuthenticationKeyLbl.AutoSize = true;
+            this.AuthenticationKeyLbl.Location = new System.Drawing.Point(6, 61);
+            this.AuthenticationKeyLbl.Name = "AuthenticationKeyLbl";
+            this.AuthenticationKeyLbl.Size = new System.Drawing.Size(99, 13);
+            this.AuthenticationKeyLbl.TabIndex = 48;
+            this.AuthenticationKeyLbl.Text = "Authentication Key:";
+            // 
             // GXSettingsDlg
             // 
             this.AcceptButton = this.OKBtn;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.CancelBtn;
-            this.ClientSize = new System.Drawing.Size(399, 319);
+            this.ClientSize = new System.Drawing.Size(423, 319);
             this.Controls.Add(this.Tabs);
             this.Controls.Add(this.panel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -367,5 +400,8 @@
         private System.Windows.Forms.TextBox SystemTitleTB;
         private System.Windows.Forms.CheckBox BlockCipherKeyAsciiCb;
         private System.Windows.Forms.CheckBox SystemTitleAsciiCb;
+        private System.Windows.Forms.CheckBox AuthenticationKeyAsciiCb;
+        private System.Windows.Forms.TextBox AuthenticationKeyTB;
+        private System.Windows.Forms.Label AuthenticationKeyLbl;
     }
 }

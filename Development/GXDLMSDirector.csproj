@@ -132,11 +132,11 @@
     <Reference Include="Gurux.Common, Version=8.1.2002.1903, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Common.8.1.2002.1903\lib\net40\Gurux.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=9.0.2005.1401, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.9.0.2005.1401\lib\net40\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=9.0.2006.201, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.9.0.2006.201\lib\net40\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=9.0.2005.1402, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.9.0.2005.1402\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=9.0.2006.201, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.9.0.2006.201\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.Net, Version=8.1.2002.1902, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Net.8.1.2002.1902\lib\net40\Gurux.Net.dll</HintPath>
@@ -170,6 +170,14 @@
     </Compile>
     <Compile Include="DLMSTranslatorForm.Designer.cs">
       <DependentUpon>DLMSTranslatorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Macro\UserActionType.cs" />
+    <Compile Include="Macro\GXMacro.cs" />
+    <Compile Include="Macro\GXMacroEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Macro\GXMacroEditor.Designer.cs">
+      <DependentUpon>GXMacroEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="GXConformanceEditor.cs" />
     <Compile Include="GXConformanceValueConverter.cs" />
@@ -277,6 +285,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="DLMSTranslatorForm.resx">
       <DependentUpon>DLMSTranslatorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Macro\GXMacroEditor.resx">
+      <DependentUpon>GXMacroEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GXSerialMonitor.resx">
       <DependentUpon>GXSerialMonitor.cs</DependentUpon>
@@ -429,6 +440,7 @@
     <Content Include="GXDLMSDirector.ico" />
     <None Include="Resources\NotifyMnu.bmp" />
     <None Include="Resources\cct.png" />
+    <None Include="Resources\record.bmp" />
     <Content Include="Resources\warning.ico" />
   </ItemGroup>
   <ItemGroup>

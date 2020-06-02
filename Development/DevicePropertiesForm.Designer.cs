@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11156 $,
-//                  $Date: 2019-11-19 13:18:00 +0200 (ti, 19 marras 2019) $
+// Version:         $Revision: 11785 $,
+//                  $Date: 2020-06-02 12:19:18 +0300 (ti, 02 kesä 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -176,6 +176,7 @@ namespace GXDLMSDirector
             this.SerialPortCB = new System.Windows.Forms.ComboBox();
             this.DeviceTab = new System.Windows.Forms.TabControl();
             this.AdvancedTab = new System.Windows.Forms.TabPage();
+            this.UseProtectedReleaseCb = new System.Windows.Forms.CheckBox();
             this.InactivityTimeoutTb = new System.Windows.Forms.TextBox();
             this.InactivityTimeoutLbl = new System.Windows.Forms.Label();
             this.ServiceClassCb = new System.Windows.Forms.ComboBox();
@@ -215,7 +216,6 @@ namespace GXDLMSDirector
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.helpProvider1 = new System.Windows.Forms.HelpProvider();
             this.conformanceHelpProvider = new System.Windows.Forms.HelpProvider();
-            this.UseProtectedReleaseCb = new System.Windows.Forms.CheckBox();
             this.SupportedServicesTab.SuspendLayout();
             this.SNSettings.SuspendLayout();
             this.LNSettings.SuspendLayout();
@@ -275,9 +275,11 @@ namespace GXDLMSDirector
             // 
             this.SupportedServicesTab.Controls.Add(this.SNSettings);
             this.SupportedServicesTab.Controls.Add(this.LNSettings);
+            this.conformanceHelpProvider.SetHelpNavigator(this.SupportedServicesTab, System.Windows.Forms.HelpNavigator.Topic);
             this.SupportedServicesTab.Location = new System.Drawing.Point(4, 22);
             this.SupportedServicesTab.Name = "SupportedServicesTab";
             this.SupportedServicesTab.Padding = new System.Windows.Forms.Padding(3);
+            this.conformanceHelpProvider.SetShowHelp(this.SupportedServicesTab, true);
             this.SupportedServicesTab.Size = new System.Drawing.Size(472, 388);
             this.SupportedServicesTab.TabIndex = 1;
             this.SupportedServicesTab.Text = "Supported Services";
@@ -296,8 +298,11 @@ namespace GXDLMSDirector
             this.SNSettings.Controls.Add(this.InformationReportCB);
             this.SNSettings.Controls.Add(this.SNDataNotificationCB);
             this.SNSettings.Controls.Add(this.ParameterizedAccessCB);
+            this.conformanceHelpProvider.SetHelpKeyword(this.SNSettings, "Action");
+            this.conformanceHelpProvider.SetHelpNavigator(this.SNSettings, System.Windows.Forms.HelpNavigator.Topic);
             this.SNSettings.Location = new System.Drawing.Point(188, 6);
             this.SNSettings.Name = "SNSettings";
+            this.conformanceHelpProvider.SetShowHelp(this.SNSettings, true);
             this.SNSettings.Size = new System.Drawing.Size(206, 382);
             this.SNSettings.TabIndex = 1;
             this.SNSettings.TabStop = false;
@@ -464,8 +469,11 @@ namespace GXDLMSDirector
             this.LNSettings.Controls.Add(this.SelectiveAccessCB);
             this.LNSettings.Controls.Add(this.EventNotificationCB);
             this.LNSettings.Controls.Add(this.ActionCB);
+            this.conformanceHelpProvider.SetHelpKeyword(this.LNSettings, "Action");
+            this.conformanceHelpProvider.SetHelpNavigator(this.LNSettings, System.Windows.Forms.HelpNavigator.Topic);
             this.LNSettings.Location = new System.Drawing.Point(8, 0);
             this.LNSettings.Name = "LNSettings";
+            this.conformanceHelpProvider.SetShowHelp(this.LNSettings, true);
             this.LNSettings.Size = new System.Drawing.Size(172, 382);
             this.LNSettings.TabIndex = 0;
             this.LNSettings.TabStop = false;
@@ -988,7 +996,8 @@ namespace GXDLMSDirector
             this.DeviceSettingsTab.Controls.Add(this.NetworkSettingsGB);
             this.DeviceSettingsTab.Controls.Add(this.TerminalSettingsGB);
             this.DeviceSettingsTab.Controls.Add(this.SerialSettingsGB);
-            this.helpProvider1.SetHelpKeyword(this.DeviceSettingsTab, "main");
+            this.helpProvider1.SetHelpKeyword(this.DeviceSettingsTab, "Advanced");
+            this.helpProvider1.SetHelpNavigator(this.DeviceSettingsTab, System.Windows.Forms.HelpNavigator.Topic);
             this.DeviceSettingsTab.Location = new System.Drawing.Point(4, 22);
             this.DeviceSettingsTab.Name = "DeviceSettingsTab";
             this.DeviceSettingsTab.Padding = new System.Windows.Forms.Padding(3);
@@ -1577,9 +1586,12 @@ namespace GXDLMSDirector
             this.DeviceTab.Controls.Add(this.CipheringTab);
             this.DeviceTab.Controls.Add(this.GatewayTab);
             this.DeviceTab.Controls.Add(this.XmlTab);
+            this.helpProvider1.SetHelpKeyword(this.DeviceTab, "DeviceProperties");
+            this.helpProvider1.SetHelpNavigator(this.DeviceTab, System.Windows.Forms.HelpNavigator.Topic);
             this.DeviceTab.Location = new System.Drawing.Point(0, 0);
             this.DeviceTab.Name = "DeviceTab";
             this.DeviceTab.SelectedIndex = 0;
+            this.helpProvider1.SetShowHelp(this.DeviceTab, true);
             this.DeviceTab.Size = new System.Drawing.Size(480, 414);
             this.DeviceTab.TabIndex = 0;
             this.DeviceTab.SelectedIndexChanged += new System.EventHandler(this.DeviceTab_SelectedIndexChanged);
@@ -1602,7 +1614,7 @@ namespace GXDLMSDirector
             this.AdvancedTab.Controls.Add(this.groupBox1);
             this.AdvancedTab.Controls.Add(this.UseUtcTimeZone);
             this.helpProvider1.SetHelpKeyword(this.AdvancedTab, "advanced");
-            this.helpProvider1.SetHelpNavigator(this.AdvancedTab, System.Windows.Forms.HelpNavigator.TopicId);
+            this.helpProvider1.SetHelpNavigator(this.AdvancedTab, System.Windows.Forms.HelpNavigator.Topic);
             this.AdvancedTab.Location = new System.Drawing.Point(4, 22);
             this.AdvancedTab.Name = "AdvancedTab";
             this.AdvancedTab.Padding = new System.Windows.Forms.Padding(3);
@@ -1611,6 +1623,18 @@ namespace GXDLMSDirector
             this.AdvancedTab.TabIndex = 3;
             this.AdvancedTab.Text = "Advanced";
             this.AdvancedTab.UseVisualStyleBackColor = true;
+            // 
+            // UseProtectedReleaseCb
+            // 
+            this.UseProtectedReleaseCb.AutoSize = true;
+            this.helpProvider1.SetHelpString(this.UseProtectedReleaseCb, "Is protected release used.");
+            this.UseProtectedReleaseCb.Location = new System.Drawing.Point(16, 351);
+            this.UseProtectedReleaseCb.Name = "UseProtectedReleaseCb";
+            this.helpProvider1.SetShowHelp(this.UseProtectedReleaseCb, true);
+            this.UseProtectedReleaseCb.Size = new System.Drawing.Size(130, 17);
+            this.UseProtectedReleaseCb.TabIndex = 59;
+            this.UseProtectedReleaseCb.Text = "Use protected release";
+            this.UseProtectedReleaseCb.UseVisualStyleBackColor = true;
             // 
             // InactivityTimeoutTb
             // 
@@ -1744,7 +1768,7 @@ namespace GXDLMSDirector
             this.groupBox1.Controls.Add(this.ServerAddressSizeCb);
             this.groupBox1.Controls.Add(this.label5);
             this.helpProvider1.SetHelpKeyword(this.groupBox1, "advanced");
-            this.helpProvider1.SetHelpNavigator(this.groupBox1, System.Windows.Forms.HelpNavigator.TopicId);
+            this.helpProvider1.SetHelpNavigator(this.groupBox1, System.Windows.Forms.HelpNavigator.Topic);
             this.groupBox1.Location = new System.Drawing.Point(6, 6);
             this.groupBox1.Name = "groupBox1";
             this.helpProvider1.SetShowHelp(this.groupBox1, true);
@@ -2010,18 +2034,6 @@ namespace GXDLMSDirector
             // conformanceHelpProvider
             // 
             this.conformanceHelpProvider.HelpNamespace = "https://www.gurux.fi/Gurux.DLMS.Conformance";
-            // 
-            // UseProtectedReleaseCb
-            // 
-            this.UseProtectedReleaseCb.AutoSize = true;
-            this.helpProvider1.SetHelpString(this.UseProtectedReleaseCb, "Is protected release used.");
-            this.UseProtectedReleaseCb.Location = new System.Drawing.Point(16, 351);
-            this.UseProtectedReleaseCb.Name = "UseProtectedReleaseCb";
-            this.helpProvider1.SetShowHelp(this.UseProtectedReleaseCb, true);
-            this.UseProtectedReleaseCb.Size = new System.Drawing.Size(130, 17);
-            this.UseProtectedReleaseCb.TabIndex = 59;
-            this.UseProtectedReleaseCb.Text = "Use protected release";
-            this.UseProtectedReleaseCb.UseVisualStyleBackColor = true;
             // 
             // DevicePropertiesForm
             // 

@@ -106,7 +106,7 @@ namespace GXDLMSDirector
         private String RemoveComments(String data)
         {
             StringBuilder sb = new StringBuilder();
-            foreach (String it in data.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (String it in data.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
             {
                 if (!it.StartsWith("#"))
                 {
@@ -116,13 +116,13 @@ namespace GXDLMSDirector
                         if (pos != -1)
                         {
                             sb.Append(it.Substring(pos));
-                            sb.Append("\r\n");
+                            sb.Append(Environment.NewLine);
                         }
                     }
                     else
                     {
                         sb.Append(it);
-                        sb.Append("\r\n");
+                        sb.Append(Environment.NewLine);
                     }
                 }
             }
@@ -187,7 +187,7 @@ namespace GXDLMSDirector
             {
                 translator.Security = s;
                 MessageXmlTB.AppendText(sb.ToString());
-                MessageXmlTB.AppendText("\r\n");
+                MessageXmlTB.AppendText(Environment.NewLine);
                 MessageXmlTB.AppendText(bb.RemainingHexString(true));
 
                 MessageBox.Show(this, ex.Message);

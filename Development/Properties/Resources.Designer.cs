@@ -255,6 +255,15 @@ namespace GXDLMSDirector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Gurux GXDLMSDirector macro (*.gxm)|*.gxm|All files (*.*)|*.*.
+        /// </summary>
+        internal static string MacroFilterTxt {
+            get {
+                return ResourceManager.GetString("MacroFilterTxt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Install Manufacturer Settings first..
         /// </summary>
         internal static string ManufacturerSettingsMissing {
@@ -346,6 +355,16 @@ namespace GXDLMSDirector.Properties {
         internal static string ReadyTxt {
             get {
                 return ResourceManager.GetString("ReadyTxt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap record {
+            get {
+                object obj = ResourceManager.GetObject("record", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

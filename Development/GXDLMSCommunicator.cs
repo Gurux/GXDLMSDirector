@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 11785 $,
-//                  $Date: 2020-06-02 12:19:18 +0300 (ti, 02 kesä 2020) $
+// Version:         $Revision: 11805 $,
+//                  $Date: 2020-06-04 08:55:58 +0300 (to, 04 kesä 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1495,6 +1495,7 @@ namespace GXDLMSDirector
                         try
                         {
                             GXDLMSTranslator t = new GXDLMSTranslator();
+                            t.Hex = false;
                             string xml = null;
                             xml = t.PduToXml(value);
                             XmlDocument doc2 = new XmlDocument();

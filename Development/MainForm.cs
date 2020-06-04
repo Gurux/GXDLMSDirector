@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11785 $,
-//                  $Date: 2020-06-02 12:19:18 +0300 (ti, 02 kesä 2020) $
+// Version:         $Revision: 11805 $,
+//                  $Date: 2020-06-04 08:55:58 +0300 (to, 04 kesä 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -929,6 +929,7 @@ namespace GXDLMSDirector
                 do
                 {
                     GXDLMSTranslator t = new GXDLMSTranslator();
+                    t.Hex = false;
                     string xml = null;
                     object xmlValue = null;
                     PduEventHandler p = new PduEventHandler(delegate (object sender1, byte[] value)
@@ -959,18 +960,27 @@ namespace GXDLMSDirector
                         }
                         catch (Exception ex)
                         {
-                            Error.ShowError(this, ex);
+                            Error.ShowError(null, ex);
                         }
                     });
-
-                    ve.Client.OnPdu += p;
+                    if (MacroEditor.Record)
+                    {
+                        ve.Client.OnPdu += p;
+                    }
+                    else
+                    {
+                        p = null;
+                    }
                     try
                     {
                         btn.View.PreAction(ve);
                     }
                     finally
                     {
-                        ve.Client.OnPdu -= p;
+                        if (p != null)
+                        {
+                            ve.Client.OnPdu -= p;
+                        }
                     }
                     if (ve.Exception != null)
                     {
@@ -2370,60 +2380,60 @@ namespace GXDLMSDirector
 
         private void InvokeAction(GXDLMSClient cl, UserActionType type, GXDLMSObject sender, int index, object value, object data, object parameters, Exception ex)
         {
-            string external = null;
-            string name;
-            if (type == UserActionType.Action)
-            {
-                name = sender.ToString() + " " + sender.LogicalName + ":" + (sender as IGXDLMSBase).GetMethodNames()[index - 1] + " (" + index + ")";
-            }
-            else
-            {
-                name = sender.ToString() + " " + sender.LogicalName + ":" + (sender as IGXDLMSBase).GetNames()[index - 1] + " (" + index + ")";
-            }
-            if (type == UserActionType.Get)
-            {
-                if (value == null)
-                {
-                    value = sender.GetValues()[index - 1];
-                }
-                //Save capture objects for profile generic.
-                if (sender is GXDLMSProfileGeneric && index == 2)
-                {
-                    ValueEventArgs e = new ValueEventArgs(sender, 3, 0, null);
-                    GXByteBuffer bb = new GXByteBuffer((byte[])((IGXDLMSBase)sender).GetValue(cl.Settings, e));
-                    //Skip data type.
-                    bb.Position = 1;
-                    external = GXDLMSTranslator.ValueToXml(cl.ChangeType(bb, DataType.Array));
-                }
-                if (parameters != null)
-                {
-                    parameters = GXDLMSTranslator.ValueToXml(parameters);
-                }
-            }
-            else if (type == UserActionType.Set && value == null)
-            {
-                value = sender.GetValues()[index - 1];
-                ValueEventArgs e = new ValueEventArgs(sender, index, 0, null);
-                data = (sender as IGXDLMSBase).GetValue(null, e);
-                if (data != null && data.GetType().IsEnum)
-                {
-                    data = new GXEnum(Convert.ToByte(data));
-                }
-                if (data is byte[])
-                {
-                    DataType dt = sender.GetDataType(index);
-                    if (dt == DataType.Array || dt == DataType.Structure)
-                    {
-                        GXByteBuffer bb = new GXByteBuffer((byte[])data);
-                        //Skip data type.
-                        bb.Position = 1;
-                        data = cl.ChangeType(bb, dt);
-                    }
-                }
-                data = GXDLMSTranslator.ValueToXml(data);
-            }
             if (MacroEditor.Record)
             {
+                string external = null;
+                string name;
+                if (type == UserActionType.Action)
+                {
+                    name = sender.ToString() + " " + sender.LogicalName + ":" + (sender as IGXDLMSBase).GetMethodNames()[index - 1] + " (" + index + ")";
+                }
+                else
+                {
+                    name = sender.ToString() + " " + sender.LogicalName + ":" + (sender as IGXDLMSBase).GetNames()[index - 1] + " (" + index + ")";
+                }
+                if (type == UserActionType.Get)
+                {
+                    if (value == null)
+                    {
+                        value = sender.GetValues()[index - 1];
+                    }
+                    //Save capture objects for profile generic.
+                    if (sender is GXDLMSProfileGeneric && index == 2)
+                    {
+                        ValueEventArgs e = new ValueEventArgs(sender, 3, 0, null);
+                        GXByteBuffer bb = new GXByteBuffer((byte[])((IGXDLMSBase)sender).GetValue(cl.Settings, e));
+                        //Skip data type.
+                        bb.Position = 1;
+                        external = GXDLMSTranslator.ValueToXml(cl.ChangeType(bb, DataType.Array));
+                    }
+                    if (parameters != null)
+                    {
+                        parameters = GXDLMSTranslator.ValueToXml(parameters);
+                    }
+                }
+                else if (type == UserActionType.Set && value == null)
+                {
+                    value = sender.GetValues()[index - 1];
+                    ValueEventArgs e = new ValueEventArgs(sender, index, 0, null);
+                    data = (sender as IGXDLMSBase).GetValue(null, e);
+                    if (data != null && data.GetType().IsEnum)
+                    {
+                        data = new GXEnum(Convert.ToByte(data));
+                    }
+                    if (data is byte[])
+                    {
+                        DataType dt = sender.GetDataType(index);
+                        if (dt == DataType.Array || dt == DataType.Structure)
+                        {
+                            GXByteBuffer bb = new GXByteBuffer((byte[])data);
+                            //Skip data type.
+                            bb.Position = 1;
+                            data = cl.ChangeType(bb, dt);
+                        }
+                    }
+                    data = GXDLMSTranslator.ValueToXml(data);
+                }
                 MacroEditor.AddAction(new GXMacro()
                 {
                     ObjectType = (int)sender.ObjectType,

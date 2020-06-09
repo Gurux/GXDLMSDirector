@@ -55,11 +55,13 @@
             this.Trace.Location = new System.Drawing.Point(15, 37);
             this.Trace.Multiline = true;
             this.Trace.Name = "Trace";
+            this.Trace.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.Trace.Size = new System.Drawing.Size(451, 191);
             this.Trace.TabIndex = 2;
             // 
             // ClearBtb
             // 
+            this.ClearBtb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ClearBtb.Location = new System.Drawing.Point(391, 230);
             this.ClearBtb.Name = "ClearBtb";
             this.ClearBtb.Size = new System.Drawing.Size(75, 23);
@@ -100,7 +102,7 @@
             // 
             // HexCb
             // 
-            this.HexCb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.HexCb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.HexCb.AutoSize = true;
             this.HexCb.Location = new System.Drawing.Point(15, 234);
             this.HexCb.Name = "HexCb";

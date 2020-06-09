@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 11805 $,
-//                  $Date: 2020-06-04 08:55:58 +0300 (to, 04 kesä 2020) $
+// Version:         $Revision: 11825 $,
+//                  $Date: 2020-06-09 10:05:11 +0300 (ti, 09 kesä 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -769,6 +769,7 @@ namespace GXDLMSDirector
             client.UseLogicalNameReferencing = this.parent.UseLogicalNameReferencing;
             client.ProposedConformance = (Conformance)parent.Conformance;
             client.UseUtc2NormalTime = parent.UtcTimeZone;
+            client.DateTimeSkips = parent.DateTimeSkips;
             //Show media verbose.
             if (this.parent.Verbose && media.Trace != System.Diagnostics.TraceLevel.Verbose)
             {
@@ -1500,9 +1501,13 @@ namespace GXDLMSDirector
                             xml = t.PduToXml(value);
                             XmlDocument doc2 = new XmlDocument();
                             doc2.LoadXml(xml);
-                            xml = doc2.GetElementsByTagName("AccessParameters")[0].InnerXml;
-                            int type = int.Parse(doc2.GetElementsByTagName("AccessSelector")[0].Attributes[0].Value);
-                            parameters = new GXStructure() { type, GXDLMSTranslator.XmlToValue(xml) };
+                            var tags = doc2.GetElementsByTagName("AccessParameters");
+                            if (tags != null && tags.Count != 0)
+                            {
+                                xml = tags[0].InnerXml;
+                                int type = int.Parse(doc2.GetElementsByTagName("AccessSelector")[0].Attributes[0].Value);
+                                parameters = new GXStructure() { type, GXDLMSTranslator.XmlToValue(xml) };
+                            }
                         }
                         catch (Exception)
                         {

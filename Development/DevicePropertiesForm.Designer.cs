@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11785 $,
-//                  $Date: 2020-06-02 12:19:18 +0300 (ti, 02 kesä 2020) $
+// Version:         $Revision: 11825 $,
+//                  $Date: 2020-06-09 10:05:11 +0300 (ti, 09 kesä 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -176,6 +176,8 @@ namespace GXDLMSDirector
             this.SerialPortCB = new System.Windows.Forms.ComboBox();
             this.DeviceTab = new System.Windows.Forms.TabControl();
             this.AdvancedTab = new System.Windows.Forms.TabPage();
+            this.IgnoreTimeStatusCb = new System.Windows.Forms.CheckBox();
+            this.IgnoreTimeZoneCb = new System.Windows.Forms.CheckBox();
             this.UseProtectedReleaseCb = new System.Windows.Forms.CheckBox();
             this.InactivityTimeoutTb = new System.Windows.Forms.TextBox();
             this.InactivityTimeoutLbl = new System.Windows.Forms.Label();
@@ -1598,6 +1600,8 @@ namespace GXDLMSDirector
             // 
             // AdvancedTab
             // 
+            this.AdvancedTab.Controls.Add(this.IgnoreTimeStatusCb);
+            this.AdvancedTab.Controls.Add(this.IgnoreTimeZoneCb);
             this.AdvancedTab.Controls.Add(this.UseProtectedReleaseCb);
             this.AdvancedTab.Controls.Add(this.InactivityTimeoutTb);
             this.AdvancedTab.Controls.Add(this.InactivityTimeoutLbl);
@@ -1623,6 +1627,34 @@ namespace GXDLMSDirector
             this.AdvancedTab.TabIndex = 3;
             this.AdvancedTab.Text = "Advanced";
             this.AdvancedTab.UseVisualStyleBackColor = true;
+            // 
+            // IgnoreTimeStatusCb
+            // 
+            this.IgnoreTimeStatusCb.AutoSize = true;
+            this.helpProvider1.SetHelpKeyword(this.IgnoreTimeStatusCb, "IgnoreTimeStatus");
+            this.helpProvider1.SetHelpNavigator(this.IgnoreTimeStatusCb, System.Windows.Forms.HelpNavigator.Topic);
+            this.helpProvider1.SetHelpString(this.IgnoreTimeStatusCb, "");
+            this.IgnoreTimeStatusCb.Location = new System.Drawing.Point(324, 244);
+            this.IgnoreTimeStatusCb.Name = "IgnoreTimeStatusCb";
+            this.helpProvider1.SetShowHelp(this.IgnoreTimeStatusCb, true);
+            this.IgnoreTimeStatusCb.Size = new System.Drawing.Size(115, 17);
+            this.IgnoreTimeStatusCb.TabIndex = 61;
+            this.IgnoreTimeStatusCb.Text = "Ignore Time Status";
+            this.IgnoreTimeStatusCb.UseVisualStyleBackColor = true;
+            // 
+            // IgnoreTimeZoneCb
+            // 
+            this.IgnoreTimeZoneCb.AutoSize = true;
+            this.helpProvider1.SetHelpKeyword(this.IgnoreTimeZoneCb, "IgnoreTimeZone");
+            this.helpProvider1.SetHelpNavigator(this.IgnoreTimeZoneCb, System.Windows.Forms.HelpNavigator.Topic);
+            this.helpProvider1.SetHelpString(this.IgnoreTimeZoneCb, "");
+            this.IgnoreTimeZoneCb.Location = new System.Drawing.Point(208, 244);
+            this.IgnoreTimeZoneCb.Name = "IgnoreTimeZoneCb";
+            this.helpProvider1.SetShowHelp(this.IgnoreTimeZoneCb, true);
+            this.IgnoreTimeZoneCb.Size = new System.Drawing.Size(110, 17);
+            this.IgnoreTimeZoneCb.TabIndex = 60;
+            this.IgnoreTimeZoneCb.Text = "Ignore Time Zone";
+            this.IgnoreTimeZoneCb.UseVisualStyleBackColor = true;
             // 
             // UseProtectedReleaseCb
             // 
@@ -1891,7 +1923,7 @@ namespace GXDLMSDirector
             this.UseUtcTimeZone.AutoSize = true;
             this.helpProvider1.SetHelpKeyword(this.UseUtcTimeZone, "UseUTC");
             this.helpProvider1.SetHelpNavigator(this.UseUtcTimeZone, System.Windows.Forms.HelpNavigator.Topic);
-            this.UseUtcTimeZone.Location = new System.Drawing.Point(16, 246);
+            this.UseUtcTimeZone.Location = new System.Drawing.Point(19, 244);
             this.UseUtcTimeZone.Name = "UseUtcTimeZone";
             this.helpProvider1.SetShowHelp(this.UseUtcTimeZone, true);
             this.UseUtcTimeZone.Size = new System.Drawing.Size(183, 17);
@@ -2244,5 +2276,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ComboBox InterfaceCb;
         private System.Windows.Forms.Label InterfaceLbl;
         private System.Windows.Forms.CheckBox UseProtectedReleaseCb;
+        private System.Windows.Forms.CheckBox IgnoreTimeStatusCb;
+        private System.Windows.Forms.CheckBox IgnoreTimeZoneCb;
     }
 }

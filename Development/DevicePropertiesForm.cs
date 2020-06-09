@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11471 $,
-//                  $Date: 2020-02-12 13:07:50 +0200 (ke, 12 helmi 2020) $
+// Version:         $Revision: 11825 $,
+//                  $Date: 2020-06-09 10:05:11 +0300 (ti, 09 kesä 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -402,6 +402,8 @@ namespace GXDLMSDirector
             InvocationCounterCb.Checked = FrameCounterTb.Text != "";
             ChallengeTB.Text = GXCommon.ToHex(GXCommon.HexToBytes(device.Challenge), true);
             UseUtcTimeZone.Checked = device.UtcTimeZone;
+            IgnoreTimeZoneCb.Checked = (device.DateTimeSkips & DateTimeSkips.Deviation) != 0;
+            IgnoreTimeStatusCb.Checked = (device.DateTimeSkips & DateTimeSkips.Status) != 0;
             if (!string.IsNullOrEmpty(device.Password))
             {
                 PasswordTB.Text = ASCIIEncoding.ASCII.GetString(CryptHelper.Decrypt(device.Password, Password.Key));
@@ -845,7 +847,15 @@ namespace GXDLMSDirector
             device.Verbose = VerboseModeCB.Checked;
             device.MaximumBaudRate = 0;
             device.UtcTimeZone = UseUtcTimeZone.Checked;
-
+            device.DateTimeSkips = DateTimeSkips.None;
+            if (IgnoreTimeZoneCb.Checked)
+            {
+                device.DateTimeSkips |= DateTimeSkips.Deviation;
+            }
+            if (IgnoreTimeStatusCb.Checked)
+            {
+                device.DateTimeSkips |= DateTimeSkips.Status;
+            }
             if (SelectedMedia is GXSerial)
             {
                 device.UseRemoteSerial = false;

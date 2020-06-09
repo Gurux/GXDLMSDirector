@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11805 $,
-//                  $Date: 2020-06-04 08:55:58 +0300 (to, 04 kesä 2020) $
+// Version:         $Revision: 11825 $,
+//                  $Date: 2020-06-09 10:05:11 +0300 (ti, 09 kesä 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -3241,6 +3241,19 @@ namespace GXDLMSDirector
                     if (dev.UseLogicalNameReferencing && dev.Conformance == (int)GXDLMSClient.GetInitialConformance(false))
                     {
                         dev.Conformance = (int)GXDLMSClient.GetInitialConformance(dev.UseLogicalNameReferencing);
+                    }
+                    if ((dev.Conformance & (int)(Conformance.ReservedZero | Conformance.ReservedSix | Conformance.ReservedSeven)) != 0)
+                    {
+                       // dev.Conformance = (int)GXDLMSClient.GetInitialConformance(dev.UseLogicalNameReferencing);
+                        //Old conformance. Swap bits.
+                        int v = 0;
+                        for (int pos = 0; pos != 24; ++pos)
+                        {
+                            v = ((v << 1) | (dev.Conformance & 0x01));
+                            dev.Conformance = (dev.Conformance >> 1);
+                        }
+                        dev.Conformance = v;
+                        d.Comm.client.ProposedConformance = (Conformance) dev.Conformance;
                     }
                     d.Comm.parentForm = this;
                     d.Manufacturers = this.Manufacturers;

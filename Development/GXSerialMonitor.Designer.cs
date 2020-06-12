@@ -126,6 +126,7 @@
             this.Controls.Add(this.label1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "GXSerialMonitor";
+            this.ShowInTaskbar = false;
             this.Text = "Serial Monitor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.GXSerialMonitor_FormClosing);
             this.ResumeLayout(false);

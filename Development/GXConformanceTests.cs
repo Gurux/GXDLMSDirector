@@ -4948,7 +4948,7 @@ namespace GXDLMSDirector
                 GXByteBuffer bb = new GXByteBuffer();
                 if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
                 {
-                    bb.SetHexString("E6E600601DA10906075F857504070203BE10040E01000000065F1F04007C1BA0FFFF");
+                    bb.SetHexString("601DA10906075F857504070203BE10040E01000000065F1F04007C1BA0FFFF");
                     dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(Command.Aarq, bb), "COSEM Application test #5. AARQ", 1, tryCount, reply);
                 }
                 else

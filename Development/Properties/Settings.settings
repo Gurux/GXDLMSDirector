@@ -155,5 +155,11 @@
     <Setting Name="NotifyAuthenticationKey" Type="System.String" Scope="User">
       <Value Profile="(Default)">D0D1D2D3D4D5D6D7D8D9DADBDCDDDEDF</Value>
     </Setting>
+    <Setting Name="MacroEditorInvokeCount" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="UseMeterTimeZone" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -142,17 +142,14 @@
       <HintPath>packages\Gurux.DLMS.9.0.2006.1201\lib\net46\Gurux.DLMS.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Gurux.DLMS.AMI.Messages, Version=8.1.2006.1201, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.AMI.Messages.8.1.2006.1201\lib\net46\Gurux.DLMS.AMI.Messages.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Gurux.DLMS.AMI.Messages, Version=8.1.2006.1501, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.AMI.Messages.8.1.2006.1501\lib\net46\Gurux.DLMS.AMI.Messages.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.AMI.UI, Version=8.1.2006.1201, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.AMI.UI.8.1.2006.1201\lib\net46\Gurux.DLMS.AMI.UI.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Gurux.DLMS.AMI.UI, Version=8.1.2006.1501, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.AMI.UI.8.1.2006.1501\lib\net46\Gurux.DLMS.AMI.UI.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=9.0.2006.1201, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.9.0.2006.1201\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Gurux.DLMS.UI, Version=9.0.2006.1701, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.9.0.2006.1701\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.MQTT, Version=8.1.2002.1901, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.MQTT.8.1.2002.1901\lib\net46\Gurux.MQTT.dll</HintPath>
@@ -328,6 +325,12 @@
       <DependentUpon>GXSettingsDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Macro\GXMacro.cs" />
+    <Compile Include="Macro\GXMacroCountDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Macro\GXMacroCountDlg.Designer.cs">
+      <DependentUpon>GXMacroCountDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="Macro\GXMacroEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -412,6 +415,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GXSettingsDlg.resx">
       <DependentUpon>GXSettingsDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Macro\GXMacroCountDlg.resx">
+      <DependentUpon>GXMacroCountDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Macro\GXMacroEditor.resx">
       <DependentUpon>GXMacroEditor.cs</DependentUpon>

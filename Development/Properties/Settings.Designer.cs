@@ -634,5 +634,29 @@ namespace GXDLMSDirector.Properties {
                 this["NotifyAuthenticationKey"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int MacroEditorInvokeCount {
+            get {
+                return ((int)(this["MacroEditorInvokeCount"]));
+            }
+            set {
+                this["MacroEditorInvokeCount"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseMeterTimeZone {
+            get {
+                return ((bool)(this["UseMeterTimeZone"]));
+            }
+            set {
+                this["UseMeterTimeZone"] = value;
+            }
+        }
     }
 }

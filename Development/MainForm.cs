@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11825 $,
-//                  $Date: 2020-06-09 10:05:11 +0300 (ti, 09 kesä 2020) $
+// Version:         $Revision: 11884 $,
+//                  $Date: 2020-06-17 13:39:54 +0300 (ke, 17 kesä 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -329,10 +329,12 @@ namespace GXDLMSDirector
                 DeleteCMnu.Enabled = DeleteMnu.Enabled = DeleteBtn.Enabled = OptionsBtn.Enabled = true;
                 ReadObjectMnu.Enabled = false;
                 AddToScheduleMenu.Visible = true;
+                MacroEditorMnu.Enabled = false;
             }
             else
             {
                 AddToScheduleMenu.Visible = false;
+                MacroEditorMnu.Enabled = true;
                 if (selectedDevice != null && selectedDevice != device)
                 {
                     receivedTraceData.Clear();
@@ -1868,6 +1870,7 @@ namespace GXDLMSDirector
                 Properties.Settings.Default.TraceType = traceLevel;
                 Properties.Settings.Default.NotificationType = notificationLevel;
                 Properties.Settings.Default.ForceRead = ForceReadMnu.Checked;
+                Properties.Settings.Default.UseMeterTimeZone = UseMeterTimeZoneMnu.Checked;
                 Properties.Settings.Default.NotificationAutoReset = AutoReset.Checked;
 
                 Properties.Settings.Default.LogComments = LogCommentsMenu.Checked;
@@ -2009,6 +2012,9 @@ namespace GXDLMSDirector
 
                 ForceReadMnu.Checked = !Properties.Settings.Default.ForceRead;
                 ForceReadMnu_Click(null, null);
+                UseMeterTimeZoneMnu.Checked = !Properties.Settings.Default.UseMeterTimeZone;
+                UseMeterTimeZoneMnu_Click(null, null);
+
                 AutoReset.Checked = !Properties.Settings.Default.NotificationAutoReset;
                 AutoReset_Click(null, null);
 
@@ -6943,6 +6949,18 @@ namespace GXDLMSDirector
             {
                 Error.ShowError(this, Ex);
             }
+        }
+
+        /// <summary>
+        /// Date times are shown using date time of the meter.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void UseMeterTimeZoneMnu_Click(object sender, EventArgs e)
+        {
+            UseMeterTimeZoneMnu.Checked = !UseMeterTimeZoneMnu.Checked;
+            UseMeterTimeZoneBtn.Checked = UseMeterTimeZoneMnu.Checked;
+            GXDlmsUi.UseMeterTimeZone = UseMeterTimeZoneMnu.Checked;
         }
     }
 }

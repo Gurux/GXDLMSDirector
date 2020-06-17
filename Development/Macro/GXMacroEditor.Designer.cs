@@ -63,6 +63,9 @@
             this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripSeparator();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.EditMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.FindNextMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.FindMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem11 = new System.Windows.Forms.ToolStripSeparator();
             this.VerifyReplyMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.IgnoreReplyMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.DisableMnu = new System.Windows.Forms.ToolStripMenuItem();
@@ -73,6 +76,7 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.runNTimesMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.recordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.HideSucceededMnu = new System.Windows.Forms.ToolStripMenuItem();
@@ -114,9 +118,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.StatusLbl = new System.Windows.Forms.ToolStripStatusLabel();
-            this.FindMnu = new System.Windows.Forms.ToolStripMenuItem();
-            this.FindNextMnu = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem11 = new System.Windows.Forms.ToolStripSeparator();
+            this.runNTimesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ActionMenu.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -148,10 +150,11 @@
             this.toolStripMenuItem19,
             this.RunMnu,
             this.runSelectedToolStripMenuItem1,
+            this.runNTimesToolStripMenuItem,
             this.toolStripMenuItem4,
             this.RecordMnu});
             this.ActionMenu.Name = "contextMenuStrip1";
-            this.ActionMenu.Size = new System.Drawing.Size(215, 342);
+            this.ActionMenu.Size = new System.Drawing.Size(215, 386);
             this.ActionMenu.Opening += new System.ComponentModel.CancelEventHandler(this.ActionMenu_Opening);
             // 
             // NewMnu
@@ -394,10 +397,33 @@
             this.toolStripMenuItem1,
             this.runToolStripMenuItem,
             this.runSelectedToolStripMenuItem,
+            this.runNTimesMnu,
             this.recordToolStripMenuItem});
             this.EditMnu.Name = "EditMnu";
             this.EditMnu.Size = new System.Drawing.Size(39, 20);
             this.EditMnu.Text = "&Edit";
+            // 
+            // FindNextMnu
+            // 
+            this.FindNextMnu.Name = "FindNextMnu";
+            this.FindNextMnu.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
+            this.FindNextMnu.Size = new System.Drawing.Size(214, 22);
+            this.FindNextMnu.Text = "Find Next";
+            this.FindNextMnu.Click += new System.EventHandler(this.FindNextMnu_Click);
+            // 
+            // FindMnu
+            // 
+            this.FindMnu.Enabled = false;
+            this.FindMnu.Name = "FindMnu";
+            this.FindMnu.ShortcutKeys = System.Windows.Forms.Keys.F3;
+            this.FindMnu.Size = new System.Drawing.Size(214, 22);
+            this.FindMnu.Text = "Find...";
+            this.FindMnu.Click += new System.EventHandler(this.FindMnu_Click);
+            // 
+            // toolStripMenuItem11
+            // 
+            this.toolStripMenuItem11.Name = "toolStripMenuItem11";
+            this.toolStripMenuItem11.Size = new System.Drawing.Size(211, 6);
             // 
             // VerifyReplyMnu
             // 
@@ -473,6 +499,13 @@
             this.runSelectedToolStripMenuItem.Text = "Run selected";
             this.runSelectedToolStripMenuItem.Click += new System.EventHandler(this.runSelectedToolStripMenuItem_Click);
             // 
+            // runNTimesMnu
+            // 
+            this.runNTimesMnu.Name = "runNTimesMnu";
+            this.runNTimesMnu.Size = new System.Drawing.Size(214, 22);
+            this.runNTimesMnu.Text = "Run N times...";
+            this.runNTimesMnu.Click += new System.EventHandler(this.runNTimesMnu_Click);
+            // 
             // recordToolStripMenuItem
             // 
             this.recordToolStripMenuItem.Name = "recordToolStripMenuItem";
@@ -495,57 +528,57 @@
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "&View";
             // 
-            // IgnoreSucceededMnu
+            // HideSucceededMnu
             // 
-            this.HideSucceededMnu.Name = "IgnoreSucceededMnu";
-            this.HideSucceededMnu.Size = new System.Drawing.Size(180, 22);
+            this.HideSucceededMnu.Name = "HideSucceededMnu";
+            this.HideSucceededMnu.Size = new System.Drawing.Size(159, 22);
             this.HideSucceededMnu.Text = "Hide Succeeded";
             this.HideSucceededMnu.Click += new System.EventHandler(this.HideSucceededMnu_Click);
             // 
-            // IgnoreFailedMnu
+            // HideFailedMnu
             // 
-            this.HideFailedMnu.Name = "IgnoreFailedMnu";
-            this.HideFailedMnu.Size = new System.Drawing.Size(180, 22);
+            this.HideFailedMnu.Name = "HideFailedMnu";
+            this.HideFailedMnu.Size = new System.Drawing.Size(159, 22);
             this.HideFailedMnu.Text = "Hide Failed";
             this.HideFailedMnu.Click += new System.EventHandler(this.HideFailedMnu_Click);
             // 
-            // IgnoreDisabledMnu
+            // HideDisabledMnu
             // 
-            this.HideDisabledMnu.Name = "IgnoreDisabledMnu";
-            this.HideDisabledMnu.Size = new System.Drawing.Size(180, 22);
+            this.HideDisabledMnu.Name = "HideDisabledMnu";
+            this.HideDisabledMnu.Size = new System.Drawing.Size(159, 22);
             this.HideDisabledMnu.Text = "Hide Disabled";
             this.HideDisabledMnu.Click += new System.EventHandler(this.HideDisabledMnu_Click);
             // 
-            // IgnoreVerifiedMnu
+            // HideVerifiedMnu
             // 
-            this.HideVerifiedMnu.Name = "IgnoreVerifiedMnu";
-            this.HideVerifiedMnu.Size = new System.Drawing.Size(180, 22);
+            this.HideVerifiedMnu.Name = "HideVerifiedMnu";
+            this.HideVerifiedMnu.Size = new System.Drawing.Size(159, 22);
             this.HideVerifiedMnu.Text = "Hide Verified";
             this.HideVerifiedMnu.Click += new System.EventHandler(this.HideVerifiedMnu_Click);
             // 
             // toolStripMenuItem8
             // 
             this.toolStripMenuItem8.Name = "toolStripMenuItem8";
-            this.toolStripMenuItem8.Size = new System.Drawing.Size(165, 6);
+            this.toolStripMenuItem8.Size = new System.Drawing.Size(156, 6);
             // 
             // BreakOnErrorMnu
             // 
             this.BreakOnErrorMnu.Name = "BreakOnErrorMnu";
-            this.BreakOnErrorMnu.Size = new System.Drawing.Size(168, 22);
+            this.BreakOnErrorMnu.Size = new System.Drawing.Size(159, 22);
             this.BreakOnErrorMnu.Text = "Break on error";
             this.BreakOnErrorMnu.Click += new System.EventHandler(this.BreakOnErrorMnu_Click);
             // 
             // RawMnu
             // 
             this.RawMnu.Name = "RawMnu";
-            this.RawMnu.Size = new System.Drawing.Size(168, 22);
+            this.RawMnu.Size = new System.Drawing.Size(159, 22);
             this.RawMnu.Text = "Raw";
             this.RawMnu.Click += new System.EventHandler(this.RawMnu_Click);
             // 
             // FollowLastMnu
             // 
             this.FollowLastMnu.Name = "FollowLastMnu";
-            this.FollowLastMnu.Size = new System.Drawing.Size(168, 22);
+            this.FollowLastMnu.Size = new System.Drawing.Size(159, 22);
             this.FollowLastMnu.Text = "Follow Last";
             this.FollowLastMnu.Click += new System.EventHandler(this.FollowLastMnu_Click);
             // 
@@ -851,27 +884,12 @@
             this.StatusLbl.Size = new System.Drawing.Size(39, 17);
             this.StatusLbl.Text = "Ready";
             // 
-            // FindMnu
+            // runNTimesToolStripMenuItem
             // 
-            this.FindMnu.Enabled = false;
-            this.FindMnu.Name = "FindMnu";
-            this.FindMnu.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.FindMnu.Size = new System.Drawing.Size(214, 22);
-            this.FindMnu.Text = "Find...";
-            this.FindMnu.Click += new System.EventHandler(this.FindMnu_Click);
-            // 
-            // FindNextMnu
-            // 
-            this.FindNextMnu.Name = "FindNextMnu";
-            this.FindNextMnu.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
-            this.FindNextMnu.Size = new System.Drawing.Size(214, 22);
-            this.FindNextMnu.Text = "Find Next";
-            this.FindNextMnu.Click += new System.EventHandler(this.FindNextMnu_Click);
-            // 
-            // toolStripMenuItem11
-            // 
-            this.toolStripMenuItem11.Name = "toolStripMenuItem11";
-            this.toolStripMenuItem11.Size = new System.Drawing.Size(211, 6);
+            this.runNTimesToolStripMenuItem.Name = "runNTimesToolStripMenuItem";
+            this.runNTimesToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
+            this.runNTimesToolStripMenuItem.Text = "Run N times...";
+            this.runNTimesToolStripMenuItem.Click += new System.EventHandler(this.runNTimesMnu_Click);
             // 
             // GXMacroView
             // 
@@ -998,5 +1016,7 @@
         private System.Windows.Forms.ToolStripMenuItem FindNextMnu;
         private System.Windows.Forms.ToolStripMenuItem FindMnu;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem11;
+        private System.Windows.Forms.ToolStripMenuItem runNTimesMnu;
+        private System.Windows.Forms.ToolStripMenuItem runNTimesToolStripMenuItem;
     }
 }

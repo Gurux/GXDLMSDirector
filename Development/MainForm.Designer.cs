@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11785 $,
-//                  $Date: 2020-06-02 12:19:18 +0300 (ti, 02 kesä 2020) $
+// Version:         $Revision: 11884 $,
+//                  $Date: 2020-06-17 13:39:54 +0300 (ke, 17 kesä 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -145,7 +145,7 @@ namespace GXDLMSDirector
             this.ManufacturersMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.OBISCodesMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.dLMSTranslatorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ActionsMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.MacroEditorMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.serialMonitorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem13 = new System.Windows.Forms.ToolStripSeparator();
             this.settingsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -327,6 +327,9 @@ namespace GXDLMSDirector
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.DeviceListView = new System.Windows.Forms.TabControl();
             this.DevicesTab = new System.Windows.Forms.TabPage();
+            this.UseMeterTimeZoneMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem33 = new System.Windows.Forms.ToolStripSeparator();
+            this.UseMeterTimeZoneBtn = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -591,6 +594,8 @@ namespace GXDLMSDirector
             this.toolStripMenuItem15,
             this.toolStripSeparator4,
             this.ForceReadMnu,
+            this.UseMeterTimeZoneMnu,
+            this.toolStripMenuItem33,
             this.PropertiesMnu});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
@@ -599,7 +604,7 @@ namespace GXDLMSDirector
             // ViewToolbarMnu
             // 
             this.ViewToolbarMnu.Name = "ViewToolbarMnu";
-            this.ViewToolbarMnu.Size = new System.Drawing.Size(175, 22);
+            this.ViewToolbarMnu.Size = new System.Drawing.Size(186, 22);
             this.ViewToolbarMnu.Text = "ToolBar";
             this.ViewToolbarMnu.ToolTipText = "Show Toolbar.";
             this.ViewToolbarMnu.Click += new System.EventHandler(this.ViewToolbarMnu_Click);
@@ -607,7 +612,7 @@ namespace GXDLMSDirector
             // ViewStatusbarMnu
             // 
             this.ViewStatusbarMnu.Name = "ViewStatusbarMnu";
-            this.ViewStatusbarMnu.Size = new System.Drawing.Size(175, 22);
+            this.ViewStatusbarMnu.Size = new System.Drawing.Size(186, 22);
             this.ViewStatusbarMnu.Text = "&Statusbar";
             this.ViewStatusbarMnu.ToolTipText = "Show Statusbar.";
             this.ViewStatusbarMnu.Click += new System.EventHandler(this.ViewStatusbarMnu_Click);
@@ -615,12 +620,12 @@ namespace GXDLMSDirector
             // toolStripMenuItem12
             // 
             this.toolStripMenuItem12.Name = "toolStripMenuItem12";
-            this.toolStripMenuItem12.Size = new System.Drawing.Size(172, 6);
+            this.toolStripMenuItem12.Size = new System.Drawing.Size(183, 6);
             // 
             // ObjectTreeMnu
             // 
             this.ObjectTreeMnu.Name = "ObjectTreeMnu";
-            this.ObjectTreeMnu.Size = new System.Drawing.Size(175, 22);
+            this.ObjectTreeMnu.Size = new System.Drawing.Size(186, 22);
             this.ObjectTreeMnu.Text = "Object Tree";
             this.ObjectTreeMnu.ToolTipText = "Show object tree.";
             this.ObjectTreeMnu.Click += new System.EventHandler(this.ObjectTreeMnu_Click);
@@ -628,7 +633,7 @@ namespace GXDLMSDirector
             // ObjectListMnu
             // 
             this.ObjectListMnu.Name = "ObjectListMnu";
-            this.ObjectListMnu.Size = new System.Drawing.Size(175, 22);
+            this.ObjectListMnu.Size = new System.Drawing.Size(186, 22);
             this.ObjectListMnu.Text = "Object &List";
             this.ObjectListMnu.ToolTipText = "Show object list.";
             this.ObjectListMnu.Click += new System.EventHandler(this.ObjectListMnu_Click);
@@ -636,7 +641,7 @@ namespace GXDLMSDirector
             // GroupsMnu
             // 
             this.GroupsMnu.Name = "GroupsMnu";
-            this.GroupsMnu.Size = new System.Drawing.Size(175, 22);
+            this.GroupsMnu.Size = new System.Drawing.Size(186, 22);
             this.GroupsMnu.Text = "Groups";
             this.GroupsMnu.ToolTipText = "Group object list by object type.";
             this.GroupsMnu.Click += new System.EventHandler(this.GroupsMnu_Click);
@@ -644,14 +649,14 @@ namespace GXDLMSDirector
             // conformanceTestsToolStripMenuItem1
             // 
             this.conformanceTestsToolStripMenuItem1.Name = "conformanceTestsToolStripMenuItem1";
-            this.conformanceTestsToolStripMenuItem1.Size = new System.Drawing.Size(175, 22);
+            this.conformanceTestsToolStripMenuItem1.Size = new System.Drawing.Size(186, 22);
             this.conformanceTestsToolStripMenuItem1.Text = "&Conformance Tests";
             this.conformanceTestsToolStripMenuItem1.Click += new System.EventHandler(this.conformanceTestsToolStripMenuItem1_Click);
             // 
             // toolStripMenuItem7
             // 
             this.toolStripMenuItem7.Name = "toolStripMenuItem7";
-            this.toolStripMenuItem7.Size = new System.Drawing.Size(172, 6);
+            this.toolStripMenuItem7.Size = new System.Drawing.Size(183, 6);
             // 
             // toolStripMenuItem17
             // 
@@ -666,7 +671,7 @@ namespace GXDLMSDirector
             this.LogMnu,
             this.ClearLogMnu});
             this.toolStripMenuItem17.Name = "toolStripMenuItem17";
-            this.toolStripMenuItem17.Size = new System.Drawing.Size(175, 22);
+            this.toolStripMenuItem17.Size = new System.Drawing.Size(186, 22);
             this.toolStripMenuItem17.Text = "&Log";
             // 
             // LogHexBtn
@@ -748,13 +753,13 @@ namespace GXDLMSDirector
             this.toolStripMenuItem24,
             this.clearTraceMnu});
             this.TraceMnu.Name = "TraceMnu";
-            this.TraceMnu.Size = new System.Drawing.Size(175, 22);
+            this.TraceMnu.Size = new System.Drawing.Size(186, 22);
             this.TraceMnu.Text = "&Trace";
             // 
             // noneToolStripMenuItem
             // 
             this.noneToolStripMenuItem.Name = "noneToolStripMenuItem";
-            this.noneToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.noneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.noneToolStripMenuItem.Text = "&None";
             this.noneToolStripMenuItem.ToolTipText = "Trace is not use,";
             this.noneToolStripMenuItem.Click += new System.EventHandler(this.noneToolStripMenuItem_Click);
@@ -762,7 +767,7 @@ namespace GXDLMSDirector
             // hexToolStripMenuItem
             // 
             this.hexToolStripMenuItem.Name = "hexToolStripMenuItem";
-            this.hexToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.hexToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.hexToolStripMenuItem.Text = "&Hex";
             this.hexToolStripMenuItem.ToolTipText = "Reseived and send bytes are show as hex in trace view.";
             this.hexToolStripMenuItem.Click += new System.EventHandler(this.hexToolStripMenuItem_Click);
@@ -770,7 +775,7 @@ namespace GXDLMSDirector
             // xmlToolStripMenuItem
             // 
             this.xmlToolStripMenuItem.Name = "xmlToolStripMenuItem";
-            this.xmlToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.xmlToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.xmlToolStripMenuItem.Text = "Xml";
             this.xmlToolStripMenuItem.ToolTipText = "Reseived and send bytes are show as xml in trace view.";
             this.xmlToolStripMenuItem.Click += new System.EventHandler(this.xmlToolStripMenuItem_Click);
@@ -778,7 +783,7 @@ namespace GXDLMSDirector
             // pDUToolStripMenuItem
             // 
             this.pDUToolStripMenuItem.Name = "pDUToolStripMenuItem";
-            this.pDUToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.pDUToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.pDUToolStripMenuItem.Text = "&Pdu";
             this.pDUToolStripMenuItem.ToolTipText = "Pdu of reseived and send bytes is shown in trace view.";
             this.pDUToolStripMenuItem.Click += new System.EventHandler(this.pDUToolStripMenuItem_Click);
@@ -786,39 +791,39 @@ namespace GXDLMSDirector
             // TraceCommentsMenu
             // 
             this.TraceCommentsMenu.Name = "TraceCommentsMenu";
-            this.TraceCommentsMenu.Size = new System.Drawing.Size(137, 22);
+            this.TraceCommentsMenu.Size = new System.Drawing.Size(180, 22);
             this.TraceCommentsMenu.Text = "Comments";
             this.TraceCommentsMenu.Click += new System.EventHandler(this.TraceCommentsMenu_Click);
             // 
             // toolStripMenuItem20
             // 
             this.toolStripMenuItem20.Name = "toolStripMenuItem20";
-            this.toolStripMenuItem20.Size = new System.Drawing.Size(134, 6);
+            this.toolStripMenuItem20.Size = new System.Drawing.Size(177, 6);
             // 
             // TraceTimeMnu
             // 
             this.TraceTimeMnu.Name = "TraceTimeMnu";
-            this.TraceTimeMnu.Size = new System.Drawing.Size(137, 22);
+            this.TraceTimeMnu.Size = new System.Drawing.Size(180, 22);
             this.TraceTimeMnu.Text = "&Time";
             this.TraceTimeMnu.Click += new System.EventHandler(this.TraceTimeMnu_Click);
             // 
             // TraceDuration
             // 
             this.TraceDuration.Name = "TraceDuration";
-            this.TraceDuration.Size = new System.Drawing.Size(137, 22);
+            this.TraceDuration.Size = new System.Drawing.Size(180, 22);
             this.TraceDuration.Text = "&Duration";
             this.TraceDuration.Click += new System.EventHandler(this.TraceDuration_Click);
             // 
             // toolStripMenuItem24
             // 
             this.toolStripMenuItem24.Name = "toolStripMenuItem24";
-            this.toolStripMenuItem24.Size = new System.Drawing.Size(134, 6);
+            this.toolStripMenuItem24.Size = new System.Drawing.Size(177, 6);
             // 
             // clearTraceMnu
             // 
             this.clearTraceMnu.Name = "clearTraceMnu";
             this.clearTraceMnu.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.T)));
-            this.clearTraceMnu.Size = new System.Drawing.Size(137, 22);
+            this.clearTraceMnu.Size = new System.Drawing.Size(180, 22);
             this.clearTraceMnu.Text = "&Clear";
             this.clearTraceMnu.Click += new System.EventHandler(this.clearTraceMnu_Click);
             // 
@@ -835,7 +840,7 @@ namespace GXDLMSDirector
             this.toolStripMenuItem23,
             this.ClearNotifications});
             this.toolStripMenuItem15.Name = "toolStripMenuItem15";
-            this.toolStripMenuItem15.Size = new System.Drawing.Size(175, 22);
+            this.toolStripMenuItem15.Size = new System.Drawing.Size(186, 22);
             this.toolStripMenuItem15.Text = "&Notifications";
             // 
             // NotificationNone
@@ -906,12 +911,12 @@ namespace GXDLMSDirector
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(172, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(183, 6);
             // 
             // ForceReadMnu
             // 
             this.ForceReadMnu.Name = "ForceReadMnu";
-            this.ForceReadMnu.Size = new System.Drawing.Size(175, 22);
+            this.ForceReadMnu.Size = new System.Drawing.Size(186, 22);
             this.ForceReadMnu.Text = "Force Read";
             this.ForceReadMnu.ToolTipText = "Are all attributes read from the selected object.";
             this.ForceReadMnu.Click += new System.EventHandler(this.ForceReadMnu_Click);
@@ -919,7 +924,7 @@ namespace GXDLMSDirector
             // PropertiesMnu
             // 
             this.PropertiesMnu.Name = "PropertiesMnu";
-            this.PropertiesMnu.Size = new System.Drawing.Size(175, 22);
+            this.PropertiesMnu.Size = new System.Drawing.Size(186, 22);
             this.PropertiesMnu.Text = "&Properties...";
             this.PropertiesMnu.ToolTipText = "Device properties.";
             this.PropertiesMnu.Click += new System.EventHandler(this.PropertiesMnu_Click);
@@ -939,7 +944,7 @@ namespace GXDLMSDirector
             this.ManufacturersMnu,
             this.OBISCodesMnu,
             this.dLMSTranslatorToolStripMenuItem,
-            this.ActionsMnu,
+            this.MacroEditorMnu,
             this.serialMonitorToolStripMenuItem,
             this.toolStripMenuItem13,
             this.settingsToolStripMenuItem1,
@@ -1038,12 +1043,12 @@ namespace GXDLMSDirector
             this.dLMSTranslatorToolStripMenuItem.Text = "DLMS Translator...";
             this.dLMSTranslatorToolStripMenuItem.Click += new System.EventHandler(this.dLMSTranslatorToolStripMenuItem_Click);
             // 
-            // ActionsMnu
+            // MacroEditorMnu
             // 
-            this.ActionsMnu.Name = "ActionsMnu";
-            this.ActionsMnu.Size = new System.Drawing.Size(180, 22);
-            this.ActionsMnu.Text = "Macro Editor";
-            this.ActionsMnu.Click += new System.EventHandler(this.ActionsMnu_Click);
+            this.MacroEditorMnu.Name = "MacroEditorMnu";
+            this.MacroEditorMnu.Size = new System.Drawing.Size(180, 22);
+            this.MacroEditorMnu.Text = "Macro Editor";
+            this.MacroEditorMnu.Click += new System.EventHandler(this.ActionsMnu_Click);
             // 
             // serialMonitorToolStripMenuItem
             // 
@@ -1445,6 +1450,7 @@ namespace GXDLMSDirector
             this.toolStripSeparator5,
             this.ForceRefreshBtn,
             this.toolStripSeparator6,
+            this.UseMeterTimeZoneBtn,
             this.DeleteBtn,
             this.toolStripButton1});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
@@ -2629,6 +2635,28 @@ namespace GXDLMSDirector
             this.DevicesTab.Text = "Devices";
             this.DevicesTab.UseVisualStyleBackColor = true;
             // 
+            // UseMeterTimeZoneMnu
+            // 
+            this.UseMeterTimeZoneMnu.Name = "UseMeterTimeZoneMnu";
+            this.UseMeterTimeZoneMnu.Size = new System.Drawing.Size(186, 22);
+            this.UseMeterTimeZoneMnu.Text = "Use Meter Time Zone";
+            this.UseMeterTimeZoneMnu.Click += new System.EventHandler(this.UseMeterTimeZoneMnu_Click);
+            // 
+            // toolStripMenuItem33
+            // 
+            this.toolStripMenuItem33.Name = "toolStripMenuItem33";
+            this.toolStripMenuItem33.Size = new System.Drawing.Size(183, 6);
+            // 
+            // UseMeterTimeZoneBtn
+            // 
+            this.UseMeterTimeZoneBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.UseMeterTimeZoneBtn.Image = ((System.Drawing.Image)(resources.GetObject("UseMeterTimeZoneBtn.Image")));
+            this.UseMeterTimeZoneBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.UseMeterTimeZoneBtn.Name = "UseMeterTimeZoneBtn";
+            this.UseMeterTimeZoneBtn.Size = new System.Drawing.Size(23, 22);
+            this.UseMeterTimeZoneBtn.Text = "Use Meter Time Zone";
+            this.UseMeterTimeZoneBtn.Click += new System.EventHandler(this.UseMeterTimeZoneMnu_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2958,7 +2986,10 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ToolStripMenuItem AddToScheduleMenu;
         private System.Windows.Forms.ToolStripMenuItem dLMSTranslatorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem serialMonitorToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem ActionsMnu;
+        private System.Windows.Forms.ToolStripMenuItem MacroEditorMnu;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem33;
+        private System.Windows.Forms.ToolStripMenuItem UseMeterTimeZoneMnu;
+        private System.Windows.Forms.ToolStripButton UseMeterTimeZoneBtn;
     }
 }
 

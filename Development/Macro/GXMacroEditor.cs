@@ -69,6 +69,10 @@ namespace GXDLMSDirector
         Dictionary<GXMacro, GXMacro> Results = new Dictionary<GXMacro, GXMacro>();
         List<GXMacro> Filtered = new List<GXMacro>();
 
+        //When macro is invoked N count this index will describe how many times macro is run.
+        int RunIndex = 1;
+        int RunCount = 1;
+
         public delegate void ConnectEventHandler(GXMacro act);
         public delegate void DisconnectEventHandler(GXMacro act);
         public delegate void GetEventHandler(GXMacro act);
@@ -134,11 +138,11 @@ namespace GXDLMSDirector
             }
             else if (target is GXDLMSObject)
             {
-                dev = (GXDLMSDevice)(target as GXDLMSObject).Parent.Tag;
+                dev = (target as GXDLMSObject).Parent.Tag as GXDLMSDevice;
             }
             else if (target is GXDLMSObjectCollection)
             {
-                dev = (GXDLMSDevice)(target as GXDLMSObjectCollection).Tag;
+                dev = (target as GXDLMSObjectCollection).Tag as GXDLMSDevice;
             }
             return dev;
         }
@@ -163,7 +167,14 @@ namespace GXDLMSDirector
             }
             else if (running)
             {
-                StatusLbl.Text = "Running";
+                if (RunCount != 1)
+                {
+                    StatusLbl.Text = string.Format("Running ({0}/{1}", RunIndex, RunCount);
+                }
+                else
+                {
+                    StatusLbl.Text = "Running";
+                }
             }
             else
             {
@@ -506,7 +517,7 @@ namespace GXDLMSDirector
                                             value = Target.Comm.client.ChangeType(bb, (DataType)macro.DataType);
                                         }
                                     }
-                                    if (macro.ObjectType == (int) ObjectType.ProfileGeneric && macro.Index == 2 && !string.IsNullOrEmpty(macro.External))
+                                    if (macro.ObjectType == (int)ObjectType.ProfileGeneric && macro.Index == 2 && !string.IsNullOrEmpty(macro.External))
                                     {
                                         Target.Comm.client.UpdateValue(obj, 3, GXDLMSTranslator.XmlToValue(macro.External));
                                     }
@@ -1315,7 +1326,7 @@ namespace GXDLMSDirector
             {
                 searchText = searchText.ToLower();
             }
-            for(int pos = index; pos < macros.Count; ++pos)
+            for (int pos = index; pos < macros.Count; ++pos)
             {
                 GXMacro it = macros[pos];
                 if ((searchLn != null && it.LogicalName == searchLn) ||
@@ -1360,6 +1371,40 @@ namespace GXDLMSDirector
             {
                 GXDLMS.Common.Error.ShowError(this, Ex);
             }
+        }
+
+        /// <summary>
+        /// Run macro N times.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void runNTimesMnu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                GXMacroCountDlg dlg = new GXMacroCountDlg();
+                if (dlg.ShowDialog(this) == DialogResult.OK)
+                {
+                    List<int> list = new List<int>();
+                    for (int pos = 0; pos != Macros2.Count; ++pos)
+                    {
+                        list.Add(pos);
+                    }
+                    RunIndex = 0;
+                    RunCount = Properties.Settings.Default.MacroEditorInvokeCount;
+                    for (int pos = 0; pos != Properties.Settings.Default.MacroEditorInvokeCount; ++pos)
+                    {
+                        ++RunIndex;
+                        Run(list, Macros2);
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                GXDLMS.Common.Error.ShowError(this, Ex);
+            }
+            RunIndex = 1;
+            RunCount = 1;
         }
     }
 }

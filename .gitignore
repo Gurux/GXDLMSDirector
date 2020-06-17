@@ -230,3 +230,5 @@ Development/.vs/GXDLMSDirector46/DesignTimeBuild/.dtbcache
 Development/.vs/GXDLMSDirector46/config/applicationhost.config
 *.v2
 Development/DvlErrLog.txt
+*.db-shm
+*.db-wal

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 11825 $,
-//                  $Date: 2020-06-09 10:05:11 +0300 (ti, 09 kesä 2020) $
+// Version:         $Revision: 11895 $,
+//                  $Date: 2020-06-23 09:40:45 +0300 (ti, 23 kesä 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1428,7 +1428,13 @@ namespace GXDLMSDirector
             {
                 if (client.UseLogicalNameReferencing)
                 {
-                    OnAfterRead(client, client.Objects.FindByLN(ObjectType.AssociationLogicalName, "0.0.40.0.0.255"), 2, reply.Data, null, null);
+                    GXDLMSObject ln = client.Objects.FindByLN(ObjectType.AssociationLogicalName, "0.0.40.0.0.255");
+                    //All meters don't add default association.
+                    if (ln == null)
+                    {
+                        ln = client.Objects.GetObjects(ObjectType.AssociationLogicalName)[0];
+                    }
+                    OnAfterRead(client, ln, 2, reply.Data, null, null);
                 }
                 else
                 {

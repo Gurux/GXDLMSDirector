@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11884 $,
-//                  $Date: 2020-06-17 13:39:54 +0300 (ke, 17 kesä 2020) $
+// Version:         $Revision: 11895 $,
+//                  $Date: 2020-06-23 09:40:45 +0300 (ti, 23 kesä 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -922,7 +922,7 @@ namespace GXDLMSDirector
             }
             else
             {
-                ve.Client = new GXDLMSClient();
+                ve.Client = new GXDLMSClient(m.UseLogicalNameReferencing);
             }
             ve.Action = btn.Action;
             GXDlmsUi.UpdateAccessRights(btn.View, btn.Target, false);
@@ -965,7 +965,7 @@ namespace GXDLMSDirector
                             Error.ShowError(null, ex);
                         }
                     });
-                    if (MacroEditor.Record)
+                    if (MacroEditor.Record || dev == null)
                     {
                         ve.Client.OnPdu += p;
                     }
@@ -997,49 +997,39 @@ namespace GXDLMSDirector
                         try
                         {
                             GXReplyData reply = new GXReplyData();
-                            if (ve.Value is byte[][])
+                            if (dev != null && ve.Value is byte[][])
                             {
-                                if (dev == null)
+                                UserActionType ua = UserActionType.None;
+                                switch (ve.Action)
                                 {
-                                    List<KeyValuePair<GXDLMSObject, byte>> list = new List<KeyValuePair<GXDLMSObject, byte>>();
-                                    list.Add(new KeyValuePair<GXDLMSObject, byte>(ve.Target, (byte)ve.Index));
-                                    activeDC.ReadObjects(new GXDLMSMeter[] { m }, list);
+                                    case ActionType.Action:
+                                        ua = UserActionType.Action;
+                                        break;
+                                    case ActionType.Read:
+                                        ua = UserActionType.Get;
+                                        break;
+                                    case ActionType.Write:
+                                        ua = UserActionType.Set;
+                                        break;
                                 }
-                                else
+                                try
                                 {
-                                    UserActionType ua = UserActionType.None;
-                                    switch (ve.Action)
+                                    int pos = 0, cnt = ((byte[][])ve.Value).Length;
+                                    foreach (byte[] it in (byte[][])ve.Value)
                                     {
-                                        case ActionType.Action:
-                                            ua = UserActionType.Action;
-                                            break;
-                                        case ActionType.Read:
-                                            ua = UserActionType.Get;
-                                            break;
-                                        case ActionType.Write:
-                                            ua = UserActionType.Set;
-                                            break;
-                                    }
-                                    try
-                                    {
-                                        int pos = 0, cnt = ((byte[][])ve.Value).Length;
-                                        foreach (byte[] it in (byte[][])ve.Value)
+                                        if (cnt != 1)
                                         {
-                                            if (cnt != 1)
-                                            {
-                                                OnProgress(null, ve.Text, ++pos, cnt);
-                                            }
-                                            reply.Clear();
-                                            dev.Comm.ReadDataBlock(it, ve.Text, 1, reply);
+                                            OnProgress(null, ve.Text, ++pos, cnt);
                                         }
-                                        InvokeAction(dev.Comm.client, ua, ve.Target, ve.Index, xmlValue, xml, null, null);
+                                        reply.Clear();
+                                        dev.Comm.ReadDataBlock(it, ve.Text, 1, reply);
                                     }
-                                    catch (Exception ex)
-                                    {
-                                        InvokeAction(dev.Comm.client, ua, ve.Target, ve.Index, null, null, null, ex);
-                                        throw;
-                                    }
-
+                                    InvokeAction(dev.Comm.client, ua, ve.Target, ve.Index, xmlValue, xml, null, null);
+                                }
+                                catch (Exception ex)
+                                {
+                                    InvokeAction(dev.Comm.client, ua, ve.Target, ve.Index, null, null, null, ex);
+                                    throw;
                                 }
                             }
                             else if (ve.Action == ActionType.Read)
@@ -1111,7 +1101,7 @@ namespace GXDLMSDirector
                                 if (dev == null)
                                 {
                                     List<GXActionParameter> list = new List<GXActionParameter>();
-                                    list.Add(new GXActionParameter() { Target = ve.Target, Index = ve.Index, Data = ve.Value });
+                                    list.Add(new GXActionParameter() { Target = ve.Target, Index = ve.Index, Data = xml });
                                     activeDC.MethodObjects(new GXDLMSMeter[] { m }, list);
                                 }
                                 else
@@ -3250,7 +3240,7 @@ namespace GXDLMSDirector
                     }
                     if ((dev.Conformance & (int)(Conformance.ReservedZero | Conformance.ReservedSix | Conformance.ReservedSeven)) != 0)
                     {
-                       // dev.Conformance = (int)GXDLMSClient.GetInitialConformance(dev.UseLogicalNameReferencing);
+                        // dev.Conformance = (int)GXDLMSClient.GetInitialConformance(dev.UseLogicalNameReferencing);
                         //Old conformance. Swap bits.
                         int v = 0;
                         for (int pos = 0; pos != 24; ++pos)
@@ -3259,7 +3249,7 @@ namespace GXDLMSDirector
                             dev.Conformance = (dev.Conformance >> 1);
                         }
                         dev.Conformance = v;
-                        d.Comm.client.ProposedConformance = (Conformance) dev.Conformance;
+                        d.Comm.client.ProposedConformance = (Conformance)dev.Conformance;
                     }
                     d.Comm.parentForm = this;
                     d.Manufacturers = this.Manufacturers;

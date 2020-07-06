@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11895 $,
-//                  $Date: 2020-06-23 09:40:45 +0300 (ti, 23 kesä 2020) $
+// Version:         $Revision: 11920 $,
+//                  $Date: 2020-07-06 10:58:21 +0300 (ma, 06 heinä 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1101,6 +1101,11 @@ namespace GXDLMSDirector
                                 if (dev == null)
                                 {
                                     List<GXActionParameter> list = new List<GXActionParameter>();
+                                    if (xml == null && ve.Value != null)
+                                    {
+                                        xmlValue = ve.Value.ToString();
+                                        xml = GXDLMSTranslator.ValueToXml(ve.Value);
+                                    }
                                     list.Add(new GXActionParameter() { Target = ve.Target, Index = ve.Index, Data = xml });
                                     activeDC.MethodObjects(new GXDLMSMeter[] { m }, list);
                                 }

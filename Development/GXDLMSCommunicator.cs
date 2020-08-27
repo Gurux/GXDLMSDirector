@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 11895 $,
-//                  $Date: 2020-06-23 09:40:45 +0300 (ti, 23 kesä 2020) $
+// Version:         $Revision: 12046 $,
+//                  $Date: 2020-08-27 15:16:33 +0300 (to, 27 elo 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -225,7 +225,7 @@ namespace GXDLMSDirector
                         //Release is call only for secured connections.
                         //All meters are not supporting Release and it's causing problems.
                         if (client.InterfaceType == InterfaceType.WRAPPER ||
-                            (client.InterfaceType == InterfaceType.HDLC && client.Ciphering.Security != Security.None && !parent.PreEstablished))
+                            (client.InterfaceType == InterfaceType.HDLC && client.Ciphering.Security != (byte)Security.None && !parent.PreEstablished))
                         {
                             byte[] data = ReleaseRequest();
                             if (data != null)
@@ -294,7 +294,7 @@ namespace GXDLMSDirector
             {
                 AllData = false,
                 Eop = eop,
-                Count = 5,
+                Count = eop == null ? 8 : 5,
                 WaitTime = parent.WaitTime * 1000,
             };
             DateTime start = DateTime.Now;
@@ -412,6 +412,7 @@ namespace GXDLMSDirector
                                 {
                                     parent.OnTrace(DateTime.Now, parent, err, rd.Array(), 0, LogFile, 0);
                                 }
+                                p.Reply = null;
                                 media.Send(data, null);
                                 continue;
                             }
@@ -427,7 +428,7 @@ namespace GXDLMSDirector
                         rd.Set(p.Reply);
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     if (rd.Size != 0)
                     {
@@ -453,7 +454,8 @@ namespace GXDLMSDirector
                             GXLogWriter.WriteLog("Duration: " + ((int)(DateTime.Now - start).TotalMilliseconds).ToString(), false);
                         }
                     }
-                    throw ex;
+                    //Throw original exception.
+                    throw;
                 }
             }
             GXLogWriter.WriteLog(null, rd.Array());
@@ -812,7 +814,7 @@ namespace GXDLMSDirector
                     client.ServerAddressSize = parent.ServerAddressSize;
                 }
             }
-            client.Ciphering.Security = parent.Security;
+            client.Ciphering.Security = (byte)parent.Security;
             if (parent.SystemTitle != null && parent.BlockCipherKey != null && parent.AuthenticationKey != null)
             {
                 client.Ciphering.SystemTitle = GXCommon.HexToBytes(parent.SystemTitle);
@@ -950,7 +952,7 @@ namespace GXDLMSDirector
                     client.ServerAddressSize = parent.ServerAddressSize;
                 }
             }
-            client.Ciphering.Security = parent.Security;
+            client.Ciphering.Security = (byte)parent.Security;
             if (parent.SystemTitle != null && parent.BlockCipherKey != null && parent.AuthenticationKey != null)
             {
                 client.Ciphering.SystemTitle = GXCommon.HexToBytes(parent.SystemTitle);
@@ -1038,18 +1040,18 @@ namespace GXDLMSDirector
                 byte[] data;
                 UpdateSettings();
                 //Read frame counter if GeneralProtection is used.
-                if (!string.IsNullOrEmpty(parent.FrameCounter) && client.Ciphering != null && client.Ciphering.Security != Security.None)
+                if (!string.IsNullOrEmpty(parent.FrameCounter) && client.Ciphering != null && client.Ciphering.Security != (byte)Security.None)
                 {
                     reply.Clear();
                     int add = client.ClientAddress;
                     Authentication auth = client.Authentication;
-                    Security security = client.Ciphering.Security;
+                    byte security = client.Ciphering.Security;
                     byte[] challenge = client.CtoSChallenge;
                     try
                     {
                         client.ClientAddress = 16;
                         client.Authentication = Authentication.None;
-                        client.Ciphering.Security = Security.None;
+                        client.Ciphering.Security = (byte)Security.None;
 
                         data = SNRMRequest();
                         if (data != null)

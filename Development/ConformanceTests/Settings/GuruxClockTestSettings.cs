@@ -37,101 +37,60 @@ using System.Text;
 
 namespace GXDLMSDirector
 {
-    public class GXConformanceApplicationTests
+    public class GuruxClockTestSettings : IGXConformanceSettings
     {
-        [Description("Exclude COSEM application layer tests #1.")]
+        [Description("Set new time to the meter using PC's local time.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
-        public bool ExcludeTest1
+        public bool SetLocalTime
         {
             get;
             set;
         }
-        [Description("Exclude COSEM application layer tests #4.")]
+        [Description("Set new time to the meter using EPOCH time.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
-        public bool ExcludeTest4
-        {
-            get;
-            set;
-        }
-        [Description("Exclude COSEM application layer tests #5.")]
-        [DefaultValue(false)]
-        [Category("Accessibility")]
-        public bool ExcludeTest5
-        {
-            get;
-            set;
-        }
-        [Description("Exclude COSEM application layer tests #6.")]
-        [DefaultValue(false)]
-        [Category("Accessibility")]
-        public bool ExcludeTest6
-        {
-            get;
-            set;
-        }
-        [Description("Exclude COSEM application layer tests #7.")]
-        [DefaultValue(false)]
-        [Category("Accessibility")]
-        public bool ExcludeTest7
-        {
-            get;
-            set;
-        }
-        [Description("Exclude COSEM application layer tests #9.")]
-        [DefaultValue(false)]
-        [Category("Accessibility")]
-        public bool ExcludeTest9
-        {
-            get;
-            set;
-        }
-        [Description("Exclude COSEM application layer tests #11.")]
-        [DefaultValue(false)]
-        [Category("Accessibility")]
-        public bool ExcludeTest11
+        public bool SetEpochTime
         {
             get;
             set;
         }
 
-        [Description("Exclude COSEM application layer tests #12.")]
+        [Description("Set new time to the meter without timezone.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
-        public bool ExcludeTest12
+        public bool SetTimeWithoutTimeZone
         {
             get;
             set;
         }
 
-        [Description("Exclude COSEM application layer tests #14.")]
+        [Description("Flip DST and check is time changed.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
-        public bool ExcludeTest14
+        public bool FlipDST
         {
             get;
             set;
         }
 
-        [Description("Exclude COSEM application layer tests #15.")]
+        [Description("Check time and check is DST flag changed.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
-        public bool ExcludeTest15
+        public bool CheckDST
         {
             get;
             set;
         }
 
-        [Description("Exclude COSEM application layer tests #16.")]
+        [Description("Change time zone and check that meter time is correct.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
-        public bool ExcludeTest16
+        public bool ChangeTimeZone
         {
             get;
             set;
         }
-
 
         /// <summary>
         /// Is any of the tests enabled.
@@ -150,21 +109,6 @@ namespace GXDLMSDirector
         }
 
         /// <summary>
-        /// Disable or enable all tests.
-        /// </summary>
-        public void Set(bool value)
-        {
-            PropertyDescriptorCollection props = TypeDescriptor.GetProperties(this);
-            foreach (PropertyDescriptor it in props)
-            {
-                if (it.GetValue(this).Equals(false))
-                {
-                    it.SetValue(this, value);
-                }
-            }
-        }
-
-        /// <summary>
         /// Return included tests.
         /// </summary>
         /// <returns></returns>
@@ -177,7 +121,14 @@ namespace GXDLMSDirector
             {
                 if (it.GetValue(this).Equals(false))
                 {
-                    list.Add(it.Name.Substring("ExcludeTest".Length));
+                    if (it.Name.StartsWith("ExcludeTest"))
+                    {
+                        list.Add(it.Name.Substring("ExcludeTest".Length));
+                    }
+                    else
+                    {
+                        list.Add(it.Name);
+                    }
                 }
             }
 

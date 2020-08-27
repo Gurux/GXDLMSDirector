@@ -48,8 +48,9 @@ namespace GXDLMSDirector
     public class GXConformanceSettings
     {
         private string imageFile;
-        GXConformanceHdlcTests excludedHdlcTests;
-        GXConformanceApplicationTests excludedApplicationTests;
+        CttHdlcSettings excludedHdlcTests;
+        CttApplicationSettings excludedApplicationTests;
+        GXConformanceGuruxSettings excludedGuruxTests;
 
         /// <summary>
         /// Constructor.
@@ -62,8 +63,9 @@ namespace GXDLMSDirector
             ImageActivateWaitTime = new TimeSpan(0, 0, 10);
             DelayConnection = Delay = new TimeSpan(0, 0, 0);
             WarningBeforeStart = true;
-            excludedApplicationTests = new GXConformanceApplicationTests();
-            excludedHdlcTests = new GXConformanceHdlcTests();
+            excludedApplicationTests = new CttApplicationSettings();
+            excludedHdlcTests = new CttHdlcSettings();
+            excludedGuruxTests = new GXConformanceGuruxSettings();
             ResendCount = -1;
         }
 
@@ -384,7 +386,7 @@ namespace GXDLMSDirector
         [DefaultValue(null)]
         [Editor(typeof(GXConformanceEditor), typeof(UITypeEditor))]
         [RefreshPropertiesAttribute(RefreshProperties.All)]
-        public GXConformanceHdlcTests ExcludedHdlcTests
+        public CttHdlcSettings ExcludedHdlcTests
         {
             get
             {
@@ -395,29 +397,9 @@ namespace GXDLMSDirector
                 //If user reset values.
                 if (value == null)
                 {
-                    value = new GXConformanceHdlcTests();
+                    value = new CttHdlcSettings();
                 }
                 excludedHdlcTests = value;
-            }
-        }
-
-        /// <summary>
-        /// Old functionality. This is removed later.
-        /// </summary>
-        [DefaultValue(false)]
-        [Browsable(false)]
-        public bool ExcludeApplicationTests
-        {
-            get
-            {
-                return false;
-            }
-            set
-            {
-                if (value)
-                {
-                    ExcludedApplicationTests.Set(true);
-                }
             }
         }
 
@@ -427,7 +409,7 @@ namespace GXDLMSDirector
         [DefaultValue(null)]
         [Editor(typeof(GXConformanceEditor), typeof(UITypeEditor))]
         [RefreshPropertiesAttribute(RefreshProperties.All)]
-        public GXConformanceApplicationTests ExcludedApplicationTests
+        public CttApplicationSettings ExcludedApplicationTests
         {
             get
             {
@@ -438,7 +420,7 @@ namespace GXDLMSDirector
                 //If user reset values.
                 if (value == null)
                 {
-                    value = new GXConformanceApplicationTests();
+                    value = new CttApplicationSettings();
                 }
                 excludedApplicationTests = value;
             }
@@ -497,23 +479,27 @@ namespace GXDLMSDirector
             set;
         }
 
-        [Description("Exclude clock Tests.")]
-        [DefaultValue(false)]
+        [Description("Exclude custom Gurux tests.")]
         [Category("Accessibility")]
-        public bool ExcludeClockTests
+        [TypeConverter(typeof(GXConformanceValueConverter))]
+        [DefaultValue(null)]
+        [Editor(typeof(GXConformanceEditor), typeof(UITypeEditor))]
+        [RefreshPropertiesAttribute(RefreshProperties.All)]
+        public GXConformanceGuruxSettings ExcludedGuruxTests
         {
-            get;
-            set;
-
-        }
-
-        [Description("Exclude Profile Generic Tests.")]
-        [DefaultValue(false)]
-        [Category("Accessibility")]
-        public bool ExcludeProfileGenericTests
-        {
-            get;
-            set;
+            get
+            {
+                return excludedGuruxTests;
+            }
+            set
+            {
+                //If user reset values.
+                if (value == null)
+                {
+                    value = new GXConformanceGuruxSettings();
+                }
+                excludedGuruxTests = value;
+            }
         }
     }
 

@@ -138,14 +138,50 @@ namespace GXDLMSDirector
         /// </summary>
         private void UpdateSecurity()
         {
-            translator.Security = (Security)Enum.Parse(typeof(Security), SecurityCB.SelectedItem.ToString());
+            translator.Security = Convert.ToByte(Enum.Parse(typeof(Security), SecurityCB.SelectedItem.ToString()));
             translator.SystemTitle = GXCommon.HexToBytes(GetAsHex(SystemTitleTB.Text, SystemTitleAsciiCb.Checked));
             translator.BlockCipherKey = GXCommon.HexToBytes(GetAsHex(BlockCipherKeyTB.Text, BlockCipherKeyAsciiCb.Checked));
             translator.AuthenticationKey = GXCommon.HexToBytes(GetAsHex(AuthenticationKeyTB.Text, AuthenticationKeyAsciiCb.Checked));
-            translator.InvocationCounter = UInt32.Parse(InvocationCounterTB.Text);
+            if (InvocationCounterTB.Text.Length == 0)
+            {
+                translator.InvocationCounter = 0;
+            }
+            else
+            {
+                translator.InvocationCounter = UInt32.Parse(InvocationCounterTB.Text);
+            }
             translator.ServerSystemTitle = GXCommon.HexToBytes(GetAsHex(ServerSystemTitleTB.Text, ServerSystemTitleAsciiCb.Checked));
             translator.DedicatedKey = GXCommon.HexToBytes(GetAsHex(DedicatedKeyTb.Text, DedicatedKeyAsciiCb.Checked));
             translator.DedicatedKey = GXCommon.HexToBytes(GetAsHex(DedicatedKeyTb.Text, DedicatedKeyAsciiCb.Checked));
+        }
+
+        private static string UpdateSystemTitle(Form parent, string title, byte[] data, string original, bool ascii)
+        {
+            if (data != null)
+            {
+                string st;
+                if (ascii)
+                {
+                    st = ASCIIEncoding.ASCII.GetString(data);
+                    //If system title is not ASCII string.
+                    if (ASCIIEncoding.ASCII.GetBytes(st) != data)
+                    {
+                        st = GXCommon.ToHex(data, false);
+                    }
+                }
+                else
+                {
+                    st = GXCommon.ToHex(data, false);
+                }
+                if (GetAsHex(original, ascii) != st)
+                {
+                    if (MessageBox.Show(parent, string.Format(title, original, st), Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)
+                    {
+                        return st;
+                    }
+                }
+            }
+            return null;
         }
 
         /// <summary>
@@ -159,25 +195,156 @@ namespace GXDLMSDirector
             StringBuilder sb = new StringBuilder();
             GXByteBuffer bb = new GXByteBuffer();
             //TODO: This can remove later.
-            Security s = translator.Security;
+            byte s = translator.Security;
             try
             {
                 translator.Clear();
                 UpdateSecurity();
-                translator.Security = Security.Authentication;
+                translator.Security = (byte)Security.Authentication;
 
                 translator.PduOnly = PduOnlyCB.Checked;
                 GXByteBuffer pdu = new GXByteBuffer();
                 bb.Set(GXDLMSTranslator.HexToBytes(RemoveComments(MessagePduTB.Text)));
                 InterfaceType type = GXDLMSTranslator.GetDlmsFraming(bb);
                 int cnt = 1;
+                string last = "";
                 while (translator.FindNextFrame(bb, pdu, type))
                 {
                     int start = bb.Position;
-                    string tmp = translator.MessageToXml(bb);
+                    GXDLMSTranslatorMessage msg = new GXDLMSTranslatorMessage();
+                    msg.Message = bb;
+                    translator.MessageToXml(msg);
+                    //Remove duplicate messages.
+                    if (RemoveDuplicatesCb.Checked)
+                    {
+                        if (last == msg.Xml)
+                        {
+                            continue;
+                        }
+                    }
+                    last = msg.Xml;
+                    if (msg.Command == Command.Aarq)
+                    {
+                        if (msg.SystemTitle != null)
+                        {
+                            string st = UpdateSystemTitle(this, "Current System title \"{0}\" is different in the parsed \"{1}\". Do you want to start using parsed one?",
+                                msg.SystemTitle, SystemTitleTB.Text, SystemTitleAsciiCb.Checked);
+                            if (st != null)
+                            {
+                                SystemTitleTB.Text = "";
+                                SystemTitleAsciiCb.Checked = false;
+                                SystemTitleTB.Text = st;
+                            }
+                        }
+                        if (msg.DedicatedKey != null)
+                        {
+                            string key = UpdateSystemTitle(this, "Current dedicated key \"{0}\" is different in the parsed \"{1}\". Do you want to start using parsed one?",
+                                msg.DedicatedKey, DedicatedKeyTb.Text, DedicatedKeyAsciiCb.Checked);
+                            if (key != null)
+                            {
+                                DedicatedKeyTb.Text = "";
+                                DedicatedKeyAsciiCb.Checked = false;
+                                DedicatedKeyTb.Text = key;
+                            }
+                        }
+                    }
+                    if (msg.Command == Command.Aare && msg.SystemTitle != null)
+                    {
+                        string st = UpdateSystemTitle(this, "Current Server System title \"{0}\" is different in the parsed \"{1}\". Do you want to start using parsed one?",
+                            msg.SystemTitle, ServerSystemTitleTB.Text, ServerSystemTitleAsciiCb.Checked);
+                        if (st != null)
+                        {
+                            ServerSystemTitleTB.Text = "";
+                            SystemTitleAsciiCb.Checked = false;
+                            ServerSystemTitleTB.Text = st;
+                        }
+                    }
+                    if (!AllRb.Checked)
+                    {
+                        switch (msg.Command)
+                        {
+                            case Command.None:
+                                break;
+                            case Command.InitiateRequest:
+                            case Command.ReadRequest:
+                            case Command.WriteRequest:
+                            case Command.GetRequest:
+                            case Command.SetRequest:
+                            case Command.MethodRequest:
+                            case Command.Snrm:
+                            case Command.Aarq:
+                            case Command.ReleaseRequest:
+                            case Command.DisconnectRequest:
+                            case Command.AccessRequest:
+                            case Command.GloGetRequest:
+                            case Command.GloSetRequest:
+                            case Command.GloMethodRequest:
+                            case Command.GloInitiateRequest:
+                            case Command.GloReadRequest:
+                            case Command.GloWriteRequest:
+                            case Command.DedInitiateRequest:
+                            case Command.DedReadRequest:
+                            case Command.DedWriteRequest:
+                            case Command.DedGetRequest:
+                            case Command.DedSetRequest:
+                            case Command.DedMethodRequest:
+                            case Command.GatewayRequest:
+                                if (ReceivedRb.Checked)
+                                {
+                                    continue;
+                                }
+                                break;
+                            case Command.InitiateResponse:
+                            case Command.ReadResponse:
+                            case Command.WriteResponse:
+                            case Command.GetResponse:
+                            case Command.SetResponse:
+                            case Command.MethodResponse:
+                            case Command.Ua:
+                            case Command.Aare:
+                            case Command.ReleaseResponse:
+                            case Command.AccessResponse:
+                            case Command.GloGetResponse:
+                            case Command.GloSetResponse:
+                            case Command.GloMethodResponse:
+                            case Command.GloInitiateResponse:
+                            case Command.GloReadResponse:
+                            case Command.GloWriteResponse:
+                            case Command.DedInitiateResponse:
+                            case Command.DedReadResponse:
+                            case Command.DedWriteResponse:
+                            case Command.DedGetResponse:
+                            case Command.DedSetResponse:
+                            case Command.DedMethodResponse:
+                            case Command.GatewayResponse:
+                                if (SentRb.Checked)
+                                {
+                                    continue;
+                                }
+                                break;
+                            case Command.DisconnectMode:
+                            case Command.UnacceptableFrame:
+                            case Command.ConfirmedServiceError:
+                            case Command.ExceptionResponse:
+                            case Command.GeneralBlockTransfer:
+                            case Command.DataNotification:
+                            case Command.GloEventNotification:
+                            case Command.GloConfirmedServiceError:
+                            case Command.GeneralGloCiphering:
+                            case Command.GeneralDedCiphering:
+                            case Command.GeneralCiphering:
+                            case Command.InformationReport:
+                            case Command.EventNotification:
+                            case Command.DedConfirmedServiceError:
+                            case Command.DedUnconfirmedWriteRequest:
+                            case Command.DedInformationReport:
+                            case Command.DedEventNotification:
+                                break;
+                        }
+                    }
                     sb.AppendLine(cnt + ": " + bb.ToHex(true, start, bb.Position - start));
                     ++cnt;
-                    sb.Append(tmp);
+                    sb.Append(msg.Xml);
                     pdu.Clear();
                 }
                 MessageXmlTB.Text = sb.ToString();
@@ -242,7 +409,14 @@ namespace GXDLMSDirector
             Properties.Settings.Default.NotifyBlockCipherKey = GetAsHex(BlockCipherKeyTB.Text, BlockCipherKeyAsciiCb.Checked);
             Properties.Settings.Default.AuthenticationKey = GetAsHex(AuthenticationKeyTB.Text, AuthenticationKeyAsciiCb.Checked);
             Properties.Settings.Default.DedicatedKey = GetAsHex(DedicatedKeyTb.Text, DedicatedKeyAsciiCb.Checked);
-            Properties.Settings.Default.InvocationCounter = ulong.Parse(InvocationCounterTB.Text);
+            if (InvocationCounterTB.Text.Length != 0)
+            {
+                Properties.Settings.Default.InvocationCounter = ulong.Parse(InvocationCounterTB.Text);
+            }
+            else
+            {
+                Properties.Settings.Default.InvocationCounter = 0;
+            }
             Properties.Settings.Default.Challenge = GetAsHex(ChallengeTb.Text, ChallengeAsciiCb.Checked);
             Properties.Settings.Default.Data = DataPdu.Text;
             Properties.Settings.Default.Save();
@@ -467,6 +641,11 @@ namespace GXDLMSDirector
             {
                 MessageBox.Show(this, ex.Message);
             }
+        }
+
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

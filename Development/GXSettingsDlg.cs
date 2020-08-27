@@ -409,7 +409,7 @@ namespace GXDLMSDirector
 
         public static bool IsAscii(byte[] value)
         {
-            if (value == null)
+            if (value == null || value.Length == 0)
             {
                 return false;
             }

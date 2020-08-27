@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11825 $,
-//                  $Date: 2020-06-09 10:05:11 +0300 (ti, 09 kesä 2020) $
+// Version:         $Revision: 12046 $,
+//                  $Date: 2020-08-27 15:16:33 +0300 (to, 27 elo 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -318,7 +318,7 @@ namespace GXDLMSDirector
                 SystemTitleAsciiCb.CheckedChanged += SystemTitleAsciiCb_CheckedChanged;
                 SystemTitleTB.Text = device.SystemTitle;
             }
-            if (IsAscii(GXCommon.HexToBytes(device.BlockCipherKey)))
+            if (!string.IsNullOrEmpty(device.BlockCipherKey) && IsAscii(GXCommon.HexToBytes(device.BlockCipherKey)))
             {
                 BlockCipherKeyAsciiCb.CheckedChanged -= BlockCipherKeyAsciiCb_CheckedChanged;
                 BlockCipherKeyAsciiCb.Checked = true;
@@ -332,7 +332,7 @@ namespace GXDLMSDirector
                 BlockCipherKeyAsciiCb.CheckedChanged += BlockCipherKeyAsciiCb_CheckedChanged;
                 BlockCipherKeyTB.Text = device.BlockCipherKey;
             }
-            if (IsAscii(GXCommon.HexToBytes(device.AuthenticationKey)))
+            if (!string.IsNullOrEmpty(device.AuthenticationKey) && IsAscii(GXCommon.HexToBytes(device.AuthenticationKey)))
             {
                 AuthenticationKeyAsciiCb.CheckedChanged -= AuthenticationKeyAsciiCb_CheckedChanged;
                 AuthenticationKeyAsciiCb.Checked = true;
@@ -347,7 +347,7 @@ namespace GXDLMSDirector
                 AuthenticationKeyTB.Text = device.AuthenticationKey;
             }
 
-            if (IsAscii(GXCommon.HexToBytes(device.DedicatedKey)))
+            if (!string.IsNullOrEmpty(device.DedicatedKey) && IsAscii(GXCommon.HexToBytes(device.DedicatedKey)))
             {
                 DedicatedKeyAsciiCb.CheckedChanged -= DedicatedKeyAsciiCb_CheckedChanged;
                 DedicatedKeyAsciiCb.Checked = true;
@@ -704,31 +704,6 @@ namespace GXDLMSDirector
             {
                 throw new Exception("Invalid name.");
             }
-            //Check security settings.
-            if (validate && ((Security)SecurityCB.SelectedItem != Security.None ||
-                ((GXAuthentication)this.AuthenticationCB.SelectedItem).Type == Authentication.HighGMAC))
-            {
-                if (SystemTitleTB.Text.Trim().Length == 0)
-                {
-                    throw new ArgumentException("Invalid system title.");
-                }
-                if (AuthenticationKeyTB.Text.Trim().Length == 0)
-                {
-                    throw new ArgumentException("Invalid authentication key.");
-                }
-                if (BlockCipherKeyTB.Text.Trim().Length == 0)
-                {
-                    throw new ArgumentException("Invalid block cipher key.");
-                }
-
-                if (UsePreEstablishedApplicationAssociations.Checked)
-                {
-                    if (ServerSystemTitle.Text.Trim().Length == 0)
-                    {
-                        throw new ArgumentException("Invalid server system title.");
-                    }
-                }
-            }
             GXServerAddress server = (GXServerAddress)ServerAddressTypeCB.SelectedItem;
             if (validate && server.HDLCAddress == HDLCAddressType.SerialNumber && PhysicalServerAddressTB.Value == 0)
             {
@@ -943,6 +918,33 @@ namespace GXDLMSDirector
             device.DedicatedKey = GetAsHex(DedicatedKeyTb.Text, DedicatedKeyAsciiCb.Checked);
             device.PreEstablished = UsePreEstablishedApplicationAssociations.Checked;
             device.UseProtectedRelease = UseProtectedReleaseCb.Checked;
+
+
+            //Check security settings.
+            if (validate && ((Security)SecurityCB.SelectedItem != Security.None ||
+                ((GXAuthentication)this.AuthenticationCB.SelectedItem).Type == Authentication.HighGMAC))
+            {
+                if (!string.IsNullOrEmpty(device.SystemTitle) && device.SystemTitle.Length != 16)
+                {
+                    throw new ArgumentException("Invalid system title. System title must be 8 bytes long.");
+                }
+                if (!string.IsNullOrEmpty(device.AuthenticationKey) && device.AuthenticationKey.Length != 32)
+                {
+                    throw new ArgumentException("Invalid authentication key. Authentication key must be 16 bytes long.");
+                }
+                if (!string.IsNullOrEmpty(device.BlockCipherKey) && device.BlockCipherKey.Length != 32)
+                {
+                    throw new ArgumentException("Invalid block cipher key. Block cipher key must be 16 bytes long.");
+                }
+                if (!string.IsNullOrEmpty(device.DedicatedKey) && device.DedicatedKey.Length != 32)
+                {
+                    throw new ArgumentException("Invalid dedicated key. Dedicated key must be 16 bytes long.");
+                }
+                if (!string.IsNullOrEmpty(device.ServerSystemTitle) && device.ServerSystemTitle.Length != 16)
+                {
+                    throw new ArgumentException("Invalid server system title. Server system title must be 8 bytes long.");
+                }
+            }
             if (InvocationCounterTB.Text != "")
             {
                 device.InvocationCounter = UInt32.Parse(InvocationCounterTB.Text);

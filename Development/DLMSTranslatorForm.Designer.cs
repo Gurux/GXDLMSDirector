@@ -30,6 +30,11 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DLMSTranslatorForm));
             this.panel2 = new System.Windows.Forms.Panel();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.RemoveDuplicatesCb = new System.Windows.Forms.CheckBox();
+            this.ReceivedRb = new System.Windows.Forms.RadioButton();
+            this.SentRb = new System.Windows.Forms.RadioButton();
+            this.AllRb = new System.Windows.Forms.RadioButton();
             this.WrapperCb = new System.Windows.Forms.CheckBox();
             this.StandardCB = new System.Windows.Forms.CheckBox();
             this.CompletePDUCb = new System.Windows.Forms.CheckBox();
@@ -76,6 +81,7 @@
             this.DataPdu = new System.Windows.Forms.TextBox();
             this.helpProvider1 = new System.Windows.Forms.HelpProvider();
             this.panel2.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -85,6 +91,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.groupBox1);
             this.panel2.Controls.Add(this.WrapperCb);
             this.panel2.Controls.Add(this.StandardCB);
             this.panel2.Controls.Add(this.CompletePDUCb);
@@ -96,8 +103,68 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(800, 47);
+            this.panel2.Size = new System.Drawing.Size(924, 47);
             this.panel2.TabIndex = 3;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.RemoveDuplicatesCb);
+            this.groupBox1.Controls.Add(this.ReceivedRb);
+            this.groupBox1.Controls.Add(this.SentRb);
+            this.groupBox1.Controls.Add(this.AllRb);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.groupBox1.Location = new System.Drawing.Point(586, 0);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(338, 47);
+            this.groupBox1.TabIndex = 10;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Show messages";
+            // 
+            // RemoveDuplicatesCb
+            // 
+            this.RemoveDuplicatesCb.AutoSize = true;
+            this.RemoveDuplicatesCb.Location = new System.Drawing.Point(6, 17);
+            this.RemoveDuplicatesCb.Name = "RemoveDuplicatesCb";
+            this.RemoveDuplicatesCb.Size = new System.Drawing.Size(117, 17);
+            this.RemoveDuplicatesCb.TabIndex = 14;
+            this.RemoveDuplicatesCb.Text = "Remove duplicates";
+            this.RemoveDuplicatesCb.UseVisualStyleBackColor = true;
+            this.RemoveDuplicatesCb.Click += new System.EventHandler(this.TranslateBtn_Click);
+            // 
+            // ReceivedRb
+            // 
+            this.ReceivedRb.AutoSize = true;
+            this.ReceivedRb.Location = new System.Drawing.Point(262, 16);
+            this.ReceivedRb.Name = "ReceivedRb";
+            this.ReceivedRb.Size = new System.Drawing.Size(71, 17);
+            this.ReceivedRb.TabIndex = 13;
+            this.ReceivedRb.Text = "Received";
+            this.ReceivedRb.UseVisualStyleBackColor = true;
+            this.ReceivedRb.Click += new System.EventHandler(this.TranslateBtn_Click);
+            // 
+            // SentRb
+            // 
+            this.SentRb.AutoSize = true;
+            this.SentRb.Location = new System.Drawing.Point(205, 16);
+            this.SentRb.Name = "SentRb";
+            this.SentRb.Size = new System.Drawing.Size(47, 17);
+            this.SentRb.TabIndex = 12;
+            this.SentRb.Text = "Sent";
+            this.SentRb.UseVisualStyleBackColor = true;
+            this.SentRb.Click += new System.EventHandler(this.TranslateBtn_Click);
+            // 
+            // AllRb
+            // 
+            this.AllRb.AutoSize = true;
+            this.AllRb.Checked = true;
+            this.AllRb.Location = new System.Drawing.Point(150, 16);
+            this.AllRb.Name = "AllRb";
+            this.AllRb.Size = new System.Drawing.Size(36, 17);
+            this.AllRb.TabIndex = 10;
+            this.AllRb.TabStop = true;
+            this.AllRb.Text = "All";
+            this.AllRb.UseVisualStyleBackColor = true;
+            this.AllRb.Click += new System.EventHandler(this.TranslateBtn_Click);
             // 
             // WrapperCb
             // 
@@ -195,7 +262,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 47);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(800, 403);
+            this.tabControl1.Size = new System.Drawing.Size(924, 403);
             this.tabControl1.TabIndex = 4;
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
@@ -207,7 +274,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(792, 377);
+            this.tabPage1.Size = new System.Drawing.Size(916, 377);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Messages";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -220,7 +287,7 @@
             this.MessageXmlTB.Multiline = true;
             this.MessageXmlTB.Name = "MessageXmlTB";
             this.MessageXmlTB.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.MessageXmlTB.Size = new System.Drawing.Size(615, 371);
+            this.MessageXmlTB.Size = new System.Drawing.Size(739, 371);
             this.MessageXmlTB.TabIndex = 3;
             // 
             // splitter1
@@ -251,7 +318,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(792, 377);
+            this.tabPage2.Size = new System.Drawing.Size(916, 377);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Pdu";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -262,7 +329,7 @@
             this.XmlTB.Location = new System.Drawing.Point(3, 106);
             this.XmlTB.Multiline = true;
             this.XmlTB.Name = "XmlTB";
-            this.XmlTB.Size = new System.Drawing.Size(786, 268);
+            this.XmlTB.Size = new System.Drawing.Size(910, 268);
             this.XmlTB.TabIndex = 4;
             // 
             // splitter2
@@ -270,7 +337,7 @@
             this.splitter2.Dock = System.Windows.Forms.DockStyle.Top;
             this.splitter2.Location = new System.Drawing.Point(3, 103);
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(786, 3);
+            this.splitter2.Size = new System.Drawing.Size(910, 3);
             this.splitter2.TabIndex = 3;
             this.splitter2.TabStop = false;
             // 
@@ -280,7 +347,7 @@
             this.PduTB.Location = new System.Drawing.Point(3, 3);
             this.PduTB.Multiline = true;
             this.PduTB.Name = "PduTB";
-            this.PduTB.Size = new System.Drawing.Size(786, 100);
+            this.PduTB.Size = new System.Drawing.Size(910, 100);
             this.PduTB.TabIndex = 2;
             this.PduTB.Text = "C0018100080000010000FF0200";
             // 
@@ -311,7 +378,7 @@
             this.tabPage3.Controls.Add(this.SecurityLbl);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(792, 377);
+            this.tabPage3.Size = new System.Drawing.Size(916, 377);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Ciphering";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -347,7 +414,7 @@
             // 
             this.ServerSystemTitleAsciiCb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ServerSystemTitleAsciiCb.AutoSize = true;
-            this.ServerSystemTitleAsciiCb.Location = new System.Drawing.Point(425, 267);
+            this.ServerSystemTitleAsciiCb.Location = new System.Drawing.Point(549, 267);
             this.ServerSystemTitleAsciiCb.Name = "ServerSystemTitleAsciiCb";
             this.ServerSystemTitleAsciiCb.Size = new System.Drawing.Size(53, 17);
             this.ServerSystemTitleAsciiCb.TabIndex = 67;
@@ -361,7 +428,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ServerSystemTitleTB.Location = new System.Drawing.Point(112, 264);
             this.ServerSystemTitleTB.Name = "ServerSystemTitleTB";
-            this.ServerSystemTitleTB.Size = new System.Drawing.Size(299, 20);
+            this.ServerSystemTitleTB.Size = new System.Drawing.Size(423, 20);
             this.ServerSystemTitleTB.TabIndex = 65;
             // 
             // ServerSystemtitleLbl
@@ -377,7 +444,7 @@
             // 
             this.ChallengeAsciiCb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ChallengeAsciiCb.AutoSize = true;
-            this.ChallengeAsciiCb.Location = new System.Drawing.Point(425, 191);
+            this.ChallengeAsciiCb.Location = new System.Drawing.Point(549, 191);
             this.ChallengeAsciiCb.Name = "ChallengeAsciiCb";
             this.ChallengeAsciiCb.Size = new System.Drawing.Size(53, 17);
             this.ChallengeAsciiCb.TabIndex = 64;
@@ -391,7 +458,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ChallengeTb.Location = new System.Drawing.Point(112, 192);
             this.ChallengeTb.Name = "ChallengeTb";
-            this.ChallengeTb.Size = new System.Drawing.Size(299, 20);
+            this.ChallengeTb.Size = new System.Drawing.Size(423, 20);
             this.ChallengeTb.TabIndex = 62;
             // 
             // label2
@@ -406,7 +473,7 @@
             // PasswordBtn
             // 
             this.PasswordBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.PasswordBtn.Location = new System.Drawing.Point(285, 218);
+            this.PasswordBtn.Location = new System.Drawing.Point(409, 218);
             this.PasswordBtn.Name = "PasswordBtn";
             this.PasswordBtn.Size = new System.Drawing.Size(126, 23);
             this.PasswordBtn.TabIndex = 61;
@@ -420,7 +487,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.InvocationCounterTB.Location = new System.Drawing.Point(112, 154);
             this.InvocationCounterTB.Name = "InvocationCounterTB";
-            this.InvocationCounterTB.Size = new System.Drawing.Size(299, 20);
+            this.InvocationCounterTB.Size = new System.Drawing.Size(423, 20);
             this.InvocationCounterTB.TabIndex = 59;
             // 
             // InvocationCounterLbl
@@ -436,7 +503,7 @@
             // 
             this.SystemTitleAsciiCb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.SystemTitleAsciiCb.AutoSize = true;
-            this.SystemTitleAsciiCb.Location = new System.Drawing.Point(425, 40);
+            this.SystemTitleAsciiCb.Location = new System.Drawing.Point(549, 40);
             this.SystemTitleAsciiCb.Name = "SystemTitleAsciiCb";
             this.SystemTitleAsciiCb.Size = new System.Drawing.Size(53, 17);
             this.SystemTitleAsciiCb.TabIndex = 58;
@@ -448,7 +515,7 @@
             // 
             this.BlockCipherKeyAsciiCb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.BlockCipherKeyAsciiCb.AutoSize = true;
-            this.BlockCipherKeyAsciiCb.Location = new System.Drawing.Point(425, 67);
+            this.BlockCipherKeyAsciiCb.Location = new System.Drawing.Point(549, 67);
             this.BlockCipherKeyAsciiCb.Name = "BlockCipherKeyAsciiCb";
             this.BlockCipherKeyAsciiCb.Size = new System.Drawing.Size(53, 17);
             this.BlockCipherKeyAsciiCb.TabIndex = 57;
@@ -460,7 +527,7 @@
             // 
             this.AuthenticationKeyAsciiCb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.AuthenticationKeyAsciiCb.AutoSize = true;
-            this.AuthenticationKeyAsciiCb.Location = new System.Drawing.Point(425, 93);
+            this.AuthenticationKeyAsciiCb.Location = new System.Drawing.Point(549, 93);
             this.AuthenticationKeyAsciiCb.Name = "AuthenticationKeyAsciiCb";
             this.AuthenticationKeyAsciiCb.Size = new System.Drawing.Size(53, 17);
             this.AuthenticationKeyAsciiCb.TabIndex = 56;
@@ -482,7 +549,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.AuthenticationKeyTB.Location = new System.Drawing.Point(112, 90);
             this.AuthenticationKeyTB.Name = "AuthenticationKeyTB";
-            this.AuthenticationKeyTB.Size = new System.Drawing.Size(299, 20);
+            this.AuthenticationKeyTB.Size = new System.Drawing.Size(423, 20);
             this.AuthenticationKeyTB.TabIndex = 49;
             // 
             // BlockCipherKeyTB
@@ -491,7 +558,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.BlockCipherKeyTB.Location = new System.Drawing.Point(112, 64);
             this.BlockCipherKeyTB.Name = "BlockCipherKeyTB";
-            this.BlockCipherKeyTB.Size = new System.Drawing.Size(299, 20);
+            this.BlockCipherKeyTB.Size = new System.Drawing.Size(423, 20);
             this.BlockCipherKeyTB.TabIndex = 48;
             // 
             // SystemTitleTB
@@ -500,7 +567,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.SystemTitleTB.Location = new System.Drawing.Point(112, 37);
             this.SystemTitleTB.Name = "SystemTitleTB";
-            this.SystemTitleTB.Size = new System.Drawing.Size(299, 20);
+            this.SystemTitleTB.Size = new System.Drawing.Size(423, 20);
             this.SystemTitleTB.TabIndex = 47;
             // 
             // AuthenticationKeyLbl
@@ -546,7 +613,7 @@
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(792, 377);
+            this.tabPage5.Size = new System.Drawing.Size(916, 377);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Data to XML";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -559,7 +626,7 @@
             this.DataXml.Multiline = true;
             this.DataXml.Name = "DataXml";
             this.DataXml.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.DataXml.Size = new System.Drawing.Size(618, 371);
+            this.DataXml.Size = new System.Drawing.Size(742, 371);
             this.DataXml.TabIndex = 5;
             // 
             // DataPdu
@@ -581,17 +648,19 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(924, 450);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.panel2);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "DLMSTranslatorForm";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Gurux DLMS Transfer";
+            this.Text = "Gurux DLMS Translator";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
@@ -653,5 +722,10 @@
         private System.Windows.Forms.TextBox DataPdu;
         private System.Windows.Forms.Button PasswordBtn;
         private System.Windows.Forms.HelpProvider helpProvider1;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.RadioButton ReceivedRb;
+        private System.Windows.Forms.RadioButton SentRb;
+        private System.Windows.Forms.RadioButton AllRb;
+        private System.Windows.Forms.CheckBox RemoveDuplicatesCb;
     }
 }

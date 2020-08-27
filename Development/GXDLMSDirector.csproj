@@ -132,11 +132,11 @@
     <Reference Include="Gurux.Common, Version=8.1.2002.1903, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Common.8.1.2002.1903\lib\net40\Gurux.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=9.0.2006.1201, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.9.0.2006.1201\lib\net40\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=9.0.2008.2701, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.9.0.2008.2701\lib\net40\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=9.0.2006.1702, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.9.0.2006.1702\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=9.0.2008.2701, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.9.0.2008.2701\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.Net, Version=8.1.2002.1902, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Net.8.1.2002.1902\lib\net40\Gurux.Net.dll</HintPath>
@@ -165,6 +165,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConformanceTests\Settings\IGXConformanceSettings.cs" />
+    <Compile Include="ConformanceTests\Settings\GuruxProfileGenericTestSettings.cs" />
+    <Compile Include="ConformanceTests\Settings\GuruxClockTestSettings.cs" />
+    <Compile Include="ConformanceTests\Settings\GuruxServiceTestSettings.cs" />
+    <Compile Include="ConformanceTests\Settings\GXConformanceGuruxSettings.cs" />
     <Compile Include="DLMSTranslatorForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -185,13 +190,13 @@
     <Compile Include="Macro\GXMacroEditor.Designer.cs">
       <DependentUpon>GXMacroEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="GXConformanceEditor.cs" />
-    <Compile Include="GXConformanceValueConverter.cs" />
-    <Compile Include="GXConformanceValueDescriptorCollection.cs" />
-    <Compile Include="GXConformanceValue.cs" />
+    <Compile Include="ConformanceTests\GXConformanceEditor.cs" />
+    <Compile Include="ConformanceTests\Internal\GXConformanceValueConverter.cs" />
+    <Compile Include="ConformanceTests\Internal\GXConformanceValueDescriptorCollection.cs" />
+    <Compile Include="ConformanceTests\Internal\GXConformanceValue.cs" />
     <Compile Include="GXByteConverter.cs" />
-    <Compile Include="GXConformanceHdlcTests.cs" />
-    <Compile Include="GXConformanceApplicationTests.cs" />
+    <Compile Include="ConformanceTests\Settings\CttHdlcSettings.cs" />
+    <Compile Include="ConformanceTests\Settings\CttApplicationSettings.cs" />
     <Compile Include="GXSerialMonitor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -213,15 +218,15 @@
     <Compile Include="GXByteUIEditor.cs" />
     <Compile Include="CryptHelper.cs" />
     <Compile Include="DeviceState.cs" />
-    <Compile Include="GXConformanceDlg.cs">
+    <Compile Include="ConformanceTests\GXConformanceDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GXConformanceDlg.Designer.cs">
+    <Compile Include="ConformanceTests\GXConformanceDlg.Designer.cs">
       <DependentUpon>GXConformanceDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="GXConformanceSettings.cs" />
-    <Compile Include="GXConformanceTests.cs" />
-    <Compile Include="GXConformanceTest.cs" />
+    <Compile Include="ConformanceTests\Settings\GXConformanceSettings.cs" />
+    <Compile Include="ConformanceTests\GXConformanceTests.cs" />
+    <Compile Include="ConformanceTests\GXConformanceTest.cs" />
     <Compile Include="GXExternalMediaForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -309,7 +314,7 @@
       <DependentUpon>GXDurations.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="GXConformanceDlg.resx">
+    <EmbeddedResource Include="ConformanceTests\GXConformanceDlg.resx">
       <DependentUpon>GXConformanceDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GXExternalMediaForm.resx">

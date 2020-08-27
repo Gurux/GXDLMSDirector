@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11920 $,
-//                  $Date: 2020-07-06 10:58:21 +0300 (ma, 06 heinä 2020) $
+// Version:         $Revision: 12046 $,
+//                  $Date: 2020-08-27 15:16:33 +0300 (to, 27 elo 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -213,11 +213,19 @@ namespace GXDLMSDirector
             column.ReadOnly = true;
             Accessrights.Columns.Add(column);
             Accessrights.Columns.Add(CreateAccessRightColumns());
+            /*
+            column = new DataGridViewTextBoxColumn();
+            column.DataPropertyName = "AccessSelector";
+            column.Name = "Access Selector";
+            column.ReadOnly = true;
+            */
+            Accessrights.Columns.Add(CreateAccessSelector());
             Accessrights.Columns.Add(CreateStaticColumns());
             Accessrights.Columns.Add(CreateTypeColumns("Type"));
             Accessrights.Columns.Add(CreateTypeColumns("UIType"));
 
             Accessrights.CellValueChanged += Accessrights_CellValueChanged;
+            Accessrights.CellFormatting += Accessrights_CellFormatting;
             Accessrights.AllowUserToAddRows = false;
             Accessrights.AllowUserToDeleteRows = false;
             Accessrights.AutoSize = true;
@@ -244,6 +252,61 @@ namespace GXDLMSDirector
             PropertyErrorView.AllowUserToAddRows = false;
             PropertyErrorView.AllowUserToDeleteRows = false;
             PropertyErrorView.AutoSize = true;
+        }
+
+        private bool IsProfileGenericTarget(object target)
+        {
+            if (target is GXDLMSProfileGeneric)
+            {
+                return true;
+            }
+            if (target is GXDLMSObjectCollection objs)
+            {
+                if (objs.Count != 0 && objs[0] is GXDLMSProfileGeneric)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void Accessrights_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            try
+            {
+                if (e.ColumnIndex == 3)
+                {
+                    byte value = (byte)e.Value;
+                    if (value == 0)
+                    {
+                        e.Value = "";
+                    }
+                    else
+                    {
+                        if (IsProfileGenericTarget(ObjectTree.SelectedNode.Tag))
+                        {
+                            string str = null;
+                            if ((value & 1) != 0)
+                            {
+                                str = "Range";
+                            }
+                            if ((value & 2) != 0)
+                            {
+                                if (str != null)
+                                {
+                                    str += ", ";
+                                }
+                                str += "Entry";
+                            }
+                            e.Value = str;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+            }
         }
 
         public void OnProgress(object sender, string description, int current, int maximium)
@@ -480,7 +543,7 @@ namespace GXDLMSDirector
                     if (d != null)
                     {
                         ManufacturerValueLbl.Text = d.Manufacturers.FindByIdentification(dev.Manufacturer).Name;
-                        ProposedConformanceTB.Text = d.Comm.client.ProposedConformance.ToString();
+                        ProposedConformanceTB.Text = ((Conformance)d.Conformance).ToString();
                         NegotiatedConformanceTB.Text = d.Comm.client.NegotiatedConformance.ToString();
                         UpdateDeviceUI(d, d.Status);
                     }
@@ -772,6 +835,15 @@ namespace GXDLMSDirector
             return combo;
         }
 
+        DataGridViewColumn CreateAccessSelector()
+        {
+            DataGridViewColumn column = new DataGridViewTextBoxColumn();
+            column.DataPropertyName = "AccessSelector";
+            column.Name = "Access Selector";
+            column.ReadOnly = true;
+            return column;
+        }
+
         DataGridViewColumn CreateTypeColumns(string name)
         {
             if (name == "Type")
@@ -891,7 +963,10 @@ namespace GXDLMSDirector
                         node.ImageIndex = node.SelectedImageIndex = dirty ? 10 : 7;
                     }
                 }
-                UpdateWriteEnabled();
+                if ((sender.GetAccess(attributeIndex) & AccessMode.Write) != 0)
+                {
+                    UpdateWriteEnabled();
+                }
             }
         }
 
@@ -4204,8 +4279,8 @@ namespace GXDLMSDirector
                                     settings.WarningBeforeStart = false;
                                     settings.CloseApplication = closeApp;
                                     settings.ExternalTests = it;
-                                    settings.ExcludedApplicationTests.Set(true);
-                                    settings.ExcludedHdlcTests.Set(true);
+                                    GXConformanceEditor.SetAll(settings.ExcludedApplicationTests, true);
+                                    GXConformanceEditor.SetAll(settings.ExcludedHdlcTests, true);
                                     settings.ExcludeBasicTests = settings.ExcludeMeterInfo = true;
                                 }
                                 else
@@ -5315,7 +5390,7 @@ namespace GXDLMSDirector
                     eventsTranslator.Clear();
                     if (newDev != null)
                     {
-                        traceTranslator.Security = newDev.Security;
+                        traceTranslator.Security = (byte)newDev.Security;
                         traceTranslator.SystemTitle = GXCommon.HexToBytes(newDev.SystemTitle);
                         traceTranslator.BlockCipherKey = GXCommon.HexToBytes(newDev.BlockCipherKey);
                         traceTranslator.AuthenticationKey = GXCommon.HexToBytes(newDev.AuthenticationKey);

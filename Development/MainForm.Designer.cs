@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11884 $,
-//                  $Date: 2020-06-17 13:39:54 +0300 (ke, 17 kesä 2020) $
+// Version:         $Revision: 12046 $,
+//                  $Date: 2020-08-27 15:16:33 +0300 (to, 27 elo 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -131,6 +131,8 @@ namespace GXDLMSDirector
             this.ClearNotifications = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.ForceReadMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.UseMeterTimeZoneMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem33 = new System.Windows.Forms.ToolStripSeparator();
             this.PropertiesMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ConnectMnu = new System.Windows.Forms.ToolStripMenuItem();
@@ -209,6 +211,7 @@ namespace GXDLMSDirector
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.ForceRefreshBtn = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.UseMeterTimeZoneBtn = new System.Windows.Forms.ToolStripButton();
             this.DeleteBtn = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.NewListTBtn = new System.Windows.Forms.ToolBarButton();
@@ -327,9 +330,6 @@ namespace GXDLMSDirector
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.DeviceListView = new System.Windows.Forms.TabControl();
             this.DevicesTab = new System.Windows.Forms.TabPage();
-            this.UseMeterTimeZoneMnu = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem33 = new System.Windows.Forms.ToolStripSeparator();
-            this.UseMeterTimeZoneBtn = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -759,7 +759,7 @@ namespace GXDLMSDirector
             // noneToolStripMenuItem
             // 
             this.noneToolStripMenuItem.Name = "noneToolStripMenuItem";
-            this.noneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.noneToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.noneToolStripMenuItem.Text = "&None";
             this.noneToolStripMenuItem.ToolTipText = "Trace is not use,";
             this.noneToolStripMenuItem.Click += new System.EventHandler(this.noneToolStripMenuItem_Click);
@@ -767,7 +767,7 @@ namespace GXDLMSDirector
             // hexToolStripMenuItem
             // 
             this.hexToolStripMenuItem.Name = "hexToolStripMenuItem";
-            this.hexToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.hexToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.hexToolStripMenuItem.Text = "&Hex";
             this.hexToolStripMenuItem.ToolTipText = "Reseived and send bytes are show as hex in trace view.";
             this.hexToolStripMenuItem.Click += new System.EventHandler(this.hexToolStripMenuItem_Click);
@@ -775,7 +775,7 @@ namespace GXDLMSDirector
             // xmlToolStripMenuItem
             // 
             this.xmlToolStripMenuItem.Name = "xmlToolStripMenuItem";
-            this.xmlToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.xmlToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.xmlToolStripMenuItem.Text = "Xml";
             this.xmlToolStripMenuItem.ToolTipText = "Reseived and send bytes are show as xml in trace view.";
             this.xmlToolStripMenuItem.Click += new System.EventHandler(this.xmlToolStripMenuItem_Click);
@@ -783,7 +783,7 @@ namespace GXDLMSDirector
             // pDUToolStripMenuItem
             // 
             this.pDUToolStripMenuItem.Name = "pDUToolStripMenuItem";
-            this.pDUToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pDUToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.pDUToolStripMenuItem.Text = "&Pdu";
             this.pDUToolStripMenuItem.ToolTipText = "Pdu of reseived and send bytes is shown in trace view.";
             this.pDUToolStripMenuItem.Click += new System.EventHandler(this.pDUToolStripMenuItem_Click);
@@ -791,39 +791,39 @@ namespace GXDLMSDirector
             // TraceCommentsMenu
             // 
             this.TraceCommentsMenu.Name = "TraceCommentsMenu";
-            this.TraceCommentsMenu.Size = new System.Drawing.Size(180, 22);
+            this.TraceCommentsMenu.Size = new System.Drawing.Size(137, 22);
             this.TraceCommentsMenu.Text = "Comments";
             this.TraceCommentsMenu.Click += new System.EventHandler(this.TraceCommentsMenu_Click);
             // 
             // toolStripMenuItem20
             // 
             this.toolStripMenuItem20.Name = "toolStripMenuItem20";
-            this.toolStripMenuItem20.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem20.Size = new System.Drawing.Size(134, 6);
             // 
             // TraceTimeMnu
             // 
             this.TraceTimeMnu.Name = "TraceTimeMnu";
-            this.TraceTimeMnu.Size = new System.Drawing.Size(180, 22);
+            this.TraceTimeMnu.Size = new System.Drawing.Size(137, 22);
             this.TraceTimeMnu.Text = "&Time";
             this.TraceTimeMnu.Click += new System.EventHandler(this.TraceTimeMnu_Click);
             // 
             // TraceDuration
             // 
             this.TraceDuration.Name = "TraceDuration";
-            this.TraceDuration.Size = new System.Drawing.Size(180, 22);
+            this.TraceDuration.Size = new System.Drawing.Size(137, 22);
             this.TraceDuration.Text = "&Duration";
             this.TraceDuration.Click += new System.EventHandler(this.TraceDuration_Click);
             // 
             // toolStripMenuItem24
             // 
             this.toolStripMenuItem24.Name = "toolStripMenuItem24";
-            this.toolStripMenuItem24.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem24.Size = new System.Drawing.Size(134, 6);
             // 
             // clearTraceMnu
             // 
             this.clearTraceMnu.Name = "clearTraceMnu";
             this.clearTraceMnu.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.T)));
-            this.clearTraceMnu.Size = new System.Drawing.Size(180, 22);
+            this.clearTraceMnu.Size = new System.Drawing.Size(137, 22);
             this.clearTraceMnu.Text = "&Clear";
             this.clearTraceMnu.Click += new System.EventHandler(this.clearTraceMnu_Click);
             // 
@@ -921,6 +921,18 @@ namespace GXDLMSDirector
             this.ForceReadMnu.ToolTipText = "Are all attributes read from the selected object.";
             this.ForceReadMnu.Click += new System.EventHandler(this.ForceReadMnu_Click);
             // 
+            // UseMeterTimeZoneMnu
+            // 
+            this.UseMeterTimeZoneMnu.Name = "UseMeterTimeZoneMnu";
+            this.UseMeterTimeZoneMnu.Size = new System.Drawing.Size(186, 22);
+            this.UseMeterTimeZoneMnu.Text = "Use Meter Time Zone";
+            this.UseMeterTimeZoneMnu.Click += new System.EventHandler(this.UseMeterTimeZoneMnu_Click);
+            // 
+            // toolStripMenuItem33
+            // 
+            this.toolStripMenuItem33.Name = "toolStripMenuItem33";
+            this.toolStripMenuItem33.Size = new System.Drawing.Size(183, 6);
+            // 
             // PropertiesMnu
             // 
             this.PropertiesMnu.Name = "PropertiesMnu";
@@ -956,7 +968,7 @@ namespace GXDLMSDirector
             // ConnectMnu
             // 
             this.ConnectMnu.Name = "ConnectMnu";
-            this.ConnectMnu.Size = new System.Drawing.Size(180, 22);
+            this.ConnectMnu.Size = new System.Drawing.Size(170, 22);
             this.ConnectMnu.Text = "&Connect";
             this.ConnectMnu.ToolTipText = "Connect to the meter.";
             this.ConnectMnu.Click += new System.EventHandler(this.ConnectMnu_Click);
@@ -964,7 +976,7 @@ namespace GXDLMSDirector
             // DisconnectMnu
             // 
             this.DisconnectMnu.Name = "DisconnectMnu";
-            this.DisconnectMnu.Size = new System.Drawing.Size(180, 22);
+            this.DisconnectMnu.Size = new System.Drawing.Size(170, 22);
             this.DisconnectMnu.Text = "&Disconnect";
             this.DisconnectMnu.ToolTipText = "Disconnect from the meter.";
             this.DisconnectMnu.Click += new System.EventHandler(this.DisconnectMnu_Click);
@@ -972,13 +984,13 @@ namespace GXDLMSDirector
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(167, 6);
             // 
             // ReadMnu
             // 
             this.ReadMnu.Name = "ReadMnu";
             this.ReadMnu.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.ReadMnu.Size = new System.Drawing.Size(180, 22);
+            this.ReadMnu.Size = new System.Drawing.Size(170, 22);
             this.ReadMnu.Text = "&Read";
             this.ReadMnu.ToolTipText = "Read selected item.";
             this.ReadMnu.Click += new System.EventHandler(this.ReadMnu_Click);
@@ -987,7 +999,7 @@ namespace GXDLMSDirector
             // 
             this.WriteMnu.Name = "WriteMnu";
             this.WriteMnu.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
-            this.WriteMnu.Size = new System.Drawing.Size(180, 22);
+            this.WriteMnu.Size = new System.Drawing.Size(170, 22);
             this.WriteMnu.Text = "&Write";
             this.WriteMnu.ToolTipText = "Write changed attributes.";
             this.WriteMnu.Click += new System.EventHandler(this.WriteMnu_Click);
@@ -996,7 +1008,7 @@ namespace GXDLMSDirector
             // 
             this.DeleteMnu.Name = "DeleteMnu";
             this.DeleteMnu.ShortcutKeys = System.Windows.Forms.Keys.Delete;
-            this.DeleteMnu.Size = new System.Drawing.Size(180, 22);
+            this.DeleteMnu.Size = new System.Drawing.Size(170, 22);
             this.DeleteMnu.Text = "Delete";
             this.DeleteMnu.ToolTipText = "Delete selected item.";
             this.DeleteMnu.Click += new System.EventHandler(this.DeleteMnu_Click);
@@ -1004,13 +1016,13 @@ namespace GXDLMSDirector
             // toolStripMenuItem6
             // 
             this.toolStripMenuItem6.Name = "toolStripMenuItem6";
-            this.toolStripMenuItem6.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem6.Size = new System.Drawing.Size(167, 6);
             // 
             // CancelBtn
             // 
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.End)));
-            this.CancelBtn.Size = new System.Drawing.Size(180, 22);
+            this.CancelBtn.Size = new System.Drawing.Size(170, 22);
             this.CancelBtn.Text = "&Cancel";
             this.CancelBtn.ToolTipText = "Cancel transaction.";
             this.CancelBtn.Click += new System.EventHandler(this.CancelBtn_Click);
@@ -1018,12 +1030,12 @@ namespace GXDLMSDirector
             // toolStripMenuItem8
             // 
             this.toolStripMenuItem8.Name = "toolStripMenuItem8";
-            this.toolStripMenuItem8.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem8.Size = new System.Drawing.Size(167, 6);
             // 
             // ManufacturersMnu
             // 
             this.ManufacturersMnu.Name = "ManufacturersMnu";
-            this.ManufacturersMnu.Size = new System.Drawing.Size(180, 22);
+            this.ManufacturersMnu.Size = new System.Drawing.Size(170, 22);
             this.ManufacturersMnu.Text = "Manufacturers...";
             this.ManufacturersMnu.ToolTipText = "Show available manufacturers.";
             this.ManufacturersMnu.Click += new System.EventHandler(this.ManufacturersMnu_Click);
@@ -1031,7 +1043,7 @@ namespace GXDLMSDirector
             // OBISCodesMnu
             // 
             this.OBISCodesMnu.Name = "OBISCodesMnu";
-            this.OBISCodesMnu.Size = new System.Drawing.Size(180, 22);
+            this.OBISCodesMnu.Size = new System.Drawing.Size(170, 22);
             this.OBISCodesMnu.Text = "OBIS Codes...";
             this.OBISCodesMnu.ToolTipText = "Show OBIS codes.";
             this.OBISCodesMnu.Click += new System.EventHandler(this.OBISCodesMnu_Click);
@@ -1039,34 +1051,34 @@ namespace GXDLMSDirector
             // dLMSTranslatorToolStripMenuItem
             // 
             this.dLMSTranslatorToolStripMenuItem.Name = "dLMSTranslatorToolStripMenuItem";
-            this.dLMSTranslatorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.dLMSTranslatorToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             this.dLMSTranslatorToolStripMenuItem.Text = "DLMS Translator...";
             this.dLMSTranslatorToolStripMenuItem.Click += new System.EventHandler(this.dLMSTranslatorToolStripMenuItem_Click);
             // 
             // MacroEditorMnu
             // 
             this.MacroEditorMnu.Name = "MacroEditorMnu";
-            this.MacroEditorMnu.Size = new System.Drawing.Size(180, 22);
+            this.MacroEditorMnu.Size = new System.Drawing.Size(170, 22);
             this.MacroEditorMnu.Text = "Macro Editor";
             this.MacroEditorMnu.Click += new System.EventHandler(this.ActionsMnu_Click);
             // 
             // serialMonitorToolStripMenuItem
             // 
             this.serialMonitorToolStripMenuItem.Name = "serialMonitorToolStripMenuItem";
-            this.serialMonitorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.serialMonitorToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             this.serialMonitorToolStripMenuItem.Text = "Serial Monitor...";
             this.serialMonitorToolStripMenuItem.Click += new System.EventHandler(this.serialMonitorToolStripMenuItem_Click);
             // 
             // toolStripMenuItem13
             // 
             this.toolStripMenuItem13.Name = "toolStripMenuItem13";
-            this.toolStripMenuItem13.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem13.Size = new System.Drawing.Size(167, 6);
             // 
             // settingsToolStripMenuItem1
             // 
             this.settingsToolStripMenuItem1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.settingsToolStripMenuItem1.Name = "settingsToolStripMenuItem1";
-            this.settingsToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.settingsToolStripMenuItem1.Size = new System.Drawing.Size(170, 22);
             this.settingsToolStripMenuItem1.Text = "Settings...";
             this.settingsToolStripMenuItem1.ToolTipText = "Show settings.";
             this.settingsToolStripMenuItem1.Click += new System.EventHandler(this.settingsToolStripMenuItem1_Click);
@@ -1074,7 +1086,7 @@ namespace GXDLMSDirector
             // AddToScheduleMenu
             // 
             this.AddToScheduleMenu.Name = "AddToScheduleMenu";
-            this.AddToScheduleMenu.Size = new System.Drawing.Size(180, 22);
+            this.AddToScheduleMenu.Size = new System.Drawing.Size(170, 22);
             this.AddToScheduleMenu.Text = "Add to Schedule...";
             this.AddToScheduleMenu.Click += new System.EventHandler(this.AddToScheduleMenu_Click);
             // 
@@ -1578,6 +1590,16 @@ namespace GXDLMSDirector
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
             this.toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
+            // 
+            // UseMeterTimeZoneBtn
+            // 
+            this.UseMeterTimeZoneBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.UseMeterTimeZoneBtn.Image = ((System.Drawing.Image)(resources.GetObject("UseMeterTimeZoneBtn.Image")));
+            this.UseMeterTimeZoneBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.UseMeterTimeZoneBtn.Name = "UseMeterTimeZoneBtn";
+            this.UseMeterTimeZoneBtn.Size = new System.Drawing.Size(23, 22);
+            this.UseMeterTimeZoneBtn.Text = "Use Meter Time Zone";
+            this.UseMeterTimeZoneBtn.Click += new System.EventHandler(this.UseMeterTimeZoneMnu_Click);
             // 
             // DeleteBtn
             // 
@@ -2323,7 +2345,7 @@ namespace GXDLMSDirector
             // Negotiated
             // 
             this.Negotiated.AutoSize = true;
-            this.Negotiated.Location = new System.Drawing.Point(341, 127);
+            this.Negotiated.Location = new System.Drawing.Point(341, 82);
             this.Negotiated.Name = "Negotiated";
             this.Negotiated.Size = new System.Drawing.Size(59, 13);
             this.Negotiated.TabIndex = 73;
@@ -2332,7 +2354,7 @@ namespace GXDLMSDirector
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(111, 127);
+            this.label1.Location = new System.Drawing.Point(111, 82);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(55, 13);
             this.label1.TabIndex = 72;
@@ -2341,17 +2363,17 @@ namespace GXDLMSDirector
             // ProposedConformanceTB
             // 
             this.ProposedConformanceTB.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.ProposedConformanceTB.Location = new System.Drawing.Point(111, 143);
+            this.ProposedConformanceTB.Location = new System.Drawing.Point(111, 98);
             this.ProposedConformanceTB.Multiline = true;
             this.ProposedConformanceTB.Name = "ProposedConformanceTB";
             this.ProposedConformanceTB.ReadOnly = true;
-            this.ProposedConformanceTB.Size = new System.Drawing.Size(203, 36);
+            this.ProposedConformanceTB.Size = new System.Drawing.Size(203, 81);
             this.ProposedConformanceTB.TabIndex = 71;
             // 
             // AuthenticationTb
             // 
             this.AuthenticationTb.AutoSize = true;
-            this.AuthenticationTb.Location = new System.Drawing.Point(111, 108);
+            this.AuthenticationTb.Location = new System.Drawing.Point(111, 41);
             this.AuthenticationTb.Name = "AuthenticationTb";
             this.AuthenticationTb.Size = new System.Drawing.Size(35, 13);
             this.AuthenticationTb.TabIndex = 70;
@@ -2360,7 +2382,7 @@ namespace GXDLMSDirector
             // AuthenticationLbl
             // 
             this.AuthenticationLbl.AutoSize = true;
-            this.AuthenticationLbl.Location = new System.Drawing.Point(6, 108);
+            this.AuthenticationLbl.Location = new System.Drawing.Point(6, 41);
             this.AuthenticationLbl.Name = "AuthenticationLbl";
             this.AuthenticationLbl.Size = new System.Drawing.Size(78, 13);
             this.AuthenticationLbl.TabIndex = 69;
@@ -2496,17 +2518,17 @@ namespace GXDLMSDirector
             // NegotiatedConformanceTB
             // 
             this.NegotiatedConformanceTB.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.NegotiatedConformanceTB.Location = new System.Drawing.Point(344, 143);
+            this.NegotiatedConformanceTB.Location = new System.Drawing.Point(344, 98);
             this.NegotiatedConformanceTB.Multiline = true;
             this.NegotiatedConformanceTB.Name = "NegotiatedConformanceTB";
             this.NegotiatedConformanceTB.ReadOnly = true;
-            this.NegotiatedConformanceTB.Size = new System.Drawing.Size(212, 36);
+            this.NegotiatedConformanceTB.Size = new System.Drawing.Size(212, 81);
             this.NegotiatedConformanceTB.TabIndex = 63;
             // 
             // ConformanceLbl
             // 
             this.ConformanceLbl.AutoSize = true;
-            this.ConformanceLbl.Location = new System.Drawing.Point(6, 143);
+            this.ConformanceLbl.Location = new System.Drawing.Point(6, 98);
             this.ConformanceLbl.Name = "ConformanceLbl";
             this.ConformanceLbl.Size = new System.Drawing.Size(73, 13);
             this.ConformanceLbl.TabIndex = 62;
@@ -2533,7 +2555,7 @@ namespace GXDLMSDirector
             // PhysicalAddressLbl
             // 
             this.PhysicalAddressLbl.AutoSize = true;
-            this.PhysicalAddressLbl.Location = new System.Drawing.Point(6, 39);
+            this.PhysicalAddressLbl.Location = new System.Drawing.Point(172, 62);
             this.PhysicalAddressLbl.Name = "PhysicalAddressLbl";
             this.PhysicalAddressLbl.Size = new System.Drawing.Size(90, 13);
             this.PhysicalAddressLbl.TabIndex = 56;
@@ -2542,7 +2564,7 @@ namespace GXDLMSDirector
             // ClientAddressValueLbl
             // 
             this.ClientAddressValueLbl.AutoSize = true;
-            this.ClientAddressValueLbl.Location = new System.Drawing.Point(111, 85);
+            this.ClientAddressValueLbl.Location = new System.Drawing.Point(277, 41);
             this.ClientAddressValueLbl.Name = "ClientAddressValueLbl";
             this.ClientAddressValueLbl.Size = new System.Drawing.Size(112, 13);
             this.ClientAddressValueLbl.TabIndex = 61;
@@ -2551,7 +2573,7 @@ namespace GXDLMSDirector
             // PhysicalAddressValueLbl
             // 
             this.PhysicalAddressValueLbl.AutoSize = true;
-            this.PhysicalAddressValueLbl.Location = new System.Drawing.Point(111, 39);
+            this.PhysicalAddressValueLbl.Location = new System.Drawing.Point(277, 62);
             this.PhysicalAddressValueLbl.Name = "PhysicalAddressValueLbl";
             this.PhysicalAddressValueLbl.Size = new System.Drawing.Size(125, 13);
             this.PhysicalAddressValueLbl.TabIndex = 57;
@@ -2560,7 +2582,7 @@ namespace GXDLMSDirector
             // ClientAddressLbl
             // 
             this.ClientAddressLbl.AutoSize = true;
-            this.ClientAddressLbl.Location = new System.Drawing.Point(6, 85);
+            this.ClientAddressLbl.Location = new System.Drawing.Point(172, 41);
             this.ClientAddressLbl.Name = "ClientAddressLbl";
             this.ClientAddressLbl.Size = new System.Drawing.Size(77, 13);
             this.ClientAddressLbl.TabIndex = 60;
@@ -2580,9 +2602,9 @@ namespace GXDLMSDirector
             this.LogicalAddressValueLbl.AutoSize = true;
             this.LogicalAddressValueLbl.Location = new System.Drawing.Point(111, 62);
             this.LogicalAddressValueLbl.Name = "LogicalAddressValueLbl";
-            this.LogicalAddressValueLbl.Size = new System.Drawing.Size(120, 13);
+            this.LogicalAddressValueLbl.Size = new System.Drawing.Size(13, 13);
             this.LogicalAddressValueLbl.TabIndex = 59;
-            this.LogicalAddressValueLbl.Text = "LogicalAddressValueLbl";
+            this.LogicalAddressValueLbl.Text = "0";
             // 
             // tabPage5
             // 
@@ -2634,28 +2656,6 @@ namespace GXDLMSDirector
             this.DevicesTab.TabIndex = 0;
             this.DevicesTab.Text = "Devices";
             this.DevicesTab.UseVisualStyleBackColor = true;
-            // 
-            // UseMeterTimeZoneMnu
-            // 
-            this.UseMeterTimeZoneMnu.Name = "UseMeterTimeZoneMnu";
-            this.UseMeterTimeZoneMnu.Size = new System.Drawing.Size(186, 22);
-            this.UseMeterTimeZoneMnu.Text = "Use Meter Time Zone";
-            this.UseMeterTimeZoneMnu.Click += new System.EventHandler(this.UseMeterTimeZoneMnu_Click);
-            // 
-            // toolStripMenuItem33
-            // 
-            this.toolStripMenuItem33.Name = "toolStripMenuItem33";
-            this.toolStripMenuItem33.Size = new System.Drawing.Size(183, 6);
-            // 
-            // UseMeterTimeZoneBtn
-            // 
-            this.UseMeterTimeZoneBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.UseMeterTimeZoneBtn.Image = ((System.Drawing.Image)(resources.GetObject("UseMeterTimeZoneBtn.Image")));
-            this.UseMeterTimeZoneBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.UseMeterTimeZoneBtn.Name = "UseMeterTimeZoneBtn";
-            this.UseMeterTimeZoneBtn.Size = new System.Drawing.Size(23, 22);
-            this.UseMeterTimeZoneBtn.Text = "Use Meter Time Zone";
-            this.UseMeterTimeZoneBtn.Click += new System.EventHandler(this.UseMeterTimeZoneMnu_Click);
             // 
             // MainForm
             // 

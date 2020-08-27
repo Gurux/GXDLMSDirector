@@ -1139,15 +1139,23 @@ namespace GXDLMSDirector
                         TestAssociationLn(settings, dev, output);
 
                     }
-#if DEBUG
-                    if (!settings.ExcludeClockTests)
+                    if (!settings.ExcludedGuruxTests.ClockTests.IsEnabled())
                     {
+                        (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
                         TestClock(test, settings, dev, output);
+                        (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = false;
                     }
-#endif //DEBUG
-                    if (!settings.ExcludeProfileGenericTests)
+                    if (!settings.ExcludedGuruxTests.ProfileGenericTests.IsEnabled())
                     {
+                        (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
                         TestProfileGeneric(test, settings, dev, output);
+                        (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = false;
+                    }
+                    if (settings.ExcludedGuruxTests.ServiceTests.IsEnabled())
+                    {
+                        (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
+                        TestServices(test, settings, dev, output);
+                        (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = false;
                     }
 
                     if (dev.Comm.payload != 0)
@@ -1217,6 +1225,468 @@ namespace GXDLMSDirector
             dev.Comm.client.UpdateValue(pg, 2, reply.Value);
         }
 
+
+        /// <summary>
+        /// Test services.
+        /// </summary>
+        /// <param name="settings">Conformance settings.</param>
+        /// <param name="dev">DLMS device.</param>
+        /// <param name="output"></param>
+        private static void TestServices(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output)
+        {
+            bool useLogicalNameReferencing = dev.Comm.client.UseLogicalNameReferencing;
+            int conformance = dev.Conformance;
+            if (!settings.ExcludedGuruxTests.ServiceTests.IncompatibleConformance)
+            {
+                dev.Comm.Disconnect();
+                try
+                {
+                    dev.Conformance = 0;
+                    Thread.Sleep((int)settings.DelayConnection.TotalMilliseconds);
+                    dev.InitializeConnection();
+                    AddError(test, dev, output.Errors, "Empty service test failed.");
+                }
+                catch (GXDLMSConfirmedServiceError ex)
+                {
+                    AddInfo(test, dev, output.Info, "Empty service test succeeded. " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    AddError(test, dev, output.Errors, "Empty service test failed. " + ex.Message);
+                }
+                finally
+                {
+                    dev.Conformance = conformance;
+                }
+            }
+
+            dev.Comm.Disconnect();
+            try
+            {
+                if (dev.UseLogicalNameReferencing)
+                {
+                    dev.Conformance = (int)Conformance.Get;
+                }
+                else
+                {
+                    dev.Conformance = (int)Conformance.Read;
+                }
+                if (dev.Authentication > Authentication.Low)
+                {
+                    dev.Conformance |= (int)Conformance.Action;
+                }
+                Thread.Sleep((int)settings.DelayConnection.TotalMilliseconds);
+                dev.InitializeConnection();
+                if (dev.Comm.client.NegotiatedConformance != (Conformance)dev.Conformance)
+                {
+                    AddError(test, dev, output.Errors, "Proposed conformance service test failed.");
+                }
+            }
+            catch (GXDLMSException)
+            {
+                AddError(test, dev, output.Errors, "Proposed conformance service test failed.");
+            }
+            if ((Conformance.GeneralProtection & dev.Comm.client.NegotiatedConformance) == 0)
+            {
+                //This cannot be tested.
+            }
+            if ((Conformance.GeneralBlockTransfer & dev.Comm.client.NegotiatedConformance) == 0)
+            {
+                //This cannot be tested.
+            }
+            if (!settings.ExcludedGuruxTests.ServiceTests.Read && (Conformance.Read & dev.Comm.client.NegotiatedConformance) == 0)
+            {
+                try
+                {
+                    GXReplyData reply = new GXReplyData();
+                    dev.Comm.client.UseLogicalNameReferencing = false;
+                    dev.Comm.ReadDataBlock(dev.Comm.client.Read((ushort)0xFA00, ObjectType.AssociationShortName, 1), "Read service test.", 1, 0, reply);
+                    AddError(test, dev, output.Errors, "Read service test failed. Meter replied.");
+                }
+                catch (GXDLMSExceptionResponse ex)
+                {
+                    AddInfo(test, dev, output.Info, "Read service test failed. " + ex.ExceptionServiceError);
+                }
+                catch (TimeoutException)
+                {
+                    AddInfo(test, dev, output.Info, "Read service test. Meter didn't reply.");
+                }
+                catch (Exception ex)
+                {
+                    AddError(test, dev, output.Errors, "Read service test failed. " + ex.Message);
+                }
+                finally
+                {
+                    dev.Comm.client.UseLogicalNameReferencing = useLogicalNameReferencing;
+                }
+            }
+            if (!settings.ExcludedGuruxTests.ServiceTests.Write && (Conformance.Write & dev.Comm.client.NegotiatedConformance) == 0)
+            {
+                try
+                {
+                    //Find writable object and write it.
+                    int index = 0;
+                    GXDLMSObject obj = null;
+                    foreach (GXDLMSObject it in dev.Objects)
+                    {
+                        for (int pos = 1; pos != (it as IGXDLMSBase).GetAttributeCount(); ++pos)
+                        {
+                            if (it.GetAccess(pos) == AccessMode.ReadWrite)
+                            {
+                                obj = it;
+                                index = pos;
+                                break;
+                            }
+                        }
+                    }
+                    if (obj == null)
+                    {
+                        AddError(test, dev, output.Errors, "Write service test skipped. There are no writable objects.");
+                    }
+                    else
+                    {
+                        GXReplyData reply = new GXReplyData();
+                        dev.Comm.client.UseLogicalNameReferencing = false;
+                        dev.Comm.ReadDataBlock(dev.Comm.client.Write((ushort)0xFA00, null, DataType.Array, ObjectType.AssociationShortName, 1), "Read service test", 1, 0, reply);
+                        AddError(test, dev, output.Errors, "Write service test failed");
+                    }
+                }
+                catch (GXDLMSExceptionResponse ex)
+                {
+                    AddInfo(test, dev, output.Info, "Write service test succeeded. " + ex.ExceptionServiceError);
+                }
+                catch (TimeoutException)
+                {
+                    AddInfo(test, dev, output.Info, "Write service test succeeded. Meter didn't reply.");
+                }
+                catch (Exception ex)
+                {
+                    AddError(test, dev, output.Errors, "Write service test failed. " + ex.Message);
+                }
+                finally
+                {
+                    dev.Comm.client.UseLogicalNameReferencing = useLogicalNameReferencing;
+                }
+            }
+            if ((Conformance.UnconfirmedWrite & dev.Comm.client.NegotiatedConformance) == 0)
+            {
+                //This cannot be tested.
+            }
+            if ((Conformance.Attribute0SupportedWithSet & dev.Comm.client.NegotiatedConformance) == 0)
+            {
+                //This cannot be tested.
+            }
+            if (!settings.ExcludedGuruxTests.ServiceTests.Attribute0SupportedWithGet && (Conformance.Attribute0SupportedWithGet & dev.Comm.client.NegotiatedConformance) == 0)
+            {
+                try
+                {
+                    //Find Data object and read it.
+                    GXDLMSObject obj = null;
+                    foreach (GXDLMSObject it in dev.Objects.GetObjects(ObjectType.Data))
+                    {
+                        obj = it;
+                        break;
+                    }
+                    if (obj == null)
+                    {
+                        AddError(test, dev, output.Errors, "Attribute0SupportedWithGet service test skipped. There are no data objects.");
+                    }
+                    else
+                    {
+                        GXReplyData reply = new GXReplyData();
+                        dev.Comm.ReadDataBlock(dev.Comm.Read(obj, 0), "Attribute0SupportedWithGet service test", 1, 0, reply);
+                        AddError(test, dev, output.Errors, "Attribute0SupportedWithGet service test failed.");
+                    }
+                }
+                catch (GXDLMSExceptionResponse ex)
+                {
+                    AddInfo(test, dev, output.Info, "Attribute0SupportedWithGet service test succeeded. " + ex.ExceptionServiceError);
+                }
+                catch (TimeoutException)
+                {
+                    AddInfo(test, dev, output.Info, "Attribute0SupportedWithGet service test succeeded. Meter didn't reply.");
+                }
+                catch (Exception ex)
+                {
+                    AddError(test, dev, output.Errors, "Attribute0SupportedWithGet service test failed. " + ex.Message);
+                }
+            }
+            if (!settings.ExcludedGuruxTests.ServiceTests.BlockTransferWithGetOrRead && (Conformance.BlockTransferWithGetOrRead & dev.Comm.client.NegotiatedConformance) == 0)
+            {
+                try
+                {
+                    GXReplyData reply = new GXReplyData();
+                    dev.Comm.client.ForceToBlocks = true;
+                    dev.Comm.ReadDataBlock(dev.Comm.Read(dev.Objects[0], 1), "BlockTransferWithGetOrRead service test", 1, 0, reply);
+                    AddError(test, dev, output.Errors, "BlockTransferWithGetOrRead service failed.");
+                }
+                catch (GXDLMSExceptionResponse ex)
+                {
+                    AddInfo(test, dev, output.Info, "BlockTransferWithGetOrRead service succeeded. " + ex.ExceptionServiceError);
+                }
+                catch (TimeoutException)
+                {
+                    AddInfo(test, dev, output.Info, "BlockTransferWithGetOrRead service succeeded. Meter didn't reply.");
+                }
+                catch (Exception ex)
+                {
+                    AddError(test, dev, output.Errors, "BlockTransferWithGetOrRead service test failed. " + ex.Message);
+                }
+                finally
+                {
+                    dev.Comm.client.ForceToBlocks = false;
+                }
+            }
+            if (!settings.ExcludedGuruxTests.ServiceTests.BlockTransferWithSetOrWrite && (Conformance.BlockTransferWithSetOrWrite & dev.Comm.client.NegotiatedConformance) == 0)
+            {
+                try
+                {
+                    //Find writable object and write it.
+                    int index = 0;
+                    GXDLMSObject obj = null;
+                    foreach (GXDLMSObject it in dev.Objects)
+                    {
+                        for (int pos = 1; pos != (it as IGXDLMSBase).GetAttributeCount(); ++pos)
+                        {
+                            if (it.GetAccess(pos) == AccessMode.ReadWrite)
+                            {
+                                obj = it;
+                                index = pos;
+                                break;
+                            }
+                        }
+                    }
+                    if (obj == null)
+                    {
+                        AddInfo(test, dev, output.Info, "BlockTransferWithSetOrWrite service test skipped. There are no writable objects.");
+                    }
+                    else
+                    {
+                        GXReplyData reply = new GXReplyData();
+                        dev.Comm.client.ForceToBlocks = true;
+                        dev.Comm.ReadDataBlock(dev.Comm.Read(obj, index), "Attribute0SupportedWithGet service BlockTransferWithSetOrWrite", 0, reply);
+                        dev.Comm.Write(obj, index);
+                        AddError(test, dev, output.Errors, "BlockTransferWithSetOrWrite service test failed.");
+                    }
+                }
+                catch (GXDLMSExceptionResponse ex)
+                {
+                    AddInfo(test, dev, output.Info, "BlockTransferWithSetOrWrite service test succeeded. " + ex.ExceptionServiceError);
+                }
+                catch (TimeoutException)
+                {
+                    AddInfo(test, dev, output.Info, "Attribute0SupportedBlockTransferWithSetOrWriteWithGet service test succeeded. Meter didn't reply.");
+                }
+                catch (Exception ex)
+                {
+                    AddError(test, dev, output.Errors, "BlockTransferWithSetOrWrite service test failed. " + ex.Message);
+                }
+                finally
+                {
+                    dev.Comm.client.ForceToBlocks = false;
+                }
+            }
+            if (!settings.ExcludedGuruxTests.ServiceTests.BlockTransferWithAction && (Conformance.BlockTransferWithAction & dev.Comm.client.NegotiatedConformance) == 0)
+            {
+                //This cannot be tested.
+            }
+            if (!settings.ExcludedGuruxTests.ServiceTests.MultipleReferences && (Conformance.MultipleReferences & dev.Comm.client.NegotiatedConformance) == 0)
+            {
+                try
+                {
+                    List<KeyValuePair<GXDLMSObject, int>> list = new List<KeyValuePair<GXDLMSObject, int>>();
+                    foreach (GXDLMSObject it in dev.Objects.GetObjects(ObjectType.Data))
+                    {
+                        list.Add(new KeyValuePair<GXDLMSObject, int>(it, 1));
+                        if (list.Count == 2)
+                        {
+                            break;
+                        }
+                    }
+                    dev.Comm.client.NegotiatedConformance |= Conformance.MultipleReferences;
+                    dev.Comm.ReadList(list);
+                    AddError(test, dev, output.Errors, "MultipleReferences service test failed.");
+                }
+                catch (GXDLMSExceptionResponse ex)
+                {
+                    AddInfo(test, dev, output.Info, "MultipleReferences service test succeeded. " + ex.ExceptionServiceError);
+                }
+                catch (TimeoutException)
+                {
+                    AddInfo(test, dev, output.Info, "MultipleReferences service test succeeded. Meter didn't reply.");
+                }
+                catch (Exception ex)
+                {
+                    AddError(test, dev, output.Errors, "MultipleReferences service test failed. " + ex.Message);
+                }
+            }
+
+            if ((Conformance.Access & dev.Comm.client.NegotiatedConformance) == 0)
+            {
+                //This cannot be tested at the moment.
+            }
+            if (!settings.ExcludedGuruxTests.ServiceTests.ParameterizedAccess && (Conformance.ParameterizedAccess & dev.Comm.client.NegotiatedConformance) == 0)
+            {
+                //Not implemented.
+            }
+            if (!settings.ExcludedGuruxTests.ServiceTests.Get && (Conformance.Get & dev.Comm.client.NegotiatedConformance) == 0)
+            {
+                try
+                {
+                    GXReplyData reply = new GXReplyData();
+                    dev.Comm.ReadDataBlock(dev.Comm.Read(dev.Objects[0], 1), "Get service test", 1, 0, reply);
+                    AddError(test, dev, output.Errors, "Get service test failed.");
+                }
+                catch (GXDLMSExceptionResponse ex)
+                {
+                    AddInfo(test, dev, output.Info, "Get service test succeeded. " + ex.ExceptionServiceError);
+                }
+                catch (TimeoutException)
+                {
+                    AddInfo(test, dev, output.Info, "Get service test succeeded. Meter didn't reply.");
+                }
+                catch (Exception ex)
+                {
+                    AddError(test, dev, output.Errors, "Get service test failed. " + ex.Message);
+                }
+            }
+            if (!settings.ExcludedGuruxTests.ServiceTests.Set && (Conformance.Set & dev.Comm.client.NegotiatedConformance) == 0)
+            {
+                try
+                {
+                    //Find writable object and write it.
+                    int index = 0;
+                    GXDLMSObject obj = null;
+                    foreach (GXDLMSObject it in dev.Objects)
+                    {
+                        for (int pos = 1; pos != (it as IGXDLMSBase).GetAttributeCount(); ++pos)
+                        {
+                            if (it.GetAccess(pos) == AccessMode.ReadWrite)
+                            {
+                                obj = it;
+                                index = pos;
+                                break;
+                            }
+                        }
+                    }
+                    if (obj == null)
+                    {
+                        AddInfo(test, dev, output.Info, "Set service test skipped. There are no writable objects.");
+                    }
+                    else
+                    {
+                        GXReplyData reply = new GXReplyData();
+                        dev.Comm.ReadDataBlock(dev.Comm.Read(obj, index), "Set service test", 0, reply);
+                        dev.Comm.Write(obj, index);
+                        AddError(test, dev, output.Errors, "Set service test failed.");
+                    }
+                }
+                catch (GXDLMSExceptionResponse ex)
+                {
+                    AddInfo(test, dev, output.Info, "Set service test succeeded. " + ex.ExceptionServiceError);
+                }
+                catch (TimeoutException)
+                {
+                    AddInfo(test, dev, output.Info, "Set service test succeeded. Meter didn't reply.");
+                }
+                catch (Exception ex)
+                {
+                    AddError(test, dev, output.Errors, "Set service test test failed. " + ex.Message);
+                }
+            }
+            if (!settings.ExcludedGuruxTests.ServiceTests.SelectiveAccess && (Conformance.SelectiveAccess & dev.Comm.client.NegotiatedConformance) == 0)
+            {
+                try
+                {
+                    //Find executed object and execute it.
+                    int index = 0;
+                    GXDLMSObject obj = null;
+                    foreach (GXDLMSObject it in dev.Objects.GetObjects(ObjectType.ProfileGeneric))
+                    {
+                        obj = it;
+                        index = 2;
+                        break;
+                    }
+                    if (obj == null)
+                    {
+                        AddInfo(test, dev, output.Info, "SelectiveAccess service test skipped. There are no profile generic objects to test.");
+                    }
+                    else
+                    {
+                        GXReplyData reply = new GXReplyData();
+                        dev.Comm.ReadDataBlock(dev.Comm.Read(obj, index), "SelectiveAccess service test", 0, reply);
+                        dev.Comm.Write(obj, index);
+                        AddError(test, dev, output.Errors, "SelectiveAccess service test failed.");
+                    }
+                }
+                catch (GXDLMSExceptionResponse ex)
+                {
+                    AddInfo(test, dev, output.Info, "SelectiveAccess service test succeeded. " + ex.ExceptionServiceError);
+                }
+                catch (GXDLMSException ex)
+                {
+                    AddInfo(test, dev, output.Info, "SelectiveAccess service test succeeded. " + ex.Message);
+                }
+                catch (TimeoutException)
+                {
+                    AddInfo(test, dev, output.Info, "SelectiveAccess service test succeeded. Meter didn't reply.");
+                }
+                catch (Exception ex)
+                {
+                    AddError(test, dev, output.Errors, "SelectiveAccess service test failed. " + ex.Message);
+                }
+            }
+            if (!settings.ExcludedGuruxTests.ServiceTests.Action && (Conformance.Action & dev.Comm.client.NegotiatedConformance) == 0)
+            {
+                try
+                {
+                    //Find executed object and execute it.
+                    int index = 0;
+                    GXDLMSObject obj = null;
+                    foreach (GXDLMSObject it in dev.Objects)
+                    {
+                        for (int pos = 1; pos != (it as IGXDLMSBase).GetMethodCount(); ++pos)
+                        {
+                            if (it.GetMethodAccess(pos) == MethodAccessMode.Access)
+                            {
+                                obj = it;
+                                index = pos;
+                                break;
+                            }
+                        }
+                    }
+                    if (obj == null)
+                    {
+                        AddInfo(test, dev, output.Info, "Action service test skipped. There are no actions to execute.");
+                    }
+                    else
+                    {
+                        GXReplyData reply = new GXReplyData();
+                        dev.Comm.ReadDataBlock(dev.Comm.Read(obj, index), "Action service test", 0, reply);
+                        dev.Comm.Write(obj, index);
+                        AddError(test, dev, output.Errors, "Action service test failed.");
+                    }
+                }
+                catch (GXDLMSExceptionResponse ex)
+                {
+                    AddInfo(test, dev, output.Info, "Action service test succeeded. " + ex.ExceptionServiceError);
+                }
+                catch (GXDLMSException ex)
+                {
+                    AddInfo(test, dev, output.Info, "Action service test succeeded. " + ex.Message);
+                }
+                catch (TimeoutException)
+                {
+                    AddInfo(test, dev, output.Info, "Action service test succeeded. Meter didn't reply.");
+                }
+                catch (Exception ex)
+                {
+                    AddError(test, dev, output.Errors, "Action service test failed. " + ex.Message);
+                }
+            }
+            dev.Conformance = conformance;
+        }
+
         /// <summary>
         /// Test profile generic.
         /// </summary>
@@ -1238,7 +1708,7 @@ namespace GXDLMSDirector
                     {
                         AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. Amount of the capture objects is different.");
                     }
-                    //else
+                    else
                     {
                         IEnumerator<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> e = catureObjects.GetEnumerator();
                         foreach (GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject> it in pg.CaptureObjects)
@@ -1287,162 +1757,179 @@ namespace GXDLMSDirector
                         AddInfo(test, dev, output.Info, "Profile generic " + pg.LogicalName + " failed. Capture objects is empty.");
                         continue;
                     }
-                    try
+                    if (settings.ExcludedGuruxTests.ProfileGenericTests.EntryIndex0)
                     {
-                        //Numbering of entries and selected values starts from 1.
-                        ReadRowsByEntry(dev, pg, 0, 1, null);
-                        passed = false;
-                    }
-                    catch (Exception)
-                    {
-                        //This should fail.
-                    }
-                    if (passed)
-                    {
-                        AddInfo(test, dev, output.Info, "Testing Profile Generic " + pg.LogicalName + " read by entry #0 succeeded.");
-                    }
-                    else
-                    {
-                        AddError(test, dev, output.Errors, "Testing Profile Generic " + pg.LogicalName + " read by entry #0 failed.");
+                        try
+                        {
+                            //Numbering of entries and selected values starts from 1.
+                            ReadRowsByEntry(dev, pg, 0, 1, null);
+                            passed = false;
+                        }
+                        catch (Exception)
+                        {
+                            //This should fail.
+                        }
+                        if (passed)
+                        {
+                            AddInfo(test, dev, output.Info, "Testing Profile Generic " + pg.LogicalName + " read by entry #0 succeeded.");
+                        }
+                        else
+                        {
+                            AddError(test, dev, output.Errors, "Testing Profile Generic " + pg.LogicalName + " read by entry #0 failed.");
+                        }
                     }
                     //Read first two lines and read by range and check the values.
-                    try
+                    if (settings.ExcludedGuruxTests.ProfileGenericTests.ReadRowsByRange)
                     {
-                        if (entriesInUse < 3)
+                        try
                         {
-                            AddInfo(test, dev, output.Info, "Profile generic " + pg.LogicalName + " skipped. Amount ot the rows is too small.");
-                        }
-                        else if (pg.CaptureObjects[0].Key is GXDLMSClock)
-                        {
-                            ReadRowsByEntry(dev, pg, 1, 2, null);
-                            List<object[]> rows = pg.Buffer;
-                            GXDateTime start = (GXDateTime)rows[0][0];
-                            GXDateTime end = (GXDateTime)rows[1][0];
-                            ReadRowsByRange(dev, pg, start, end, null);
-                            if (pg.Buffer.Count < 2)
+                            if (entriesInUse < 3)
                             {
-                                AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned wrong amount of rows.");
+                                AddInfo(test, dev, output.Info, "Profile generic " + pg.LogicalName + " skipped. Amount ot the rows is too small.");
                             }
-                            else
+                            else if (pg.CaptureObjects[0].Key is GXDLMSClock)
                             {
-                                foreach (object[] it in pg.Buffer)
+                                ReadRowsByEntry(dev, pg, 1, 2, null);
+                                List<object[]> rows = pg.Buffer;
+                                GXDateTime start = (GXDateTime)rows[0][0];
+                                GXDateTime end = (GXDateTime)rows[1][0];
+                                ReadRowsByRange(dev, pg, start, end, null);
+                                if (pg.Buffer.Count < 2)
                                 {
-                                    GXDateTime dt = (GXDateTime)it[0];
-                                    if (dt.Value < start.Value || dt.Value > end.Value)
+                                    AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned wrong amount of rows.");
+                                }
+                                else
+                                {
+                                    foreach (object[] it in pg.Buffer)
                                     {
-                                        AddInfo(test, dev, output.Info, "Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned wrong item. Start time: " + start + " End time: " + end + " Actual time: " + dt);
+                                        GXDateTime dt = (GXDateTime)it[0];
+                                        if (dt.Value < start.Value || dt.Value > end.Value)
+                                        {
+                                            AddInfo(test, dev, output.Info, "Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned wrong item. Start time: " + start + " End time: " + end + " Actual time: " + dt);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            AddError(test, dev, output.Errors, "Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
+                        }
+                    }
+                    //Read last row.
+                    if (settings.ExcludedGuruxTests.ProfileGenericTests.ReadLastRow)
+                    {
+                        try
+                        {
+                            if (pg.CaptureObjects[0].Key is GXDLMSClock)
+                            {
+                                ReadRowsByEntry(dev, pg, entriesInUse, entriesInUse, null);
+                                List<object[]> rows = pg.Buffer;
+                                GXDateTime start = (GXDateTime)rows[0][0];
+                                ReadRowsByRange(dev, pg, start, DateTime.MaxValue, null);
+                                if (pg.Buffer.Count != 1)
+                                {
+                                    AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid amount of rows when last one was read.");
+                                }
+                                else
+                                {
+                                    GXDateTime dt = (GXDateTime)pg.Buffer[0][0];
+                                    if (dt.Value != start.Value)
+                                    {
+                                        AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid row when last one was read.");
                                         break;
                                     }
                                 }
                             }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        AddError(test, dev, output.Errors, "Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
-                    }
-                    //Read last row.
-                    try
-                    {
-                        if (pg.CaptureObjects[0].Key is GXDLMSClock)
-                        {
-                            ReadRowsByEntry(dev, pg, entriesInUse, entriesInUse, null);
-                            List<object[]> rows = pg.Buffer;
-                            GXDateTime start = (GXDateTime)rows[0][0];
-                            ReadRowsByRange(dev, pg, start, DateTime.MaxValue, null);
-                            if (pg.Buffer.Count != 1)
-                            {
-                                AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid amount of rows when last one was read.");
-                            }
-                            else
-                            {
-                                GXDateTime dt = (GXDateTime)pg.Buffer[0][0];
-                                if (dt.Value != start.Value)
-                                {
-                                    AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid row when last one was read.");
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        AddError(test, dev, output.Errors, "Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
-                    }
-                    //Read last row using end index #0.
-                    try
-                    {
-                        if (pg.CaptureObjects[0].Key is GXDLMSClock)
-                        {
-                            ReadRowsByEntry(dev, pg, entriesInUse, 0, null);
-                            if (pg.Buffer.Count != 1)
-                            {
-                                AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid amount of rows when last one was read using Zero as end index.");
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        AddError(test, dev, output.Errors, "Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
-                    }
-                    //Read after last row.
-                    try
-                    {
-                        if (pg.CaptureObjects[0].Key is GXDLMSClock)
-                        {
-                            ReadRowsByEntry(dev, pg, entriesInUse, entriesInUse, null);
-                            List<object[]> rows = pg.Buffer;
-                            GXDateTime start = (GXDateTime)rows[0][0];
-                            ReadRowsByRange(dev, pg, start.Value.LocalDateTime.AddHours(1), DateTime.MaxValue, null);
-                            if (pg.Buffer.Count != 0)
-                            {
-                                AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid amount of rows when last one was read.");
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        AddError(test, dev, output.Errors, "Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
-                    }
-
-                    //Read only first column.
-                    if (entriesInUse < 1)
-                    {
-                        AddInfo(test, dev, output.Info, "Profile generic " + pg.LogicalName + " skipped. Amount ot the rows is too small.");
-                    }
-                    else
-                    {
-                        List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> columns = new List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>>();
-                        columns.Add(pg.CaptureObjects[0]);
-                        try
-                        {
-                            ReadRowsByEntry(dev, pg, 1, 1, columns);
-                            if (pg.Buffer.Count != 0 || pg.Buffer[0].Length != 1)
-                            {
-                                AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. ReadRowsByEntry returned invalid amount of columns when only first one was read.");
-                            }
-                        }
                         catch (Exception ex)
                         {
                             AddError(test, dev, output.Errors, "Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
                         }
+                    }
+                    //Read last row using end index #0.
+                    if (settings.ExcludedGuruxTests.ProfileGenericTests.ReadUsingHighestPossibleEntry)
+                    {
                         try
                         {
                             if (pg.CaptureObjects[0].Key is GXDLMSClock)
                             {
-                                ReadRowsByEntry(dev, pg, 1, 1, null);
-                                List<object[]> rows = pg.Buffer;
-                                GXDateTime start = (GXDateTime)rows[0][0];
-                                ReadRowsByRange(dev, pg, start.Value.LocalDateTime, start.Value.LocalDateTime.AddHours(1), columns);
-                                if (pg.Buffer.Count != 0)
+                                ReadRowsByEntry(dev, pg, entriesInUse, 0, null);
+                                if (pg.Buffer.Count != 1)
                                 {
-                                    AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid amount of columns when only first one was read.");
+                                    AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid amount of rows when last one was read using Zero as end index.");
                                 }
                             }
                         }
                         catch (Exception ex)
                         {
                             AddError(test, dev, output.Errors, "Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
+                        }
+                    }
+                    //Read after last row.
+                    if (settings.ExcludedGuruxTests.ProfileGenericTests.ReadLastRow)
+                    {
+                        try
+                        {
+                            if (pg.CaptureObjects[0].Key is GXDLMSClock)
+                            {
+                                ReadRowsByEntry(dev, pg, entriesInUse, entriesInUse, null);
+                                List<object[]> rows = pg.Buffer;
+                                GXDateTime start = (GXDateTime)rows[0][0];
+                                ReadRowsByRange(dev, pg, start.Value.LocalDateTime.AddHours(1), DateTime.MaxValue, null);
+                                if (pg.Buffer.Count != 0)
+                                {
+                                    AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid amount of rows when last one was read.");
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            AddError(test, dev, output.Errors, "Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
+                        }
+                    }
+                    //Read only first column.
+                    if (settings.ExcludedGuruxTests.ProfileGenericTests.ReadFirstColumn)
+                    {
+                        if (entriesInUse < 1)
+                        {
+                            AddInfo(test, dev, output.Info, "Profile generic " + pg.LogicalName + " skipped. Amount ot the rows is too small.");
+                        }
+                        else
+                        {
+                            List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>> columns = new List<GXKeyValuePair<GXDLMSObject, GXDLMSCaptureObject>>();
+                            columns.Add(pg.CaptureObjects[0]);
+                            try
+                            {
+                                ReadRowsByEntry(dev, pg, 1, 1, columns);
+                                if (pg.Buffer.Count != 0 || pg.Buffer[0].Length != 1)
+                                {
+                                    AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. ReadRowsByEntry returned invalid amount of columns when only first one was read.");
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                AddError(test, dev, output.Errors, "Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
+                            }
+                            try
+                            {
+                                if (pg.CaptureObjects[0].Key is GXDLMSClock)
+                                {
+                                    ReadRowsByEntry(dev, pg, 1, 1, null);
+                                    List<object[]> rows = pg.Buffer;
+                                    GXDateTime start = (GXDateTime)rows[0][0];
+                                    ReadRowsByRange(dev, pg, start.Value.LocalDateTime, start.Value.LocalDateTime.AddHours(1), columns);
+                                    if (pg.Buffer.Count != 0)
+                                    {
+                                        AddError(test, dev, output.Errors, "Profile generic " + pg.LogicalName + " failed. ReadRowsByRange returned invalid amount of columns when only first one was read.");
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                AddError(test, dev, output.Errors, "Testing Profile Generic " + pg.LogicalName + " " + ex.Message);
+                            }
                         }
                     }
                 }
@@ -1516,22 +2003,22 @@ namespace GXDLMSDirector
             }
             if (dev.Comm.client.UseLogicalNameReferencing)
             {
-                if (dev.Comm.client.Ciphering.Security == Security.None && ln.ApplicationContextName.ContextId != ApplicationContextName.LogicalName)
+                if (dev.Comm.client.Ciphering.Security == (byte)Security.None && ln.ApplicationContextName.ContextId != ApplicationContextName.LogicalName)
                 {
                     output.Errors.Insert(0, "Wrong ApplicationContextName.ContextId: " + ln.ApplicationContextName.ContextId);
                 }
-                else if (dev.Comm.client.Ciphering.Security != Security.None && ln.ApplicationContextName.ContextId != ApplicationContextName.LogicalNameWithCiphering)
+                else if (dev.Comm.client.Ciphering.Security != (byte)Security.None && ln.ApplicationContextName.ContextId != ApplicationContextName.LogicalNameWithCiphering)
                 {
                     output.Errors.Insert(0, "Wrong ApplicationContextName.ContextId: " + ln.ApplicationContextName.ContextId);
                 }
             }
             else
             {
-                if (dev.Comm.client.Ciphering.Security == Security.None && ln.ApplicationContextName.ContextId != ApplicationContextName.ShortName)
+                if (dev.Comm.client.Ciphering.Security == (byte)Security.None && ln.ApplicationContextName.ContextId != ApplicationContextName.ShortName)
                 {
                     output.Errors.Insert(0, "Wrong ApplicationContextName.ContextId: " + ln.ApplicationContextName.ContextId);
                 }
-                else if (dev.Comm.client.Ciphering.Security != Security.None && ln.ApplicationContextName.ContextId != ApplicationContextName.ShortNameWithCiphering)
+                else if (dev.Comm.client.Ciphering.Security != (byte)Security.None && ln.ApplicationContextName.ContextId != ApplicationContextName.ShortNameWithCiphering)
                 {
                     output.Errors.Insert(0, "Wrong ApplicationContextName.ContextId: " + ln.ApplicationContextName.ContextId);
                 }
@@ -1612,7 +2099,7 @@ namespace GXDLMSDirector
             }
             try
             {
-                if (dev.Comm.client.Ciphering.Security != Security.None)
+                if (dev.Comm.client.Ciphering.Security != (byte)Security.None)
                 {
                     bool ded = dev.Comm.client.Ciphering.DedicatedKey != null;
                     if ((dev.Comm.client.ConnectionState & ConnectionState.Dlms) == 0 ||
@@ -1754,7 +2241,7 @@ namespace GXDLMSDirector
                     passed = false;
                 }
             }
-            catch(TimeoutException)
+            catch (TimeoutException)
             {
                 AddError(test, dev, output.Errors, "Timeout.");
                 passed = false;
@@ -5265,7 +5752,7 @@ namespace GXDLMSDirector
             }
             //SubTest 2: AARQ.calling-AP-title too short
             if (passed && (dev.Comm.client.Authentication == Authentication.HighGMAC ||
-                (dev.Comm.client.Ciphering != null && dev.Comm.client.Ciphering.Security != Security.None)))
+                (dev.Comm.client.Ciphering != null && dev.Comm.client.Ciphering.Security != (byte)Security.None)))
             {
                 try
                 {
@@ -5328,7 +5815,7 @@ namespace GXDLMSDirector
             }
             //SubTest 3: AARQ.calling-AP-title too long
             if (passed && (dev.Comm.client.Authentication == Authentication.HighGMAC ||
-                (dev.Comm.client.Ciphering != null && dev.Comm.client.Ciphering.Security != Security.None)))
+                (dev.Comm.client.Ciphering != null && dev.Comm.client.Ciphering.Security != (byte)Security.None)))
             {
                 try
                 {
@@ -5639,11 +6126,11 @@ namespace GXDLMSDirector
                 passed = false;
                 AddInfo(test, dev, output.Info, "COSEM Application tests #9 failed. " + ex.Message);
             }
-            Security s = dev.Comm.client.Ciphering.Security;
+            byte s = dev.Comm.client.Ciphering.Security;
             try
             {
                 reply.Clear();
-                dev.Comm.client.Ciphering.Security = Security.None;
+                dev.Comm.client.Ciphering.Security = 0;
                 data = dev.Comm.client.SNRMRequest();
                 dev.Comm.ReadDataBlock(data, "COSEM Application test #9. SNRM", 1, tryCount, reply);
                 dev.Comm.ParseUAResponse(reply.Data);
@@ -6200,7 +6687,7 @@ namespace GXDLMSDirector
                     else
                     {
                         bb.SetHexString("C004C1000F0000280000FF0100");
-                         dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #15. Invalid Get request.", 1, tryCount, reply);
+                        dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(0, bb), "COSEM Application test #15. Invalid Get request.", 1, tryCount, reply);
                     }
                     passed = false;
                 }
@@ -6665,69 +7152,76 @@ namespace GXDLMSDirector
                         GXDateTime newTime = new GXDateTime(DateTime.Now);
                         it.Time = newTime;
                         DateTime start = DateTime.Now;
-                        try
+                        if (!settings.ExcludedGuruxTests.ClockTests.SetLocalTime)
                         {
-                            if (dev.Comm.client.UseUtc2NormalTime)
+                            try
                             {
-                                it.TimeZone = (int)TimeZoneInfo.Local.BaseUtcOffset.TotalMinutes;
+                                if (dev.Comm.client.UseUtc2NormalTime)
+                                {
+                                    it.TimeZone = (int)TimeZoneInfo.Local.BaseUtcOffset.TotalMinutes;
+                                }
+                                else
+                                {
+                                    it.TimeZone = -(int)TimeZoneInfo.Local.BaseUtcOffset.TotalMinutes;
+                                }
+                                AddInfo(test, dev, output.Info, "Set new Time zone:" + it.TimeZone);
+                                dev.Comm.Write(it, 3);
+                                dev.Comm.Write(it, 2);
+                                newTime.Skip |= DateTimeSkips.Second;
+                                dev.Comm.ReadValue(it, 2);
+                                time = it.Time;
+                                if (newTime.Compare(it.Time.Value.Add(DateTime.Now - start).LocalDateTime) != 0)
+                                {
+                                    AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock1\">Clock test #1 failed</a>. Failed to set new time using current time zone. Expected: " + newTime + " Actual: " + it.Time.Value.Add(DateTime.Now - start).LocalDateTime);
+                                    start = time = DateTime.Now;
+                                }
+                                else
+                                {
+                                    AddInfo(test, dev, output.Info, "Setting new time succeeded using current time zone.");
+                                }
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                it.TimeZone = -(int)TimeZoneInfo.Local.BaseUtcOffset.TotalMinutes;
-                            }
-                            AddInfo(test, dev, output.Info, "Set new Time zone:" + it.TimeZone);
-                            dev.Comm.Write(it, 3);
-                            dev.Comm.Write(it, 2);
-                            newTime.Skip |= DateTimeSkips.Second;
-                            dev.Comm.ReadValue(it, 2);
-                            time = it.Time;
-                            if (newTime.Compare(it.Time.Value.Add(DateTime.Now - start).LocalDateTime) != 0)
-                            {
-                                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock1\">Clock test #1 failed</a>. Failed to set new time using current time zone. Expected: " + newTime + " Actual: " + it.Time.Value.Add(DateTime.Now - start).LocalDateTime);
+                                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock1\">Clock test #1 failed</a>. Failed to set new time using current time zone. Meter returns exception. " + ex.Message);
                                 start = time = DateTime.Now;
                             }
-                            else
-                            {
-                                AddInfo(test, dev, output.Info, "Setting new time succeeded using current time zone.");
-                            }
                         }
-                        catch (Exception ex)
+                        if (!settings.ExcludedGuruxTests.ClockTests.SetEpochTime)
                         {
-                            AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock1\">Clock test #1 failed</a>. Failed to set new time using current time zone. Meter returns exception. " + ex.Message);
-                            start = time = DateTime.Now;
-                        }
-                        //Update new time using UTC time.
-                        newTime = new GXDateTime(DateTime.Now.ToUniversalTime());
-                        newTime.Skip |= DateTimeSkips.Second;
-                        it.Time = newTime;
-                        try
-                        {
-                            dev.Comm.Write(it, 2);
-                            dev.Comm.ReadValue(it, 2);
-                            if (newTime.Compare(it.Time.Value.Add(DateTime.Now - start).LocalDateTime) != 0)
+                            //Update new time using UTC time.
+                            newTime = new GXDateTime(DateTime.Now.ToUniversalTime());
+                            newTime.Skip |= DateTimeSkips.Second;
+                            it.Time = newTime;
+                            try
                             {
-                                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock2\">Clock test #2 failed</a>. Failed to set new time using UTC time. Expected: " + newTime + " Actual: " + it.Time.Value.Add(DateTime.Now - start).LocalDateTime);
+                                dev.Comm.Write(it, 2);
+                                dev.Comm.ReadValue(it, 2);
+                                if (newTime.Compare(it.Time.Value.Add(DateTime.Now - start).LocalDateTime) != 0)
+                                {
+                                    AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock2\">Clock test #2 failed</a>. Failed to set new time using UTC time. Expected: " + newTime + " Actual: " + it.Time.Value.Add(DateTime.Now - start).LocalDateTime);
+                                }
+                                else
+                                {
+                                    AddInfo(test, dev, output.Info, "Setting new time succeeded using UTC time zone.");
+                                }
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                AddInfo(test, dev, output.Info, "Setting new time succeeded using UTC time zone.");
+                                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock2\">Clock test #2 failed</a>. Failed to set new time using UTC time zone. Meter returns exception. " + ex.Message);
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock2\">Clock test #2 failed</a>. Failed to set new time using UTC time zone. Meter returns exception. " + ex.Message);
                         }
 
-                        /*
-                        //Update new time without timezone.
-                        it.Time.Skip |= DateTimeSkips.Deviation;
-                        dev.Comm.Write(it, 2);
-                        dev.Comm.ReadValue(it, 2);
-                        if (newTime.Compare(it.Time.Value.Add(DateTime.Now - start).DateTime) != 0)
+                        if (!settings.ExcludedGuruxTests.ClockTests.SetTimeWithoutTimeZone)
                         {
-                            AddError(test, dev, output.Errors, "Failed to set new time using without time zone. Expected: " + newTime + " Actual: " + it.Time.Value.Add(DateTime.Now - start).DateTime);
+                            //Update new time without timezone.
+                            it.Time.Skip |= DateTimeSkips.Deviation;
+                            dev.Comm.Write(it, 2);
+                            dev.Comm.ReadValue(it, 2);
+                            if (newTime.Compare(it.Time.Value.Add(DateTime.Now - start).DateTime) != 0)
+                            {
+                                AddError(test, dev, output.Errors, "Failed to set new time using without time zone. Expected: " + newTime + " Actual: " + it.Time.Value.Add(DateTime.Now - start).DateTime);
+                            }
                         }
-                        */
 
                         //Check DST.
                         if (it.GetAccess(8) == AccessMode.ReadWrite && (it.GetAccess(7) & AccessMode.Read) != 0)
@@ -6735,27 +7229,167 @@ namespace GXDLMSDirector
                             dev.Comm.ReadValue(it, 8);
                             dev.Comm.ReadValue(it, 7);
                             bool dst = it.Enabled;
-                            int deviation = it.Deviation;
-                            if (dst)
+                            if (!settings.ExcludedGuruxTests.ClockTests.FlipDST)
                             {
-                                AddInfo(test, dev, output.Info, "DST is in use and deviation is " + deviation + ".");
+                                int deviation = it.Deviation;
+                                if (dst)
+                                {
+                                    AddInfo(test, dev, output.Info, "DST is in use and deviation is " + deviation + ".");
+                                }
+                                else
+                                {
+                                    AddInfo(test, dev, output.Info, "DST is not in use. Devitation is " + deviation + ".");
+                                }
+                                if (deviation != 0)
+                                {
+                                    //Flip DST.
+                                    it.Enabled = !dst;
+                                    try
+                                    {
+                                        dev.Comm.Write(it, 8);
+                                    }
+                                    catch (Exception)
+                                    {
+                                        AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock3\">Clock test #3 failed</a>. Clock test failed. Failed to enable DST.");
+                                    }
+                                    //Read time.
+                                    dev.Comm.ReadValue(it, 2);
+                                    GXDateTime tmp = new GXDateTime(it.Time);
+                                    tmp.Skip |= DateTimeSkips.Second;
+                                    if (tmp.Compare(time.Add(DateTime.Now - start)) != 0)
+                                    {
+                                        //Setting current time
+                                        AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock3\">Clock test #3 failed</a>. Clock test failed. Time is not valid if DST is changed. Expected: " + time.Add(DateTime.Now - start) + " Actual: " + tmp);
+                                    }
+                                    else
+                                    {
+                                        AddInfo(test, dev, output.Info, "Meter can change DST and time is updated correctly.");
+                                    }
+                                    //Enable DST back.
+                                    if (!it.Enabled)
+                                    {
+                                        it.Enabled = dst;
+                                        try
+                                        {
+                                            dev.Comm.Write(it, 8);
+                                        }
+                                        catch (Exception)
+                                        {
+                                            AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock3\">Clock test #3 failed</a>. Clock test failed. Failed to set DST.");
+                                        }
+                                    }
+                                }
                             }
-                            else
+                            //Change time and check is DST flag set.
+                            if ((it.GetAccess(5) & AccessMode.Read) != 0 && (it.GetAccess(6) & AccessMode.Read) != 0)
                             {
-                                AddInfo(test, dev, output.Info, "DST is not in use. Devitation is " + deviation + ".");
-                            }
-                            if (deviation != 0)
-                            {
-                                //Flip DST.
-                                it.Enabled = !dst;
+                                if (!settings.ExcludedGuruxTests.ClockTests.CheckDST)
+                                {
+                                    dev.Comm.ReadValue(it, 4);
+                                    dev.Comm.ReadValue(it, 5);
+                                    dev.Comm.ReadValue(it, 6);
+                                    GXDateTime begin = it.Begin;
+                                    GXDateTime end = it.End;
+                                    bool dst1;
+                                    //Read time.
+                                    dev.Comm.ReadValue(it, 2);
+                                    GXDateTime tmp = new GXDateTime(it.Time);
+                                    if (begin.Compare(tmp) != 1 && end.Compare(tmp) != -1)
+                                    {
+                                        AddInfo(test, dev, output.Info, "Meter is in DST time.");
+                                        if ((it.Status & ClockStatus.DaylightSavingActive) == 0)
+                                        {
+                                            AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 failed</a>. Meter is in DST, but DST status flag is not set.");
+                                        }
+                                        //Move meter to normal time.
+                                        it.Time = new GXDateTime(end.Value.AddDays(7));
+                                        dst1 = false;
+                                    }
+                                    else
+                                    {
+                                        AddInfo(test, dev, output.Info, "Meter is in normal time.");
+                                        if ((it.Status & ClockStatus.DaylightSavingActive) != 0)
+                                        {
+                                            AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 failed</a>. Meter is in normal time, but DST status flag is set.");
+                                        }
+                                        //Move meter to DST time.
+                                        it.Time = new GXDateTime(begin.Value.AddDays(7));
+                                        dst1 = true;
+                                    }
+                                    //Write new time.
+                                    dev.Comm.Write(it, 2);
+                                    //Check that clock status is changed.
+                                    dev.Comm.ReadValue(it, 4);
+                                    if (((it.Status & ClockStatus.DaylightSavingActive) != 0 && !dst1) ||
+                                         ((it.Status & ClockStatus.DaylightSavingActive) == 0 && dst1))
+                                    {
+                                        if (dst1)
+                                        {
+                                            AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 failed</a>. Meter is in DST, but DST status flag is not set.");
+                                        }
+                                        else
+                                        {
+                                            AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 failed</a>. Meter is in normal time, but DST status flag is set.");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (dst1)
+                                        {
+                                            AddInfo(test, dev, output.Info, "Time is changed to DST time, and DST status flag is set.");
+                                        }
+                                        else
+                                        {
+                                            AddInfo(test, dev, output.Info, "Time is changed to normal time and DST status flag is not set.");
+                                        }
+                                    }
+                                    //Move meter to current time.
+                                    it.Time = new GXDateTime(time.Add(DateTime.Now - start));
+                                    dev.Comm.Write(it, 2);
+                                }
+                                else
+                                {
+                                    AddInfo(test, dev, output.Info, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 is not tested</a>. Changind DST begin and end time is not tested.");
+                                }
+                                //Return DST back.
+                                it.Enabled = dst;
                                 try
                                 {
                                     dev.Comm.Write(it, 8);
                                 }
                                 catch (Exception)
                                 {
-                                    AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock3\">Clock test #3 failed</a>. Clock test failed. Failed to enable DST.");
+                                    AddError(test, dev, output.Errors, "Clock test failed. Failed to set DST.");
                                 }
+                            }
+                        }
+                        //Change time zone to UTC.
+                        if (!settings.ExcludedGuruxTests.ClockTests.ChangeTimeZone)
+                        {
+                            if (it.TimeZone != 0)
+                            {
+                                AddInfo(test, dev, output.Info, "Time zone of the meter:" + it.TimeZone);
+                                it.TimeZone = 0;
+                                dev.Comm.Write(it, 3);
+                                //Read time.
+                                dev.Comm.ReadValue(it, 2);
+                                GXDateTime tmp = new GXDateTime(it.Time);
+                                tmp.Skip |= DateTimeSkips.Second;
+                                if (tmp.Compare(time.Add(DateTime.Now - start)) != 0)
+                                {
+                                    //Setting UTC time
+                                    AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock5\">Clock test #5 failed</a>. Clock test failed. Time is not valid if time zone is changed to UTC. Expected: " + time.Add(DateTime.Now - start) + " Actual: " + tmp);
+                                }
+                                else
+                                {
+                                    AddInfo(test, dev, output.Info, "Meter can change time zone to UTC and time is updated correctly.");
+                                }
+                            }
+                            else
+                            {
+                                it.TimeZone = (int)TimeZoneInfo.Utc.GetUtcOffset(DateTime.Now).TotalMinutes;
+                                AddInfo(test, dev, output.Info, "Time zone of the meter is UTC. Try to set it to " + it.TimeZone);
+                                dev.Comm.Write(it, 3);
                                 //Read time.
                                 dev.Comm.ReadValue(it, 2);
                                 GXDateTime tmp = new GXDateTime(it.Time);
@@ -6763,143 +7397,12 @@ namespace GXDLMSDirector
                                 if (tmp.Compare(time.Add(DateTime.Now - start)) != 0)
                                 {
                                     //Setting current time
-                                    AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock3\">Clock test #3 failed</a>. Clock test failed. Time is not valid if DST is changed. Expected: " + time.Add(DateTime.Now - start) + " Actual: " + tmp);
+                                    AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock5\">Clock test #5 failed</a>.  Clock test failed. Time is not valid if time zone is changed from UTC. Expected: " + time.Add(DateTime.Now - start) + " Actual: " + tmp);
                                 }
                                 else
                                 {
-                                    AddInfo(test, dev, output.Info, "Meter can change DST and time is updated correctly.");
+                                    AddInfo(test, dev, output.Info, "Meter can change time zone from UTC and time is updated correctly.");
                                 }
-                                //Enable DST back.
-                                if (!it.Enabled)
-                                {
-                                    it.Enabled = dst;
-                                    try
-                                    {
-                                        dev.Comm.Write(it, 8);
-                                    }
-                                    catch (Exception)
-                                    {
-                                        AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock3\">Clock test #3 failed</a>. Clock test failed. Failed to set DST.");
-                                    }
-                                }
-                            }
-                            //Change time and check is DST flag set.
-                            if ((it.GetAccess(5) & AccessMode.Read) != 0 && (it.GetAccess(6) & AccessMode.Read) != 0)
-                            {
-                                dev.Comm.ReadValue(it, 4);
-                                dev.Comm.ReadValue(it, 5);
-                                dev.Comm.ReadValue(it, 6);
-                                GXDateTime begin = it.Begin;
-                                GXDateTime end = it.End;
-                                bool dst1;
-                                //Read time.
-                                dev.Comm.ReadValue(it, 2);
-                                GXDateTime tmp = new GXDateTime(it.Time);
-                                if (begin.Compare(tmp) != 1 && end.Compare(tmp) != -1)
-                                {
-                                    AddInfo(test, dev, output.Info, "Meter is in DST time.");
-                                    if ((it.Status & ClockStatus.DaylightSavingActive) == 0)
-                                    {
-                                        AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 failed</a>. Meter is in DST, but DST status flag is not set.");
-                                    }
-                                    //Move meter to normal time.
-                                    it.Time = new GXDateTime(end.Value.AddDays(7));
-                                    dst1 = false;
-                                }
-                                else
-                                {
-                                    AddInfo(test, dev, output.Info, "Meter is in normal time.");
-                                    if ((it.Status & ClockStatus.DaylightSavingActive) != 0)
-                                    {
-                                        AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 failed</a>. Meter is in normal time, but DST status flag is set.");
-                                    }
-                                    //Move meter to DST time.
-                                    it.Time = new GXDateTime(begin.Value.AddDays(7));
-                                    dst1 = true;
-                                }
-                                //Write new time.
-                                dev.Comm.Write(it, 2);
-                                //Check that clock status is changed.
-                                dev.Comm.ReadValue(it, 4);
-                                if (((it.Status & ClockStatus.DaylightSavingActive) != 0 && !dst1) ||
-                                     ((it.Status & ClockStatus.DaylightSavingActive) == 0 && dst1))
-                                {
-                                    if (dst1)
-                                    {
-                                        AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 failed</a>. Meter is in DST, but DST status flag is not set.");
-                                    }
-                                    else
-                                    {
-                                        AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 failed</a>. Meter is in normal time, but DST status flag is set.");
-                                    }
-                                }
-                                else
-                                {
-                                    if (dst1)
-                                    {
-                                        AddInfo(test, dev, output.Info, "Time is changed to DST time, and DST status flag is set.");
-                                    }
-                                    else
-                                    {
-                                        AddInfo(test, dev, output.Info, "Time is changed to normal time and DST status flag is not set.");
-                                    }
-                                }
-                                //Move meter to current time.
-                                it.Time = new GXDateTime(time.Add(DateTime.Now - start));
-                                dev.Comm.Write(it, 2);
-                            }
-                            else
-                            {
-                                AddInfo(test, dev, output.Info, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock4\">Clock test #4 is not tested</a>. Changind DST begin and end time is not tested.");
-                            }
-                            //Return DST back.
-                            it.Enabled = dst;
-                            try
-                            {
-                                dev.Comm.Write(it, 8);
-                            }
-                            catch (Exception)
-                            {
-                                AddError(test, dev, output.Errors, "Clock test failed. Failed to set DST.");
-                            }
-                        }
-                        //Change time zone to UTC.
-                        if (it.TimeZone != 0)
-                        {
-                            AddInfo(test, dev, output.Info, "Time zone of the meter:" + it.TimeZone);
-                            it.TimeZone = 0;
-                            dev.Comm.Write(it, 3);
-                            //Read time.
-                            dev.Comm.ReadValue(it, 2);
-                            GXDateTime tmp = new GXDateTime(it.Time);
-                            tmp.Skip |= DateTimeSkips.Second;
-                            if (tmp.Compare(time.Add(DateTime.Now - start)) != 0)
-                            {
-                                //Setting UTC time
-                                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock5\">Clock test #5 failed</a>. Clock test failed. Time is not valid if time zone is changed to UTC. Expected: " + time.Add(DateTime.Now - start) + " Actual: " + tmp);
-                            }
-                            else
-                            {
-                                AddInfo(test, dev, output.Info, "Meter can change time zone to UTC and time is updated correctly.");
-                            }
-                        }
-                        else
-                        {
-                            it.TimeZone = (int)TimeZoneInfo.Utc.GetUtcOffset(DateTime.Now).TotalMinutes;
-                            AddInfo(test, dev, output.Info, "Time zone of the meter is UTC. Try to set it to " + it.TimeZone);
-                            dev.Comm.Write(it, 3);
-                            //Read time.
-                            dev.Comm.ReadValue(it, 2);
-                            GXDateTime tmp = new GXDateTime(it.Time);
-                            tmp.Skip |= DateTimeSkips.Second;
-                            if (tmp.Compare(time.Add(DateTime.Now - start)) != 0)
-                            {
-                                //Setting current time
-                                AddError(test, dev, output.Errors, "<a href=\"https://www.gurux.fi/gurux.dlms.ctt.tests#clock5\">Clock test #5 failed</a>.  Clock test failed. Time is not valid if time zone is changed from UTC. Expected: " + time.Add(DateTime.Now - start) + " Actual: " + tmp);
-                            }
-                            else
-                            {
-                                AddInfo(test, dev, output.Info, "Meter can change time zone from UTC and time is updated correctly.");
                             }
                         }
                     }

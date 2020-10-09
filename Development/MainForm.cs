@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12046 $,
-//                  $Date: 2020-08-27 15:16:33 +0300 (to, 27 elo 2020) $
+// Version:         $Revision: 12145 $,
+//                  $Date: 2020-10-09 14:52:52 +0300 (pe, 09 loka 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -4084,7 +4084,7 @@ namespace GXDLMSDirector
                 }
 
                 events = new GXNet(NetworkType.Tcp, 4059);
-                events.ConfigurableSettings = (AvailableMediaSettings.Port | AvailableMediaSettings.Protocol);
+                events.ConfigurableSettings = (AvailableMediaSettings.Port | AvailableMediaSettings.Protocol | AvailableMediaSettings.UseIPv6);
                 events.Settings = Properties.Settings.Default.EventsSettings;
                 events.OnMediaStateChange += Events_OnMediaStateChange;
                 events.OnReceived += Events_OnReceived;

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12169 $,
-//                  $Date: 2020-11-06 09:57:31 +0200 (pe, 06 marras 2020) $
+// Version:         $Revision: 12170 $,
+//                  $Date: 2020-11-06 10:14:58 +0200 (pe, 06 marras 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -2494,7 +2494,7 @@ namespace GXDLMSDirector
                 {
                     value = sender.GetValues()[index - 1];
                     ValueEventArgs e = new ValueEventArgs(sender, index, 0, null);
-                    data = (sender as IGXDLMSBase).GetValue(null, e);
+                    data = (sender as IGXDLMSBase).GetValue(cl.Settings, e);
                     if (data != null && data.GetType().IsEnum)
                     {
                         data = new GXEnum(Convert.ToByte(data));

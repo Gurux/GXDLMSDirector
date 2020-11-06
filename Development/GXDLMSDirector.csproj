@@ -137,6 +137,11 @@
     </Reference>
     <Reference Include="Gurux.DLMS.UI, Version=9.0.2011.502, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.DLMS.UI.9.0.2011.502\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=9.0.2010.901, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.9.0.2010.901\lib\net40\Gurux.DLMS.dll</HintPath>
+    </Reference>
+    <Reference Include="Gurux.DLMS.UI, Version=9.0.2010.901, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.9.0.2010.901\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.Net, Version=8.1.2002.1902, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Net.8.1.2002.1902\lib\net40\Gurux.Net.dll</HintPath>

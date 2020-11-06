@@ -36,7 +36,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Collections.Generic;
 
-namespace MRUSample
+namespace GXDLMSDirector
 {
     delegate void OpenMRUFileEventHandler(string fileName);
 

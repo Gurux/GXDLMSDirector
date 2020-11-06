@@ -138,17 +138,17 @@
     <Reference Include="Gurux.Common, Version=8.1.2002.1903, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Common.8.1.2002.1903\lib\net46\Gurux.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=9.0.2009.802, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.9.0.2009.802\lib\net46\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=9.0.2011.503, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.9.0.2011.503\lib\net46\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.AMI.Messages, Version=8.1.2009.801, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.AMI.Messages.8.1.2009.801\lib\net46\Gurux.DLMS.AMI.Messages.dll</HintPath>
+    <Reference Include="Gurux.DLMS.AMI.Messages, Version=8.1.2011.601, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.AMI.Messages.8.1.2011.601\lib\net46\Gurux.DLMS.AMI.Messages.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.AMI.UI, Version=8.1.2009.801, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.AMI.UI.8.1.2009.801\lib\net46\Gurux.DLMS.AMI.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.AMI.UI, Version=8.1.2011.601, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.AMI.UI.8.1.2011.601\lib\net46\Gurux.DLMS.AMI.UI.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=9.0.2009.801, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.9.0.2009.801\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=9.0.2011.502, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.9.0.2011.502\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.MQTT, Version=8.1.2002.1901, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.MQTT.8.1.2002.1901\lib\net46\Gurux.MQTT.dll</HintPath>
@@ -169,8 +169,8 @@
     <Reference Include="Microsoft.Win32.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
     </Reference>
-    <Reference Include="MQTTnet, Version=3.0.12.0, Culture=neutral, PublicKeyToken=b69712f52770c0a7, processorArchitecture=MSIL">
-      <HintPath>packages\MQTTnet.3.0.12\lib\net452\MQTTnet.dll</HintPath>
+    <Reference Include="MQTTnet, Version=3.0.13.0, Culture=neutral, PublicKeyToken=b69712f52770c0a7, processorArchitecture=MSIL">
+      <HintPath>packages\MQTTnet.3.0.13\lib\net452\MQTTnet.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -281,6 +281,7 @@
     <Compile Include="ConformanceTests\Internal\GXConformanceValueDescriptorCollection.cs" />
     <Compile Include="ConformanceTests\Settings\CttApplicationSettings.cs" />
     <Compile Include="ConformanceTests\Settings\CttHdlcSettings.cs" />
+    <Compile Include="ConformanceTests\Settings\GuruxAuthenticationTestSettings.cs" />
     <Compile Include="ConformanceTests\Settings\GuruxClockTestSettings.cs" />
     <Compile Include="ConformanceTests\Settings\GuruxProfileGenericTestSettings.cs" />
     <Compile Include="ConformanceTests\Settings\GuruxServiceTestSettings.cs" />
@@ -288,6 +289,24 @@
     <Compile Include="ConformanceTests\Settings\GXConformanceSettings.cs" />
     <Compile Include="ConformanceTests\Settings\IGXConformanceSettings.cs" />
     <Compile Include="GXByteConverter.cs" />
+    <Compile Include="GXHdlcAddressResolver.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GXHdlcAddressResolver.Designer.cs">
+      <DependentUpon>GXHdlcAddressResolver.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GXPlcDiscover.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GXPlcDiscover.Designer.cs">
+      <DependentUpon>GXPlcDiscover.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GXPlcRegisterDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GXPlcRegisterDlg.Designer.cs">
+      <DependentUpon>GXPlcRegisterDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="GXSerialMonitor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -398,6 +417,15 @@
     </Compile>
     <EmbeddedResource Include="ConformanceTests\GXConformanceDlg.resx">
       <DependentUpon>GXConformanceDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GXHdlcAddressResolver.resx">
+      <DependentUpon>GXHdlcAddressResolver.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GXPlcDiscover.resx">
+      <DependentUpon>GXPlcDiscover.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GXPlcRegisterDlg.resx">
+      <DependentUpon>GXPlcRegisterDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GXSerialMonitor.resx">
       <DependentUpon>GXSerialMonitor.cs</DependentUpon>

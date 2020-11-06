@@ -1,5 +1,7 @@
 ﻿using Gurux.Common;
 using Gurux.DLMS;
+using Gurux.DLMS.ASN;
+using Gurux.DLMS.ASN.Enums;
 using Gurux.DLMS.Enums;
 using Gurux.DLMS.Secure;
 using System;
@@ -7,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +20,7 @@ namespace GXDLMSDirector
     public partial class DLMSTranslatorForm : Form
     {
         GXDLMSTranslator translator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
+        string path = null;
 
         public DLMSTranslatorForm()
         {
@@ -42,6 +46,62 @@ namespace GXDLMSDirector
             if (!string.IsNullOrEmpty(Properties.Settings.Default.Message))
             {
                 MessagePduTB.Text = Properties.Settings.Default.Message;
+            }
+
+            try
+            {
+                string[] certificates = Properties.Settings.Default.Certificates.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string str in certificates)
+                {
+                    try
+                    {
+                        if (str[0] == '0')
+                        {
+                            GXx509Certificate cert = new GXx509Certificate(str.Substring(1));
+                            ListViewItem li = new ListViewItem("Public Key");
+                            li.StateImageIndex = li.ImageIndex = 0;
+                            li.SubItems.Add(cert.Subject);
+                            li.SubItems.Add(cert.ValidFrom + "-" + cert.ValidTo);
+                            StringBuilder sb = new StringBuilder();
+                            foreach (KeyUsage it in Enum.GetValues(typeof(KeyUsage)))
+                            {
+                                if (((int)it & (int)cert.KeyUsage) != 0)
+                                {
+                                    sb.Append(it);
+                                    sb.Append(", ");
+                                }
+                            }
+                            if (sb.Length != 0)
+                            {
+                                sb.Length -= 2;
+                            }
+                            li.SubItems.Add(sb.ToString());
+                            CertificatesList.Items.Add(li).Tag = cert;
+                        }
+                        else
+                        {
+                            GXPkcs8 cert = new GXPkcs8(str.Substring(1));
+                            ListViewItem li = new ListViewItem("Private Key");
+                            li.StateImageIndex = li.ImageIndex = 1;
+                            foreach (ListViewItem it in CertificatesList.Items)
+                            {
+                                if (it.Tag is GXPkcs8)
+                                {
+                                    throw new Exception("Private key already exists. There can be only one private key.");
+                                }
+                            }
+                            CertificatesList.Items.Add(li).Tag = cert;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -419,6 +479,24 @@ namespace GXDLMSDirector
             }
             Properties.Settings.Default.Challenge = GetAsHex(ChallengeTb.Text, ChallengeAsciiCb.Checked);
             Properties.Settings.Default.Data = DataPdu.Text;
+
+            StringBuilder sb = new StringBuilder();
+            foreach (ListViewItem it in CertificatesList.Items)
+            {
+                if (it.Tag is GXx509Certificate c)
+                {
+                    sb.Append("0");
+                    sb.Append(c.ToPem());
+                    sb.Append(",");
+                }
+                else if (it.Tag is GXPkcs8 pk)
+                {
+                    sb.Append("1");
+                    sb.Append(pk.ToPem());
+                    sb.Append(",");
+                }
+            }
+            Properties.Settings.Default.Certificates = sb.ToString();
             Properties.Settings.Default.Save();
         }
 
@@ -646,6 +724,122 @@ namespace GXDLMSDirector
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
 
+        }
+
+        /// <summary>
+        /// Add new certificate.
+        /// </summary>
+        private void CertificateAddMnu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                OpenFileDialog dlg = new OpenFileDialog();
+                dlg.Multiselect = false;
+                if (string.IsNullOrEmpty(path))
+                {
+                    dlg.InitialDirectory = Directory.GetCurrentDirectory();
+                }
+                else
+                {
+                    System.IO.FileInfo fi = new System.IO.FileInfo(path);
+                    dlg.InitialDirectory = fi.DirectoryName;
+                    dlg.FileName = fi.Name;
+                }
+                dlg.Filter = Properties.Resources.CertificateFilterTxt;
+                dlg.DefaultExt = ".pem";
+                dlg.ValidateNames = true;
+                if (dlg.ShowDialog(this) == DialogResult.OK)
+                {
+                    bool exists = false;
+                    if (File.Exists(dlg.FileName))
+                    {
+                        try
+                        {
+                            GXx509Certificate cert = GXx509Certificate.Load(dlg.FileName);
+                            foreach (ListViewItem it in CertificatesList.Items)
+                            {
+                                if (it.Tag is GXx509Certificate c)
+                                {
+                                    if (c.Subject == cert.Subject)
+                                    {
+                                        exists = true;
+                                        throw new Exception("Public key already exists.");
+                                    }
+                                }
+                            }
+                            ListViewItem li = new ListViewItem("Public Key");
+                            li.StateImageIndex = li.ImageIndex = 0;
+                            li.SubItems.Add(cert.Subject);
+                            li.SubItems.Add(cert.ValidFrom + "-" + cert.ValidTo);
+                            StringBuilder sb = new StringBuilder();
+                            foreach (KeyUsage it in Enum.GetValues(typeof(KeyUsage)))
+                            {
+                                if (((int)it & (int)cert.KeyUsage) != 0)
+                                {
+                                    sb.Append(it);
+                                    sb.Append(", ");
+                                }
+                            }
+                            if (sb.Length != 0)
+                            {
+                                sb.Length -= 2;
+                            }
+                            li.SubItems.Add(sb.ToString());
+                            CertificatesList.Items.Add(li).Tag = cert;
+                        }
+                        catch (Exception)
+                        {
+                            if (!exists)
+                            {
+                                //Check if this is private key.
+                                GXPkcs8 cert = GXPkcs8.Load(dlg.FileName);
+                                ListViewItem li = new ListViewItem("Private Key");
+                                li.StateImageIndex = li.ImageIndex = 1;
+                                foreach (ListViewItem it in CertificatesList.Items)
+                                {
+                                    if (it.Tag is GXPkcs8)
+                                    {
+                                        throw new Exception("Private key already exists. There can be only one private key.");
+                                    }
+                                }
+                                CertificatesList.Items.Add(li).Tag = cert;
+                            }
+                        }
+                        path = dlg.FileName;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Remove selected certificates.
+        /// </summary>
+        private void CertificateRemoveMnu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (CertificatesList.SelectedItems.Count != 0)
+                {
+                    DialogResult ret = MessageBox.Show(this, Properties.Resources.CertificateRemove, Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
+                    if (ret != DialogResult.Yes)
+                    {
+                        return;
+                    }
+                    while (CertificatesList.SelectedItems.Count != 0)
+                    {
+                        ListViewItem it = CertificatesList.SelectedItems[0];
+                        it.Remove();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message);
+            }
         }
     }
 }

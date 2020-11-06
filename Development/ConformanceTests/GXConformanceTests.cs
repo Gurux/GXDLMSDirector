@@ -745,7 +745,7 @@ namespace GXDLMSDirector
                     output.PreInfo.Add("Start Time: " + start.ToString());
                     output.PreInfo.Add("<hr>");
                     //HDLC tests.
-                    if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
+                    if (GXConformanceEditor.IsEnabled(settings.ExcludedHdlcTests) && dev.Comm.client.InterfaceType == InterfaceType.HDLC)
                     {
                         dev.Comm.UpdateSettings();
                         dev.Comm.InitializeConnection(false);
@@ -756,7 +756,7 @@ namespace GXDLMSDirector
                         }
                     }
                     //Application tests.
-                    if ((dev.Comm.client.ConnectionState & ConnectionState.Dlms) == 0)
+                    if (GXConformanceEditor.IsEnabled(settings.ExcludedApplicationTests) && (dev.Comm.client.ConnectionState & ConnectionState.Dlms) == 0)
                     {
                         dev.Comm.UpdateSettings();
                         dev.Comm.InitializeConnection(false);
@@ -1113,16 +1113,6 @@ namespace GXDLMSDirector
                                 }
                             }
                         }
-                        //Test invalid password.
-                        try
-                        {
-                            TestInvalidPassword(settings, dev, output);
-                        }
-                        catch (Exception ex)
-                        {
-                            AddError(test, dev, output.Errors, ex.Message);
-                            test.OnError(test, ex);
-                        }
                         try
                         {
                             TestImageTransfer(settings, test, dev, output);
@@ -1139,22 +1129,28 @@ namespace GXDLMSDirector
                         TestAssociationLn(settings, dev, output);
 
                     }
-                    if (!settings.ExcludedGuruxTests.ClockTests.IsEnabled())
+                    if (GXConformanceEditor.IsEnabled(settings.ExcludedGuruxTests.ClockTests))
                     {
                         (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
                         TestClock(test, settings, dev, output);
                         (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = false;
                     }
-                    if (!settings.ExcludedGuruxTests.ProfileGenericTests.IsEnabled())
+                    if (GXConformanceEditor.IsEnabled(settings.ExcludedGuruxTests.ProfileGenericTests))
                     {
                         (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
                         TestProfileGeneric(test, settings, dev, output);
                         (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = false;
                     }
-                    if (settings.ExcludedGuruxTests.ServiceTests.IsEnabled())
+                    if (GXConformanceEditor.IsEnabled(settings.ExcludedGuruxTests.ServiceTests))
                     {
                         (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
                         TestServices(test, settings, dev, output);
+                        (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = false;
+                    }
+                    if (GXConformanceEditor.IsEnabled(settings.ExcludedGuruxTests.AuthenticationTests))
+                    {
+                        (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
+                        TestAuthentications(test, settings, dev, output);
                         (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = false;
                     }
 
@@ -1225,6 +1221,28 @@ namespace GXDLMSDirector
             dev.Comm.client.UpdateValue(pg, 2, reply.Value);
         }
 
+        /// <summary>
+        /// Test authentications.
+        /// </summary>
+        /// <param name="settings">Conformance settings.</param>
+        /// <param name="dev">DLMS device.</param>
+        /// <param name="output"></param>
+        private static void TestAuthentications(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output)
+        {
+            if (!settings.ExcludedGuruxTests.AuthenticationTests.WrongPassword)
+            {
+                //Test invalid password.
+                try
+                {
+                    TestInvalidPassword(test, settings, dev, output);
+                }
+                catch (Exception ex)
+                {
+                    AddError(test, dev, output.Errors, ex.Message);
+                    test.OnError(test, ex);
+                }
+            }
+        }
 
         /// <summary>
         /// Test services.
@@ -2170,14 +2188,14 @@ namespace GXDLMSDirector
         /// <param name="settings">Conformance settings.</param>
         /// <param name="dev">DLMS device.</param>
         /// <param name="output"></param>
-        private static void TestInvalidPassword(GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output)
+        private static void TestInvalidPassword(GXConformanceTest test, GXConformanceSettings settings, GXDLMSDevice dev, GXOutput output)
         {
-            if (!string.IsNullOrEmpty(settings.InvalidPassword) && dev.Comm.client.Authentication != Authentication.None)
+            if (!string.IsNullOrEmpty(settings.ExcludedGuruxTests.AuthenticationTests.InvalidPassword) && dev.Comm.client.Authentication != Authentication.None)
             {
                 dev.Comm.Disconnect();
                 string pw = dev.Password;
                 byte[] hpw = dev.HexPassword;
-                dev.Password = CryptHelper.Encrypt(settings.InvalidPassword, Password.Key);
+                dev.Password = CryptHelper.Encrypt(settings.ExcludedGuruxTests.AuthenticationTests.InvalidPassword, Password.Key);
                 dev.HexPassword = null;
                 try
                 {
@@ -2186,9 +2204,16 @@ namespace GXDLMSDirector
                     output.Errors.Insert(0, "Login succeeded with wrong password.");
                     dev.Comm.Disconnect();
                 }
-                catch (GXDLMSException)
+                catch (GXDLMSException ex)
                 {
-                    output.Info.Insert(0, "Invalid password test succeeded.");
+                    if (ex.ErrorCode != 0)
+                    {
+                        AddInfo(test, dev, output.Info, "Invalid password test succeeded. Meter returned " + ex.Message);
+                    }
+                    else
+                    {
+                        AddError(test, dev, output.Errors, "Invalid password test failed. Meter didn't return an error.");
+                    }
                     dev.Comm.Disconnect();
                 }
                 //Try to connect again.

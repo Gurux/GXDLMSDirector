@@ -115,5 +115,22 @@ namespace GXDLMSDirector
                 m_EdSvc.CloseDropDown();
             }
         }
+
+
+        /// <summary>
+        /// Is any of the tests enabled.
+        /// </summary>
+        public static bool IsEnabled(object target)
+        {
+            PropertyDescriptorCollection props = TypeDescriptor.GetProperties(target);
+            foreach (PropertyDescriptor it in props)
+            {
+                if (it.GetValue(target).Equals(false))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

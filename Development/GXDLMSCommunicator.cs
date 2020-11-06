@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12046 $,
-//                  $Date: 2020-08-27 15:16:33 +0300 (to, 27 elo 2020) $
+// Version:         $Revision: 12169 $,
+//                  $Date: 2020-11-06 09:57:31 +0200 (pe, 06 marras 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -284,7 +284,7 @@ namespace GXDLMSDirector
             reply.Error = 0;
             object eop = (byte)0x7E;
             //In network connection terminator is not used.
-            if (client.InterfaceType == InterfaceType.WRAPPER && !(media is GXSerial) && !parent.UseRemoteSerial)
+            if (client.InterfaceType != InterfaceType.HDLC)
             {
                 eop = null;
             }
@@ -372,8 +372,16 @@ namespace GXDLMSDirector
                     }
 
                     //Loop until whole COSEM packet is received.
-                    while (!client.GetData(rd, reply, notify))
+                    //If received data is echo.
+                    while (rd.Compare(data) ||
+                        !client.GetData(rd, reply, notify))
                     {
+                        rd.Position = 0;
+                        if (rd.Compare(data))
+                        {
+                            rd.Clear();
+                        }
+                        rd.Position = 0;
                         p.Reply = null;
                         if (notify.Data.Size != 0)
                         {
@@ -535,16 +543,23 @@ namespace GXDLMSDirector
             media.Receive(p);
         }
 
-        void InitializeIEC()
+        internal string InitializeIEC()
         {
-            GXManufacturer manufacturer = this.parent.Manufacturers.FindByIdentification(parent.Manufacturer);
-            if (manufacturer == null)
+            string manufactureID = null;
+            if (parent.Manufacturer != null)
             {
-                throw new Exception("Unknown manufacturer " + parent.Manufacturer);
+                GXManufacturer manufacturer = this.parent.Manufacturers.FindByIdentification(parent.Manufacturer);
+                if (manufacturer == null)
+                {
+                    throw new Exception("Unknown manufacturer " + parent.Manufacturer);
+                }
             }
             GXSerial serial = media as GXSerial;
             byte Terminator = (byte)0x0A;
-            media.Open();
+            if (!media.IsOpen)
+            {
+                media.Open();
+            }
             if (media is GXSerial)
             {
                 //Some meters need a little break.
@@ -618,7 +633,7 @@ namespace GXDLMSDirector
                     media.Receive(p);
                     throw new Exception("Invalid responce.");
                 }
-                string manufactureID = p.Reply.Substring(1, 3);
+                manufactureID = p.Reply.Substring(1, 3);
                 UpdateManufactureSettings(manufactureID);
                 char baudrate = p.Reply[4];
                 int BaudRate = 0;
@@ -687,6 +702,7 @@ namespace GXDLMSDirector
                     Thread.Sleep(1000);
                 }
             }
+            return manufactureID;
         }
 
         void Media_OnTrace(object sender, TraceEventArgs e)
@@ -751,12 +767,16 @@ namespace GXDLMSDirector
             {
                 throw new Exception(string.Format("Manufacturer type does not match. Manufacturer is {0} and it should be {1}.", id, this.parent.Manufacturer));
             }
-            GXManufacturer manufacturer = this.parent.Manufacturers.FindByIdentification(id);
-            if (manufacturer == null)
+            GXManufacturer manufacturer = null;
+            if (!string.IsNullOrEmpty(this.parent.Manufacturer))
             {
-                throw new Exception("Unknown manufacturer " + id);
+                manufacturer = this.parent.Manufacturers.FindByIdentification(id);
+                if (manufacturer == null)
+                {
+                    throw new Exception("Unknown manufacturer " + id);
+                }
+                this.parent.Manufacturer = manufacturer.Identification;
             }
-            this.parent.Manufacturer = manufacturer.Identification;
             client.Standard = this.parent.Standard;
             client.Authentication = this.parent.Authentication;
             client.InterfaceType = InterfaceType.HDLC;
@@ -791,7 +811,7 @@ namespace GXDLMSDirector
             }
 
             client.ClientAddress = parent.ClientAddress;
-            if (parent.HDLCAddressing == HDLCAddressType.SerialNumber)
+            if (parent.HDLCAddressing == HDLCAddressType.SerialNumber && manufacturer != null)
             {
                 string formula = null;
                 GXServerAddress server = manufacturer.GetServer(parent.HDLCAddressing);
@@ -899,6 +919,8 @@ namespace GXDLMSDirector
             }
             client.Authentication = this.parent.Authentication;
             client.InterfaceType = parent.InterfaceType;
+            client.Plc.MacSourceAddress = parent.MACSourceAddress;
+            client.Plc.MacDestinationAddress = parent.MacDestinationAddress;
             if (!string.IsNullOrEmpty(this.parent.Password))
             {
                 client.Password = CryptHelper.Decrypt(this.parent.Password, Password.Key);
@@ -942,14 +964,14 @@ namespace GXDLMSDirector
             }
             else
             {
-                if (client.InterfaceType == InterfaceType.WRAPPER)
-                {
-                    client.ServerAddress = Convert.ToInt32(parent.PhysicalAddress);
-                }
-                else
+                if (client.InterfaceType == InterfaceType.HDLC)
                 {
                     client.ServerAddress = GXDLMSClient.GetServerAddress(parent.LogicalAddress, Convert.ToInt32(parent.PhysicalAddress), parent.ServerAddressSize);
                     client.ServerAddressSize = parent.ServerAddressSize;
+                }
+                else
+                {
+                    client.ServerAddress = Convert.ToInt32(parent.PhysicalAddress);
                 }
             }
             client.Ciphering.Security = (byte)parent.Security;

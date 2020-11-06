@@ -36,7 +36,6 @@ using Gurux.DLMS.Enums;
 using Gurux.DLMS.Objects;
 using Gurux.DLMS.UI;
 using GXDLMSDirector.Macro;
-using MRUSample;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

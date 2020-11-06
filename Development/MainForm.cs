@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12046 $,
-//                  $Date: 2020-08-27 15:16:33 +0300 (to, 27 elo 2020) $
+// Version:         $Revision: 12169 $,
+//                  $Date: 2020-11-06 09:57:31 +0200 (pe, 06 marras 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -44,7 +44,6 @@ using System.Diagnostics;
 using System.Threading;
 using GXDLMS.Common;
 using Gurux.Common;
-using MRUSample;
 using Gurux.DLMS.ManufacturerSettings;
 using Gurux.DLMS.Objects;
 using Gurux.DLMS;
@@ -88,7 +87,7 @@ namespace GXDLMSDirector
         GXAsyncWork TransactionWork;
         Dictionary<Type, List<IGXDLMSView>> Views;
         String path;
-        GXManufacturerCollection Manufacturers;
+        internal GXManufacturerCollection Manufacturers;
         System.Collections.Hashtable ObjectTreeItems = new System.Collections.Hashtable();
         SortedList<int, GXDLMSObject> SelectedListItems = new SortedList<int, GXDLMSObject>();
         System.Collections.Hashtable ObjectListItems = new System.Collections.Hashtable();
@@ -668,11 +667,14 @@ namespace GXDLMSDirector
                         st = d.Standard;
                     }
                     SelectedView = GXDlmsUi.GetView(Views, (GXDLMSObject)obj, st);
+                    ObjectPanelFrame.Controls.Remove(HelpBtn);
+
                     foreach (Control it in ObjectPanelFrame.Controls)
                     {
                         it.Hide();
                     }
                     ObjectPanelFrame.Controls.Clear();
+                    ObjectPanelFrame.Controls.Add(HelpBtn);
                     try
                     {
                         SelectedView.Target = (GXDLMSObject)obj;
@@ -2982,7 +2984,7 @@ namespace GXDLMSDirector
                         //If this is the last node to remove.
                         if (node.Parent.Nodes.Count == 1 && !(node.Parent.Tag is GXDLMSDevice))
                         {
-                            object type = (obj.Parent.Tag.GetHashCode() << 16) + obj.ObjectType;
+                            object type = (obj.Parent.Tag.GetHashCode() << 32) + obj.ObjectType;
                             TreeNode node2 = ObjectTreeItems[type] as TreeNode;
                             if (node2 != null)
                             {
@@ -3576,12 +3578,12 @@ namespace GXDLMSDirector
             GXDLMSObjectCollection objects = null;
             if (group != null)
             {
-                node = ObjectTreeItems[(it.Parent.Tag.GetHashCode() << 16) + it.ObjectType] as TreeNode;
+                node = ObjectTreeItems[(it.Parent.Tag.GetHashCode() << 32) + it.ObjectType] as TreeNode;
                 if (node == null)
                 {
                     node = deviceNode.Nodes.Add(it.ObjectType.ToString());
                     node.SelectedImageIndex = node.ImageIndex = 11;
-                    ObjectTreeItems[(it.Parent.Tag.GetHashCode() << 16) + it.ObjectType] = node;
+                    ObjectTreeItems[(it.Parent.Tag.GetHashCode() << 32) + it.ObjectType] = node;
                     objects = new GXDLMSObjectCollection();
                     objects.Tag = deviceNode.Tag;
                     node.Tag = objects;
@@ -3861,7 +3863,7 @@ namespace GXDLMSDirector
             TransactionWork.Start();
         }
 
-        private void AddDevice(GXDLMSDevice dev)
+        internal void AddDevice(GXDLMSDevice dev)
         {
             if (activeDC != null)
             {
@@ -4084,7 +4086,7 @@ namespace GXDLMSDirector
                 }
 
                 events = new GXNet(NetworkType.Tcp, 4059);
-                events.ConfigurableSettings = (AvailableMediaSettings.Port | AvailableMediaSettings.Protocol);
+                events.ConfigurableSettings = (AvailableMediaSettings.Port | AvailableMediaSettings.Protocol | AvailableMediaSettings.UseIPv6);
                 events.Settings = Properties.Settings.Default.EventsSettings;
                 events.OnMediaStateChange += Events_OnMediaStateChange;
                 events.OnReceived += Events_OnReceived;
@@ -7031,6 +7033,58 @@ namespace GXDLMSDirector
             UseMeterTimeZoneMnu.Checked = !UseMeterTimeZoneMnu.Checked;
             UseMeterTimeZoneBtn.Checked = UseMeterTimeZoneMnu.Checked;
             GXDlmsUi.UseMeterTimeZone = UseMeterTimeZoneMnu.Checked;
+        }
+
+        /// <summary>
+        /// Show help for selected COSEM object.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void HelpBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                GXDLMSViewAttribute[] att = (GXDLMSViewAttribute[])SelectedView.GetType().GetCustomAttributes(typeof(GXDLMSViewAttribute), true);
+                string str = "https://www.gurux.fi/index.php?q=" + att[0].DLMSType.ToString();
+                // Show online help.
+                Process.Start(str);
+            }
+            catch (Exception Ex)
+            {
+                Error.ShowError(this, Ex);
+            }
+        }
+
+        /// <summary>
+        /// Show HDLC address resolver.
+        /// </summary>
+        private void HdlcAddressResolverMnu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                GXHdlcAddressResolver dlg = new GXHdlcAddressResolver();
+                dlg.Show(this);
+            }
+            catch (Exception Ex)
+            {
+                Error.ShowError(this, Ex);
+            }
+        }
+
+        /// <summary>
+        /// Show S-FSK PLC discovery wnd.
+        /// </summary>
+        private void SFSKPLCDiscoverMnu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                GXPlcDiscover dlg = new GXPlcDiscover(this);
+                dlg.Show(this);
+            }
+            catch (Exception Ex)
+            {
+                Error.ShowError(this, Ex);
+            }
         }
     }
 }

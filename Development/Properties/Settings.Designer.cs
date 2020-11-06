@@ -12,7 +12,7 @@ namespace GXDLMSDirector.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.6.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.7.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -656,6 +656,150 @@ namespace GXDLMSDirector.Properties {
             }
             set {
                 this["UseMeterTimeZone"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Certificates {
+            get {
+                return ((string)(this["Certificates"]));
+            }
+            set {
+                this["Certificates"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool HdlcAddressUseOpticalProbe {
+            get {
+                return ((bool)(this["HdlcAddressUseOpticalProbe"]));
+            }
+            set {
+                this["HdlcAddressUseOpticalProbe"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string HdlcAddressMedia {
+            get {
+                return ((string)(this["HdlcAddressMedia"]));
+            }
+            set {
+                this["HdlcAddressMedia"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string HdlcAddressSerialSettings {
+            get {
+                return ((string)(this["HdlcAddressSerialSettings"]));
+            }
+            set {
+                this["HdlcAddressSerialSettings"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string HdlcAddressNetworkSettings {
+            get {
+                return ((string)(this["HdlcAddressNetworkSettings"]));
+            }
+            set {
+                this["HdlcAddressNetworkSettings"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool HdlcAddressScanBaudRates {
+            get {
+                return ((bool)(this["HdlcAddressScanBaudRates"]));
+            }
+            set {
+                this["HdlcAddressScanBaudRates"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string HdlcAddressBaudRates {
+            get {
+                return ((string)(this["HdlcAddressBaudRates"]));
+            }
+            set {
+                this["HdlcAddressBaudRates"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PlcMedia {
+            get {
+                return ((string)(this["PlcMedia"]));
+            }
+            set {
+                this["PlcMedia"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PlcSerialSettings {
+            get {
+                return ((string)(this["PlcSerialSettings"]));
+            }
+            set {
+                this["PlcSerialSettings"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PlcNetworkSettings {
+            get {
+                return ((string)(this["PlcNetworkSettings"]));
+            }
+            set {
+                this["PlcNetworkSettings"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int PlcInterface {
+            get {
+                return ((int)(this["PlcInterface"]));
+            }
+            set {
+                this["PlcInterface"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("00 11 22 33 44 55 66 77 88")]
+        public string PlcSerialSettingsActiveInitiator {
+            get {
+                return ((string)(this["PlcSerialSettingsActiveInitiator"]));
+            }
+            set {
+                this["PlcSerialSettingsActiveInitiator"] = value;
             }
         }
     }

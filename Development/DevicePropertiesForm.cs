@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12046 $,
-//                  $Date: 2020-08-27 15:16:33 +0300 (to, 27 elo 2020) $
+// Version:         $Revision: 12169 $,
+//                  $Date: 2020-11-06 09:57:31 +0200 (pe, 06 marras 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -48,11 +48,14 @@ using System.IO;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Xml;
+using Gurux.DLMS.ASN;
+using Gurux.DLMS.ASN.Enums;
 
 namespace GXDLMSDirector
 {
     partial class DevicePropertiesForm : Form
     {
+        string path;
         Form MediaPropertiesForm = null;
         GXManufacturerCollection Manufacturers;
         IGXMedia SelectedMedia = null;
@@ -67,6 +70,9 @@ namespace GXDLMSDirector
             try
             {
                 InitializeComponent();
+#if !GURUX_ECDSA
+                DeviceTab.TabPages.Remove(CertificatesTab);
+#endif //GURUX_ECDSA
                 ServerAddressSizeCb.Items.Add("");
                 ServerAddressSizeCb.Items.Add((byte)1);
                 ServerAddressSizeCb.Items.Add((byte)2);
@@ -75,16 +81,6 @@ namespace GXDLMSDirector
                 {
                     StandardCb.Items.Add(it);
                 }
-                foreach (InterfaceType it in Enum.GetValues(typeof(InterfaceType)))
-                {
-                    if (it != InterfaceType.PDU)
-                    {
-                        InterfaceCb.Items.Add(it);
-                    }
-
-                }
-
-
                 PriorityCb.Items.Add(Priority.Normal);
                 PriorityCb.Items.Add(Priority.High);
                 ServiceClassCb.Items.Add(ServiceClass.UnConfirmed);
@@ -105,13 +101,11 @@ namespace GXDLMSDirector
                     OKBtn.Enabled = false;
                 }
                 Device = dev2;
-                StartProtocolCB.Items.Add(StartProtocolType.IEC);
-                StartProtocolCB.Items.Add(StartProtocolType.DLMS);
                 int pos = 0;
                 foreach (GXManufacturer it in Manufacturers)
                 {
                     int index = this.ManufacturerCB.Items.Add(it);
-                    if (it.Name == GXDLMSDirector.Properties.Settings.Default.SelectedManufacturer)
+                    if (it.Name == Properties.Settings.Default.SelectedManufacturer)
                     {
                         pos = index;
                     }
@@ -138,7 +132,7 @@ namespace GXDLMSDirector
             }
             catch (Exception Ex)
             {
-                GXDLMS.Common.Error.ShowError(this, Ex);
+                GXDLMS.Common.Error.ShowError(null, Ex);
             }
         }
 
@@ -389,7 +383,6 @@ namespace GXDLMSDirector
                 }
             }
             UseRemoteSerialCB.Checked = device.UseRemoteSerial;
-            StartProtocolCB.SelectedItem = device.StartProtocol;
             PhysicalServerAddressTB.Value = Convert.ToDecimal(device.PhysicalAddress);
             LogicalServerAddressTB.Value = Convert.ToDecimal(device.LogicalAddress);
             this.ClientAddTB.Value = Convert.ToDecimal(Convert.ToUInt32(device.ClientAddress));
@@ -420,10 +413,16 @@ namespace GXDLMSDirector
             this.UseLNCB.Checked = device.UseLogicalNameReferencing;
             this.UseLNCB.CheckedChanged += new System.EventHandler(this.UseLNCB_CheckedChanged);
             ShowConformance((Conformance)device.Conformance);
-
+            //Handle old way.
+            if (device.InterfaceType == InterfaceType.HDLC && device.StartProtocol == StartProtocolType.IEC)
+            {
+                device.InterfaceType = InterfaceType.HdlcWithModeE;
+            }
             InterfaceCb.SelectedItem = device.InterfaceType;
             MaxInfoTXTb.Text = device.MaxInfoTX.ToString();
             MaxInfoRXTb.Text = device.MaxInfoRX.ToString();
+            MACSourceAddressTb.Value = device.MACSourceAddress;
+            MACTargetAddressTb.Value = device.MacDestinationAddress;
             WindowSizeTXTb.Text = device.WindowSizeTX.ToString();
             WindowSizeRXTb.Text = device.WindowSizeRX.ToString();
             InactivityTimeoutTb.Text = device.InactivityTimeout.ToString();
@@ -710,7 +709,9 @@ namespace GXDLMSDirector
                 throw new Exception("Invalid Serial Number.");
             }
             GXManufacturer man = (GXManufacturer)ManufacturerCB.SelectedItem;
-            device.Authentication = ((GXAuthentication)this.AuthenticationCB.SelectedItem).Type;
+            GXAuthentication auth = ((GXAuthentication)this.AuthenticationCB.SelectedItem);
+            device.Authentication = auth.Type;
+            device.AuthenticationName = auth.Name;
             if (device.Authentication != Authentication.None)
             {
                 if (PasswordAsciiCb.Checked)
@@ -768,6 +769,23 @@ namespace GXDLMSDirector
             else
             {
                 device.InactivityTimeout = int.Parse(InactivityTimeoutTb.Text);
+            }
+            if (MACSourceAddressTb.Text == "")
+            {
+                device.MACSourceAddress = 0xC00;
+            }
+            else
+            {
+                device.MACSourceAddress = Convert.ToUInt16(MACSourceAddressTb.Value);
+            }
+
+            if (MACTargetAddressTb.Text == "")
+            {
+                device.MacDestinationAddress = 0;
+            }
+            else
+            {
+                device.MacDestinationAddress = Convert.ToUInt16(MACTargetAddressTb.Value);
             }
             if (MaxPduTb.Text == "")
             {
@@ -907,8 +925,7 @@ namespace GXDLMSDirector
             }
             device.UseLogicalNameReferencing = this.UseLNCB.Checked;
             device.LogicalAddress = Convert.ToInt32(LogicalServerAddressTB.Value);
-            device.StartProtocol = (StartProtocolType)this.StartProtocolCB.SelectedItem;
-            GXDLMSDirector.Properties.Settings.Default.SelectedManufacturer = man.Name;
+            Properties.Settings.Default.SelectedManufacturer = man.Name;
 
             device.Security = (Security)SecurityCB.SelectedItem;
             device.SystemTitle = GetAsHex(SystemTitleTB.Text, SystemTitleAsciiCb.Checked);
@@ -1139,7 +1156,15 @@ namespace GXDLMSDirector
             {
                 return;
             }
-            string name = authentication.Type.ToString();
+            string name;
+            if (string.IsNullOrEmpty(authentication.Name))
+            {
+                name = authentication.Type.ToString();
+            }
+            else
+            {
+                name = authentication.Name;
+            }
             SizeF s = e.Graphics.MeasureString(name, f);
             e.Graphics.DrawString(name, f, b, e.Bounds);
         }
@@ -1153,18 +1178,6 @@ namespace GXDLMSDirector
                 if (man != null)
                 {
                     UseLNCB.Checked = Device.UseLogicalNameReferencing = man.UseLogicalNameReferencing;
-                    if (SelectedMedia is GXNet)
-                    {
-                        StartProtocolCB.Enabled = !man.UseIEC47;
-                    }
-                    else
-                    {
-                        StartProtocolCB.Enabled = true;
-                    }
-                    if (!StartProtocolCB.Enabled)
-                    {
-                        StartProtocolCB.SelectedItem = StartProtocolType.DLMS;
-                    }
                 }
             }
         }
@@ -1191,13 +1204,47 @@ namespace GXDLMSDirector
                 GXManufacturer man = (GXManufacturer)ManufacturerCB.SelectedItem;
                 if (man != null)
                 {
-                    StartProtocolCB.SelectedItem = man.StartProtocol;
+                    InterfaceType selected;
+                    if (InterfaceCb.SelectedItem != null)
+                    {
+                        selected = (InterfaceType)InterfaceCb.SelectedItem;
+                    }
+                    else
+                    {
+                        selected = Device.InterfaceType;
+                    }
+                    InterfaceCb.Items.Clear();
+                    if (man.SupporterdInterfaces != 0)
+                    {
+                        foreach (InterfaceType it in Enum.GetValues(typeof(InterfaceType)))
+                        {
+                            if ((man.SupporterdInterfaces & (1 << (int)it)) != 0)
+                            {
+                                InterfaceCb.Items.Add(it);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        InterfaceCb.Items.Add(InterfaceType.HDLC);
+                        InterfaceCb.Items.Add(InterfaceType.HdlcWithModeE);
+                        InterfaceCb.Items.Add(InterfaceType.WRAPPER);
+                    }
+                    InterfaceCb.SelectedItem = selected;
+                    //Select first item if interface is not available.
+                    if (InterfaceCb.SelectedItem == null)
+                    {
+                        InterfaceCb.SelectedItem = InterfaceCb.Items[0];
+                    }
+
                     this.ClientAddTB.Value = man.GetActiveAuthentication().ClientAddress;
                     AuthenticationCB.Items.Clear();
                     foreach (GXAuthentication it in man.Settings)
                     {
+                        bool empty = string.IsNullOrEmpty(Device.AuthenticationName);
                         int pos = AuthenticationCB.Items.Add(it);
-                        if (it.Type == Device.Authentication)
+                        if ((empty && it.Type == Device.Authentication) ||
+                                (!empty && it.Name == Device.AuthenticationName))
                         {
                             this.AuthenticationCB.SelectedIndex = pos;
                         }
@@ -1282,40 +1329,6 @@ namespace GXDLMSDirector
                     SystemTitleAsciiCb.CheckedChanged += SystemTitleAsciiCb_CheckedChanged;
                     BlockCipherKeyAsciiCb.CheckedChanged += BlockCipherKeyAsciiCb_CheckedChanged;
                     AuthenticationKeyAsciiCb.CheckedChanged += AuthenticationKeyAsciiCb_CheckedChanged;
-                }
-            }
-            catch (Exception Ex)
-            {
-                GXDLMS.Common.Error.ShowError(this, Ex);
-            }
-        }
-
-        private void StartProtocolCB_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                foreach (object it in this.MediasCB.Items)
-                {
-                    if (it is GXSerial)
-                    {
-                        //Initialize serial settings.
-                        GXSerial serial = (GXSerial)it;
-                        if ((StartProtocolType)StartProtocolCB.SelectedItem == StartProtocolType.DLMS)
-                        {
-                            serial.BaudRate = 9600;
-                            serial.DataBits = 8;
-                            serial.Parity = Parity.None;
-                            serial.StopBits = StopBits.One;
-                        }
-                        else
-                        {
-                            serial.BaudRate = 300;
-                            serial.DataBits = 7;
-                            serial.Parity = Parity.Even;
-                            serial.StopBits = StopBits.One;
-                        }
-                        break;
-                    }
                 }
             }
             catch (Exception Ex)
@@ -1836,8 +1849,225 @@ namespace GXDLMSDirector
             {
                 PhysicalServerAddressLbl.Text = "Physical Server:";
             }
-            LogicalServerAddressLbl.Visible = LogicalServerAddressTB.Visible = type == InterfaceType.HDLC;
+            if (type == InterfaceType.Plc || type == InterfaceType.PlcHdlc)
+            {
+                if (DeviceTab.TabPages.Contains(HdlcFrameTab))
+                {
+                    DeviceTab.TabPages.Remove(HdlcFrameTab);
+                }
+                if (!DeviceTab.TabPages.Contains(PlcFrame))
+                {
+                    DeviceTab.TabPages.Insert(2, PlcFrame);
+                }
+            }
+            else if (type == InterfaceType.HDLC ||
+                type == InterfaceType.HdlcWithModeE)
+            {
+                if (DeviceTab.TabPages.Contains(PlcFrame))
+                {
+                    DeviceTab.TabPages.Remove(PlcFrame);
+                }
+                if (!DeviceTab.TabPages.Contains(HdlcFrameTab))
+                {
+                    DeviceTab.TabPages.Insert(2, HdlcFrameTab);
+                }
+                foreach (object it in this.MediasCB.Items)
+                {
+                    if (it is GXSerial)
+                    {
+                        //Initialize serial settings.
+                        GXSerial serial = (GXSerial)it;
+                        if (type == InterfaceType.HDLC)
+                        {
+                            serial.BaudRate = 9600;
+                            serial.DataBits = 8;
+                            serial.Parity = Parity.None;
+                            serial.StopBits = StopBits.One;
+                        }
+                        else
+                        {
+                            serial.BaudRate = 300;
+                            serial.DataBits = 7;
+                            serial.Parity = Parity.Even;
+                            serial.StopBits = StopBits.One;
+                        }
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                if (DeviceTab.TabPages.Contains(HdlcFrameTab))
+                {
+                    DeviceTab.TabPages.Remove(HdlcFrameTab);
+                }
+                if (DeviceTab.TabPages.Contains(PlcFrame))
+                {
+                    DeviceTab.TabPages.Remove(PlcFrame);
+                }
+            }
+        }
 
+        /// <summary>
+        /// Update server system title if Italy standard is used.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ServerSystemTitle_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (ServerSystemTitleAsciiCb.Checked)
+                {
+
+                }
+                else
+                {
+                    byte[] tmp = GXDLMSTranslator.HexToBytes(ServerSystemTitle.Text);
+                    if (tmp.Length == 8)
+                    {
+                        ItalySystemTitleTb.Text = GXDLMSConverter.SystemTitleToString(Standard.Italy, tmp, false);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //Ignore all exceptions.
+            }
+        }
+
+        private void StandardCb_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                ItalySystemTitleTb.Visible = (Standard)StandardCb.SelectedItem == Standard.Italy;
+            }
+            catch (Exception)
+            {
+                //Ignore all exceptions.
+            }
+        }
+
+        /// <summary>
+        /// Add new certificate.
+        /// </summary>
+        private void CertificateAddMnu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                OpenFileDialog dlg = new OpenFileDialog();
+                dlg.Multiselect = false;
+                if (string.IsNullOrEmpty(path))
+                {
+                    dlg.InitialDirectory = Directory.GetCurrentDirectory();
+                }
+                else
+                {
+                    System.IO.FileInfo fi = new System.IO.FileInfo(path);
+                    dlg.InitialDirectory = fi.DirectoryName;
+                    dlg.FileName = fi.Name;
+                }
+                dlg.Filter = Properties.Resources.CertificateFilterTxt;
+                dlg.DefaultExt = ".pem";
+                dlg.ValidateNames = true;
+                if (dlg.ShowDialog(this) == DialogResult.OK)
+                {
+                    bool exists = false;
+                    if (File.Exists(dlg.FileName))
+                    {
+                        try
+                        {
+                            GXx509Certificate cert = GXx509Certificate.Load(dlg.FileName);
+                            foreach (ListViewItem it in CertificatesList.Items)
+                            {
+                                if (it.Tag is GXx509Certificate c)
+                                {
+                                    if (c.Subject == cert.Subject)
+                                    {
+                                        exists = true;
+                                        throw new Exception("Public key already exists.");
+                                    }
+                                }
+                            }
+                            ListViewItem li = new ListViewItem("Public Key");
+                            li.StateImageIndex = li.ImageIndex = 0;
+                            li.SubItems.Add(cert.Subject);
+                            li.SubItems.Add(cert.ValidFrom + "-" + cert.ValidTo);
+                            StringBuilder sb = new StringBuilder();
+                            foreach (KeyUsage it in Enum.GetValues(typeof(KeyUsage)))
+                            {
+                                if (((int)it & (int)cert.KeyUsage) != 0)
+                                {
+                                    sb.Append(it);
+                                    sb.Append(", ");
+                                }
+                            }
+                            if (sb.Length != 0)
+                            {
+                                sb.Length -= 2;
+                            }
+                            li.SubItems.Add(sb.ToString());
+                            CertificatesList.Items.Add(li).Tag = cert;
+                        }
+                        catch (Exception)
+                        {
+                            if (!exists)
+                            {
+                                //Check if this is private key.
+                                GXPkcs8 cert = GXPkcs8.Load(dlg.FileName);
+                                ListViewItem li = new ListViewItem("Private Key");
+                                li.StateImageIndex = li.ImageIndex = 1;
+                                foreach (ListViewItem it in CertificatesList.Items)
+                                {
+                                    if (it.Tag is GXPkcs8)
+                                    {
+                                        throw new Exception("Private key already exists. There can be only one private key.");
+                                    }
+                                }
+                                CertificatesList.Items.Add(li).Tag = cert;
+                            }
+                        }
+                        path = dlg.FileName;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Remove selected certificates.
+        /// </summary>
+        private void CertificateRemoveMnu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (CertificatesList.SelectedItems.Count != 0)
+                {
+                    DialogResult ret = MessageBox.Show(this, Properties.Resources.CertificateRemove, Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
+                    if (ret != DialogResult.Yes)
+                    {
+                        return;
+                    }
+                    while (CertificatesList.SelectedItems.Count != 0)
+                    {
+                        ListViewItem it = CertificatesList.SelectedItems[0];
+                        it.Remove();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message);
+            }
+        }
+
+        private void ShowAsHex_CheckedChanged(object sender, EventArgs e)
+        {
+            MACTargetAddressTb.Hexadecimal = MACSourceAddressTb.Hexadecimal = PhysicalServerAddressTB.Hexadecimal =
+                LogicalServerAddressTB.Hexadecimal = ClientAddTB.Hexadecimal = ShowAsHex.Checked;
         }
     }
 }

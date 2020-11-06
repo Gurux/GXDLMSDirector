@@ -43,12 +43,14 @@ namespace GXDLMSDirector
         GuruxServiceTestSettings serviceTests;
         GuruxClockTestSettings clockTests;
         GuruxProfileGenericTestSettings profileGenericTest;
+        GuruxAuthenticationTestSettings authenticationTests;
 
         public GXConformanceGuruxSettings()
         {
             serviceTests = new GuruxServiceTestSettings();
             clockTests = new GuruxClockTestSettings();
             profileGenericTest = new GuruxProfileGenericTestSettings();
+            authenticationTests = new GuruxAuthenticationTestSettings();
         }
 
         [Description("Gurux Clock tests.")]
@@ -120,20 +122,27 @@ namespace GXDLMSDirector
             }
         }
 
-        /// <summary>
-        /// Is any of the tests enabled.
-        /// </summary>
-        public bool IsEnabled()
+        [Description("Gurux Authentication tests.")]
+        [Category("Accessibility")]
+        [TypeConverter(typeof(GXConformanceValueConverter))]
+        [DefaultValue(null)]
+        [Editor(typeof(GXConformanceEditor), typeof(UITypeEditor))]
+        [RefreshPropertiesAttribute(RefreshProperties.All)]
+        public GuruxAuthenticationTestSettings AuthenticationTests
         {
-            PropertyDescriptorCollection props = TypeDescriptor.GetProperties(this);
-            foreach (PropertyDescriptor it in props)
+            get
             {
-                if (it.GetValue(this).Equals(true))
-                {
-                    return true;
-                }
+                return authenticationTests;
             }
-            return false;
+            set
+            {
+                //If user reset values.
+                if (value == null)
+                {
+                    value = new GuruxAuthenticationTestSettings();
+                }
+                authenticationTests = value;
+            }
         }
 
         /// <summary>

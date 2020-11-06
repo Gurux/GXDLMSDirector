@@ -132,11 +132,11 @@
     <Reference Include="Gurux.Common, Version=8.1.2002.1903, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Common.8.1.2002.1903\lib\net40\Gurux.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=9.0.2009.801, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.9.0.2009.801\lib\net40\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=9.0.2011.503, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.9.0.2011.503\lib\net40\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=9.0.2009.801, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.9.0.2009.801\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=9.0.2011.502, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.9.0.2011.502\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.Net, Version=8.1.2002.1902, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Net.8.1.2002.1902\lib\net40\Gurux.Net.dll</HintPath>
@@ -165,6 +165,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConformanceTests\Settings\GuruxAuthenticationTestSettings.cs" />
     <Compile Include="ConformanceTests\Settings\IGXConformanceSettings.cs" />
     <Compile Include="ConformanceTests\Settings\GuruxProfileGenericTestSettings.cs" />
     <Compile Include="ConformanceTests\Settings\GuruxClockTestSettings.cs" />
@@ -175,6 +176,24 @@
     </Compile>
     <Compile Include="DLMSTranslatorForm.Designer.cs">
       <DependentUpon>DLMSTranslatorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GXPlcDiscover.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GXPlcDiscover.Designer.cs">
+      <DependentUpon>GXPlcDiscover.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GXHdlcAddressResolver.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GXHdlcAddressResolver.Designer.cs">
+      <DependentUpon>GXHdlcAddressResolver.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GXPlcRegisterDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GXPlcRegisterDlg.Designer.cs">
+      <DependentUpon>GXPlcRegisterDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Macro\GXMacroCountDlg.cs">
       <SubType>Form</SubType>
@@ -296,6 +315,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="DLMSTranslatorForm.resx">
       <DependentUpon>DLMSTranslatorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GXPlcDiscover.resx">
+      <DependentUpon>GXPlcDiscover.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GXHdlcAddressResolver.resx">
+      <DependentUpon>GXHdlcAddressResolver.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GXPlcRegisterDlg.resx">
+      <DependentUpon>GXPlcRegisterDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Macro\GXMacroCountDlg.resx">
       <DependentUpon>GXMacroCountDlg.cs</DependentUpon>
@@ -455,6 +485,7 @@
     <None Include="Resources\NotifyMnu.bmp" />
     <None Include="Resources\cct.png" />
     <None Include="Resources\record.bmp" />
+    <None Include="Resources\help.bmp" />
     <Content Include="Resources\warning.ico" />
   </ItemGroup>
   <ItemGroup>

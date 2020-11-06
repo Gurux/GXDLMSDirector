@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10624 $,
-//                  $Date: 2019-04-24 13:56:09 +0300 (ke, 24 huhti 2019) $
+// Version:         $Revision: 12169 $,
+//                  $Date: 2020-11-06 09:57:31 +0200 (pe, 06 marras 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -70,10 +70,7 @@ namespace GXDLMSDirector
             this.NameCH = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.StartProtocolTB = new System.Windows.Forms.TextBox();
-            this.StartProtocolLbl = new System.Windows.Forms.Label();
             this.EditBtn = new System.Windows.Forms.Button();
-            this.UseIEC47CB = new System.Windows.Forms.CheckBox();
             this.RemoveBtn = new System.Windows.Forms.Button();
             this.NewBtn = new System.Windows.Forms.Button();
             this.UseLNCB = new System.Windows.Forms.CheckBox();
@@ -81,6 +78,8 @@ namespace GXDLMSDirector
             this.label1 = new System.Windows.Forms.Label();
             this.NameTB = new System.Windows.Forms.TextBox();
             this.NameLbl = new System.Windows.Forms.Label();
+            this.SupportedInterfacesTb = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
@@ -163,10 +162,9 @@ namespace GXDLMSDirector
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.StartProtocolTB);
-            this.panel2.Controls.Add(this.StartProtocolLbl);
+            this.panel2.Controls.Add(this.SupportedInterfacesTb);
+            this.panel2.Controls.Add(this.label2);
             this.panel2.Controls.Add(this.EditBtn);
-            this.panel2.Controls.Add(this.UseIEC47CB);
             this.panel2.Controls.Add(this.RemoveBtn);
             this.panel2.Controls.Add(this.NewBtn);
             this.panel2.Controls.Add(this.UseLNCB);
@@ -180,22 +178,6 @@ namespace GXDLMSDirector
             this.panel2.Size = new System.Drawing.Size(257, 316);
             this.panel2.TabIndex = 14;
             // 
-            // StartProtocolTB
-            // 
-            this.StartProtocolTB.Location = new System.Drawing.Point(116, 121);
-            this.StartProtocolTB.Name = "StartProtocolTB";
-            this.StartProtocolTB.Size = new System.Drawing.Size(129, 20);
-            this.StartProtocolTB.TabIndex = 22;
-            // 
-            // StartProtocolLbl
-            // 
-            this.StartProtocolLbl.AutoSize = true;
-            this.StartProtocolLbl.Location = new System.Drawing.Point(10, 125);
-            this.StartProtocolLbl.Name = "StartProtocolLbl";
-            this.StartProtocolLbl.Size = new System.Drawing.Size(74, 13);
-            this.StartProtocolLbl.TabIndex = 21;
-            this.StartProtocolLbl.Text = "Start Protocol:";
-            // 
             // EditBtn
             // 
             this.EditBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -206,16 +188,6 @@ namespace GXDLMSDirector
             this.EditBtn.Text = "Edit";
             this.EditBtn.UseVisualStyleBackColor = true;
             this.EditBtn.Click += new System.EventHandler(this.EditBtn_Click);
-            // 
-            // UseIEC47CB
-            // 
-            this.UseIEC47CB.AutoSize = true;
-            this.UseIEC47CB.Location = new System.Drawing.Point(10, 98);
-            this.UseIEC47CB.Name = "UseIEC47CB";
-            this.UseIEC47CB.Size = new System.Drawing.Size(113, 17);
-            this.UseIEC47CB.TabIndex = 14;
-            this.UseIEC47CB.Text = "Use IEC 62056-47";
-            this.UseIEC47CB.UseVisualStyleBackColor = true;
             // 
             // RemoveBtn
             // 
@@ -281,6 +253,24 @@ namespace GXDLMSDirector
             this.NameLbl.TabIndex = 15;
             this.NameLbl.Text = "Manufacturer Name:";
             // 
+            // SupportedInterfacesTb
+            // 
+            this.SupportedInterfacesTb.Location = new System.Drawing.Point(7, 116);
+            this.SupportedInterfacesTb.Multiline = true;
+            this.SupportedInterfacesTb.Name = "SupportedInterfacesTb";
+            this.SupportedInterfacesTb.ReadOnly = true;
+            this.SupportedInterfacesTb.Size = new System.Drawing.Size(238, 165);
+            this.SupportedInterfacesTb.TabIndex = 17;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(7, 100);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(109, 13);
+            this.label2.TabIndex = 18;
+            this.label2.Text = "Supported Interfaces.";
+            // 
             // ManufacturersForm
             // 
             this.AcceptButton = this.OKBtn;
@@ -313,7 +303,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Splitter splitter1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Button EditBtn;
-        private System.Windows.Forms.CheckBox UseIEC47CB;
         private System.Windows.Forms.Button RemoveBtn;
         private System.Windows.Forms.Button NewBtn;
         private System.Windows.Forms.CheckBox UseLNCB;
@@ -322,9 +311,8 @@ namespace GXDLMSDirector
         private System.Windows.Forms.TextBox NameTB;
         private System.Windows.Forms.Label NameLbl;
         private System.Windows.Forms.ColumnHeader NameCH;
-        private System.Windows.Forms.TextBox StartProtocolTB;
-        private System.Windows.Forms.Label StartProtocolLbl;
         private System.Windows.Forms.Button DownloadLatestBtn;
-
+        private System.Windows.Forms.TextBox SupportedInterfacesTb;
+        private System.Windows.Forms.Label label2;
     }
 }

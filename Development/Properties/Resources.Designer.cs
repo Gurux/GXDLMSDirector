@@ -108,6 +108,24 @@ namespace GXDLMSDirector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Certificate Files (*.pem)|*.pem|All files (*.*)|*.*.
+        /// </summary>
+        internal static string CertificateFilterTxt {
+            get {
+                return ResourceManager.GetString("CertificateFilterTxt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure that you want to remove selected certificate(s)?.
+        /// </summary>
+        internal static string CertificateRemove {
+            get {
+                return ResourceManager.GetString("CertificateRemove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure that you want to remove selected Conformance Test results?.
         /// </summary>
         internal static string ConformanceTestRemove {
@@ -206,6 +224,16 @@ namespace GXDLMSDirector.Properties {
         internal static string GXDLMSDirectorTxt {
             get {
                 return ResourceManager.GetString("GXDLMSDirectorTxt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap help {
+            get {
+                object obj = ResourceManager.GetObject("help", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

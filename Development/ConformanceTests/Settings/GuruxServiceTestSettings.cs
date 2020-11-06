@@ -167,25 +167,6 @@ namespace GXDLMSDirector
             set;
         }
 
-
-
-
-        /// <summary>
-        /// Is any of the tests enabled.
-        /// </summary>
-        public bool IsEnabled()
-        {
-            PropertyDescriptorCollection props = TypeDescriptor.GetProperties(this);
-            foreach (PropertyDescriptor it in props)
-            {
-                if (it.GetValue(this).Equals(true))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         /// <summary>
         /// Return included tests.
         /// </summary>

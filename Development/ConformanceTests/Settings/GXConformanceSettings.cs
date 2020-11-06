@@ -196,15 +196,6 @@ namespace GXDLMSDirector
             set;
         }
 
-        [Description("Invalid password.")]
-        [Category("Connection")]
-        [DefaultValue(null)]
-        public string InvalidPassword
-        {
-            get;
-            set;
-        }
-
         [XmlIgnore]
         [Description("Delay between connections.")]
         [Category("Connection")]

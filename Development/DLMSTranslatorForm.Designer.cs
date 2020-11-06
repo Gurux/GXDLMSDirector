@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DLMSTranslatorForm));
             this.panel2 = new System.Windows.Forms.Panel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -79,7 +80,17 @@
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.DataXml = new System.Windows.Forms.TextBox();
             this.DataPdu = new System.Windows.Forms.TextBox();
+            this.CertificatesTab = new System.Windows.Forms.TabPage();
+            this.CertificatesList = new System.Windows.Forms.ListView();
+            this.TypeCh = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.SubjectCh = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ValidityCh = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.KeyUsageCh = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.CertificateMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.CertificateAddMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.CertificateRemoveMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.helpProvider1 = new System.Windows.Forms.HelpProvider();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.panel2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -87,6 +98,8 @@
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabPage5.SuspendLayout();
+            this.CertificatesTab.SuspendLayout();
+            this.CertificateMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel2
@@ -258,6 +271,7 @@
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage5);
+            this.tabControl1.Controls.Add(this.CertificatesTab);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 47);
             this.tabControl1.Name = "tabControl1";
@@ -640,9 +654,88 @@
             this.DataPdu.Size = new System.Drawing.Size(168, 371);
             this.DataPdu.TabIndex = 4;
             // 
+            // CertificatesTab
+            // 
+            this.CertificatesTab.Controls.Add(this.CertificatesList);
+            this.CertificatesTab.Location = new System.Drawing.Point(4, 22);
+            this.CertificatesTab.Name = "CertificatesTab";
+            this.CertificatesTab.Size = new System.Drawing.Size(916, 377);
+            this.CertificatesTab.TabIndex = 5;
+            this.CertificatesTab.Text = "Certificates";
+            this.CertificatesTab.UseVisualStyleBackColor = true;
+            // 
+            // CertificatesList
+            // 
+            this.CertificatesList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.TypeCh,
+            this.SubjectCh,
+            this.ValidityCh,
+            this.KeyUsageCh});
+            this.CertificatesList.ContextMenuStrip = this.CertificateMenu;
+            this.CertificatesList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CertificatesList.FullRowSelect = true;
+            this.CertificatesList.HideSelection = false;
+            this.CertificatesList.Location = new System.Drawing.Point(0, 0);
+            this.CertificatesList.MultiSelect = false;
+            this.CertificatesList.Name = "CertificatesList";
+            this.CertificatesList.Size = new System.Drawing.Size(916, 377);
+            this.CertificatesList.SmallImageList = this.imageList1;
+            this.CertificatesList.TabIndex = 24;
+            this.CertificatesList.UseCompatibleStateImageBehavior = false;
+            this.CertificatesList.View = System.Windows.Forms.View.Details;
+            // 
+            // TypeCh
+            // 
+            this.TypeCh.Text = "Type";
+            this.TypeCh.Width = 72;
+            // 
+            // SubjectCh
+            // 
+            this.SubjectCh.Text = "Subject";
+            this.SubjectCh.Width = 100;
+            // 
+            // ValidityCh
+            // 
+            this.ValidityCh.Text = "Validity";
+            this.ValidityCh.Width = 106;
+            // 
+            // KeyUsageCh
+            // 
+            this.KeyUsageCh.Text = "Key Usage";
+            this.KeyUsageCh.Width = 355;
+            // 
+            // CertificateMenu
+            // 
+            this.CertificateMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.CertificateAddMnu,
+            this.CertificateRemoveMnu});
+            this.CertificateMenu.Name = "contextMenuStrip1";
+            this.CertificateMenu.Size = new System.Drawing.Size(118, 48);
+            // 
+            // CertificateAddMnu
+            // 
+            this.CertificateAddMnu.Name = "CertificateAddMnu";
+            this.CertificateAddMnu.Size = new System.Drawing.Size(117, 22);
+            this.CertificateAddMnu.Text = "Add..";
+            this.CertificateAddMnu.Click += new System.EventHandler(this.CertificateAddMnu_Click);
+            // 
+            // CertificateRemoveMnu
+            // 
+            this.CertificateRemoveMnu.Name = "CertificateRemoveMnu";
+            this.CertificateRemoveMnu.Size = new System.Drawing.Size(117, 22);
+            this.CertificateRemoveMnu.Text = "Remove";
+            this.CertificateRemoveMnu.Click += new System.EventHandler(this.CertificateRemoveMnu_Click);
+            // 
             // helpProvider1
             // 
             this.helpProvider1.HelpNamespace = "https://www.gurux.fi/GXDLMSDirector.DeviceProperties";
+            // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Magenta;
+            this.imageList1.Images.SetKeyName(0, "publicKey.png");
+            this.imageList1.Images.SetKeyName(1, "privateKey.png");
             // 
             // DLMSTranslatorForm
             // 
@@ -670,6 +763,8 @@
             this.tabPage3.PerformLayout();
             this.tabPage5.ResumeLayout(false);
             this.tabPage5.PerformLayout();
+            this.CertificatesTab.ResumeLayout(false);
+            this.CertificateMenu.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -727,5 +822,15 @@
         private System.Windows.Forms.RadioButton SentRb;
         private System.Windows.Forms.RadioButton AllRb;
         private System.Windows.Forms.CheckBox RemoveDuplicatesCb;
+        private System.Windows.Forms.TabPage CertificatesTab;
+        private System.Windows.Forms.ListView CertificatesList;
+        private System.Windows.Forms.ColumnHeader SubjectCh;
+        private System.Windows.Forms.ColumnHeader ValidityCh;
+        private System.Windows.Forms.ColumnHeader KeyUsageCh;
+        private System.Windows.Forms.ContextMenuStrip CertificateMenu;
+        private System.Windows.Forms.ToolStripMenuItem CertificateAddMnu;
+        private System.Windows.Forms.ToolStripMenuItem CertificateRemoveMnu;
+        private System.Windows.Forms.ColumnHeader TypeCh;
+        private System.Windows.Forms.ImageList imageList1;
     }
 }

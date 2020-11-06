@@ -37,56 +37,21 @@ using System.Text;
 
 namespace GXDLMSDirector
 {
-    public class GuruxClockTestSettings : IGXConformanceSettings
+    public class GuruxAuthenticationTestSettings : IGXConformanceSettings
     {
-        [Description("Set new time to the meter using PC's local time.")]
+        [Description("Try to connect using wrong password.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
-        public bool SetLocalTime
-        {
-            get;
-            set;
-        }
-        [Description("Set new time to the meter using EPOCH time.")]
-        [DefaultValue(false)]
-        [Category("Accessibility")]
-        public bool SetEpochTime
+        public bool WrongPassword
         {
             get;
             set;
         }
 
-        [Description("Set new time to the meter without timezone.")]
-        [DefaultValue(false)]
-        [Category("Accessibility")]
-        public bool SetTimeWithoutTimeZone
-        {
-            get;
-            set;
-        }
-
-        [Description("Flip DST and check is time changed.")]
-        [DefaultValue(false)]
-        [Category("Accessibility")]
-        public bool FlipDST
-        {
-            get;
-            set;
-        }
-
-        [Description("Check time and check is DST flag changed.")]
-        [DefaultValue(false)]
-        [Category("Accessibility")]
-        public bool CheckDST
-        {
-            get;
-            set;
-        }
-
-        [Description("Change time zone and check that meter time is correct.")]
-        [DefaultValue(false)]
-        [Category("Accessibility")]
-        public bool ChangeTimeZone
+        [Description("Try to connect using wrong password.")]
+        [Category("Connection")]
+        [DefaultValue(null)]
+        public string InvalidPassword
         {
             get;
             set;
@@ -103,7 +68,8 @@ namespace GXDLMSDirector
             PropertyDescriptorCollection props = TypeDescriptor.GetProperties(this);
             foreach (PropertyDescriptor it in props)
             {
-                if (it.GetValue(this).Equals(false))
+                object value = it.GetValue(this);
+                if (value != null && value.Equals(false))
                 {
                     if (it.Name.StartsWith("ExcludeTest"))
                     {

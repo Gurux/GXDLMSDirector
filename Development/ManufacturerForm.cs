@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11471 $,
-//                  $Date: 2020-02-12 13:07:50 +0200 (ke, 12 helmi 2020) $
+// Version:         $Revision: 12169 $,
+//                  $Date: 2020-11-06 09:57:31 +0200 (pe, 06 marras 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -38,7 +38,6 @@ using System.Windows.Forms;
 using Gurux.DLMS.ManufacturerSettings;
 using Gurux.DLMS.Enums;
 using Gurux.Common;
-using Gurux.DLMS;
 
 namespace GXDLMSDirector
 {
@@ -71,6 +70,9 @@ namespace GXDLMSDirector
         public ManufacturerForm(GXManufacturerCollection manufacturers, GXManufacturer manufacturer)
         {
             InitializeComponent();
+#if !GURUX_LPWAN
+            LpWanCb.Visible = WiSunCb.Visible = false;
+#endif //GURUX_LPWAN
             foreach (object it in Enum.GetValues(typeof(Standard)))
             {
                 StandardCb.Items.Add(it);
@@ -119,14 +121,9 @@ namespace GXDLMSDirector
 
             ServerAddressTypeCB.DrawMode = AuthenticationCB.DrawMode = DrawMode.OwnerDrawFixed;
             ClientAddTB.Value = authentication.ClientAddress;
-
-            StartProtocolCB.Items.Add(StartProtocolType.IEC);
-            StartProtocolCB.Items.Add(StartProtocolType.DLMS);
             NameTB.Text = manufacturer.Name;
             ManufacturerIdTB.Text = manufacturer.Identification;
             UseLNCB.Checked = manufacturer.UseLogicalNameReferencing;
-            UseIEC47CB.Checked = manufacturer.UseIEC47;
-            StartProtocolCB.SelectedItem = manufacturer.StartProtocol;
             //Manufacturer ID can not change after creation.
             ManufacturerIdTB.Enabled = string.IsNullOrEmpty(manufacturer.Identification);
             WebAddressTB.Text = Manufacturer.WebAddress;
@@ -170,6 +167,22 @@ namespace GXDLMSDirector
                 AuthenticationKeyTB.Text = GXCommon.ToHex(manufacturer.AuthenticationKey, true);
             }
             UseUtcTimeZone.Checked = manufacturer.UtcTimeZone;
+            if (manufacturer.SupporterdInterfaces != 0)
+            {
+                HdlcCb.Checked = (manufacturer.SupporterdInterfaces & (1 << (int)InterfaceType.HDLC)) != 0;
+                HdlcWithModeECb.Checked = (manufacturer.SupporterdInterfaces & (1 << (int)InterfaceType.HdlcWithModeE)) != 0;
+                WrapperCb.Checked = (manufacturer.SupporterdInterfaces & (1 << (int)InterfaceType.WRAPPER)) != 0;
+                WirelessMBusCb.Checked = (manufacturer.SupporterdInterfaces & (1 << (int)InterfaceType.WirelessMBus)) != 0;
+                PlcCb.Checked = (manufacturer.SupporterdInterfaces & (1 << (int)InterfaceType.Plc)) != 0;
+                PlcHdlcCb.Checked = (manufacturer.SupporterdInterfaces & (1 << (int)InterfaceType.PlcHdlc)) != 0;
+                LpWanCb.Checked = (manufacturer.SupporterdInterfaces & (1 << (int)InterfaceType.LPWAN)) != 0;
+                WiSunCb.Checked = (manufacturer.SupporterdInterfaces & (1 << (int)InterfaceType.WiSUN)) != 0;
+            }
+            else
+            {
+                //Select default interfaces.
+                HdlcCb.Checked = HdlcWithModeECb.Checked = WrapperCb.Checked = true;
+            }
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
@@ -195,8 +208,6 @@ namespace GXDLMSDirector
                 Manufacturer.Name = NameTB.Text;
                 Manufacturer.Identification = ManufacturerIdTB.Text;
                 Manufacturer.UseLogicalNameReferencing = UseLNCB.Checked;
-                Manufacturer.UseIEC47 = UseIEC47CB.Checked;
-                Manufacturer.StartProtocol = (StartProtocolType)StartProtocolCB.SelectedItem;
                 Manufacturer.Standard = (Standard)StandardCb.SelectedItem;
                 Manufacturer.UtcTimeZone = UseUtcTimeZone.Checked;
 
@@ -217,6 +228,44 @@ namespace GXDLMSDirector
                 Manufacturer.SystemTitle = GXCommon.HexToBytes(DevicePropertiesForm.GetAsHex(SystemTitleTB.Text, SystemTitleAsciiCb.Checked));
                 Manufacturer.BlockCipherKey = GXCommon.HexToBytes(DevicePropertiesForm.GetAsHex(BlockCipherKeyTB.Text, BlockCipherKeyAsciiCb.Checked));
                 Manufacturer.AuthenticationKey = GXCommon.HexToBytes(DevicePropertiesForm.GetAsHex(AuthenticationKeyTB.Text, AuthenticationKeyAsciiCb.Checked));
+
+                Manufacturer.SupporterdInterfaces = 0;
+                if (HdlcCb.Checked)
+                {
+                    Manufacturer.SupporterdInterfaces |= 1 << (int)InterfaceType.HDLC;
+                }
+                if (HdlcWithModeECb.Checked)
+                {
+                    Manufacturer.SupporterdInterfaces |= 1 << (int)InterfaceType.HdlcWithModeE;
+                }
+                if (WrapperCb.Checked)
+                {
+                    Manufacturer.SupporterdInterfaces |= 1 << (int)InterfaceType.WRAPPER;
+                }
+                if (WirelessMBusCb.Checked)
+                {
+                    Manufacturer.SupporterdInterfaces |= 1 << (int)InterfaceType.WirelessMBus;
+                }
+                if (PlcCb.Checked)
+                {
+                    Manufacturer.SupporterdInterfaces |= 1 << (int)InterfaceType.Plc;
+                }
+                if (PlcHdlcCb.Checked)
+                {
+                    Manufacturer.SupporterdInterfaces |= 1 << (int)InterfaceType.PlcHdlc;
+                }
+                if (LpWanCb.Checked)
+                {
+                    Manufacturer.SupporterdInterfaces |= 1 << (int)InterfaceType.LPWAN;
+                }
+                if (WiSunCb.Checked)
+                {
+                    Manufacturer.SupporterdInterfaces |= 1 << (int)InterfaceType.WiSUN;
+                }
+                if (Manufacturer.SupporterdInterfaces == 0)
+                {
+                    throw new Exception("Supporterd interfaces are not selected.");
+                }
             }
             catch (Exception Ex)
             {
@@ -362,6 +411,11 @@ namespace GXDLMSDirector
         }
 
         private void UseUtcTimeZone_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
 
         }

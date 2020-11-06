@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 10624 $,
-//                  $Date: 2019-04-24 13:56:09 +0300 (ke, 24 huhti 2019) $
+// Version:         $Revision: 12169 $,
+//                  $Date: 2020-11-06 09:57:31 +0200 (pe, 06 marras 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -32,16 +32,11 @@
 //---------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using GXDLMS.ManufacturerSettings;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using Gurux.DLMS.ManufacturerSettings;
+using Gurux.DLMS.Enums;
 
 namespace GXDLMSDirector
 {
@@ -55,7 +50,7 @@ namespace GXDLMSDirector
             InitializeComponent();
             NameCH.Width = -2;
             UpdateValues();
-            StartProtocolTB.Enabled = NameTB.Enabled = ManufacturerIdTB.Enabled = UseLNCB.Enabled = UseIEC47CB.Enabled = false;
+            NameTB.Enabled = ManufacturerIdTB.Enabled = UseLNCB.Enabled = false;
             ManufacturersOriginal = manufacturers;
 
             //Create clone from original items.
@@ -179,23 +174,52 @@ namespace GXDLMSDirector
             }
         }
 
+        private void UpdatateInterface(bool isSupported, InterfaceType type)
+        {
+            if (isSupported)
+            {
+                if (SupportedInterfacesTb.Text.Length != 0)
+                {
+                    SupportedInterfacesTb.AppendText(Environment.NewLine);
+                }
+                SupportedInterfacesTb.AppendText(type.ToString());
+            }
+        }
+
         void UpdateValues()
         {
             bool bEnabled = ManufacturersList.SelectedItems.Count == 1;
             RemoveBtn.Enabled = EditBtn.Enabled = bEnabled;
+            SupportedInterfacesTb.Text = "";
             if (bEnabled)
             {
                 GXManufacturer m = (GXManufacturer)ManufacturersList.SelectedItems[0].Tag;
                 NameTB.Text = m.Name;
                 ManufacturerIdTB.Text = m.Identification;
                 UseLNCB.Checked = m.UseLogicalNameReferencing;
-                UseIEC47CB.Checked = m.UseIEC47;
-                StartProtocolTB.Text = m.StartProtocol.ToString();
+                if (m.SupporterdInterfaces != 0)
+                {
+                    UpdatateInterface((m.SupporterdInterfaces & (1 << (int)InterfaceType.HDLC)) != 0, InterfaceType.HDLC);
+                    UpdatateInterface((m.SupporterdInterfaces & (1 << (int)InterfaceType.HdlcWithModeE)) != 0, InterfaceType.HdlcWithModeE);
+                    UpdatateInterface((m.SupporterdInterfaces & (1 << (int)InterfaceType.WRAPPER)) != 0, InterfaceType.WRAPPER);
+                    UpdatateInterface((m.SupporterdInterfaces & (1 << (int)InterfaceType.WirelessMBus)) != 0, InterfaceType.WirelessMBus);
+                    UpdatateInterface((m.SupporterdInterfaces & (1 << (int)InterfaceType.Plc)) != 0, InterfaceType.Plc);
+                    UpdatateInterface((m.SupporterdInterfaces & (1 << (int)InterfaceType.PlcHdlc)) != 0, InterfaceType.PlcHdlc);
+                    UpdatateInterface((m.SupporterdInterfaces & (1 << (int)InterfaceType.LPWAN)) != 0, InterfaceType.LPWAN);
+                    UpdatateInterface((m.SupporterdInterfaces & (1 << (int)InterfaceType.WiSUN)) != 0, InterfaceType.WiSUN);
+                }
+                else
+                {
+                    //Select default interfaces.
+                    UpdatateInterface(true, InterfaceType.HDLC);
+                    UpdatateInterface(true, InterfaceType.HdlcWithModeE);
+                    UpdatateInterface(true, InterfaceType.WRAPPER);
+                }
             }
             else
             {
-                StartProtocolTB.Text = NameTB.Text = ManufacturerIdTB.Text = "";
-                UseLNCB.Checked = UseIEC47CB.Checked = false;
+                NameTB.Text = ManufacturerIdTB.Text = "";
+                UseLNCB.Checked = false;
             }
         }
 

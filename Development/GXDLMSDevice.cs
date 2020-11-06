@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 11463 $,
-//                  $Date: 2020-02-11 14:13:52 +0200 (ti, 11 helmi 2020) $
+// Version:         $Revision: 12169 $,
+//                  $Date: 2020-11-06 09:57:31 +0200 (pe, 06 marras 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -669,7 +669,10 @@ namespace GXDLMSDirector
                     {
                         foreach (GXDLMSAssociationShortName sn in Objects.GetObjects(ObjectType.AssociationShortName))
                         {
-                            Comm.ReadValue(sn, 3);
+                            if (sn.Version > 1)
+                            {
+                                Comm.ReadValue(sn, 3);
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -716,7 +719,10 @@ namespace GXDLMSDirector
                             //Read scaler first.
                             try
                             {
-                                Comm.ReadValue(it, 3);
+                                if ((it.GetAccess(3) & AccessMode.Read) != 0)
+                                {
+                                    Comm.ReadValue(it, 3);
+                                }
                             }
                             catch (Exception ex)
                             {
@@ -734,7 +740,10 @@ namespace GXDLMSDirector
                             //Read scaler first.
                             try
                             {
-                                Comm.ReadValue(it, 4);
+                                if ((it.GetAccess(4) & AccessMode.Read) != 0)
+                                {
+                                    Comm.ReadValue(it, 4);
+                                }
                             }
                             catch (Exception ex)
                             {

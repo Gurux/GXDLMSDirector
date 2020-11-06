@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11471 $,
-//                  $Date: 2020-02-12 13:07:50 +0200 (ke, 12 helmi 2020) $
+// Version:         $Revision: 12169 $,
+//                  $Date: 2020-11-06 09:57:31 +0200 (pe, 06 marras 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -64,14 +64,11 @@ namespace GXDLMSDirector
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ManufacturerForm));
             this.OKBtn = new System.Windows.Forms.Button();
             this.CancelBtn = new System.Windows.Forms.Button();
-            this.UseIEC47CB = new System.Windows.Forms.CheckBox();
             this.UseLNCB = new System.Windows.Forms.CheckBox();
             this.ManufacturerIdTB = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.NameTB = new System.Windows.Forms.TextBox();
             this.NameLbl = new System.Windows.Forms.Label();
-            this.StartProtocolLbl = new System.Windows.Forms.Label();
-            this.StartProtocolCB = new System.Windows.Forms.ComboBox();
             this.AddressingGB = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.ClientAddLbl = new System.Windows.Forms.Label();
@@ -93,6 +90,7 @@ namespace GXDLMSDirector
             this.WebAddressLbl = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.UseUtcTimeZone = new System.Windows.Forms.CheckBox();
             this.StandardCb = new System.Windows.Forms.ComboBox();
             this.StandardLbl = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
@@ -109,7 +107,16 @@ namespace GXDLMSDirector
             this.SecurityLbl = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.InfoTB = new System.Windows.Forms.TextBox();
-            this.UseUtcTimeZone = new System.Windows.Forms.CheckBox();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.HdlcCb = new System.Windows.Forms.CheckBox();
+            this.HdlcWithModeECb = new System.Windows.Forms.CheckBox();
+            this.WirelessMBusCb = new System.Windows.Forms.CheckBox();
+            this.PlcCb = new System.Windows.Forms.CheckBox();
+            this.PlcHdlcCb = new System.Windows.Forms.CheckBox();
+            this.LpWanCb = new System.Windows.Forms.CheckBox();
+            this.WiSunCb = new System.Windows.Forms.CheckBox();
+            this.WrapperCb = new System.Windows.Forms.CheckBox();
             this.AddressingGB.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ClientAddTB)).BeginInit();
@@ -120,6 +127,8 @@ namespace GXDLMSDirector
             this.tabPage1.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tabPage4.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // OKBtn
@@ -129,7 +138,7 @@ namespace GXDLMSDirector
             this.OKBtn.Location = new System.Drawing.Point(247, 407);
             this.OKBtn.Name = "OKBtn";
             this.OKBtn.Size = new System.Drawing.Size(75, 23);
-            this.OKBtn.TabIndex = 19;
+            this.OKBtn.TabIndex = 0;
             this.OKBtn.Text = "&OK";
             this.OKBtn.UseVisualStyleBackColor = true;
             this.OKBtn.Click += new System.EventHandler(this.OKBtn_Click);
@@ -141,19 +150,9 @@ namespace GXDLMSDirector
             this.CancelBtn.Location = new System.Drawing.Point(328, 407);
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.Size = new System.Drawing.Size(75, 23);
-            this.CancelBtn.TabIndex = 20;
+            this.CancelBtn.TabIndex = 1;
             this.CancelBtn.Text = "&Cancel";
             this.CancelBtn.UseVisualStyleBackColor = true;
-            // 
-            // UseIEC47CB
-            // 
-            this.UseIEC47CB.AutoSize = true;
-            this.UseIEC47CB.Location = new System.Drawing.Point(196, 78);
-            this.UseIEC47CB.Name = "UseIEC47CB";
-            this.UseIEC47CB.Size = new System.Drawing.Size(103, 17);
-            this.UseIEC47CB.TabIndex = 3;
-            this.UseIEC47CB.Text = "Use WRAPPER";
-            this.UseIEC47CB.UseVisualStyleBackColor = true;
             // 
             // UseLNCB
             // 
@@ -196,24 +195,6 @@ namespace GXDLMSDirector
             this.NameLbl.Size = new System.Drawing.Size(38, 13);
             this.NameLbl.TabIndex = 15;
             this.NameLbl.Text = "Name:";
-            // 
-            // StartProtocolLbl
-            // 
-            this.StartProtocolLbl.AutoSize = true;
-            this.StartProtocolLbl.Location = new System.Drawing.Point(10, 103);
-            this.StartProtocolLbl.Name = "StartProtocolLbl";
-            this.StartProtocolLbl.Size = new System.Drawing.Size(74, 13);
-            this.StartProtocolLbl.TabIndex = 20;
-            this.StartProtocolLbl.Text = "Start Protocol:";
-            // 
-            // StartProtocolCB
-            // 
-            this.StartProtocolCB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.StartProtocolCB.FormattingEnabled = true;
-            this.StartProtocolCB.Location = new System.Drawing.Point(119, 100);
-            this.StartProtocolCB.Name = "StartProtocolCB";
-            this.StartProtocolCB.Size = new System.Drawing.Size(194, 21);
-            this.StartProtocolCB.TabIndex = 4;
             // 
             // AddressingGB
             // 
@@ -427,13 +408,14 @@ namespace GXDLMSDirector
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Location = new System.Drawing.Point(1, 2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(412, 399);
-            this.tabControl1.TabIndex = 48;
+            this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
             // 
@@ -448,9 +430,6 @@ namespace GXDLMSDirector
             this.tabPage1.Controls.Add(this.label1);
             this.tabPage1.Controls.Add(this.ManufacturerIdTB);
             this.tabPage1.Controls.Add(this.UseLNCB);
-            this.tabPage1.Controls.Add(this.UseIEC47CB);
-            this.tabPage1.Controls.Add(this.StartProtocolCB);
-            this.tabPage1.Controls.Add(this.StartProtocolLbl);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -458,6 +437,17 @@ namespace GXDLMSDirector
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // UseUtcTimeZone
+            // 
+            this.UseUtcTimeZone.AutoSize = true;
+            this.UseUtcTimeZone.Location = new System.Drawing.Point(10, 100);
+            this.UseUtcTimeZone.Name = "UseUtcTimeZone";
+            this.UseUtcTimeZone.Size = new System.Drawing.Size(183, 17);
+            this.UseUtcTimeZone.TabIndex = 43;
+            this.UseUtcTimeZone.Text = "Use UTC time zone, not standard";
+            this.UseUtcTimeZone.UseVisualStyleBackColor = true;
+            this.UseUtcTimeZone.CheckedChanged += new System.EventHandler(this.UseUtcTimeZone_CheckedChanged);
             // 
             // StandardCb
             // 
@@ -492,7 +482,7 @@ namespace GXDLMSDirector
             this.tabPage3.Controls.Add(this.SecurityLbl);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(404, 372);
+            this.tabPage3.Size = new System.Drawing.Size(404, 373);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Secured Connections";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -607,7 +597,7 @@ namespace GXDLMSDirector
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(404, 372);
+            this.tabPage2.Size = new System.Drawing.Size(404, 373);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Info";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -620,19 +610,117 @@ namespace GXDLMSDirector
             this.InfoTB.Multiline = true;
             this.InfoTB.Name = "InfoTB";
             this.InfoTB.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.InfoTB.Size = new System.Drawing.Size(398, 366);
+            this.InfoTB.Size = new System.Drawing.Size(398, 367);
             this.InfoTB.TabIndex = 1;
             // 
-            // UseUtcTimeZone
+            // tabPage4
             // 
-            this.UseUtcTimeZone.AutoSize = true;
-            this.UseUtcTimeZone.Location = new System.Drawing.Point(6, 127);
-            this.UseUtcTimeZone.Name = "UseUtcTimeZone";
-            this.UseUtcTimeZone.Size = new System.Drawing.Size(183, 17);
-            this.UseUtcTimeZone.TabIndex = 43;
-            this.UseUtcTimeZone.Text = "Use UTC time zone, not standard";
-            this.UseUtcTimeZone.UseVisualStyleBackColor = true;
-            this.UseUtcTimeZone.CheckedChanged += new System.EventHandler(this.UseUtcTimeZone_CheckedChanged);
+            this.tabPage4.Controls.Add(this.groupBox3);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(404, 373);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "Interfaces";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.WrapperCb);
+            this.groupBox3.Controls.Add(this.WiSunCb);
+            this.groupBox3.Controls.Add(this.LpWanCb);
+            this.groupBox3.Controls.Add(this.PlcHdlcCb);
+            this.groupBox3.Controls.Add(this.PlcCb);
+            this.groupBox3.Controls.Add(this.WirelessMBusCb);
+            this.groupBox3.Controls.Add(this.HdlcWithModeECb);
+            this.groupBox3.Controls.Add(this.HdlcCb);
+            this.groupBox3.Location = new System.Drawing.Point(7, 6);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(391, 361);
+            this.groupBox3.TabIndex = 0;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Supported interfaces";
+            // 
+            // HdlcCb
+            // 
+            this.HdlcCb.AutoSize = true;
+            this.HdlcCb.Location = new System.Drawing.Point(15, 19);
+            this.HdlcCb.Name = "HdlcCb";
+            this.HdlcCb.Size = new System.Drawing.Size(55, 17);
+            this.HdlcCb.TabIndex = 0;
+            this.HdlcCb.Text = "HDLC";
+            this.HdlcCb.UseVisualStyleBackColor = true;
+            // 
+            // HdlcWithModeECb
+            // 
+            this.HdlcWithModeECb.AutoSize = true;
+            this.HdlcWithModeECb.Location = new System.Drawing.Point(15, 42);
+            this.HdlcWithModeECb.Name = "HdlcWithModeECb";
+            this.HdlcWithModeECb.Size = new System.Drawing.Size(113, 17);
+            this.HdlcWithModeECb.TabIndex = 1;
+            this.HdlcWithModeECb.Text = "Hdlc With Mode E";
+            this.HdlcWithModeECb.UseVisualStyleBackColor = true;
+            // 
+            // WirelessMBusCb
+            // 
+            this.WirelessMBusCb.AutoSize = true;
+            this.WirelessMBusCb.Location = new System.Drawing.Point(15, 85);
+            this.WirelessMBusCb.Name = "WirelessMBusCb";
+            this.WirelessMBusCb.Size = new System.Drawing.Size(99, 17);
+            this.WirelessMBusCb.TabIndex = 3;
+            this.WirelessMBusCb.Text = "Wireless M-Bus";
+            this.WirelessMBusCb.UseVisualStyleBackColor = true;
+            // 
+            // PlcCb
+            // 
+            this.PlcCb.AutoSize = true;
+            this.PlcCb.Location = new System.Drawing.Point(15, 108);
+            this.PlcCb.Name = "PlcCb";
+            this.PlcCb.Size = new System.Drawing.Size(46, 17);
+            this.PlcCb.TabIndex = 4;
+            this.PlcCb.Text = "PLC";
+            this.PlcCb.UseVisualStyleBackColor = true;
+            // 
+            // PlcHdlcCb
+            // 
+            this.PlcHdlcCb.AutoSize = true;
+            this.PlcHdlcCb.Location = new System.Drawing.Point(15, 131);
+            this.PlcHdlcCb.Name = "PlcHdlcCb";
+            this.PlcHdlcCb.Size = new System.Drawing.Size(100, 17);
+            this.PlcHdlcCb.TabIndex = 5;
+            this.PlcHdlcCb.Text = "PLC with HDLC";
+            this.PlcHdlcCb.UseVisualStyleBackColor = true;
+            // 
+            // LpWanCb
+            // 
+            this.LpWanCb.AutoSize = true;
+            this.LpWanCb.Location = new System.Drawing.Point(15, 154);
+            this.LpWanCb.Name = "LpWanCb";
+            this.LpWanCb.Size = new System.Drawing.Size(225, 17);
+            this.LpWanCb.TabIndex = 6;
+            this.LpWanCb.Text = "LowPower Wide Area Networks (LPWAN)";
+            this.LpWanCb.UseVisualStyleBackColor = true;
+            // 
+            // WiSunCb
+            // 
+            this.WiSunCb.AutoSize = true;
+            this.WiSunCb.Location = new System.Drawing.Point(15, 177);
+            this.WiSunCb.Name = "WiSunCb";
+            this.WiSunCb.Size = new System.Drawing.Size(158, 17);
+            this.WiSunCb.TabIndex = 7;
+            this.WiSunCb.Text = "Wi-SUN FAN mesh network";
+            this.WiSunCb.UseVisualStyleBackColor = true;
+            // 
+            // WrapperCb
+            // 
+            this.WrapperCb.AutoSize = true;
+            this.WrapperCb.Location = new System.Drawing.Point(15, 64);
+            this.WrapperCb.Name = "WrapperCb";
+            this.WrapperCb.Size = new System.Drawing.Size(81, 17);
+            this.WrapperCb.TabIndex = 2;
+            this.WrapperCb.Text = "WRAPPER";
+            this.WrapperCb.UseVisualStyleBackColor = true;
+            this.WrapperCb.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // ManufacturerForm
             // 
@@ -665,6 +753,9 @@ namespace GXDLMSDirector
             this.tabPage3.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.tabPage4.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -673,14 +764,11 @@ namespace GXDLMSDirector
 
         private System.Windows.Forms.Button OKBtn;
         private System.Windows.Forms.Button CancelBtn;
-        private System.Windows.Forms.CheckBox UseIEC47CB;
         private System.Windows.Forms.CheckBox UseLNCB;
         private System.Windows.Forms.TextBox ManufacturerIdTB;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox NameTB;
         private System.Windows.Forms.Label NameLbl;
-        private System.Windows.Forms.Label StartProtocolLbl;
-        private System.Windows.Forms.ComboBox StartProtocolCB;
         private System.Windows.Forms.GroupBox AddressingGB;
         private System.Windows.Forms.ComboBox AuthenticationCB;
         private System.Windows.Forms.Label AuthenticationLbl;
@@ -719,5 +807,15 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ComboBox StandardCb;
         private System.Windows.Forms.Label StandardLbl;
         private System.Windows.Forms.CheckBox UseUtcTimeZone;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.CheckBox WirelessMBusCb;
+        private System.Windows.Forms.CheckBox HdlcWithModeECb;
+        private System.Windows.Forms.CheckBox HdlcCb;
+        private System.Windows.Forms.CheckBox LpWanCb;
+        private System.Windows.Forms.CheckBox PlcHdlcCb;
+        private System.Windows.Forms.CheckBox PlcCb;
+        private System.Windows.Forms.CheckBox WiSunCb;
+        private System.Windows.Forms.CheckBox WrapperCb;
     }
 }

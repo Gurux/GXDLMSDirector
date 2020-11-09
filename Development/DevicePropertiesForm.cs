@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12169 $,
-//                  $Date: 2020-11-06 09:57:31 +0200 (pe, 06 marras 2020) $
+// Version:         $Revision: 12183 $,
+//                  $Date: 2020-11-09 12:04:39 +0200 (ma, 09 marras 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -413,11 +413,6 @@ namespace GXDLMSDirector
             this.UseLNCB.Checked = device.UseLogicalNameReferencing;
             this.UseLNCB.CheckedChanged += new System.EventHandler(this.UseLNCB_CheckedChanged);
             ShowConformance((Conformance)device.Conformance);
-            //Handle old way.
-            if (device.InterfaceType == InterfaceType.HDLC && device.StartProtocol == StartProtocolType.IEC)
-            {
-                device.InterfaceType = InterfaceType.HdlcWithModeE;
-            }
             InterfaceCb.SelectedItem = device.InterfaceType;
             MaxInfoTXTb.Text = device.MaxInfoTX.ToString();
             MaxInfoRXTb.Text = device.MaxInfoRX.ToString();

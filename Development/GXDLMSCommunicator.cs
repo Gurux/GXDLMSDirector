@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12169 $,
-//                  $Date: 2020-11-06 09:57:31 +0200 (pe, 06 marras 2020) $
+// Version:         $Revision: 12192 $,
+//                  $Date: 2020-11-10 16:59:56 +0200 (ti, 10 marras 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -566,7 +566,7 @@ namespace GXDLMSDirector
                 Thread.Sleep(1000);
             }
             //Query device information.
-            if (serial != null && parent.StartProtocol == StartProtocolType.IEC)
+            if (serial != null && parent.InterfaceType == InterfaceType.HdlcWithModeE)
             {
                 string data = "/?!\r\n";
                 if (this.parent.HDLCAddressing == HDLCAddressType.SerialNumber)

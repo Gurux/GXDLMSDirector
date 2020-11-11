@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12192 $,
-//                  $Date: 2020-11-10 16:59:56 +0200 (ti, 10 marras 2020) $
+// Version:         $Revision: 12193 $,
+//                  $Date: 2020-11-11 09:12:42 +0200 (ke, 11 marras 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -173,7 +173,9 @@ namespace GXDLMSDirector
                 catch (Exception ex)
                 {
                     //Update frame ID if meter returns error.
-                    if (client.InterfaceType == InterfaceType.HDLC)
+                    if (client.InterfaceType == InterfaceType.HDLC ||
+                        client.InterfaceType == InterfaceType.HdlcWithModeE ||
+                        client.InterfaceType == InterfaceType.PlcHdlc)
                     {
                         int t, source;
                         byte type;
@@ -225,7 +227,7 @@ namespace GXDLMSDirector
                         //Release is call only for secured connections.
                         //All meters are not supporting Release and it's causing problems.
                         if (client.InterfaceType == InterfaceType.WRAPPER ||
-                            (client.InterfaceType == InterfaceType.HDLC && client.Ciphering.Security != (byte)Security.None && !parent.PreEstablished))
+                            (client.Ciphering.Security != (byte)Security.None && !parent.PreEstablished))
                         {
                             byte[] data = ReleaseRequest();
                             if (data != null)
@@ -241,7 +243,10 @@ namespace GXDLMSDirector
                     try
                     {
                         reply.Clear();
-                        if (client.InterfaceType == InterfaceType.HDLC && !parent.PreEstablished)
+                        if ((client.InterfaceType == InterfaceType.HDLC ||
+                            client.InterfaceType == InterfaceType.HdlcWithModeE ||
+                            client.InterfaceType == InterfaceType.PlcHdlc)
+                            && !parent.PreEstablished)
                         {
                             ReadDataBlock(DisconnectRequest(true), "Disconnect request", reply);
                         }
@@ -284,7 +289,9 @@ namespace GXDLMSDirector
             reply.Error = 0;
             object eop = (byte)0x7E;
             //In network connection terminator is not used.
-            if (client.InterfaceType != InterfaceType.HDLC)
+            if (client.InterfaceType != InterfaceType.HDLC &&
+                client.InterfaceType != InterfaceType.HdlcWithModeE &&
+                client.InterfaceType != InterfaceType.PlcHdlc)
             {
                 eop = null;
             }
@@ -964,7 +971,7 @@ namespace GXDLMSDirector
             }
             else
             {
-                if (client.InterfaceType == InterfaceType.HDLC)
+                if (client.InterfaceType == InterfaceType.HDLC || client.InterfaceType == InterfaceType.HdlcWithModeE || client.InterfaceType == InterfaceType.PlcHdlc)
                 {
                     client.ServerAddress = GXDLMSClient.GetServerAddress(parent.LogicalAddress, Convert.ToInt32(parent.PhysicalAddress), parent.ServerAddressSize);
                     client.ServerAddressSize = parent.ServerAddressSize;
@@ -1221,7 +1228,9 @@ namespace GXDLMSDirector
                 catch (Exception ex)
                 {
                     //Update frame ID if meter returns error.
-                    if (client.InterfaceType == InterfaceType.HDLC)
+                    if (client.InterfaceType == InterfaceType.HDLC ||
+                        client.InterfaceType == InterfaceType.HdlcWithModeE ||
+                        client.InterfaceType == InterfaceType.PlcHdlc)
                     {
                         int target, source;
                         byte type;
@@ -1270,7 +1279,9 @@ namespace GXDLMSDirector
                 catch (Exception ex)
                 {
                     //Update frame ID if meter returns error.
-                    if (client.InterfaceType == InterfaceType.HDLC)
+                    if (client.InterfaceType == InterfaceType.HDLC ||
+                        client.InterfaceType == InterfaceType.HdlcWithModeE ||
+                        client.InterfaceType == InterfaceType.PlcHdlc)
                     {
                         int target, source;
                         byte type;
@@ -1294,7 +1305,9 @@ namespace GXDLMSDirector
                 catch (Exception ex)
                 {
                     //Update frame ID if meter returns error.
-                    if (client.InterfaceType == InterfaceType.HDLC)
+                    if (client.InterfaceType == InterfaceType.HDLC ||
+                        client.InterfaceType == InterfaceType.HdlcWithModeE ||
+                        client.InterfaceType == InterfaceType.PlcHdlc)
                     {
                         int target, source;
                         byte type;

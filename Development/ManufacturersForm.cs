@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12169 $,
-//                  $Date: 2020-11-06 09:57:31 +0200 (pe, 06 marras 2020) $
+// Version:         $Revision: 12250 $,
+//                  $Date: 2020-12-16 12:25:15 +0200 (ke, 16 joulu 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -54,28 +54,31 @@ namespace GXDLMSDirector
             ManufacturersOriginal = manufacturers;
 
             //Create clone from original items.
-            MemoryStream ms = new MemoryStream();
-            BinaryFormatter bf = new BinaryFormatter();
-            bf.Serialize(ms, manufacturers);
-            ms.Position = 0;
-            Manufacturers = (GXManufacturerCollection)bf.Deserialize(ms);
-            ms.Close();
-            bool bSelected = false;
-            foreach (GXManufacturer it in Manufacturers)
+            if (manufacturers != null)
             {
-                if (!it.Removed)
+                MemoryStream ms = new MemoryStream();
+                BinaryFormatter bf = new BinaryFormatter();
+                bf.Serialize(ms, manufacturers);
+                ms.Position = 0;
+                Manufacturers = (GXManufacturerCollection)bf.Deserialize(ms);
+                ms.Close();
+                bool bSelected = false;
+                foreach (GXManufacturer it in Manufacturers)
                 {
-                    ListViewItem item = AddManufacturer(it);
-                    if (it.Identification == selectedManufacturer)
+                    if (!it.Removed)
                     {
-                        bSelected = item.Selected = true;
+                        ListViewItem item = AddManufacturer(it);
+                        if (it.Identification == selectedManufacturer)
+                        {
+                            bSelected = item.Selected = true;
+                        }
                     }
                 }
-            }
-            //Select first item
-            if (ManufacturersList.Items.Count != 0 && !bSelected)
-            {
-                ManufacturersList.Items[0].Selected = true;
+                //Select first item
+                if (ManufacturersList.Items.Count != 0 && !bSelected)
+                {
+                    ManufacturersList.Items[0].Selected = true;
+                }
             }
         }
 

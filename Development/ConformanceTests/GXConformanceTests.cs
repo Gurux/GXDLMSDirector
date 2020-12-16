@@ -557,7 +557,7 @@ namespace GXDLMSDirector
         private static void OnMessageTrace(DateTime time, GXDLMSDevice sender, string trace, byte[] data, int payload, string path, int duration)
         {
             //Save highest frame size.
-            if (sender.Comm.client.InterfaceType == InterfaceType.HDLC && payload > sender.Comm.client.Limits.MaxInfoRX)
+            if (sender.Comm.client.InterfaceType == InterfaceType.HDLC && payload > sender.Comm.client.HdlcSettings.MaxInfoRX)
             {
                 if (sender.Comm.payload < payload)
                 {
@@ -775,22 +775,22 @@ namespace GXDLMSDirector
                     {
                         output.PreInfo.Add("InvocationCounter: " + client.Ciphering.InvocationCounter);
                     }
-                    if (dev.Comm.client.InterfaceType == InterfaceType.HDLC && !dev.Comm.client.Limits.UseFrameSize)
+                    if (dev.Comm.client.InterfaceType == InterfaceType.HDLC && !dev.Comm.client.HdlcSettings.UseFrameSize)
                     {
-                        if (dev.MaxInfoRX != 128 && dev.MaxInfoRX != dev.Comm.client.Limits.MaxInfoRX)
+                        if (dev.MaxInfoRX != 128 && dev.MaxInfoRX != dev.Comm.client.HdlcSettings.MaxInfoRX)
                         {
-                            output.Warnings.Add("Client asked that RX PDU size is " + dev.MaxInfoRX + ". Meter uses " + dev.Comm.client.Limits.MaxInfoRX);
+                            output.Warnings.Add("Client asked that RX PDU size is " + dev.MaxInfoRX + ". Meter uses " + dev.Comm.client.HdlcSettings.MaxInfoRX);
                         }
-                        if (dev.MaxInfoTX != 128 && dev.MaxInfoTX != dev.Comm.client.Limits.MaxInfoTX)
+                        if (dev.MaxInfoTX != 128 && dev.MaxInfoTX != dev.Comm.client.HdlcSettings.MaxInfoTX)
                         {
-                            output.Warnings.Add("Client asked that TX PDU size is " + dev.MaxInfoTX + ". Meter uses " + dev.Comm.client.Limits.MaxInfoTX);
+                            output.Warnings.Add("Client asked that TX PDU size is " + dev.MaxInfoTX + ". Meter uses " + dev.Comm.client.HdlcSettings.MaxInfoTX);
                         }
                         if (dev.PduSize < dev.Comm.client.MaxReceivePDUSize)
                         {
                             output.Warnings.Add("Client asked that PDU size is " + dev.PduSize + ". Meter uses " + dev.Comm.client.MaxReceivePDUSize);
                         }
                     }
-                    int maxframesize = dev.Comm.client.Limits.MaxInfoRX;
+                    int maxframesize = dev.Comm.client.HdlcSettings.MaxInfoRX;
                     if (settings.ReReadAssociationView)
                     {
                         test.OnTrace(test, "Re-reading association view.\r\n");
@@ -1156,7 +1156,7 @@ namespace GXDLMSDirector
 
                     if (dev.Comm.payload != 0)
                     {
-                        //TODO:   output.Errors.Insert(0, "HDLC payload size is is too high. There are " + dev.Comm.payload + " bytes. Max size is " + dev.Comm.client.Limits.MaxInfoRX + " bytes.");
+                        //TODO:   output.Errors.Insert(0, "HDLC payload size is is too high. There are " + dev.Comm.payload + " bytes. Max size is " + dev.Comm.client.HdlcSettings.MaxInfoRX + " bytes.");
                     }
                     if (output.Errors.Count != 0)
                     {
@@ -2285,9 +2285,9 @@ namespace GXDLMSDirector
                 {
                     dev.Comm.ParseUAResponse(reply.Data);
                 }
-                AddInfo(test, dev, output.Info, "SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.Limits.MaxInfoTX +
-                    " MaxInfoLengthReceive: " + dev.Comm.client.Limits.MaxInfoRX + " WindowSizeTransmit: " +
-                    dev.Comm.client.Limits.WindowSizeTX + " WindowSizeReceive: " + dev.Comm.client.Limits.WindowSizeRX);
+                AddInfo(test, dev, output.Info, "SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.HdlcSettings.MaxInfoTX +
+                    " MaxInfoLengthReceive: " + dev.Comm.client.HdlcSettings.MaxInfoRX + " WindowSizeTransmit: " +
+                    dev.Comm.client.HdlcSettings.WindowSizeTX + " WindowSizeReceive: " + dev.Comm.client.HdlcSettings.WindowSizeRX);
             }
             catch (Exception)
             {
@@ -2300,7 +2300,7 @@ namespace GXDLMSDirector
                 try
                 {
                     reply.Clear();
-                    dev.Comm.client.Limits.SenderFrame = 0x10;
+                    dev.Comm.client.HdlcSettings.SenderFrame = 0x10;
                     dev.Comm.ReadDataBlock(dev.Comm.client.ReceiverReady(RequestTypes.None), "HDLC test #1. Receiver Ready ", 1, tryCount, reply);
                     if ((reply.FrameId & 0xF) != 1)
                     {
@@ -2421,9 +2421,9 @@ namespace GXDLMSDirector
                 {
                     dev.Comm.ParseUAResponse(reply.Data);
                 }
-                AddInfo(test, dev, output.Info, "SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.Limits.MaxInfoTX +
-                    " MaxInfoLengthReceive: " + dev.Comm.client.Limits.MaxInfoRX + " WindowSizeTransmit: " +
-                    dev.Comm.client.Limits.WindowSizeTX + " WindowSizeReceive: " + dev.Comm.client.Limits.WindowSizeRX);
+                AddInfo(test, dev, output.Info, "SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.HdlcSettings.MaxInfoTX +
+                    " MaxInfoLengthReceive: " + dev.Comm.client.HdlcSettings.MaxInfoRX + " WindowSizeTransmit: " +
+                    dev.Comm.client.HdlcSettings.WindowSizeTX + " WindowSizeReceive: " + dev.Comm.client.HdlcSettings.WindowSizeRX);
             }
             catch (Exception ex)
             {
@@ -2453,7 +2453,7 @@ namespace GXDLMSDirector
             try
             {
                 reply.Clear();
-                dev.Comm.client.Limits.SenderFrame = 0x10;
+                dev.Comm.client.HdlcSettings.SenderFrame = 0x10;
                 dev.Comm.ReadDataBlock(dev.Comm.client.ReceiverReady(RequestTypes.None), "HDLC test #2. Receiver Ready ", 1, tryCount, reply);
                 if (reply.FrameId != 0x11)
                 {
@@ -2564,9 +2564,9 @@ namespace GXDLMSDirector
                     reply.Clear();
                     dev.Comm.ReadDataBlock(dev.Comm.SNRMRequest(), "HDLC test #1. SNRM request", 1, tryCount, reply);
                     dev.Comm.ParseUAResponse(reply.Data);
-                    AddInfo(test, dev, output.Info, "SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.Limits.MaxInfoTX +
-                        " MaxInfoLengthReceive: " + dev.Comm.client.Limits.MaxInfoRX + " WindowSizeTransmit: " +
-                        dev.Comm.client.Limits.WindowSizeTX + " WindowSizeReceive: " + dev.Comm.client.Limits.WindowSizeRX);
+                    AddInfo(test, dev, output.Info, "SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.HdlcSettings.MaxInfoTX +
+                        " MaxInfoLengthReceive: " + dev.Comm.client.HdlcSettings.MaxInfoRX + " WindowSizeTransmit: " +
+                        dev.Comm.client.HdlcSettings.WindowSizeTX + " WindowSizeReceive: " + dev.Comm.client.HdlcSettings.WindowSizeRX);
                     dev.Comm.ReadDataBlock(dev.Comm.client.AARQRequest(), "HDLC test #14. AARQRequest.", 1, tryCount, reply);
                     dev.Comm.client.ParseAAREResponse(reply.Data);
                 }
@@ -2600,9 +2600,9 @@ namespace GXDLMSDirector
                             reply.Clear();
                             dev.Comm.ReadDataBlock(dev.Comm.SNRMRequest(), "HDLC test #3. SNRM request", 1, tryCount, reply);
                             dev.Comm.ParseUAResponse(reply.Data);
-                            AddInfo(test, dev, output.Info, "Disconect SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.Limits.MaxInfoTX +
-                                " MaxInfoLengthReceive: " + dev.Comm.client.Limits.MaxInfoRX + " WindowSizeTransmit: " +
-                                dev.Comm.client.Limits.WindowSizeTX + " WindowSizeReceive: " + dev.Comm.client.Limits.WindowSizeRX);
+                            AddInfo(test, dev, output.Info, "Disconect SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.HdlcSettings.MaxInfoTX +
+                                " MaxInfoLengthReceive: " + dev.Comm.client.HdlcSettings.MaxInfoRX + " WindowSizeTransmit: " +
+                                dev.Comm.client.HdlcSettings.WindowSizeTX + " WindowSizeReceive: " + dev.Comm.client.HdlcSettings.WindowSizeRX);
                         }
                         catch (Exception ex)
                         {
@@ -2840,8 +2840,8 @@ namespace GXDLMSDirector
             }
 
             //Remove content one byte at the time.
-            UInt16 rx = dev.Comm.client.Limits.MaxInfoRX, tx = dev.Comm.client.Limits.MaxInfoTX;
-            dev.Comm.client.Limits.MaxInfoRX = dev.Comm.client.Limits.MaxInfoTX = 128;
+            UInt16 rx = dev.Comm.client.HdlcSettings.MaxInfoRX, tx = dev.Comm.client.HdlcSettings.MaxInfoTX;
+            dev.Comm.client.HdlcSettings.MaxInfoRX = dev.Comm.client.HdlcSettings.MaxInfoTX = 128;
             try
             {
                 GXByteBuffer bb = new GXByteBuffer(dev.Comm.SNRMRequest());
@@ -2867,17 +2867,17 @@ namespace GXDLMSDirector
             }
             finally
             {
-                dev.Comm.client.Limits.MaxInfoRX = rx;
-                dev.Comm.client.Limits.MaxInfoTX = tx;
+                dev.Comm.client.HdlcSettings.MaxInfoRX = rx;
+                dev.Comm.client.HdlcSettings.MaxInfoTX = tx;
             }
             try
             {
                 reply.Clear();
                 dev.Comm.ReadDataBlock(dev.Comm.SNRMRequest(), "HDLC test #5. SNRM request", 1, tryCount, reply);
                 dev.Comm.ParseUAResponse(reply.Data);
-                AddInfo(test, dev, output.Info, "Disconect SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.Limits.MaxInfoTX +
-                    " MaxInfoLengthReceive: " + dev.Comm.client.Limits.MaxInfoRX + " WindowSizeTransmit: " +
-                    dev.Comm.client.Limits.WindowSizeTX + " WindowSizeReceive: " + dev.Comm.client.Limits.WindowSizeRX);
+                AddInfo(test, dev, output.Info, "Disconect SNRM request succeeded. MaxInfoLengthTransmit: " + dev.Comm.client.HdlcSettings.MaxInfoTX +
+                    " MaxInfoLengthReceive: " + dev.Comm.client.HdlcSettings.MaxInfoRX + " WindowSizeTransmit: " +
+                    dev.Comm.client.HdlcSettings.WindowSizeTX + " WindowSizeReceive: " + dev.Comm.client.HdlcSettings.WindowSizeRX);
             }
             catch (Exception ex)
             {
@@ -3326,7 +3326,7 @@ namespace GXDLMSDirector
             {
                 AddInfo(test, dev, output.Info, "Unknown command succeeded (timeout).");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 passed = false;
             }
@@ -3582,18 +3582,18 @@ namespace GXDLMSDirector
             try
             {
                 reply.Clear();
-                dev.Comm.client.Limits.MaxInfoRX = dev.Comm.client.Limits.MaxInfoTX = 2030;
+                dev.Comm.client.HdlcSettings.MaxInfoRX = dev.Comm.client.HdlcSettings.MaxInfoTX = 2030;
                 byte[] data = dev.Comm.client.SNRMRequest();
                 dev.Comm.ReadDataBlock(data, "HDLC test #12. max frame size.", 1, tryCount, reply);
                 dev.Comm.client.ParseUAResponse(reply.Data);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 passed = false;
             }
             finally
             {
-                dev.Comm.client.Limits.MaxInfoRX = dev.Comm.client.Limits.MaxInfoTX = 128;
+                dev.Comm.client.HdlcSettings.MaxInfoRX = dev.Comm.client.HdlcSettings.MaxInfoTX = 128;
             }
             try
             {
@@ -3677,7 +3677,7 @@ namespace GXDLMSDirector
             try
             {
                 reply.Clear();
-                dev.Comm.client.Limits.WindowSizeRX = dev.Comm.client.Limits.WindowSizeTX = 4;
+                dev.Comm.client.HdlcSettings.WindowSizeRX = dev.Comm.client.HdlcSettings.WindowSizeTX = 4;
                 byte[] data = dev.Comm.client.SNRMRequest();
                 dev.Comm.ReadDataBlock(data, "HDLC test #13. Window size 4.", 1, tryCount, reply);
                 dev.Comm.client.ParseUAResponse(reply.Data);
@@ -3688,7 +3688,7 @@ namespace GXDLMSDirector
             }
             finally
             {
-                dev.Comm.client.Limits.WindowSizeRX = dev.Comm.client.Limits.WindowSizeTX = 1;
+                dev.Comm.client.HdlcSettings.WindowSizeRX = dev.Comm.client.HdlcSettings.WindowSizeTX = 1;
             }
             try
             {
@@ -3886,7 +3886,7 @@ namespace GXDLMSDirector
             {
                 try
                 {
-                    dev.Comm.client.Limits.MaxInfoTX = 4;
+                    dev.Comm.client.HdlcSettings.MaxInfoTX = 4;
                     dev.Comm.ReadDataBlock(dev.Comm.client.AARQRequest(), "HDLC test #15. AARQRequest.", 1, tryCount, reply);
                     dev.Comm.client.ParseAAREResponse(reply.Data);
                 }
@@ -3896,7 +3896,7 @@ namespace GXDLMSDirector
                 }
                 finally
                 {
-                    dev.Comm.client.Limits.MaxInfoTX = 128;
+                    dev.Comm.client.HdlcSettings.MaxInfoTX = 128;
                 }
             }
             try
@@ -3995,8 +3995,8 @@ namespace GXDLMSDirector
                 {
                     reply.Clear();
                     GXByteBuffer bb = new GXByteBuffer();
-                    ++dev.Comm.client.Limits.MaxInfoTX;
-                    bb.Capacity = dev.Comm.client.Limits.MaxInfoTX;
+                    ++dev.Comm.client.HdlcSettings.MaxInfoTX;
+                    bb.Capacity = dev.Comm.client.HdlcSettings.MaxInfoTX;
                     bb.Size = bb.Capacity;
                     byte[] data = dev.Comm.client.CustomHdlcFrameRequest(0x10, bb);
                     dev.Comm.ReadDataBlock(data, "HDLC test #16. AARQRequest.", 1, tryCount, reply);
@@ -4015,7 +4015,7 @@ namespace GXDLMSDirector
                 }
                 finally
                 {
-                    --dev.Comm.client.Limits.MaxInfoTX;
+                    --dev.Comm.client.HdlcSettings.MaxInfoTX;
                 }
             }
             try
@@ -5332,7 +5332,7 @@ namespace GXDLMSDirector
                     AddError(test, dev, output.Errors, "Timeout.");
                     passed = false;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     passed = false;
                 }
@@ -5390,7 +5390,7 @@ namespace GXDLMSDirector
                 AddError(test, dev, output.Errors, "Timeout.");
                 passed = false;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 passed = false;
             }
@@ -5600,7 +5600,7 @@ namespace GXDLMSDirector
                 AddError(test, dev, output.Errors, "Timeout.");
                 passed = false;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 passed = false;
             }
@@ -6237,7 +6237,7 @@ namespace GXDLMSDirector
                 }
                 reply.Clear();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 passed = false;
             }
@@ -6367,7 +6367,7 @@ namespace GXDLMSDirector
                     AddInfo(test, dev, output.Info, "COSEM Application tests #12 failed. " + ex.Message);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 passed = false;
             }
@@ -6429,7 +6429,7 @@ namespace GXDLMSDirector
                     AddInfo(test, dev, output.Info, "COSEM Application tests #12 failed. " + ex.Message);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 passed = false;
             }
@@ -6548,7 +6548,7 @@ namespace GXDLMSDirector
                     AddInfo(test, dev, output.Info, "COSEM Application tests #14 failed. " + ex.Message);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 passed = false;
             }
@@ -6602,7 +6602,7 @@ namespace GXDLMSDirector
                 }
                 dev.Comm.ParseAAREResponse(reply.Data);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 passed = false;
             }
@@ -6692,7 +6692,7 @@ namespace GXDLMSDirector
                     dev.Comm.client.ParseApplicationAssociationResponse(reply.Data);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 passed = false;
             }
@@ -6728,7 +6728,7 @@ namespace GXDLMSDirector
                         passed = false;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     passed = false;
                 }
@@ -6765,7 +6765,7 @@ namespace GXDLMSDirector
                         passed = false;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     passed = false;
                 }
@@ -6783,11 +6783,11 @@ namespace GXDLMSDirector
                     dev.Comm.ReadDataBlock(data2, "Read non-existing object", 1, reply);
                     passed = false;
                 }
-                catch (GXDLMSException ex)
+                catch (GXDLMSException)
                 {
                     AddInfo(test, dev, output.Info, "COSEM Application tests #15 Invalid Get request non-existing object succeeded.");
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     passed = false;
                 }
@@ -6858,7 +6858,7 @@ namespace GXDLMSDirector
                     AddInfo(test, dev, output.Info, "COSEM Application tests #15 failed for Short Name referencing. " + ex.Message);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 passed = false;
             }
@@ -6985,7 +6985,7 @@ namespace GXDLMSDirector
                         passed = false;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     passed = false;
                 }

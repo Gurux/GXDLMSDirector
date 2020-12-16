@@ -440,16 +440,35 @@ namespace GXDLMSDirector
                 string actual, expected;
                 if (Properties.Settings.Default.MacroRaw)
                 {
-                    expected = macro.Data;
+                    if (macro.Verify && macro.Exception != null)
+                    {
+                        expected = macro.Exception;
+                    }
+                    else
+                    {
+                        expected = macro.Data;
+                    }
                 }
                 else
                 {
-                    expected = macro.Value;
+                    if (macro.Verify && macro.Exception != null)
+                    {
+                        expected = macro.Exception;
+                    }
+                    else
+                    {
+                        expected = macro.Value;
+                    }
                 }
                 OriginalDataTb.Text = expected;
                 if (Results.ContainsKey(macro))
                 {
-                    if (Properties.Settings.Default.MacroRaw)
+                    if (macro.Verify && macro.Exception != Results[macro].Exception)
+                    {
+                        actual = Results[macro].Exception;
+                        expected = macro.Exception;
+                    }
+                    else if (Properties.Settings.Default.MacroRaw)
                     {
                         actual = Results[macro].Data;
                         expected = macro.Data;
@@ -723,14 +742,34 @@ namespace GXDLMSDirector
                         }
                         catch (Exception ex)
                         {
-                            macro.Exception = ex.Message;
-                            if (Properties.Settings.Default.MacroBreakOnError)
+                            //If macro is verified and exception is expected.
+                            if (orig.Verify && orig.Exception != null)
                             {
-                                throw;
+                                macro.Exception = ex.Message;
+                            }
+                            else
+                            {
+                                macro.Exception = ex.Message;
+                                if (Properties.Settings.Default.MacroBreakOnError)
+                                {
+                                    throw;
+                                }
                             }
                         }
                         finally
                         {
+                            //If exception is expected.
+                            if (orig.Verify && orig.Exception != macro.Exception)
+                            {
+                                if (macro.Exception == null)
+                                {
+                                    macro.Exception = "Error expected but meter didn't return an error.";
+                                }
+                                else
+                                {
+                                    macro.Exception = "Meter returned different exception than expected. " + macro.Exception;
+                                }
+                            }
                             orig.Running = false;
                             MacrosView.RedrawItems(it, it, false);
                         }
@@ -1239,8 +1278,15 @@ namespace GXDLMSDirector
                     }
                     else if (!string.IsNullOrEmpty(action.Exception))
                     {
+                        if (action.Verify)
+                        {
+                            li.ImageIndex = 3;
+                        }
+                        else
+                        {
+                            li.ImageIndex = 2;
+                        }
                         //Exception that has occurred on recording.
-                        li.ImageIndex = 2;
                         li.SubItems[3].Text = action.Exception;
                     }
                     else if (action.Verify && action.Type != UserActionType.Connect && action.Type != UserActionType.Disconnecting)
@@ -1255,7 +1301,7 @@ namespace GXDLMSDirector
                     {
                         li.BackColor = Color.Green;
                     }
-                    else if (action.LastRunMacro != null && !string.IsNullOrEmpty(action.LastRunMacro.Exception))
+                    else if (action.LastRunMacro != null && action.LastRunMacro.Exception != action.Exception)
                     {
                         //If macro run fails.
                         li.BackColor = Color.Red;

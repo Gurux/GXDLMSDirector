@@ -42,6 +42,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Gurux.DLMS.Enums;
 using System.Collections;
+using Gurux.DLMS.Plc;
+using Gurux.DLMS.Plc.Enums;
 
 namespace GXDLMSDirector
 {
@@ -158,7 +160,7 @@ namespace GXDLMSDirector
                     str = it.AlarmDescriptor.ToString();
                 }
                 ListViewItem li = (ListViewItem)_meters[GXCommon.ToHex(it.SystemTitle)];
-                string sa, da;
+                string sa;
                 if (it.SourceAddress == (UInt16)PlcSourceAddress.New)
                 {
                     sa = "New (0x" + it.SourceAddress.ToString("X") + ")";

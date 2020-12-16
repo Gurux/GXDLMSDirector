@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12169 $,
-//                  $Date: 2020-11-06 09:57:31 +0200 (pe, 06 marras 2020) $
+// Version:         $Revision: 12250 $,
+//                  $Date: 2020-12-16 12:25:15 +0200 (ke, 16 joulu 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -173,14 +173,14 @@ namespace GXDLMSDirector
                 communicator.InitializeConnection(true);
                 UpdateStatus(DeviceState.Connected);
             }
-            catch (Exception Ex)
+            catch (Exception)
             {
                 UpdateStatus(DeviceState.Initialized);
                 if (Media != null)
                 {
                     Media.Close();
                 }
-                throw Ex;
+                throw;
             }
         }
 

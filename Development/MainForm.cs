@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12170 $,
-//                  $Date: 2020-11-06 10:14:58 +0200 (pe, 06 marras 2020) $
+// Version:         $Revision: 12251 $,
+//                  $Date: 2020-12-16 12:29:30 +0200 (ke, 16 joulu 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1201,7 +1201,7 @@ namespace GXDLMSDirector
                                         }
                                         catch (Exception ex)
                                         {
-                                            InvokeAction(dev.Comm.client, UserActionType.Action, ve.Target, ve.Index, null, null, null, ex);
+                                            InvokeAction(dev.Comm.client, UserActionType.Action, ve.Target, ve.Index, xmlValue, xml, null, ex);
                                             throw;
                                         }
 
@@ -4111,7 +4111,14 @@ namespace GXDLMSDirector
                 {
                     if (MessageBox.Show(this, GXDLMSDirector.Properties.Resources.InstallManufacturersOnlineTxt, GXDLMSDirector.Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
                     {
-                        GXManufacturerCollection.UpdateManufactureSettings();
+                        try
+                        {
+                            GXManufacturerCollection.UpdateManufactureSettings();
+                        }
+                        catch (Exception ex)
+                        {
+                            GXDLMS.Common.Error.ShowError(this, ex);
+                        }
                     }
                 }
                 Manufacturers = new GXManufacturerCollection();
@@ -4871,7 +4878,7 @@ namespace GXDLMSDirector
                                 }
                             }
                         }
-                        catch (Exception Ex)
+                        catch (Exception)
                         {
                             //Skip error.
                         }

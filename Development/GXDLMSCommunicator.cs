@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12193 $,
-//                  $Date: 2020-11-11 09:12:42 +0200 (ke, 11 marras 2020) $
+// Version:         $Revision: 12251 $,
+//                  $Date: 2020-12-16 12:29:30 +0200 (ke, 16 joulu 2020) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -180,7 +180,7 @@ namespace GXDLMSDirector
                         int t, source;
                         byte type;
                         GXDLMSClient.GetHdlcAddressInfo(new GXByteBuffer(it), out t, out source, out type);
-                        client.Limits.SenderFrame = type;
+                        client.HdlcSettings.SenderFrame = type;
                     }
                     throw ex;
                 }
@@ -633,16 +633,22 @@ namespace GXDLMSDirector
                         }
                     }
                 }
+                int pos = 0;
+                //With some meters there might be some extra invalid chars. Remove them.
+                while (pos < p.Reply.Length && p.Reply[pos] != '/')
+                {
+                    ++pos;
+                }
                 GXLogWriter.WriteLog("HDLC received: " + p.Reply);
-                if (p.Reply[0] != '/')
+                if (p.Reply[pos] != '/')
                 {
                     p.WaitTime = 100;
                     media.Receive(p);
                     throw new Exception("Invalid responce.");
                 }
-                manufactureID = p.Reply.Substring(1, 3);
+                manufactureID = p.Reply.Substring(pos + 1, 3);
                 UpdateManufactureSettings(manufactureID);
-                char baudrate = p.Reply[4];
+                char baudrate = p.Reply[pos + 4];
                 int BaudRate = 0;
                 switch (baudrate)
                 {
@@ -1013,11 +1019,11 @@ namespace GXDLMSDirector
             {
                 client.Ciphering.DedicatedKey = null;
             }
-            client.Limits.WindowSizeRX = parent.WindowSizeRX;
-            client.Limits.WindowSizeTX = parent.WindowSizeTX;
-            client.Limits.UseFrameSize = parent.UseFrameSize;
-            client.Limits.MaxInfoRX = parent.MaxInfoRX;
-            client.Limits.MaxInfoTX = parent.MaxInfoTX;
+            client.HdlcSettings.WindowSizeRX = parent.WindowSizeRX;
+            client.HdlcSettings.WindowSizeTX = parent.WindowSizeTX;
+            client.HdlcSettings.UseFrameSize = parent.UseFrameSize;
+            client.HdlcSettings.MaxInfoRX = parent.MaxInfoRX;
+            client.HdlcSettings.MaxInfoTX = parent.MaxInfoTX;
             client.MaxReceivePDUSize = parent.PduSize;
             client.UserId = parent.UserId;
             client.Priority = parent.Priority;
@@ -1188,7 +1194,7 @@ namespace GXDLMSDirector
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 if (media is GXSerial && parent.StartProtocol == StartProtocolType.IEC)
                 {
@@ -1204,7 +1210,7 @@ namespace GXDLMSDirector
                         media.Receive(p);
                     }
                 }
-                throw ex;
+                throw;
             }
             parent.KeepAliveStart();
         }
@@ -1225,7 +1231,7 @@ namespace GXDLMSDirector
                 {
                     ReadDataBlock(it, text, reply);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     //Update frame ID if meter returns error.
                     if (client.InterfaceType == InterfaceType.HDLC ||
@@ -1235,9 +1241,9 @@ namespace GXDLMSDirector
                         int target, source;
                         byte type;
                         GXDLMSClient.GetHdlcAddressInfo(new GXByteBuffer(it), out target, out source, out type);
-                        client.Limits.SenderFrame = type;
+                        client.HdlcSettings.SenderFrame = type;
                     }
-                    throw ex;
+                    throw;
                 }
             }
         }
@@ -1286,7 +1292,7 @@ namespace GXDLMSDirector
                         int target, source;
                         byte type;
                         GXDLMSClient.GetHdlcAddressInfo(new GXByteBuffer(it), out target, out source, out type);
-                        client.Limits.SenderFrame = type;
+                        client.HdlcSettings.SenderFrame = type;
                     }
                     throw ex;
                 }
@@ -1312,7 +1318,7 @@ namespace GXDLMSDirector
                         int target, source;
                         byte type;
                         GXDLMSClient.GetHdlcAddressInfo(new GXByteBuffer(it), out target, out source, out type);
-                        client.Limits.SenderFrame = type;
+                        client.HdlcSettings.SenderFrame = type;
                     }
                     throw ex;
                 }

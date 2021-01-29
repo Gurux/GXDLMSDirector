@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12251 $,
-//                  $Date: 2020-12-16 12:29:30 +0200 (ke, 16 joulu 2020) $
+// Version:         $Revision: 12310 $,
+//                  $Date: 2021-01-29 08:21:47 +0200 (pe, 29 tammi 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -383,12 +383,16 @@ namespace GXDLMSDirector
                     while (rd.Compare(data) ||
                         !client.GetData(rd, reply, notify))
                     {
+                        int framePosition = rd.Position;
                         rd.Position = 0;
                         if (rd.Compare(data))
                         {
                             rd.Clear();
                         }
-                        rd.Position = 0;
+                        else
+                        {
+                            rd.Position = framePosition;
+                        }
                         p.Reply = null;
                         if (notify.Data.Size != 0)
                         {

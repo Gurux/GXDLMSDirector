@@ -443,15 +443,6 @@ namespace GXDLMSDirector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        internal static string String1 {
-            get {
-                return ResourceManager.GetString("String1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to System title.
         /// </summary>
         internal static string SystemTitleTxt {

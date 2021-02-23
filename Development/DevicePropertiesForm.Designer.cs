@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12169 $,
-//                  $Date: 2020-11-06 09:57:31 +0200 (pe, 06 marras 2020) $
+// Version:         $Revision: 12330 $,
+//                  $Date: 2021-02-23 15:17:30 +0200 (ti, 23 helmi 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -69,6 +69,7 @@ namespace GXDLMSDirector
             this.InitialSettingsBtn = new System.Windows.Forms.Button();
             this.SupportedServicesTab = new System.Windows.Forms.TabPage();
             this.SNSettings = new System.Windows.Forms.GroupBox();
+            this.SNDeltaValueEncodingCb = new System.Windows.Forms.CheckBox();
             this.SNGeneralProtectionCB = new System.Windows.Forms.CheckBox();
             this.SNGeneralBlockTransferCB = new System.Windows.Forms.CheckBox();
             this.ReadCB = new System.Windows.Forms.CheckBox();
@@ -81,6 +82,7 @@ namespace GXDLMSDirector
             this.SNDataNotificationCB = new System.Windows.Forms.CheckBox();
             this.ParameterizedAccessCB = new System.Windows.Forms.CheckBox();
             this.LNSettings = new System.Windows.Forms.GroupBox();
+            this.DeltaValueEncodingCb = new System.Windows.Forms.CheckBox();
             this.GeneralProtectionCB = new System.Windows.Forms.CheckBox();
             this.GeneralBlockTransferCB = new System.Windows.Forms.CheckBox();
             this.Attribute0SetReferencingCB = new System.Windows.Forms.CheckBox();
@@ -98,33 +100,13 @@ namespace GXDLMSDirector
             this.EventNotificationCB = new System.Windows.Forms.CheckBox();
             this.ActionCB = new System.Windows.Forms.CheckBox();
             this.CipheringTab = new System.Windows.Forms.TabPage();
-            this.ItalySystemTitleTb = new System.Windows.Forms.TextBox();
-            this.DedicatedKeyAsciiCb = new System.Windows.Forms.CheckBox();
-            this.DedicatedKeyTb = new System.Windows.Forms.TextBox();
-            this.DedicatedKeyLbl = new System.Windows.Forms.Label();
+            this.SettingsPanel = new System.Windows.Forms.Panel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.InvocationCounterCb = new System.Windows.Forms.CheckBox();
             this.FrameCounterTb = new System.Windows.Forms.TextBox();
             this.FrameCounterLbl = new System.Windows.Forms.Label();
             this.InvocationCounterLbl = new System.Windows.Forms.Label();
             this.InvocationCounterTB = new System.Windows.Forms.TextBox();
-            this.ServerSystemTitleAsciiCb = new System.Windows.Forms.CheckBox();
-            this.ServerSystemTitle = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.UsePreEstablishedApplicationAssociations = new System.Windows.Forms.CheckBox();
-            this.ChallengeTB = new System.Windows.Forms.TextBox();
-            this.ChallengeLbl = new System.Windows.Forms.Label();
-            this.BlockCipherKeyAsciiCb = new System.Windows.Forms.CheckBox();
-            this.AuthenticationKeyAsciiCb = new System.Windows.Forms.CheckBox();
-            this.SystemTitleAsciiCb = new System.Windows.Forms.CheckBox();
-            this.SecurityCB = new System.Windows.Forms.ComboBox();
-            this.AuthenticationKeyTB = new System.Windows.Forms.TextBox();
-            this.BlockCipherKeyTB = new System.Windows.Forms.TextBox();
-            this.SystemTitleTB = new System.Windows.Forms.TextBox();
-            this.AuthenticationKeyLbl = new System.Windows.Forms.Label();
-            this.BlockCipherKeyLbl = new System.Windows.Forms.Label();
-            this.SystemtitleLbl = new System.Windows.Forms.Label();
-            this.SecurityLbl = new System.Windows.Forms.Label();
             this.DeviceSettingsTab = new System.Windows.Forms.TabPage();
             this.InterfaceCb = new System.Windows.Forms.ComboBox();
             this.InterfaceLbl = new System.Windows.Forms.Label();
@@ -211,16 +193,6 @@ namespace GXDLMSDirector
             this.MACSourceAddressTb = new System.Windows.Forms.NumericUpDown();
             this.MACTargetAddressLbl = new System.Windows.Forms.Label();
             this.MACSourceAddressLbl = new System.Windows.Forms.Label();
-            this.CertificatesTab = new System.Windows.Forms.TabPage();
-            this.CertificatesList = new System.Windows.Forms.ListView();
-            this.TypeCh = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.SubjectCh = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.ValidityCh = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.KeyUsageCh = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.CertificateMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.CertificateAddMnu = new System.Windows.Forms.ToolStripMenuItem();
-            this.CertificateRemoveMnu = new System.Windows.Forms.ToolStripMenuItem();
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.GatewayTab = new System.Windows.Forms.TabPage();
             this.UseGatewayCb = new System.Windows.Forms.CheckBox();
             this.PhysicalDeviceAddressAsciiCb = new System.Windows.Forms.CheckBox();
@@ -233,9 +205,14 @@ namespace GXDLMSDirector
             this.CopyBtn = new System.Windows.Forms.Button();
             this.ApplyBtn = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.helpProvider1 = new System.Windows.Forms.HelpProvider();
             this.conformanceHelpProvider = new System.Windows.Forms.HelpProvider();
             this.ShowAsHex = new System.Windows.Forms.CheckBox();
+            this.PduFrame = new System.Windows.Forms.TabPage();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.PduWaitTimelbl = new System.Windows.Forms.Label();
+            this.PduWaitTimeTb = new System.Windows.Forms.TextBox();
             this.SupportedServicesTab.SuspendLayout();
             this.SNSettings.SuspendLayout();
             this.LNSettings.SuspendLayout();
@@ -257,17 +234,17 @@ namespace GXDLMSDirector
             this.PlcGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MACTargetAddressTb)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MACSourceAddressTb)).BeginInit();
-            this.CertificatesTab.SuspendLayout();
-            this.CertificateMenu.SuspendLayout();
             this.GatewayTab.SuspendLayout();
             this.XmlTab.SuspendLayout();
+            this.PduFrame.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // CancelBtn
             // 
             this.CancelBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelBtn.Location = new System.Drawing.Point(392, 422);
+            this.CancelBtn.Location = new System.Drawing.Point(431, 422);
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.Size = new System.Drawing.Size(75, 23);
             this.CancelBtn.TabIndex = 4;
@@ -279,7 +256,7 @@ namespace GXDLMSDirector
             // 
             this.OKBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.OKBtn.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.OKBtn.Location = new System.Drawing.Point(311, 422);
+            this.OKBtn.Location = new System.Drawing.Point(350, 422);
             this.OKBtn.Name = "OKBtn";
             this.OKBtn.Size = new System.Drawing.Size(75, 23);
             this.OKBtn.TabIndex = 3;
@@ -290,7 +267,7 @@ namespace GXDLMSDirector
             // InitialSettingsBtn
             // 
             this.InitialSettingsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.InitialSettingsBtn.Location = new System.Drawing.Point(10, 422);
+            this.InitialSettingsBtn.Location = new System.Drawing.Point(8, 422);
             this.InitialSettingsBtn.Name = "InitialSettingsBtn";
             this.InitialSettingsBtn.Size = new System.Drawing.Size(117, 23);
             this.InitialSettingsBtn.TabIndex = 1;
@@ -307,13 +284,14 @@ namespace GXDLMSDirector
             this.SupportedServicesTab.Name = "SupportedServicesTab";
             this.SupportedServicesTab.Padding = new System.Windows.Forms.Padding(3);
             this.conformanceHelpProvider.SetShowHelp(this.SupportedServicesTab, true);
-            this.SupportedServicesTab.Size = new System.Drawing.Size(472, 388);
+            this.SupportedServicesTab.Size = new System.Drawing.Size(511, 388);
             this.SupportedServicesTab.TabIndex = 1;
             this.SupportedServicesTab.Text = "Supported Services";
             this.SupportedServicesTab.UseVisualStyleBackColor = true;
             // 
             // SNSettings
             // 
+            this.SNSettings.Controls.Add(this.SNDeltaValueEncodingCb);
             this.SNSettings.Controls.Add(this.SNGeneralProtectionCB);
             this.SNSettings.Controls.Add(this.SNGeneralBlockTransferCB);
             this.SNSettings.Controls.Add(this.ReadCB);
@@ -335,12 +313,25 @@ namespace GXDLMSDirector
             this.SNSettings.TabStop = false;
             this.SNSettings.Text = "SN settings";
             // 
+            // SNDeltaValueEncodingCb
+            // 
+            this.SNDeltaValueEncodingCb.AutoSize = true;
+            this.conformanceHelpProvider.SetHelpKeyword(this.SNDeltaValueEncodingCb, "DeltaValueEncoding ");
+            this.conformanceHelpProvider.SetHelpNavigator(this.SNDeltaValueEncodingCb, System.Windows.Forms.HelpNavigator.Topic);
+            this.SNDeltaValueEncodingCb.Location = new System.Drawing.Point(6, 240);
+            this.SNDeltaValueEncodingCb.Name = "SNDeltaValueEncodingCb";
+            this.conformanceHelpProvider.SetShowHelp(this.SNDeltaValueEncodingCb, true);
+            this.SNDeltaValueEncodingCb.Size = new System.Drawing.Size(127, 17);
+            this.SNDeltaValueEncodingCb.TabIndex = 18;
+            this.SNDeltaValueEncodingCb.Text = "Delta value encoding";
+            this.SNDeltaValueEncodingCb.UseVisualStyleBackColor = true;
+            // 
             // SNGeneralProtectionCB
             // 
             this.SNGeneralProtectionCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.SNGeneralProtectionCB, "GeneralProtection");
             this.conformanceHelpProvider.SetHelpNavigator(this.SNGeneralProtectionCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.SNGeneralProtectionCB.Location = new System.Drawing.Point(6, 243);
+            this.SNGeneralProtectionCB.Location = new System.Drawing.Point(6, 220);
             this.SNGeneralProtectionCB.Name = "SNGeneralProtectionCB";
             this.conformanceHelpProvider.SetShowHelp(this.SNGeneralProtectionCB, true);
             this.SNGeneralProtectionCB.Size = new System.Drawing.Size(113, 17);
@@ -353,7 +344,7 @@ namespace GXDLMSDirector
             this.SNGeneralBlockTransferCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.SNGeneralBlockTransferCB, "GeneralBlockTransfer");
             this.conformanceHelpProvider.SetHelpNavigator(this.SNGeneralBlockTransferCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.SNGeneralBlockTransferCB.Location = new System.Drawing.Point(6, 220);
+            this.SNGeneralBlockTransferCB.Location = new System.Drawing.Point(6, 200);
             this.SNGeneralBlockTransferCB.Name = "SNGeneralBlockTransferCB";
             this.conformanceHelpProvider.SetShowHelp(this.SNGeneralBlockTransferCB, true);
             this.SNGeneralBlockTransferCB.Size = new System.Drawing.Size(130, 17);
@@ -366,7 +357,7 @@ namespace GXDLMSDirector
             this.ReadCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.ReadCB, "Read");
             this.conformanceHelpProvider.SetHelpNavigator(this.ReadCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.ReadCB.Location = new System.Drawing.Point(6, 197);
+            this.ReadCB.Location = new System.Drawing.Point(6, 180);
             this.ReadCB.Name = "ReadCB";
             this.conformanceHelpProvider.SetShowHelp(this.ReadCB, true);
             this.ReadCB.Size = new System.Drawing.Size(52, 17);
@@ -379,7 +370,7 @@ namespace GXDLMSDirector
             this.WriteCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.WriteCB, "Write");
             this.conformanceHelpProvider.SetHelpNavigator(this.WriteCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.WriteCB.Location = new System.Drawing.Point(6, 174);
+            this.WriteCB.Location = new System.Drawing.Point(6, 160);
             this.WriteCB.Name = "WriteCB";
             this.conformanceHelpProvider.SetShowHelp(this.WriteCB, true);
             this.WriteCB.Size = new System.Drawing.Size(51, 17);
@@ -392,7 +383,7 @@ namespace GXDLMSDirector
             this.UnconfirmedWriteCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.UnconfirmedWriteCB, "UnconfirmedWrite");
             this.conformanceHelpProvider.SetHelpNavigator(this.UnconfirmedWriteCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.UnconfirmedWriteCB.Location = new System.Drawing.Point(6, 151);
+            this.UnconfirmedWriteCB.Location = new System.Drawing.Point(6, 140);
             this.UnconfirmedWriteCB.Name = "UnconfirmedWriteCB";
             this.conformanceHelpProvider.SetShowHelp(this.UnconfirmedWriteCB, true);
             this.UnconfirmedWriteCB.Size = new System.Drawing.Size(111, 17);
@@ -405,7 +396,7 @@ namespace GXDLMSDirector
             this.ReadBlockTransferCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.ReadBlockTransferCB, "ReadBlockTransfer");
             this.conformanceHelpProvider.SetHelpNavigator(this.ReadBlockTransferCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.ReadBlockTransferCB.Location = new System.Drawing.Point(6, 128);
+            this.ReadBlockTransferCB.Location = new System.Drawing.Point(6, 120);
             this.ReadBlockTransferCB.Name = "ReadBlockTransferCB";
             this.conformanceHelpProvider.SetShowHelp(this.ReadBlockTransferCB, true);
             this.ReadBlockTransferCB.Size = new System.Drawing.Size(119, 17);
@@ -418,7 +409,7 @@ namespace GXDLMSDirector
             this.WriteBlockTransferCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.WriteBlockTransferCB, "WriteBlockTransfer");
             this.conformanceHelpProvider.SetHelpNavigator(this.WriteBlockTransferCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.WriteBlockTransferCB.Location = new System.Drawing.Point(6, 105);
+            this.WriteBlockTransferCB.Location = new System.Drawing.Point(6, 100);
             this.WriteBlockTransferCB.Name = "WriteBlockTransferCB";
             this.conformanceHelpProvider.SetShowHelp(this.WriteBlockTransferCB, true);
             this.WriteBlockTransferCB.Size = new System.Drawing.Size(118, 17);
@@ -431,7 +422,7 @@ namespace GXDLMSDirector
             this.SNMultipleReferencesCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.SNMultipleReferencesCB, "MultipleReferences");
             this.conformanceHelpProvider.SetHelpNavigator(this.SNMultipleReferencesCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.SNMultipleReferencesCB.Location = new System.Drawing.Point(6, 82);
+            this.SNMultipleReferencesCB.Location = new System.Drawing.Point(6, 80);
             this.SNMultipleReferencesCB.Name = "SNMultipleReferencesCB";
             this.conformanceHelpProvider.SetShowHelp(this.SNMultipleReferencesCB, true);
             this.SNMultipleReferencesCB.Size = new System.Drawing.Size(115, 17);
@@ -444,7 +435,7 @@ namespace GXDLMSDirector
             this.InformationReportCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.InformationReportCB, "InformationReport");
             this.conformanceHelpProvider.SetHelpNavigator(this.InformationReportCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.InformationReportCB.Location = new System.Drawing.Point(6, 59);
+            this.InformationReportCB.Location = new System.Drawing.Point(6, 60);
             this.InformationReportCB.Name = "InformationReportCB";
             this.conformanceHelpProvider.SetShowHelp(this.InformationReportCB, true);
             this.InformationReportCB.Size = new System.Drawing.Size(108, 17);
@@ -457,7 +448,7 @@ namespace GXDLMSDirector
             this.SNDataNotificationCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.SNDataNotificationCB, "DataNotification");
             this.conformanceHelpProvider.SetHelpNavigator(this.SNDataNotificationCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.SNDataNotificationCB.Location = new System.Drawing.Point(6, 36);
+            this.SNDataNotificationCB.Location = new System.Drawing.Point(6, 40);
             this.SNDataNotificationCB.Name = "SNDataNotificationCB";
             this.conformanceHelpProvider.SetShowHelp(this.SNDataNotificationCB, true);
             this.SNDataNotificationCB.Size = new System.Drawing.Size(103, 17);
@@ -470,7 +461,7 @@ namespace GXDLMSDirector
             this.ParameterizedAccessCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.ParameterizedAccessCB, "ParameterizedAccess");
             this.conformanceHelpProvider.SetHelpNavigator(this.ParameterizedAccessCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.ParameterizedAccessCB.Location = new System.Drawing.Point(6, 13);
+            this.ParameterizedAccessCB.Location = new System.Drawing.Point(6, 20);
             this.ParameterizedAccessCB.Name = "ParameterizedAccessCB";
             this.conformanceHelpProvider.SetShowHelp(this.ParameterizedAccessCB, true);
             this.ParameterizedAccessCB.Size = new System.Drawing.Size(130, 17);
@@ -480,6 +471,7 @@ namespace GXDLMSDirector
             // 
             // LNSettings
             // 
+            this.LNSettings.Controls.Add(this.DeltaValueEncodingCb);
             this.LNSettings.Controls.Add(this.GeneralProtectionCB);
             this.LNSettings.Controls.Add(this.GeneralBlockTransferCB);
             this.LNSettings.Controls.Add(this.Attribute0SetReferencingCB);
@@ -506,12 +498,25 @@ namespace GXDLMSDirector
             this.LNSettings.TabStop = false;
             this.LNSettings.Text = "LN settings";
             // 
+            // DeltaValueEncodingCb
+            // 
+            this.DeltaValueEncodingCb.AutoSize = true;
+            this.conformanceHelpProvider.SetHelpKeyword(this.DeltaValueEncodingCb, "DeltaValueEncoding ");
+            this.conformanceHelpProvider.SetHelpNavigator(this.DeltaValueEncodingCb, System.Windows.Forms.HelpNavigator.Topic);
+            this.DeltaValueEncodingCb.Location = new System.Drawing.Point(6, 340);
+            this.DeltaValueEncodingCb.Name = "DeltaValueEncodingCb";
+            this.conformanceHelpProvider.SetShowHelp(this.DeltaValueEncodingCb, true);
+            this.DeltaValueEncodingCb.Size = new System.Drawing.Size(127, 17);
+            this.DeltaValueEncodingCb.TabIndex = 17;
+            this.DeltaValueEncodingCb.Text = "Delta value encoding";
+            this.DeltaValueEncodingCb.UseVisualStyleBackColor = true;
+            // 
             // GeneralProtectionCB
             // 
             this.GeneralProtectionCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.GeneralProtectionCB, "GeneralProtection");
             this.conformanceHelpProvider.SetHelpNavigator(this.GeneralProtectionCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.GeneralProtectionCB.Location = new System.Drawing.Point(6, 365);
+            this.GeneralProtectionCB.Location = new System.Drawing.Point(6, 320);
             this.GeneralProtectionCB.Name = "GeneralProtectionCB";
             this.conformanceHelpProvider.SetShowHelp(this.GeneralProtectionCB, true);
             this.GeneralProtectionCB.Size = new System.Drawing.Size(113, 17);
@@ -524,7 +529,7 @@ namespace GXDLMSDirector
             this.GeneralBlockTransferCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.GeneralBlockTransferCB, "GeneralBlockTransfer");
             this.conformanceHelpProvider.SetHelpNavigator(this.GeneralBlockTransferCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.GeneralBlockTransferCB.Location = new System.Drawing.Point(6, 341);
+            this.GeneralBlockTransferCB.Location = new System.Drawing.Point(6, 300);
             this.GeneralBlockTransferCB.Name = "GeneralBlockTransferCB";
             this.conformanceHelpProvider.SetShowHelp(this.GeneralBlockTransferCB, true);
             this.GeneralBlockTransferCB.Size = new System.Drawing.Size(130, 17);
@@ -537,7 +542,7 @@ namespace GXDLMSDirector
             this.Attribute0SetReferencingCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.Attribute0SetReferencingCB, "Attribute0SetReferencing");
             this.conformanceHelpProvider.SetHelpNavigator(this.Attribute0SetReferencingCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.Attribute0SetReferencingCB.Location = new System.Drawing.Point(6, 318);
+            this.Attribute0SetReferencingCB.Location = new System.Drawing.Point(6, 280);
             this.Attribute0SetReferencingCB.Name = "Attribute0SetReferencingCB";
             this.conformanceHelpProvider.SetShowHelp(this.Attribute0SetReferencingCB, true);
             this.Attribute0SetReferencingCB.Size = new System.Drawing.Size(147, 17);
@@ -550,7 +555,7 @@ namespace GXDLMSDirector
             this.PriorityManagementCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.PriorityManagementCB, "PriorityManagement");
             this.conformanceHelpProvider.SetHelpNavigator(this.PriorityManagementCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.PriorityManagementCB.Location = new System.Drawing.Point(6, 295);
+            this.PriorityManagementCB.Location = new System.Drawing.Point(6, 260);
             this.PriorityManagementCB.Name = "PriorityManagementCB";
             this.conformanceHelpProvider.SetShowHelp(this.PriorityManagementCB, true);
             this.PriorityManagementCB.Size = new System.Drawing.Size(121, 17);
@@ -563,7 +568,7 @@ namespace GXDLMSDirector
             this.Attribute0GetReferencingCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.Attribute0GetReferencingCB, "Attribute0GetReferencing");
             this.conformanceHelpProvider.SetHelpNavigator(this.Attribute0GetReferencingCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.Attribute0GetReferencingCB.Location = new System.Drawing.Point(5, 272);
+            this.Attribute0GetReferencingCB.Location = new System.Drawing.Point(5, 240);
             this.Attribute0GetReferencingCB.Name = "Attribute0GetReferencingCB";
             this.conformanceHelpProvider.SetShowHelp(this.Attribute0GetReferencingCB, true);
             this.Attribute0GetReferencingCB.Size = new System.Drawing.Size(148, 17);
@@ -576,7 +581,7 @@ namespace GXDLMSDirector
             this.GetBlockTransferCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.GetBlockTransferCB, "GetBlockTransfer");
             this.conformanceHelpProvider.SetHelpNavigator(this.GetBlockTransferCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.GetBlockTransferCB.Location = new System.Drawing.Point(6, 249);
+            this.GetBlockTransferCB.Location = new System.Drawing.Point(6, 220);
             this.GetBlockTransferCB.Name = "GetBlockTransferCB";
             this.conformanceHelpProvider.SetShowHelp(this.GetBlockTransferCB, true);
             this.GetBlockTransferCB.Size = new System.Drawing.Size(110, 17);
@@ -589,7 +594,7 @@ namespace GXDLMSDirector
             this.SetBlockTransferCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.SetBlockTransferCB, "SetBlockTransfer");
             this.conformanceHelpProvider.SetHelpNavigator(this.SetBlockTransferCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.SetBlockTransferCB.Location = new System.Drawing.Point(6, 226);
+            this.SetBlockTransferCB.Location = new System.Drawing.Point(6, 200);
             this.SetBlockTransferCB.Name = "SetBlockTransferCB";
             this.conformanceHelpProvider.SetShowHelp(this.SetBlockTransferCB, true);
             this.SetBlockTransferCB.Size = new System.Drawing.Size(109, 17);
@@ -602,7 +607,7 @@ namespace GXDLMSDirector
             this.ActionBlockTransferCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.ActionBlockTransferCB, "ActionBlockTransfer");
             this.conformanceHelpProvider.SetHelpNavigator(this.ActionBlockTransferCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.ActionBlockTransferCB.Location = new System.Drawing.Point(6, 203);
+            this.ActionBlockTransferCB.Location = new System.Drawing.Point(6, 180);
             this.ActionBlockTransferCB.Name = "ActionBlockTransferCB";
             this.conformanceHelpProvider.SetShowHelp(this.ActionBlockTransferCB, true);
             this.ActionBlockTransferCB.Size = new System.Drawing.Size(123, 17);
@@ -615,7 +620,7 @@ namespace GXDLMSDirector
             this.MultipleReferencesCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.MultipleReferencesCB, "MultipleReferences");
             this.conformanceHelpProvider.SetHelpNavigator(this.MultipleReferencesCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.MultipleReferencesCB.Location = new System.Drawing.Point(6, 180);
+            this.MultipleReferencesCB.Location = new System.Drawing.Point(6, 160);
             this.MultipleReferencesCB.Name = "MultipleReferencesCB";
             this.conformanceHelpProvider.SetShowHelp(this.MultipleReferencesCB, true);
             this.MultipleReferencesCB.Size = new System.Drawing.Size(120, 17);
@@ -628,7 +633,7 @@ namespace GXDLMSDirector
             this.DataNotificationCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.DataNotificationCB, "DataNotification");
             this.conformanceHelpProvider.SetHelpNavigator(this.DataNotificationCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.DataNotificationCB.Location = new System.Drawing.Point(6, 157);
+            this.DataNotificationCB.Location = new System.Drawing.Point(6, 140);
             this.DataNotificationCB.Name = "DataNotificationCB";
             this.conformanceHelpProvider.SetShowHelp(this.DataNotificationCB, true);
             this.DataNotificationCB.Size = new System.Drawing.Size(105, 17);
@@ -641,7 +646,7 @@ namespace GXDLMSDirector
             this.AccessCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.AccessCB, "Access");
             this.conformanceHelpProvider.SetHelpNavigator(this.AccessCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.AccessCB.Location = new System.Drawing.Point(6, 134);
+            this.AccessCB.Location = new System.Drawing.Point(6, 120);
             this.AccessCB.Name = "AccessCB";
             this.conformanceHelpProvider.SetShowHelp(this.AccessCB, true);
             this.AccessCB.Size = new System.Drawing.Size(61, 17);
@@ -654,7 +659,7 @@ namespace GXDLMSDirector
             this.GetCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.GetCB, "Get");
             this.conformanceHelpProvider.SetHelpNavigator(this.GetCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.GetCB.Location = new System.Drawing.Point(6, 111);
+            this.GetCB.Location = new System.Drawing.Point(6, 100);
             this.GetCB.Name = "GetCB";
             this.conformanceHelpProvider.SetShowHelp(this.GetCB, true);
             this.GetCB.Size = new System.Drawing.Size(43, 17);
@@ -667,7 +672,7 @@ namespace GXDLMSDirector
             this.SetCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.SetCB, "Set");
             this.conformanceHelpProvider.SetHelpNavigator(this.SetCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.SetCB.Location = new System.Drawing.Point(6, 88);
+            this.SetCB.Location = new System.Drawing.Point(6, 80);
             this.SetCB.Name = "SetCB";
             this.conformanceHelpProvider.SetShowHelp(this.SetCB, true);
             this.SetCB.Size = new System.Drawing.Size(42, 17);
@@ -680,7 +685,7 @@ namespace GXDLMSDirector
             this.SelectiveAccessCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.SelectiveAccessCB, "SelectiveAccess");
             this.conformanceHelpProvider.SetHelpNavigator(this.SelectiveAccessCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.SelectiveAccessCB.Location = new System.Drawing.Point(6, 65);
+            this.SelectiveAccessCB.Location = new System.Drawing.Point(6, 60);
             this.SelectiveAccessCB.Name = "SelectiveAccessCB";
             this.conformanceHelpProvider.SetShowHelp(this.SelectiveAccessCB, true);
             this.SelectiveAccessCB.Size = new System.Drawing.Size(108, 17);
@@ -693,7 +698,7 @@ namespace GXDLMSDirector
             this.EventNotificationCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.EventNotificationCB, "EventNotification");
             this.conformanceHelpProvider.SetHelpNavigator(this.EventNotificationCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.EventNotificationCB.Location = new System.Drawing.Point(6, 42);
+            this.EventNotificationCB.Location = new System.Drawing.Point(6, 40);
             this.EventNotificationCB.Name = "EventNotificationCB";
             this.conformanceHelpProvider.SetShowHelp(this.EventNotificationCB, true);
             this.EventNotificationCB.Size = new System.Drawing.Size(110, 17);
@@ -706,7 +711,7 @@ namespace GXDLMSDirector
             this.ActionCB.AutoSize = true;
             this.conformanceHelpProvider.SetHelpKeyword(this.ActionCB, "Action");
             this.conformanceHelpProvider.SetHelpNavigator(this.ActionCB, System.Windows.Forms.HelpNavigator.Topic);
-            this.ActionCB.Location = new System.Drawing.Point(6, 19);
+            this.ActionCB.Location = new System.Drawing.Point(6, 20);
             this.ActionCB.Name = "ActionCB";
             this.conformanceHelpProvider.SetShowHelp(this.ActionCB, true);
             this.ActionCB.Size = new System.Drawing.Size(56, 17);
@@ -716,69 +721,21 @@ namespace GXDLMSDirector
             // 
             // CipheringTab
             // 
-            this.CipheringTab.Controls.Add(this.ItalySystemTitleTb);
-            this.CipheringTab.Controls.Add(this.DedicatedKeyAsciiCb);
-            this.CipheringTab.Controls.Add(this.DedicatedKeyTb);
-            this.CipheringTab.Controls.Add(this.DedicatedKeyLbl);
+            this.CipheringTab.Controls.Add(this.SettingsPanel);
             this.CipheringTab.Controls.Add(this.groupBox2);
-            this.CipheringTab.Controls.Add(this.ServerSystemTitleAsciiCb);
-            this.CipheringTab.Controls.Add(this.ServerSystemTitle);
-            this.CipheringTab.Controls.Add(this.label4);
-            this.CipheringTab.Controls.Add(this.UsePreEstablishedApplicationAssociations);
-            this.CipheringTab.Controls.Add(this.ChallengeTB);
-            this.CipheringTab.Controls.Add(this.ChallengeLbl);
-            this.CipheringTab.Controls.Add(this.BlockCipherKeyAsciiCb);
-            this.CipheringTab.Controls.Add(this.AuthenticationKeyAsciiCb);
-            this.CipheringTab.Controls.Add(this.SystemTitleAsciiCb);
-            this.CipheringTab.Controls.Add(this.SecurityCB);
-            this.CipheringTab.Controls.Add(this.AuthenticationKeyTB);
-            this.CipheringTab.Controls.Add(this.BlockCipherKeyTB);
-            this.CipheringTab.Controls.Add(this.SystemTitleTB);
-            this.CipheringTab.Controls.Add(this.AuthenticationKeyLbl);
-            this.CipheringTab.Controls.Add(this.BlockCipherKeyLbl);
-            this.CipheringTab.Controls.Add(this.SystemtitleLbl);
-            this.CipheringTab.Controls.Add(this.SecurityLbl);
             this.CipheringTab.Location = new System.Drawing.Point(4, 22);
             this.CipheringTab.Name = "CipheringTab";
-            this.CipheringTab.Size = new System.Drawing.Size(472, 388);
+            this.CipheringTab.Size = new System.Drawing.Size(511, 388);
             this.CipheringTab.TabIndex = 2;
             this.CipheringTab.Text = "Secured Connections";
             this.CipheringTab.UseVisualStyleBackColor = true;
             // 
-            // ItalySystemTitleTb
+            // SettingsPanel
             // 
-            this.ItalySystemTitleTb.Location = new System.Drawing.Point(112, 333);
-            this.ItalySystemTitleTb.Name = "ItalySystemTitleTb";
-            this.ItalySystemTitleTb.ReadOnly = true;
-            this.ItalySystemTitleTb.Size = new System.Drawing.Size(226, 20);
-            this.ItalySystemTitleTb.TabIndex = 77;
-            // 
-            // DedicatedKeyAsciiCb
-            // 
-            this.DedicatedKeyAsciiCb.AutoSize = true;
-            this.DedicatedKeyAsciiCb.Location = new System.Drawing.Point(347, 110);
-            this.DedicatedKeyAsciiCb.Name = "DedicatedKeyAsciiCb";
-            this.DedicatedKeyAsciiCb.Size = new System.Drawing.Size(53, 17);
-            this.DedicatedKeyAsciiCb.TabIndex = 8;
-            this.DedicatedKeyAsciiCb.Text = "ASCII";
-            this.DedicatedKeyAsciiCb.UseVisualStyleBackColor = true;
-            this.DedicatedKeyAsciiCb.CheckedChanged += new System.EventHandler(this.DedicatedKeyAsciiCb_CheckedChanged);
-            // 
-            // DedicatedKeyTb
-            // 
-            this.DedicatedKeyTb.Location = new System.Drawing.Point(113, 108);
-            this.DedicatedKeyTb.Name = "DedicatedKeyTb";
-            this.DedicatedKeyTb.Size = new System.Drawing.Size(226, 20);
-            this.DedicatedKeyTb.TabIndex = 7;
-            // 
-            // DedicatedKeyLbl
-            // 
-            this.DedicatedKeyLbl.AutoSize = true;
-            this.DedicatedKeyLbl.Location = new System.Drawing.Point(8, 111);
-            this.DedicatedKeyLbl.Name = "DedicatedKeyLbl";
-            this.DedicatedKeyLbl.Size = new System.Drawing.Size(80, 13);
-            this.DedicatedKeyLbl.TabIndex = 76;
-            this.DedicatedKeyLbl.Text = "Dedicated Key:";
+            this.SettingsPanel.Location = new System.Drawing.Point(2, 3);
+            this.SettingsPanel.Name = "SettingsPanel";
+            this.SettingsPanel.Size = new System.Drawing.Size(504, 280);
+            this.SettingsPanel.TabIndex = 80;
             // 
             // groupBox2
             // 
@@ -787,7 +744,7 @@ namespace GXDLMSDirector
             this.groupBox2.Controls.Add(this.FrameCounterLbl);
             this.groupBox2.Controls.Add(this.InvocationCounterLbl);
             this.groupBox2.Controls.Add(this.InvocationCounterTB);
-            this.groupBox2.Location = new System.Drawing.Point(0, 156);
+            this.groupBox2.Location = new System.Drawing.Point(1, 288);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(339, 97);
             this.groupBox2.TabIndex = 9;
@@ -841,163 +798,6 @@ namespace GXDLMSDirector
             this.InvocationCounterTB.Size = new System.Drawing.Size(221, 20);
             this.InvocationCounterTB.TabIndex = 9;
             // 
-            // ServerSystemTitleAsciiCb
-            // 
-            this.ServerSystemTitleAsciiCb.AutoSize = true;
-            this.ServerSystemTitleAsciiCb.Location = new System.Drawing.Point(347, 309);
-            this.ServerSystemTitleAsciiCb.Name = "ServerSystemTitleAsciiCb";
-            this.ServerSystemTitleAsciiCb.Size = new System.Drawing.Size(53, 17);
-            this.ServerSystemTitleAsciiCb.TabIndex = 14;
-            this.ServerSystemTitleAsciiCb.Text = "ASCII";
-            this.ServerSystemTitleAsciiCb.UseVisualStyleBackColor = true;
-            this.ServerSystemTitleAsciiCb.CheckedChanged += new System.EventHandler(this.ServerSystemTitleAsciiCb_CheckedChanged);
-            // 
-            // ServerSystemTitle
-            // 
-            this.ServerSystemTitle.Location = new System.Drawing.Point(113, 307);
-            this.ServerSystemTitle.Name = "ServerSystemTitle";
-            this.ServerSystemTitle.ReadOnly = true;
-            this.ServerSystemTitle.Size = new System.Drawing.Size(226, 20);
-            this.ServerSystemTitle.TabIndex = 13;
-            this.ServerSystemTitle.TextChanged += new System.EventHandler(this.ServerSystemTitle_TextChanged);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(8, 310);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(63, 13);
-            this.label4.TabIndex = 68;
-            this.label4.Text = "System title:";
-            // 
-            // UsePreEstablishedApplicationAssociations
-            // 
-            this.UsePreEstablishedApplicationAssociations.AutoSize = true;
-            this.UsePreEstablishedApplicationAssociations.Location = new System.Drawing.Point(8, 284);
-            this.UsePreEstablishedApplicationAssociations.Name = "UsePreEstablishedApplicationAssociations";
-            this.UsePreEstablishedApplicationAssociations.Size = new System.Drawing.Size(218, 17);
-            this.UsePreEstablishedApplicationAssociations.TabIndex = 12;
-            this.UsePreEstablishedApplicationAssociations.Text = "Pre-established Application Associations ";
-            this.UsePreEstablishedApplicationAssociations.UseVisualStyleBackColor = true;
-            this.UsePreEstablishedApplicationAssociations.CheckedChanged += new System.EventHandler(this.UsePreEstablishedApplicationAssociations_CheckedChanged);
-            // 
-            // ChallengeTB
-            // 
-            this.ChallengeTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ChallengeTB.Location = new System.Drawing.Point(113, 258);
-            this.ChallengeTB.Name = "ChallengeTB";
-            this.ChallengeTB.Size = new System.Drawing.Size(226, 20);
-            this.ChallengeTB.TabIndex = 11;
-            // 
-            // ChallengeLbl
-            // 
-            this.ChallengeLbl.AutoSize = true;
-            this.ChallengeLbl.Location = new System.Drawing.Point(8, 261);
-            this.ChallengeLbl.Name = "ChallengeLbl";
-            this.ChallengeLbl.Size = new System.Drawing.Size(57, 13);
-            this.ChallengeLbl.TabIndex = 65;
-            this.ChallengeLbl.Text = "Challenge:";
-            // 
-            // BlockCipherKeyAsciiCb
-            // 
-            this.BlockCipherKeyAsciiCb.AutoSize = true;
-            this.BlockCipherKeyAsciiCb.Location = new System.Drawing.Point(347, 57);
-            this.BlockCipherKeyAsciiCb.Name = "BlockCipherKeyAsciiCb";
-            this.BlockCipherKeyAsciiCb.Size = new System.Drawing.Size(53, 17);
-            this.BlockCipherKeyAsciiCb.TabIndex = 4;
-            this.BlockCipherKeyAsciiCb.Text = "ASCII";
-            this.BlockCipherKeyAsciiCb.UseVisualStyleBackColor = true;
-            this.BlockCipherKeyAsciiCb.CheckedChanged += new System.EventHandler(this.BlockCipherKeyAsciiCb_CheckedChanged);
-            // 
-            // AuthenticationKeyAsciiCb
-            // 
-            this.AuthenticationKeyAsciiCb.AutoSize = true;
-            this.AuthenticationKeyAsciiCb.Location = new System.Drawing.Point(347, 83);
-            this.AuthenticationKeyAsciiCb.Name = "AuthenticationKeyAsciiCb";
-            this.AuthenticationKeyAsciiCb.Size = new System.Drawing.Size(53, 17);
-            this.AuthenticationKeyAsciiCb.TabIndex = 6;
-            this.AuthenticationKeyAsciiCb.Text = "ASCII";
-            this.AuthenticationKeyAsciiCb.UseVisualStyleBackColor = true;
-            this.AuthenticationKeyAsciiCb.CheckedChanged += new System.EventHandler(this.AuthenticationKeyAsciiCb_CheckedChanged);
-            // 
-            // SystemTitleAsciiCb
-            // 
-            this.SystemTitleAsciiCb.AutoSize = true;
-            this.SystemTitleAsciiCb.Location = new System.Drawing.Point(347, 30);
-            this.SystemTitleAsciiCb.Name = "SystemTitleAsciiCb";
-            this.SystemTitleAsciiCb.Size = new System.Drawing.Size(53, 17);
-            this.SystemTitleAsciiCb.TabIndex = 2;
-            this.SystemTitleAsciiCb.Text = "ASCII";
-            this.SystemTitleAsciiCb.UseVisualStyleBackColor = true;
-            this.SystemTitleAsciiCb.CheckedChanged += new System.EventHandler(this.SystemTitleAsciiCb_CheckedChanged);
-            // 
-            // SecurityCB
-            // 
-            this.SecurityCB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.SecurityCB.Location = new System.Drawing.Point(113, 3);
-            this.SecurityCB.Name = "SecurityCB";
-            this.SecurityCB.Size = new System.Drawing.Size(226, 21);
-            this.SecurityCB.TabIndex = 0;
-            this.SecurityCB.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.SecurityCB_DrawItem);
-            // 
-            // AuthenticationKeyTB
-            // 
-            this.AuthenticationKeyTB.Location = new System.Drawing.Point(113, 81);
-            this.AuthenticationKeyTB.Name = "AuthenticationKeyTB";
-            this.AuthenticationKeyTB.Size = new System.Drawing.Size(226, 20);
-            this.AuthenticationKeyTB.TabIndex = 5;
-            // 
-            // BlockCipherKeyTB
-            // 
-            this.BlockCipherKeyTB.Location = new System.Drawing.Point(113, 55);
-            this.BlockCipherKeyTB.Name = "BlockCipherKeyTB";
-            this.BlockCipherKeyTB.Size = new System.Drawing.Size(226, 20);
-            this.BlockCipherKeyTB.TabIndex = 3;
-            // 
-            // SystemTitleTB
-            // 
-            this.SystemTitleTB.Location = new System.Drawing.Point(113, 28);
-            this.SystemTitleTB.Name = "SystemTitleTB";
-            this.SystemTitleTB.Size = new System.Drawing.Size(226, 20);
-            this.SystemTitleTB.TabIndex = 1;
-            // 
-            // AuthenticationKeyLbl
-            // 
-            this.AuthenticationKeyLbl.AutoSize = true;
-            this.AuthenticationKeyLbl.Location = new System.Drawing.Point(8, 84);
-            this.AuthenticationKeyLbl.Name = "AuthenticationKeyLbl";
-            this.AuthenticationKeyLbl.Size = new System.Drawing.Size(99, 13);
-            this.AuthenticationKeyLbl.TabIndex = 45;
-            this.AuthenticationKeyLbl.Text = "Authentication Key:";
-            // 
-            // BlockCipherKeyLbl
-            // 
-            this.BlockCipherKeyLbl.AutoSize = true;
-            this.BlockCipherKeyLbl.Location = new System.Drawing.Point(8, 58);
-            this.BlockCipherKeyLbl.Name = "BlockCipherKeyLbl";
-            this.BlockCipherKeyLbl.Size = new System.Drawing.Size(91, 13);
-            this.BlockCipherKeyLbl.TabIndex = 44;
-            this.BlockCipherKeyLbl.Text = "Block Cipher Key:";
-            // 
-            // SystemtitleLbl
-            // 
-            this.SystemtitleLbl.AutoSize = true;
-            this.SystemtitleLbl.Location = new System.Drawing.Point(8, 32);
-            this.SystemtitleLbl.Name = "SystemtitleLbl";
-            this.SystemtitleLbl.Size = new System.Drawing.Size(63, 13);
-            this.SystemtitleLbl.TabIndex = 43;
-            this.SystemtitleLbl.Text = "System title:";
-            // 
-            // SecurityLbl
-            // 
-            this.SecurityLbl.AutoSize = true;
-            this.SecurityLbl.Location = new System.Drawing.Point(8, 6);
-            this.SecurityLbl.Name = "SecurityLbl";
-            this.SecurityLbl.Size = new System.Drawing.Size(48, 13);
-            this.SecurityLbl.TabIndex = 40;
-            this.SecurityLbl.Text = "Security:";
-            // 
             // DeviceSettingsTab
             // 
             this.DeviceSettingsTab.Controls.Add(this.InterfaceCb);
@@ -1037,7 +837,7 @@ namespace GXDLMSDirector
             this.DeviceSettingsTab.Name = "DeviceSettingsTab";
             this.DeviceSettingsTab.Padding = new System.Windows.Forms.Padding(3);
             this.helpProvider1.SetShowHelp(this.DeviceSettingsTab, true);
-            this.DeviceSettingsTab.Size = new System.Drawing.Size(472, 388);
+            this.DeviceSettingsTab.Size = new System.Drawing.Size(511, 388);
             this.DeviceSettingsTab.TabIndex = 0;
             this.DeviceSettingsTab.Text = "Device Settings";
             this.DeviceSettingsTab.UseVisualStyleBackColor = true;
@@ -1598,9 +1398,9 @@ namespace GXDLMSDirector
             this.DeviceTab.Controls.Add(this.AdvancedTab);
             this.DeviceTab.Controls.Add(this.HdlcFrameTab);
             this.DeviceTab.Controls.Add(this.PlcFrame);
+            this.DeviceTab.Controls.Add(this.PduFrame);
             this.DeviceTab.Controls.Add(this.SupportedServicesTab);
             this.DeviceTab.Controls.Add(this.CipheringTab);
-            this.DeviceTab.Controls.Add(this.CertificatesTab);
             this.DeviceTab.Controls.Add(this.GatewayTab);
             this.DeviceTab.Controls.Add(this.XmlTab);
             this.helpProvider1.SetHelpKeyword(this.DeviceTab, "DeviceProperties");
@@ -1609,7 +1409,7 @@ namespace GXDLMSDirector
             this.DeviceTab.Name = "DeviceTab";
             this.DeviceTab.SelectedIndex = 0;
             this.helpProvider1.SetShowHelp(this.DeviceTab, true);
-            this.DeviceTab.Size = new System.Drawing.Size(480, 414);
+            this.DeviceTab.Size = new System.Drawing.Size(519, 414);
             this.DeviceTab.TabIndex = 0;
             this.DeviceTab.SelectedIndexChanged += new System.EventHandler(this.DeviceTab_SelectedIndexChanged);
             // 
@@ -1637,7 +1437,7 @@ namespace GXDLMSDirector
             this.AdvancedTab.Name = "AdvancedTab";
             this.AdvancedTab.Padding = new System.Windows.Forms.Padding(3);
             this.helpProvider1.SetShowHelp(this.AdvancedTab, true);
-            this.AdvancedTab.Size = new System.Drawing.Size(472, 388);
+            this.AdvancedTab.Size = new System.Drawing.Size(511, 388);
             this.AdvancedTab.TabIndex = 3;
             this.AdvancedTab.Text = "Advanced";
             this.AdvancedTab.UseVisualStyleBackColor = true;
@@ -1820,7 +1620,7 @@ namespace GXDLMSDirector
             this.HdlcFrameTab.Location = new System.Drawing.Point(4, 22);
             this.HdlcFrameTab.Name = "HdlcFrameTab";
             this.HdlcFrameTab.Padding = new System.Windows.Forms.Padding(3);
-            this.HdlcFrameTab.Size = new System.Drawing.Size(472, 388);
+            this.HdlcFrameTab.Size = new System.Drawing.Size(511, 388);
             this.HdlcFrameTab.TabIndex = 7;
             this.HdlcFrameTab.Text = "Frame";
             this.HdlcFrameTab.UseVisualStyleBackColor = true;
@@ -1961,7 +1761,7 @@ namespace GXDLMSDirector
             this.PlcFrame.Controls.Add(this.PlcGroup);
             this.PlcFrame.Location = new System.Drawing.Point(4, 22);
             this.PlcFrame.Name = "PlcFrame";
-            this.PlcFrame.Size = new System.Drawing.Size(472, 388);
+            this.PlcFrame.Size = new System.Drawing.Size(511, 388);
             this.PlcFrame.TabIndex = 8;
             this.PlcFrame.Text = "Frame";
             this.PlcFrame.UseVisualStyleBackColor = true;
@@ -2042,85 +1842,6 @@ namespace GXDLMSDirector
             this.MACSourceAddressLbl.TabIndex = 38;
             this.MACSourceAddressLbl.Text = "MAC Source Address:";
             // 
-            // CertificatesTab
-            // 
-            this.CertificatesTab.Controls.Add(this.CertificatesList);
-            this.CertificatesTab.Location = new System.Drawing.Point(4, 22);
-            this.CertificatesTab.Name = "CertificatesTab";
-            this.CertificatesTab.Size = new System.Drawing.Size(472, 388);
-            this.CertificatesTab.TabIndex = 6;
-            this.CertificatesTab.Text = "Certificates";
-            this.CertificatesTab.UseVisualStyleBackColor = true;
-            // 
-            // CertificatesList
-            // 
-            this.CertificatesList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.TypeCh,
-            this.SubjectCh,
-            this.ValidityCh,
-            this.KeyUsageCh});
-            this.CertificatesList.ContextMenuStrip = this.CertificateMenu;
-            this.CertificatesList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CertificatesList.FullRowSelect = true;
-            this.CertificatesList.HideSelection = false;
-            this.CertificatesList.Location = new System.Drawing.Point(0, 0);
-            this.CertificatesList.MultiSelect = false;
-            this.CertificatesList.Name = "CertificatesList";
-            this.CertificatesList.Size = new System.Drawing.Size(472, 388);
-            this.CertificatesList.SmallImageList = this.imageList1;
-            this.CertificatesList.TabIndex = 25;
-            this.CertificatesList.UseCompatibleStateImageBehavior = false;
-            this.CertificatesList.View = System.Windows.Forms.View.Details;
-            // 
-            // TypeCh
-            // 
-            this.TypeCh.Text = "Type";
-            this.TypeCh.Width = 72;
-            // 
-            // SubjectCh
-            // 
-            this.SubjectCh.Text = "Subject";
-            this.SubjectCh.Width = 100;
-            // 
-            // ValidityCh
-            // 
-            this.ValidityCh.Text = "Validity";
-            this.ValidityCh.Width = 106;
-            // 
-            // KeyUsageCh
-            // 
-            this.KeyUsageCh.Text = "Key Usage";
-            this.KeyUsageCh.Width = 355;
-            // 
-            // CertificateMenu
-            // 
-            this.CertificateMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.CertificateAddMnu,
-            this.CertificateRemoveMnu});
-            this.CertificateMenu.Name = "contextMenuStrip1";
-            this.CertificateMenu.Size = new System.Drawing.Size(118, 48);
-            // 
-            // CertificateAddMnu
-            // 
-            this.CertificateAddMnu.Name = "CertificateAddMnu";
-            this.CertificateAddMnu.Size = new System.Drawing.Size(117, 22);
-            this.CertificateAddMnu.Text = "Add..";
-            this.CertificateAddMnu.Click += new System.EventHandler(this.CertificateAddMnu_Click);
-            // 
-            // CertificateRemoveMnu
-            // 
-            this.CertificateRemoveMnu.Name = "CertificateRemoveMnu";
-            this.CertificateRemoveMnu.Size = new System.Drawing.Size(117, 22);
-            this.CertificateRemoveMnu.Text = "Remove";
-            this.CertificateRemoveMnu.Click += new System.EventHandler(this.CertificateRemoveMnu_Click);
-            // 
-            // imageList1
-            // 
-            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-            this.imageList1.TransparentColor = System.Drawing.Color.Magenta;
-            this.imageList1.Images.SetKeyName(0, "publicKey.png");
-            this.imageList1.Images.SetKeyName(1, "privateKey.png");
-            // 
             // GatewayTab
             // 
             this.GatewayTab.Controls.Add(this.UseGatewayCb);
@@ -2131,7 +1852,7 @@ namespace GXDLMSDirector
             this.GatewayTab.Controls.Add(this.NetworkIDLbl);
             this.GatewayTab.Location = new System.Drawing.Point(4, 22);
             this.GatewayTab.Name = "GatewayTab";
-            this.GatewayTab.Size = new System.Drawing.Size(472, 388);
+            this.GatewayTab.Size = new System.Drawing.Size(511, 388);
             this.GatewayTab.TabIndex = 5;
             this.GatewayTab.Text = "Gateway";
             this.GatewayTab.UseVisualStyleBackColor = true;
@@ -2203,7 +1924,7 @@ namespace GXDLMSDirector
             this.XmlTab.Controls.Add(this.textBox1);
             this.XmlTab.Location = new System.Drawing.Point(4, 22);
             this.XmlTab.Name = "XmlTab";
-            this.XmlTab.Size = new System.Drawing.Size(472, 388);
+            this.XmlTab.Size = new System.Drawing.Size(511, 388);
             this.XmlTab.TabIndex = 4;
             this.XmlTab.Text = "XML";
             this.XmlTab.UseVisualStyleBackColor = true;
@@ -2249,6 +1970,13 @@ namespace GXDLMSDirector
             this.textBox1.Size = new System.Drawing.Size(455, 352);
             this.textBox1.TabIndex = 0;
             // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Magenta;
+            this.imageList1.Images.SetKeyName(0, "publicKey.png");
+            this.imageList1.Images.SetKeyName(1, "privateKey.png");
+            // 
             // helpProvider1
             // 
             this.helpProvider1.HelpNamespace = "https://www.gurux.fi/GXDLMSDirector.DeviceProperties";
@@ -2270,13 +1998,58 @@ namespace GXDLMSDirector
             this.ShowAsHex.UseVisualStyleBackColor = true;
             this.ShowAsHex.CheckedChanged += new System.EventHandler(this.ShowAsHex_CheckedChanged);
             // 
+            // PduFrame
+            // 
+            this.PduFrame.Controls.Add(this.groupBox1);
+            this.PduFrame.Location = new System.Drawing.Point(4, 22);
+            this.PduFrame.Name = "PduFrame";
+            this.PduFrame.Padding = new System.Windows.Forms.Padding(3);
+            this.PduFrame.Size = new System.Drawing.Size(511, 388);
+            this.PduFrame.TabIndex = 9;
+            this.PduFrame.Text = "Framing";
+            this.PduFrame.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.PduWaitTimeTb);
+            this.groupBox1.Controls.Add(this.PduWaitTimelbl);
+            this.helpProvider1.SetHelpKeyword(this.groupBox1, "advanced");
+            this.helpProvider1.SetHelpNavigator(this.groupBox1, System.Windows.Forms.HelpNavigator.Topic);
+            this.groupBox1.Location = new System.Drawing.Point(8, 6);
+            this.groupBox1.Name = "groupBox1";
+            this.helpProvider1.SetShowHelp(this.groupBox1, true);
+            this.groupBox1.Size = new System.Drawing.Size(375, 149);
+            this.groupBox1.TabIndex = 61;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "PDU settings";
+            // 
+            // PduWaitTimelbl
+            // 
+            this.PduWaitTimelbl.AutoSize = true;
+            this.PduWaitTimelbl.Location = new System.Drawing.Point(10, 23);
+            this.PduWaitTimelbl.Name = "PduWaitTimelbl";
+            this.PduWaitTimelbl.Size = new System.Drawing.Size(51, 13);
+            this.PduWaitTimelbl.TabIndex = 38;
+            this.PduWaitTimelbl.Text = "Wait time";
+            // 
+            // PduWaitTimeTb
+            // 
+            this.helpProvider1.SetHelpKeyword(this.PduWaitTimeTb, "Password");
+            this.helpProvider1.SetHelpNavigator(this.PduWaitTimeTb, System.Windows.Forms.HelpNavigator.Topic);
+            this.helpProvider1.SetHelpString(this.PduWaitTimeTb, "Authentication is not used.");
+            this.PduWaitTimeTb.Location = new System.Drawing.Point(121, 23);
+            this.PduWaitTimeTb.Name = "PduWaitTimeTb";
+            this.helpProvider1.SetShowHelp(this.PduWaitTimeTb, true);
+            this.PduWaitTimeTb.Size = new System.Drawing.Size(139, 20);
+            this.PduWaitTimeTb.TabIndex = 42;
+            // 
             // DevicePropertiesForm
             // 
             this.AcceptButton = this.OKBtn;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.CancelBtn;
-            this.ClientSize = new System.Drawing.Size(479, 456);
+            this.ClientSize = new System.Drawing.Size(518, 456);
             this.Controls.Add(this.ShowAsHex);
             this.Controls.Add(this.InitialSettingsBtn);
             this.Controls.Add(this.DeviceTab);
@@ -2297,7 +2070,6 @@ namespace GXDLMSDirector
             this.LNSettings.ResumeLayout(false);
             this.LNSettings.PerformLayout();
             this.CipheringTab.ResumeLayout(false);
-            this.CipheringTab.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.DeviceSettingsTab.ResumeLayout(false);
@@ -2323,12 +2095,13 @@ namespace GXDLMSDirector
             this.PlcGroup.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MACTargetAddressTb)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MACSourceAddressTb)).EndInit();
-            this.CertificatesTab.ResumeLayout(false);
-            this.CertificateMenu.ResumeLayout(false);
             this.GatewayTab.ResumeLayout(false);
             this.GatewayTab.PerformLayout();
             this.XmlTab.ResumeLayout(false);
             this.XmlTab.PerformLayout();
+            this.PduFrame.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2341,14 +2114,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Button InitialSettingsBtn;
         private System.Windows.Forms.TabPage SupportedServicesTab;
         private System.Windows.Forms.TabPage CipheringTab;
-        private System.Windows.Forms.ComboBox SecurityCB;
-        private System.Windows.Forms.TextBox AuthenticationKeyTB;
-        private System.Windows.Forms.TextBox BlockCipherKeyTB;
-        private System.Windows.Forms.TextBox SystemTitleTB;
-        private System.Windows.Forms.Label AuthenticationKeyLbl;
-        private System.Windows.Forms.Label BlockCipherKeyLbl;
-        private System.Windows.Forms.Label SystemtitleLbl;
-        private System.Windows.Forms.Label SecurityLbl;
         private System.Windows.Forms.TabPage DeviceSettingsTab;
         private System.Windows.Forms.CheckBox VerboseModeCB;
         private System.Windows.Forms.CheckBox UseLNCB;
@@ -2421,13 +2186,8 @@ namespace GXDLMSDirector
         private System.Windows.Forms.CheckBox InformationReportCB;
         private System.Windows.Forms.CheckBox SNDataNotificationCB;
         private System.Windows.Forms.CheckBox ParameterizedAccessCB;
-        private System.Windows.Forms.CheckBox BlockCipherKeyAsciiCb;
-        private System.Windows.Forms.CheckBox AuthenticationKeyAsciiCb;
-        private System.Windows.Forms.CheckBox SystemTitleAsciiCb;
         private System.Windows.Forms.TextBox InvocationCounterTB;
         private System.Windows.Forms.Label InvocationCounterLbl;
-        private System.Windows.Forms.TextBox ChallengeTB;
-        private System.Windows.Forms.Label ChallengeLbl;
         private System.Windows.Forms.CheckBox PasswordAsciiCb;
         private System.Windows.Forms.GroupBox CustomSettings;
         private System.Windows.Forms.TabPage AdvancedTab;
@@ -2444,10 +2204,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ComboBox PriorityCb;
         private System.Windows.Forms.TextBox UserIdTb;
         private System.Windows.Forms.Label UserIDLbl;
-        private System.Windows.Forms.CheckBox UsePreEstablishedApplicationAssociations;
-        private System.Windows.Forms.TextBox ServerSystemTitle;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.CheckBox ServerSystemTitleAsciiCb;
         private System.Windows.Forms.ComboBox StandardCb;
         private System.Windows.Forms.Label StandardLbl;
         private System.Windows.Forms.TextBox FrameCounterTb;
@@ -2459,9 +2215,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button CopyBtn;
         private System.Windows.Forms.Button PasteFromClipboardBtn;
-        private System.Windows.Forms.CheckBox DedicatedKeyAsciiCb;
-        private System.Windows.Forms.TextBox DedicatedKeyTb;
-        private System.Windows.Forms.Label DedicatedKeyLbl;
         private System.Windows.Forms.TabPage GatewayTab;
         private System.Windows.Forms.CheckBox PhysicalDeviceAddressAsciiCb;
         private System.Windows.Forms.TextBox PhysicalDeviceAddressTb;
@@ -2477,17 +2230,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.CheckBox UseProtectedReleaseCb;
         private System.Windows.Forms.CheckBox IgnoreTimeStatusCb;
         private System.Windows.Forms.CheckBox IgnoreTimeZoneCb;
-        private System.Windows.Forms.TextBox ItalySystemTitleTb;
-        private System.Windows.Forms.TabPage CertificatesTab;
         private System.Windows.Forms.ImageList imageList1;
-        private System.Windows.Forms.ContextMenuStrip CertificateMenu;
-        private System.Windows.Forms.ToolStripMenuItem CertificateAddMnu;
-        private System.Windows.Forms.ToolStripMenuItem CertificateRemoveMnu;
-        private System.Windows.Forms.ListView CertificatesList;
-        private System.Windows.Forms.ColumnHeader TypeCh;
-        private System.Windows.Forms.ColumnHeader SubjectCh;
-        private System.Windows.Forms.ColumnHeader ValidityCh;
-        private System.Windows.Forms.ColumnHeader KeyUsageCh;
         private System.Windows.Forms.TabPage HdlcFrameTab;
         private System.Windows.Forms.GroupBox HdlcGroup;
         private System.Windows.Forms.CheckBox FrameSizeCb;
@@ -2508,5 +2251,12 @@ namespace GXDLMSDirector
         private System.Windows.Forms.CheckBox ShowAsHex;
         private System.Windows.Forms.NumericUpDown MACTargetAddressTb;
         private System.Windows.Forms.NumericUpDown MACSourceAddressTb;
+        private System.Windows.Forms.Panel SettingsPanel;
+        private System.Windows.Forms.CheckBox SNDeltaValueEncodingCb;
+        private System.Windows.Forms.CheckBox DeltaValueEncodingCb;
+        private System.Windows.Forms.TabPage PduFrame;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label PduWaitTimelbl;
+        private System.Windows.Forms.TextBox PduWaitTimeTb;
     }
 }

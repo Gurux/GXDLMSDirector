@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12169 $,
-//                  $Date: 2020-11-06 09:57:31 +0200 (pe, 06 marras 2020) $
+// Version:         $Revision: 12330 $,
+//                  $Date: 2021-02-23 15:17:30 +0200 (ti, 23 helmi 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -151,6 +151,7 @@ namespace GXDLMSDirector
             this.serialMonitorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.HdlcAddressResolverMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.PlcDiscoverMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.EcdsaKeysMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem13 = new System.Windows.Forms.ToolStripSeparator();
             this.settingsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.AddToScheduleMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -964,6 +965,7 @@ namespace GXDLMSDirector
             this.serialMonitorToolStripMenuItem,
             this.HdlcAddressResolverMnu,
             this.PlcDiscoverMnu,
+            this.EcdsaKeysMnu,
             this.toolStripMenuItem13,
             this.settingsToolStripMenuItem1,
             this.AddToScheduleMenu});
@@ -1088,6 +1090,13 @@ namespace GXDLMSDirector
             this.PlcDiscoverMnu.Size = new System.Drawing.Size(206, 22);
             this.PlcDiscoverMnu.Text = "PLC Discover...";
             this.PlcDiscoverMnu.Click += new System.EventHandler(this.SFSKPLCDiscoverMnu_Click);
+            // 
+            // EcdsaKeysMnu
+            // 
+            this.EcdsaKeysMnu.Name = "EcdsaKeysMnu";
+            this.EcdsaKeysMnu.Size = new System.Drawing.Size(206, 22);
+            this.EcdsaKeysMnu.Text = "ECDSA keys...";
+            this.EcdsaKeysMnu.Click += new System.EventHandler(this.EcdsaKeysMnu_Click);
             // 
             // toolStripMenuItem13
             // 
@@ -1324,7 +1333,7 @@ namespace GXDLMSDirector
             this.StatusLbl,
             this.toolStripStatusLabel1,
             this.ProgressBar});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 514);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 669);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(913, 22);
             this.statusStrip1.TabIndex = 5;
@@ -1741,7 +1750,7 @@ namespace GXDLMSDirector
             this.TreeView.Location = new System.Drawing.Point(4, 4);
             this.TreeView.Name = "TreeView";
             this.TreeView.Padding = new System.Windows.Forms.Padding(3);
-            this.TreeView.Size = new System.Drawing.Size(192, 439);
+            this.TreeView.Size = new System.Drawing.Size(192, 594);
             this.TreeView.TabIndex = 0;
             this.TreeView.Text = "Tree";
             this.TreeView.UseVisualStyleBackColor = true;
@@ -1756,7 +1765,7 @@ namespace GXDLMSDirector
             this.ObjectTree.Location = new System.Drawing.Point(3, 3);
             this.ObjectTree.Name = "ObjectTree";
             this.ObjectTree.SelectedImageIndex = 0;
-            this.ObjectTree.Size = new System.Drawing.Size(186, 433);
+            this.ObjectTree.Size = new System.Drawing.Size(186, 588);
             this.ObjectTree.TabIndex = 3;
             this.ObjectTree.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.ObjectTree_BeforeSelect);
             this.ObjectTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.ObjectTree_AfterSelect);
@@ -1772,14 +1781,14 @@ namespace GXDLMSDirector
             this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(200, 465);
+            this.tabControl1.Size = new System.Drawing.Size(200, 620);
             this.tabControl1.TabIndex = 10;
             // 
             // splitter1
             // 
             this.splitter1.Location = new System.Drawing.Point(200, 49);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(1, 465);
+            this.splitter1.Size = new System.Drawing.Size(1, 620);
             this.splitter1.TabIndex = 11;
             this.splitter1.TabStop = false;
             // 
@@ -1791,7 +1800,7 @@ namespace GXDLMSDirector
             this.panel1.Controls.Add(this.splitter3);
             this.panel1.Controls.Add(this.TraceView);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(201, 414);
+            this.panel1.Location = new System.Drawing.Point(201, 569);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(712, 100);
             this.panel1.TabIndex = 30;
@@ -2151,7 +2160,7 @@ namespace GXDLMSDirector
             // splitter2
             // 
             this.splitter2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.splitter2.Location = new System.Drawing.Point(201, 411);
+            this.splitter2.Location = new System.Drawing.Point(201, 566);
             this.splitter2.Name = "splitter2";
             this.splitter2.Size = new System.Drawing.Size(712, 3);
             this.splitter2.TabIndex = 31;
@@ -2285,10 +2294,10 @@ namespace GXDLMSDirector
             // 
             this.DeviceInfoView.Controls.Add(this.tabPage4);
             this.DeviceInfoView.Controls.Add(this.tabPage5);
-            this.DeviceInfoView.Location = new System.Drawing.Point(202, 52);
+            this.DeviceInfoView.Location = new System.Drawing.Point(203, 56);
             this.DeviceInfoView.Name = "DeviceInfoView";
             this.DeviceInfoView.SelectedIndex = 0;
-            this.DeviceInfoView.Size = new System.Drawing.Size(518, 281);
+            this.DeviceInfoView.Size = new System.Drawing.Size(518, 476);
             this.DeviceInfoView.TabIndex = 37;
             // 
             // tabPage4
@@ -2298,7 +2307,7 @@ namespace GXDLMSDirector
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(510, 255);
+            this.tabPage4.Size = new System.Drawing.Size(510, 450);
             this.tabPage4.TabIndex = 0;
             this.tabPage4.Text = "General";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -2314,7 +2323,7 @@ namespace GXDLMSDirector
             this.groupBox1.Controls.Add(this.NetworkIDLbl);
             this.groupBox1.Location = new System.Drawing.Point(2, 327);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(507, 0);
+            this.groupBox1.Size = new System.Drawing.Size(507, 195);
             this.groupBox1.TabIndex = 71;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Gateway";
@@ -2374,7 +2383,7 @@ namespace GXDLMSDirector
             this.DeviceGb.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DeviceGb.Location = new System.Drawing.Point(3, 3);
             this.DeviceGb.Name = "DeviceGb";
-            this.DeviceGb.Size = new System.Drawing.Size(504, 249);
+            this.DeviceGb.Size = new System.Drawing.Size(504, 444);
             this.DeviceGb.TabIndex = 13;
             this.DeviceGb.TabStop = false;
             // 
@@ -2443,7 +2452,7 @@ namespace GXDLMSDirector
             this.Ciphering.Controls.Add(this.SecurityLbl);
             this.Ciphering.Location = new System.Drawing.Point(0, 188);
             this.Ciphering.Name = "Ciphering";
-            this.Ciphering.Size = new System.Drawing.Size(507, 0);
+            this.Ciphering.Size = new System.Drawing.Size(507, 195);
             this.Ciphering.TabIndex = 68;
             this.Ciphering.TabStop = false;
             this.Ciphering.Text = "Ciphering";
@@ -2697,7 +2706,7 @@ namespace GXDLMSDirector
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(913, 536);
+            this.ClientSize = new System.Drawing.Size(913, 691);
             this.Controls.Add(this.DeviceListView);
             this.Controls.Add(this.DeviceInfoView);
             this.Controls.Add(this.tabControl2);
@@ -3030,6 +3039,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Button HelpBtn;
         private System.Windows.Forms.ToolStripMenuItem HdlcAddressResolverMnu;
         private System.Windows.Forms.ToolStripMenuItem PlcDiscoverMnu;
+        private System.Windows.Forms.ToolStripMenuItem EcdsaKeysMnu;
     }
 }
 

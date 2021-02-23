@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12310 $,
-//                  $Date: 2021-01-29 08:21:47 +0200 (pe, 29 tammi 2021) $
+// Version:         $Revision: 12330 $,
+//                  $Date: 2021-02-23 15:17:30 +0200 (ti, 23 helmi 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -47,6 +47,8 @@ using System.Threading;
 using Gurux.DLMS.Secure;
 using System.Collections.Generic;
 using System.Xml;
+using Gurux.DLMS.ASN;
+using Gurux.DLMS.Ecdsa;
 
 namespace GXDLMSDirector
 {
@@ -120,6 +122,18 @@ namespace GXDLMSDirector
             byte[] tmp = client.Read(it, attributeOrdinal)[0];
             GXLogWriter.WriteLog(string.Format("Reading object {0}, interface {1}", it.LogicalName, it.ObjectType), tmp);
             return tmp;
+        }
+
+        /// <summary>
+        /// Read or write multiple items with one request.
+        /// </summary>
+        /// <param name="time"></param>
+        /// <param name="list"></param>
+        public void AccessRequest(DateTime time, List<GXDLMSAccessItem> list)
+        {
+            GXReplyData reply = new GXReplyData();
+            ReadDataBlock(client.AccessRequest(time, list), "Access Request", reply);
+            client.ParseAccessResponse(list, reply.Data);
         }
 
         public byte[][] Read(GXDLMSObject it, int attributeOrdinal, string parameters)
@@ -299,7 +313,7 @@ namespace GXDLMSDirector
             bool succeeded = false;
             ReceiveParameters<byte[]> p = new ReceiveParameters<byte[]>()
             {
-                AllData = false,
+                AllData = client.InterfaceType == InterfaceType.PDU,
                 Eop = eop,
                 Count = eop == null ? 8 : 5,
                 WaitTime = parent.WaitTime * 1000,
@@ -357,6 +371,14 @@ namespace GXDLMSDirector
                 try
                 {
                     pos = 0;
+                    if (client.InterfaceType == InterfaceType.PDU)
+                    {
+                        p.WaitTime = client.Pdu.WaitTime;
+                        p.Reply = null;
+                        p.Count = 1;
+                        media.Receive(p);
+                    }
+
                     while (rd.GetUInt8(0) == '\t')
                     {
                         pos = 1;
@@ -851,7 +873,20 @@ namespace GXDLMSDirector
                     client.ServerAddressSize = parent.ServerAddressSize;
                 }
             }
-            client.Ciphering.Security = (byte)parent.Security;
+            client.Ciphering.Security = parent.Security;
+            client.Ciphering.SecuritySuite = parent.SecuritySuite;
+            client.Ciphering.KeyAgreementScheme = parent.KeyAgreementScheme;
+            if (client.Authentication == Authentication.HighECDSA ||
+                (client.Ciphering.Security != Security.None &&
+                parent.SecuritySuite != SecuritySuite.GMac))
+            {
+                GXPkcs8 pk = GXPkcs8.FromDer(parent.ClientAgreementKey);
+                GXx509Certificate pub = GXx509Certificate.FromDer(parent.ServerAgreementKey);
+                client.Ciphering.KeyAgreementKeyPair = new KeyValuePair<GXPrivateKey, GXPublicKey>(pk.PrivateKey, pub.PublicKey);
+                pk = GXPkcs8.FromDer(parent.ClientSigningKey);
+                pub = GXx509Certificate.FromDer(parent.ServerSigningKey);
+                client.Ciphering.SigningKeyPair = new KeyValuePair<GXPrivateKey, GXPublicKey>(pk.PrivateKey, pub.PublicKey);
+            }
             if (parent.SystemTitle != null && parent.BlockCipherKey != null && parent.AuthenticationKey != null)
             {
                 client.Ciphering.SystemTitle = GXCommon.HexToBytes(parent.SystemTitle);
@@ -959,13 +994,6 @@ namespace GXDLMSDirector
                 media.Trace = System.Diagnostics.TraceLevel.Off;
                 media.OnTrace -= new TraceEventHandler(Media_OnTrace);
             }
-
-            //If network media is used check is manufacturer supporting IEC 62056-47
-            if (client.InterfaceType == InterfaceType.WRAPPER && (parent.UseRemoteSerial || this.media is GXSerial))
-            {
-                client.InterfaceType = InterfaceType.HDLC;
-            }
-
             client.ClientAddress = parent.ClientAddress;
             if (parent.HDLCAddressing == HDLCAddressType.SerialNumber)
             {
@@ -991,7 +1019,7 @@ namespace GXDLMSDirector
                     client.ServerAddress = Convert.ToInt32(parent.PhysicalAddress);
                 }
             }
-            client.Ciphering.Security = (byte)parent.Security;
+            client.Ciphering.Security = parent.Security;
             if (parent.SystemTitle != null && parent.BlockCipherKey != null && parent.AuthenticationKey != null)
             {
                 client.Ciphering.SystemTitle = GXCommon.HexToBytes(parent.SystemTitle);
@@ -1084,13 +1112,13 @@ namespace GXDLMSDirector
                     reply.Clear();
                     int add = client.ClientAddress;
                     Authentication auth = client.Authentication;
-                    byte security = client.Ciphering.Security;
+                    Security security = client.Ciphering.Security;
                     byte[] challenge = client.CtoSChallenge;
                     try
                     {
                         client.ClientAddress = 16;
                         client.Authentication = Authentication.None;
-                        client.Ciphering.Security = (byte)Security.None;
+                        client.Ciphering.Security = Security.None;
 
                         data = SNRMRequest();
                         if (data != null)
@@ -1647,7 +1675,7 @@ namespace GXDLMSDirector
                     {
                         OnBeforeRead(client, obj, it, null, null, null);
                     }
-                    byte[] data = client.Read(obj.Name, obj.ObjectType, it)[0];
+                    byte[][] data = client.Read(obj.Name, obj.ObjectType, it);
                     try
                     {
                         ReadDataBlock(data, "Read object type " + obj.ObjectType + " index: " + it, reply);

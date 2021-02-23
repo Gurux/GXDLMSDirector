@@ -77,6 +77,7 @@ namespace GXDLMSDirector
         {
             _eventsTranslator = eventsTranslator;
             InitializeComponent();
+            CertificationServerTb.Text = Properties.Settings.Default.GeneratorAddress;
             try
             {
                 //Show notification settings.
@@ -237,6 +238,7 @@ namespace GXDLMSDirector
                 {
                     checkUpdates.Cancel();
                 }
+                Properties.Settings.Default.GeneratorAddress = CertificationServerTb.Text;
             }
             catch (Exception Ex)
             {

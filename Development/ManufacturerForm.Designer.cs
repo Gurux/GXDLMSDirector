@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12169 $,
-//                  $Date: 2020-11-06 09:57:31 +0200 (pe, 06 marras 2020) $
+// Version:         $Revision: 12330 $,
+//                  $Date: 2021-02-23 15:17:30 +0200 (ti, 23 helmi 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -93,6 +93,16 @@ namespace GXDLMSDirector
             this.UseUtcTimeZone = new System.Windows.Forms.CheckBox();
             this.StandardCb = new System.Windows.Forms.ComboBox();
             this.StandardLbl = new System.Windows.Forms.Label();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.WrapperCb = new System.Windows.Forms.CheckBox();
+            this.WiSunCb = new System.Windows.Forms.CheckBox();
+            this.LpWanCb = new System.Windows.Forms.CheckBox();
+            this.PlcHdlcCb = new System.Windows.Forms.CheckBox();
+            this.PlcCb = new System.Windows.Forms.CheckBox();
+            this.WirelessMBusCb = new System.Windows.Forms.CheckBox();
+            this.HdlcWithModeECb = new System.Windows.Forms.CheckBox();
+            this.HdlcCb = new System.Windows.Forms.CheckBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.BlockCipherKeyAsciiCb = new System.Windows.Forms.CheckBox();
             this.AuthenticationKeyAsciiCb = new System.Windows.Forms.CheckBox();
@@ -107,16 +117,9 @@ namespace GXDLMSDirector
             this.SecurityLbl = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.InfoTB = new System.Windows.Forms.TextBox();
-            this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.HdlcCb = new System.Windows.Forms.CheckBox();
-            this.HdlcWithModeECb = new System.Windows.Forms.CheckBox();
-            this.WirelessMBusCb = new System.Windows.Forms.CheckBox();
-            this.PlcCb = new System.Windows.Forms.CheckBox();
-            this.PlcHdlcCb = new System.Windows.Forms.CheckBox();
-            this.LpWanCb = new System.Windows.Forms.CheckBox();
-            this.WiSunCb = new System.Windows.Forms.CheckBox();
-            this.WrapperCb = new System.Windows.Forms.CheckBox();
+            this.WiredMBusCb = new System.Windows.Forms.CheckBox();
+            this.PLCPrimeCb = new System.Windows.Forms.CheckBox();
+            this.RawPDUCb = new System.Windows.Forms.CheckBox();
             this.AddressingGB.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ClientAddTB)).BeginInit();
@@ -125,10 +128,10 @@ namespace GXDLMSDirector
             ((System.ComponentModel.ISupportInitialize)(this.LogicalServerAddTB)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            this.tabPage3.SuspendLayout();
-            this.tabPage2.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // OKBtn
@@ -467,6 +470,118 @@ namespace GXDLMSDirector
             this.StandardLbl.TabIndex = 42;
             this.StandardLbl.Text = "Standard:";
             // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.groupBox3);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(404, 373);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "Interfaces";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.RawPDUCb);
+            this.groupBox3.Controls.Add(this.PLCPrimeCb);
+            this.groupBox3.Controls.Add(this.WiredMBusCb);
+            this.groupBox3.Controls.Add(this.WrapperCb);
+            this.groupBox3.Controls.Add(this.WiSunCb);
+            this.groupBox3.Controls.Add(this.LpWanCb);
+            this.groupBox3.Controls.Add(this.PlcHdlcCb);
+            this.groupBox3.Controls.Add(this.PlcCb);
+            this.groupBox3.Controls.Add(this.WirelessMBusCb);
+            this.groupBox3.Controls.Add(this.HdlcWithModeECb);
+            this.groupBox3.Controls.Add(this.HdlcCb);
+            this.groupBox3.Location = new System.Drawing.Point(7, 6);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(391, 361);
+            this.groupBox3.TabIndex = 0;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Supported interfaces";
+            // 
+            // WrapperCb
+            // 
+            this.WrapperCb.AutoSize = true;
+            this.WrapperCb.Location = new System.Drawing.Point(15, 64);
+            this.WrapperCb.Name = "WrapperCb";
+            this.WrapperCb.Size = new System.Drawing.Size(81, 17);
+            this.WrapperCb.TabIndex = 2;
+            this.WrapperCb.Text = "WRAPPER";
+            this.WrapperCb.UseVisualStyleBackColor = true;
+            this.WrapperCb.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
+            // WiSunCb
+            // 
+            this.WiSunCb.AutoSize = true;
+            this.WiSunCb.Location = new System.Drawing.Point(15, 177);
+            this.WiSunCb.Name = "WiSunCb";
+            this.WiSunCb.Size = new System.Drawing.Size(158, 17);
+            this.WiSunCb.TabIndex = 7;
+            this.WiSunCb.Text = "Wi-SUN FAN mesh network";
+            this.WiSunCb.UseVisualStyleBackColor = true;
+            // 
+            // LpWanCb
+            // 
+            this.LpWanCb.AutoSize = true;
+            this.LpWanCb.Location = new System.Drawing.Point(15, 154);
+            this.LpWanCb.Name = "LpWanCb";
+            this.LpWanCb.Size = new System.Drawing.Size(225, 17);
+            this.LpWanCb.TabIndex = 6;
+            this.LpWanCb.Text = "LowPower Wide Area Networks (LPWAN)";
+            this.LpWanCb.UseVisualStyleBackColor = true;
+            // 
+            // PlcHdlcCb
+            // 
+            this.PlcHdlcCb.AutoSize = true;
+            this.PlcHdlcCb.Location = new System.Drawing.Point(15, 131);
+            this.PlcHdlcCb.Name = "PlcHdlcCb";
+            this.PlcHdlcCb.Size = new System.Drawing.Size(100, 17);
+            this.PlcHdlcCb.TabIndex = 5;
+            this.PlcHdlcCb.Text = "PLC with HDLC";
+            this.PlcHdlcCb.UseVisualStyleBackColor = true;
+            // 
+            // PlcCb
+            // 
+            this.PlcCb.AutoSize = true;
+            this.PlcCb.Location = new System.Drawing.Point(15, 108);
+            this.PlcCb.Name = "PlcCb";
+            this.PlcCb.Size = new System.Drawing.Size(46, 17);
+            this.PlcCb.TabIndex = 4;
+            this.PlcCb.Text = "PLC";
+            this.PlcCb.UseVisualStyleBackColor = true;
+            // 
+            // WirelessMBusCb
+            // 
+            this.WirelessMBusCb.AutoSize = true;
+            this.WirelessMBusCb.Location = new System.Drawing.Point(15, 85);
+            this.WirelessMBusCb.Name = "WirelessMBusCb";
+            this.WirelessMBusCb.Size = new System.Drawing.Size(99, 17);
+            this.WirelessMBusCb.TabIndex = 3;
+            this.WirelessMBusCb.Text = "Wireless M-Bus";
+            this.WirelessMBusCb.UseVisualStyleBackColor = true;
+            // 
+            // HdlcWithModeECb
+            // 
+            this.HdlcWithModeECb.AutoSize = true;
+            this.HdlcWithModeECb.Location = new System.Drawing.Point(15, 42);
+            this.HdlcWithModeECb.Name = "HdlcWithModeECb";
+            this.HdlcWithModeECb.Size = new System.Drawing.Size(113, 17);
+            this.HdlcWithModeECb.TabIndex = 1;
+            this.HdlcWithModeECb.Text = "Hdlc With Mode E";
+            this.HdlcWithModeECb.UseVisualStyleBackColor = true;
+            // 
+            // HdlcCb
+            // 
+            this.HdlcCb.AutoSize = true;
+            this.HdlcCb.Location = new System.Drawing.Point(15, 19);
+            this.HdlcCb.Name = "HdlcCb";
+            this.HdlcCb.Size = new System.Drawing.Size(55, 17);
+            this.HdlcCb.TabIndex = 0;
+            this.HdlcCb.Text = "HDLC";
+            this.HdlcCb.UseVisualStyleBackColor = true;
+            // 
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.BlockCipherKeyAsciiCb);
@@ -613,114 +728,35 @@ namespace GXDLMSDirector
             this.InfoTB.Size = new System.Drawing.Size(398, 367);
             this.InfoTB.TabIndex = 1;
             // 
-            // tabPage4
+            // WiredMBusCb
             // 
-            this.tabPage4.Controls.Add(this.groupBox3);
-            this.tabPage4.Location = new System.Drawing.Point(4, 22);
-            this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(404, 373);
-            this.tabPage4.TabIndex = 3;
-            this.tabPage4.Text = "Interfaces";
-            this.tabPage4.UseVisualStyleBackColor = true;
+            this.WiredMBusCb.AutoSize = true;
+            this.WiredMBusCb.Location = new System.Drawing.Point(15, 226);
+            this.WiredMBusCb.Name = "WiredMBusCb";
+            this.WiredMBusCb.Size = new System.Drawing.Size(87, 17);
+            this.WiredMBusCb.TabIndex = 9;
+            this.WiredMBusCb.Text = "Wired M-Bus";
+            this.WiredMBusCb.UseVisualStyleBackColor = true;
             // 
-            // groupBox3
+            // PLCPrimeCb
             // 
-            this.groupBox3.Controls.Add(this.WrapperCb);
-            this.groupBox3.Controls.Add(this.WiSunCb);
-            this.groupBox3.Controls.Add(this.LpWanCb);
-            this.groupBox3.Controls.Add(this.PlcHdlcCb);
-            this.groupBox3.Controls.Add(this.PlcCb);
-            this.groupBox3.Controls.Add(this.WirelessMBusCb);
-            this.groupBox3.Controls.Add(this.HdlcWithModeECb);
-            this.groupBox3.Controls.Add(this.HdlcCb);
-            this.groupBox3.Location = new System.Drawing.Point(7, 6);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(391, 361);
-            this.groupBox3.TabIndex = 0;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Supported interfaces";
+            this.PLCPrimeCb.AutoSize = true;
+            this.PLCPrimeCb.Location = new System.Drawing.Point(15, 200);
+            this.PLCPrimeCb.Name = "PLCPrimeCb";
+            this.PLCPrimeCb.Size = new System.Drawing.Size(78, 17);
+            this.PLCPrimeCb.TabIndex = 8;
+            this.PLCPrimeCb.Text = "PLC Prime ";
+            this.PLCPrimeCb.UseVisualStyleBackColor = true;
             // 
-            // HdlcCb
+            // RawPDUCb
             // 
-            this.HdlcCb.AutoSize = true;
-            this.HdlcCb.Location = new System.Drawing.Point(15, 19);
-            this.HdlcCb.Name = "HdlcCb";
-            this.HdlcCb.Size = new System.Drawing.Size(55, 17);
-            this.HdlcCb.TabIndex = 0;
-            this.HdlcCb.Text = "HDLC";
-            this.HdlcCb.UseVisualStyleBackColor = true;
-            // 
-            // HdlcWithModeECb
-            // 
-            this.HdlcWithModeECb.AutoSize = true;
-            this.HdlcWithModeECb.Location = new System.Drawing.Point(15, 42);
-            this.HdlcWithModeECb.Name = "HdlcWithModeECb";
-            this.HdlcWithModeECb.Size = new System.Drawing.Size(113, 17);
-            this.HdlcWithModeECb.TabIndex = 1;
-            this.HdlcWithModeECb.Text = "Hdlc With Mode E";
-            this.HdlcWithModeECb.UseVisualStyleBackColor = true;
-            // 
-            // WirelessMBusCb
-            // 
-            this.WirelessMBusCb.AutoSize = true;
-            this.WirelessMBusCb.Location = new System.Drawing.Point(15, 85);
-            this.WirelessMBusCb.Name = "WirelessMBusCb";
-            this.WirelessMBusCb.Size = new System.Drawing.Size(99, 17);
-            this.WirelessMBusCb.TabIndex = 3;
-            this.WirelessMBusCb.Text = "Wireless M-Bus";
-            this.WirelessMBusCb.UseVisualStyleBackColor = true;
-            // 
-            // PlcCb
-            // 
-            this.PlcCb.AutoSize = true;
-            this.PlcCb.Location = new System.Drawing.Point(15, 108);
-            this.PlcCb.Name = "PlcCb";
-            this.PlcCb.Size = new System.Drawing.Size(46, 17);
-            this.PlcCb.TabIndex = 4;
-            this.PlcCb.Text = "PLC";
-            this.PlcCb.UseVisualStyleBackColor = true;
-            // 
-            // PlcHdlcCb
-            // 
-            this.PlcHdlcCb.AutoSize = true;
-            this.PlcHdlcCb.Location = new System.Drawing.Point(15, 131);
-            this.PlcHdlcCb.Name = "PlcHdlcCb";
-            this.PlcHdlcCb.Size = new System.Drawing.Size(100, 17);
-            this.PlcHdlcCb.TabIndex = 5;
-            this.PlcHdlcCb.Text = "PLC with HDLC";
-            this.PlcHdlcCb.UseVisualStyleBackColor = true;
-            // 
-            // LpWanCb
-            // 
-            this.LpWanCb.AutoSize = true;
-            this.LpWanCb.Location = new System.Drawing.Point(15, 154);
-            this.LpWanCb.Name = "LpWanCb";
-            this.LpWanCb.Size = new System.Drawing.Size(225, 17);
-            this.LpWanCb.TabIndex = 6;
-            this.LpWanCb.Text = "LowPower Wide Area Networks (LPWAN)";
-            this.LpWanCb.UseVisualStyleBackColor = true;
-            // 
-            // WiSunCb
-            // 
-            this.WiSunCb.AutoSize = true;
-            this.WiSunCb.Location = new System.Drawing.Point(15, 177);
-            this.WiSunCb.Name = "WiSunCb";
-            this.WiSunCb.Size = new System.Drawing.Size(158, 17);
-            this.WiSunCb.TabIndex = 7;
-            this.WiSunCb.Text = "Wi-SUN FAN mesh network";
-            this.WiSunCb.UseVisualStyleBackColor = true;
-            // 
-            // WrapperCb
-            // 
-            this.WrapperCb.AutoSize = true;
-            this.WrapperCb.Location = new System.Drawing.Point(15, 64);
-            this.WrapperCb.Name = "WrapperCb";
-            this.WrapperCb.Size = new System.Drawing.Size(81, 17);
-            this.WrapperCb.TabIndex = 2;
-            this.WrapperCb.Text = "WRAPPER";
-            this.WrapperCb.UseVisualStyleBackColor = true;
-            this.WrapperCb.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.RawPDUCb.AutoSize = true;
+            this.RawPDUCb.Location = new System.Drawing.Point(15, 249);
+            this.RawPDUCb.Name = "RawPDUCb";
+            this.RawPDUCb.Size = new System.Drawing.Size(74, 17);
+            this.RawPDUCb.TabIndex = 10;
+            this.RawPDUCb.Text = "Raw PDU";
+            this.RawPDUCb.UseVisualStyleBackColor = true;
             // 
             // ManufacturerForm
             // 
@@ -749,13 +785,13 @@ namespace GXDLMSDirector
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            this.tabPage4.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
-            this.tabPage4.ResumeLayout(false);
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -817,5 +853,8 @@ namespace GXDLMSDirector
         private System.Windows.Forms.CheckBox PlcCb;
         private System.Windows.Forms.CheckBox WiSunCb;
         private System.Windows.Forms.CheckBox WrapperCb;
+        private System.Windows.Forms.CheckBox WiredMBusCb;
+        private System.Windows.Forms.CheckBox PLCPrimeCb;
+        private System.Windows.Forms.CheckBox RawPDUCb;
     }
 }

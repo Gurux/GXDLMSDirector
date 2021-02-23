@@ -661,18 +661,6 @@ namespace GXDLMSDirector.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Certificates {
-            get {
-                return ((string)(this["Certificates"]));
-            }
-            set {
-                this["Certificates"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool HdlcAddressUseOpticalProbe {
             get {
@@ -800,6 +788,90 @@ namespace GXDLMSDirector.Properties {
             }
             set {
                 this["PlcSerialSettingsActiveInitiator"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int SecuritySuite {
+            get {
+                return ((int)(this["SecuritySuite"]));
+            }
+            set {
+                this["SecuritySuite"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ClientSigningKey {
+            get {
+                return ((string)(this["ClientSigningKey"]));
+            }
+            set {
+                this["ClientSigningKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ClientAgreementKey {
+            get {
+                return ((string)(this["ClientAgreementKey"]));
+            }
+            set {
+                this["ClientAgreementKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ServerSigningKey {
+            get {
+                return ((string)(this["ServerSigningKey"]));
+            }
+            set {
+                this["ServerSigningKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ServerAgreementKey {
+            get {
+                return ((string)(this["ServerAgreementKey"]));
+            }
+            set {
+                this["ServerAgreementKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://certificates.gurux.fi/api/CertificateGenerator")]
+        public string GeneratorAddress {
+            get {
+                return ((string)(this["GeneratorAddress"]));
+            }
+            set {
+                this["GeneratorAddress"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int KeyAgreementScheme {
+            get {
+                return ((int)(this["KeyAgreementScheme"]));
+            }
+            set {
+                this["KeyAgreementScheme"] = value;
             }
         }
     }

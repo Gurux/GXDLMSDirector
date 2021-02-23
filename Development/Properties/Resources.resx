@@ -142,9 +142,6 @@
   <data name="ExternalMediaNoUpdates" xml:space="preserve">
     <value>No updates available.</value>
   </data>
-  <data name="String1" xml:space="preserve">
-    <value />
-  </data>
   <data name="ReadAssociationView" xml:space="preserve">
     <value>You need to read Association view to see all objects what the meter can offer. Do you want to do it now?</value>
   </data>

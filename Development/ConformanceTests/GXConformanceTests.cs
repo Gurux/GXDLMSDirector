@@ -2441,14 +2441,15 @@ namespace GXDLMSDirector
             }
             catch (TimeoutException)
             {
-                AddError(test, dev, output.Errors, "Timeout.");
-                passed = false;
+                passed = true;
             }
             catch (Exception)
             {
                 AddInfo(test, dev, output.Info, "Illegal frame succeeded.");
             }
-            Thread.Sleep(2000);
+            GXDLMSObjectCollection objs = dev.Comm.client.Objects.GetObjects(ObjectType.IecHdlcSetup);
+            GXDLMSHdlcSetup s = (GXDLMSHdlcSetup)objs[0];
+            Thread.Sleep(s.InactivityTimeout * 1000);
             //Check that meter is Normal Response Mode.
             try
             {
@@ -2610,7 +2611,7 @@ namespace GXDLMSDirector
                             passed = false;
                         }
                         test.OnTrace(test, "Testing inactivity timeout and sleeping for " + s.InactivityTimeout + " seconds.\r\n");
-                        Thread.Sleep((1 + s.InactivityTimeout) * 1000);
+                        Thread.Sleep((int) Math.Floor(s.InactivityTimeout * 1000 * 1.1));
                         try
                         {
                             reply.Clear();
@@ -4800,184 +4801,194 @@ namespace GXDLMSDirector
             {
                 return;
             }
-            if (!settings.ExcludedHdlcTests.ExcludeTest1)
+            int resendCount = dev.ResendCount;
+            try
             {
-                Test1(test, settings, dev, output, tryCount);
-                if (!Continue)
+                //HDLC tests are not re-send. It will broke some of the tests.
+                dev.ResendCount = 1;
+                if (!settings.ExcludedHdlcTests.ExcludeTest1)
                 {
-                    return;
+                    Test1(test, settings, dev, output, tryCount);
+                    if (!Continue)
+                    {
+                        return;
+                    }
                 }
-            }
-            if (!settings.ExcludedHdlcTests.ExcludeTest2)
-            {
-                Test2(test, settings, dev, output, tryCount);
-                if (!Continue)
+                if (!settings.ExcludedHdlcTests.ExcludeTest2)
                 {
-                    return;
+                    Test2(test, settings, dev, output, tryCount);
+                    if (!Continue)
+                    {
+                        return;
+                    }
                 }
-            }
 
-            if (!settings.ExcludedHdlcTests.ExcludeTest3)
-            {
-                Test3(test, settings, dev, output, tryCount);
-                if (!Continue)
+                if (!settings.ExcludedHdlcTests.ExcludeTest3)
                 {
-                    return;
+                    Test3(test, settings, dev, output, tryCount);
+                    if (!Continue)
+                    {
+                        return;
+                    }
                 }
-            }
-            if (!settings.ExcludedHdlcTests.ExcludeTest4)
-            {
-                Test4(test, settings, dev, output, tryCount);
-                if (!Continue)
+                if (!settings.ExcludedHdlcTests.ExcludeTest4)
                 {
-                    return;
+                    Test4(test, settings, dev, output, tryCount);
+                    if (!Continue)
+                    {
+                        return;
+                    }
                 }
-            }
 
-            if (!settings.ExcludedHdlcTests.ExcludeTest5)
-            {
-                Test5(test, settings, dev, output, tryCount);
-                if (!Continue)
+                if (!settings.ExcludedHdlcTests.ExcludeTest5)
                 {
-                    return;
+                    Test5(test, settings, dev, output, tryCount);
+                    if (!Continue)
+                    {
+                        return;
+                    }
                 }
-            }
-            if (!settings.ExcludedHdlcTests.ExcludeTest6)
-            {
-                Test6(test, settings, dev, output, tryCount);
-                if (!Continue)
+                if (!settings.ExcludedHdlcTests.ExcludeTest6)
                 {
-                    return;
+                    Test6(test, settings, dev, output, tryCount);
+                    if (!Continue)
+                    {
+                        return;
+                    }
                 }
-            }
-            if (!settings.ExcludedHdlcTests.ExcludeTest7)
-            {
-                Test7(test, settings, dev, output, tryCount);
-                if (!Continue)
+                if (!settings.ExcludedHdlcTests.ExcludeTest7)
                 {
-                    return;
+                    Test7(test, settings, dev, output, tryCount);
+                    if (!Continue)
+                    {
+                        return;
+                    }
                 }
-            }
-            if (!settings.ExcludedHdlcTests.ExcludeTest8)
-            {
-                Test8(test, settings, dev, output, tryCount);
-                if (!Continue)
+                if (!settings.ExcludedHdlcTests.ExcludeTest8)
                 {
-                    return;
+                    Test8(test, settings, dev, output, tryCount);
+                    if (!Continue)
+                    {
+                        return;
+                    }
                 }
-            }
-            if (!settings.ExcludedHdlcTests.ExcludeTest9)
-            {
-                Test9(test, settings, dev, output, tryCount);
-                if (!Continue)
+                if (!settings.ExcludedHdlcTests.ExcludeTest9)
                 {
-                    return;
+                    Test9(test, settings, dev, output, tryCount);
+                    if (!Continue)
+                    {
+                        return;
+                    }
                 }
-            }
-            if (!settings.ExcludedHdlcTests.ExcludeTest10)
-            {
-                Test10(test, settings, dev, output, tryCount);
-                if (!Continue)
+                if (!settings.ExcludedHdlcTests.ExcludeTest10)
                 {
-                    return;
+                    Test10(test, settings, dev, output, tryCount);
+                    if (!Continue)
+                    {
+                        return;
+                    }
                 }
-            }
-            if (!settings.ExcludedHdlcTests.ExcludeTest11)
-            {
-                Test11(test, settings, dev, output, tryCount);
-                if (!Continue)
+                if (!settings.ExcludedHdlcTests.ExcludeTest11)
                 {
-                    return;
+                    Test11(test, settings, dev, output, tryCount);
+                    if (!Continue)
+                    {
+                        return;
+                    }
                 }
-            }
-            if (!settings.ExcludedHdlcTests.ExcludeTest12)
-            {
-                Test12(test, settings, dev, output, tryCount);
-                if (!Continue)
+                if (!settings.ExcludedHdlcTests.ExcludeTest12)
                 {
-                    return;
+                    Test12(test, settings, dev, output, tryCount);
+                    if (!Continue)
+                    {
+                        return;
+                    }
                 }
-            }
-            if (!settings.ExcludedHdlcTests.ExcludeTest13)
-            {
-                Test13(test, settings, dev, output, tryCount);
-                if (!Continue)
+                if (!settings.ExcludedHdlcTests.ExcludeTest13)
                 {
-                    return;
+                    Test13(test, settings, dev, output, tryCount);
+                    if (!Continue)
+                    {
+                        return;
+                    }
                 }
-            }
-            if (!settings.ExcludedHdlcTests.ExcludeTest14)
-            {
+                if (!settings.ExcludedHdlcTests.ExcludeTest14)
+                {
 
-                Test14(test, settings, dev, output, tryCount);
-                if (!Continue)
-                {
-                    return;
+                    Test14(test, settings, dev, output, tryCount);
+                    if (!Continue)
+                    {
+                        return;
+                    }
                 }
-            }
-            if (!settings.ExcludedHdlcTests.ExcludeTest15)
-            {
+                if (!settings.ExcludedHdlcTests.ExcludeTest15)
+                {
 
-                Test15(test, settings, dev, output, tryCount);
-                if (!Continue)
-                {
-                    return;
+                    Test15(test, settings, dev, output, tryCount);
+                    if (!Continue)
+                    {
+                        return;
+                    }
                 }
-            }
-            if (!settings.ExcludedHdlcTests.ExcludeTest16)
-            {
+                if (!settings.ExcludedHdlcTests.ExcludeTest16)
+                {
 
-                Test16(test, settings, dev, output, tryCount);
-                if (!Continue)
-                {
-                    return;
+                    Test16(test, settings, dev, output, tryCount);
+                    if (!Continue)
+                    {
+                        return;
+                    }
                 }
-            }
-            if (!settings.ExcludedHdlcTests.ExcludeTest17)
-            {
+                if (!settings.ExcludedHdlcTests.ExcludeTest17)
+                {
 
-                Test17(test, settings, dev, output, tryCount);
-                if (!Continue)
-                {
-                    return;
+                    Test17(test, settings, dev, output, tryCount);
+                    if (!Continue)
+                    {
+                        return;
+                    }
                 }
-            }
-            if (!settings.ExcludedHdlcTests.ExcludeTest18)
-            {
+                if (!settings.ExcludedHdlcTests.ExcludeTest18)
+                {
 
-                Test18(test, settings, dev, output, tryCount);
-                if (!Continue)
+                    Test18(test, settings, dev, output, tryCount);
+                    if (!Continue)
+                    {
+                        return;
+                    }
+                }
+                if (!settings.ExcludedHdlcTests.ExcludeTest19)
                 {
-                    return;
+                    Test19(test, settings, dev, output, tryCount);
+                    if (!Continue)
+                    {
+                        return;
+                    }
+                }
+                if (!settings.ExcludedHdlcTests.ExcludeTest20)
+                {
+                    Test20(test, settings, dev, output, tryCount);
+                    if (!Continue)
+                    {
+                        return;
+                    }
+                }
+                if (!settings.ExcludedHdlcTests.ExcludeTest21)
+                {
+                    Test21(test, settings, dev, output, tryCount);
+                    if (!Continue)
+                    {
+                        return;
+                    }
+                }
+                if (!settings.ExcludedHdlcTests.ExcludeTest101)
+                {
+                    Test101(test, settings, dev, output, tryCount);
                 }
             }
-            if (!settings.ExcludedHdlcTests.ExcludeTest19)
+            finally
             {
-                Test19(test, settings, dev, output, tryCount);
-                if (!Continue)
-                {
-                    return;
-                }
-            }
-            if (!settings.ExcludedHdlcTests.ExcludeTest20)
-            {
-                Test20(test, settings, dev, output, tryCount);
-                if (!Continue)
-                {
-                    return;
-                }
-            }
-            if (!settings.ExcludedHdlcTests.ExcludeTest21)
-            {
-                Test21(test, settings, dev, output, tryCount);
-                if (!Continue)
-                {
-                    return;
-                }
-            }
-            if (!settings.ExcludedHdlcTests.ExcludeTest101)
-            {
-                Test101(test, settings, dev, output, tryCount);
+                dev.ResendCount = resendCount;
             }
         }
 
@@ -5067,7 +5078,7 @@ namespace GXDLMSDirector
                 passed = false;
                 AddError(test, dev, output.Errors, "COSEM Application tests #1 failed. " + ex.Message);
             }
-            (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = false;
+                (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = false;
 
             //T_APPL_OPEN_1
             try
@@ -5735,16 +5746,8 @@ namespace GXDLMSDirector
 
                 (dev.Comm.client as GXDLMSXmlClient).LoadXml(xml);
                 GXDLMSTranslator t = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
-                if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
-                {
-                    bb.SetHexString("E6E6006036A109060760857405080101A203040144A303040144A403020100A503020100A803020100BE10040E01000000065F1F040060FEDFFFFF");
-                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(Command.Aarq, bb), "COSEM Application test #6. AARQ", 1, tryCount, reply);
-                }
-                else
-                {
-                    bb.SetHexString("6036A109060760857405080101A203040144A303040144A403020100A503020100A803020100BE10040E01000000065F1F040060FEDFFFFF");
-                    dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(Command.Aarq, bb), "COSEM Application test #6. AARQ", 1, tryCount, reply);
-                }
+                bb.SetHexString("6036A109060760857405080101A203040144A303040144A403020100A503020100A803020100BE10040E01000000065F1F040060FEDFFFFF");
+                dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(Command.Aarq, bb), "COSEM Application test #6. AARQ", 1, tryCount, reply);
                 dev.Comm.ParseAAREResponse(reply.Data);
                 reply.Data.Position = 0;
                 string str = t.PduToXml(reply.Data);
@@ -6151,7 +6154,7 @@ namespace GXDLMSDirector
                 passed = false;
                 AddInfo(test, dev, output.Info, "COSEM Application tests #9 failed. " + ex.Message);
             }
-            byte s = dev.Comm.client.Ciphering.Security;
+            Security s = dev.Comm.client.Ciphering.Security;
             try
             {
                 reply.Clear();
@@ -6227,7 +6230,7 @@ namespace GXDLMSDirector
             try
             {
                 dev.Comm.client.QualityOfService = 1;
-                dev.Comm.ReadDataBlock(dev.Comm.client.AARQRequest(), "COSEM Application test #9. AARQ", 1, tryCount, reply);
+                dev.Comm.ReadDataBlock(dev.Comm.client.AARQRequest(), "COSEM Application test #11. AARQ", 1, tryCount, reply);
                 dev.Comm.client.QualityOfService = 0;
                 dev.Comm.ParseAAREResponse(reply.Data);
                 if (dev.Comm.client.QualityOfService != 1)
@@ -6847,9 +6850,9 @@ namespace GXDLMSDirector
                 passed = false;
                 AddError(test, dev, output.Errors, "COSEM Application tests #15 failed using read service.");
             }
-            catch (GXDLMSConfirmedServiceError ex)
+            catch (GXDLMSExceptionResponse ex)
             {
-                if (ex.ServiceError == ServiceError.Service && ex.ServiceErrorValue == 2)
+                if (ex.ExceptionStateError == ExceptionStateError.ServiceUnknown && ex.ExceptionServiceError == ExceptionServiceError.ServiceNotSupported)
                 {
                     AddInfo(test, dev, output.Info, "COSEM Application tests #15 succeeded when Short Name referencing is used.");
                 }

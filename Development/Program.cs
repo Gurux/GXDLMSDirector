@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 11125 $,
-//                  $Date: 2019-11-14 12:00:13 +0200 (to, 14 marras 2019) $
+// Version:         $Revision: 12331 $,
+//                  $Date: 2021-02-23 15:18:17 +0200 (ti, 23 helmi 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -41,6 +41,9 @@ using System.Deployment.Application;
 using Microsoft.Win32;
 using System.Diagnostics;
 using Gurux.DLMS;
+using Gurux.DLMS.Ecdsa;
+using System.Numerics;
+using Gurux.DLMS.Secure;
 
 namespace GXDLMSDirector
 {

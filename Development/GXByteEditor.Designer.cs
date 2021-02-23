@@ -66,6 +66,7 @@ namespace GXDLMSDirector
             this.CancelBtn = new System.Windows.Forms.Button();
             this.AsciiCb = new System.Windows.Forms.CheckBox();
             this.ValueTb = new System.Windows.Forms.TextBox();
+            this.helpProvider1 = new System.Windows.Forms.HelpProvider();
             this.SuspendLayout();
             // 
             // OKBtn
@@ -112,6 +113,10 @@ namespace GXDLMSDirector
             this.ValueTb.Size = new System.Drawing.Size(394, 149);
             this.ValueTb.TabIndex = 25;
             // 
+            // helpProvider1
+            // 
+            this.helpProvider1.HelpNamespace = "https://www.gurux.fi/GXDLMSDirector.DeviceProperties";
+            // 
             // GXByteEditor
             // 
             this.AcceptButton = this.OKBtn;
@@ -141,5 +146,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Button CancelBtn;
         private System.Windows.Forms.CheckBox AsciiCb;
         private System.Windows.Forms.TextBox ValueTb;
+        private System.Windows.Forms.HelpProvider helpProvider1;
     }
 }

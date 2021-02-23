@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12169 $,
-//                  $Date: 2020-11-06 09:57:31 +0200 (pe, 06 marras 2020) $
+// Version:         $Revision: 12330 $,
+//                  $Date: 2021-02-23 15:17:30 +0200 (ti, 23 helmi 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -177,6 +177,9 @@ namespace GXDLMSDirector
                 PlcHdlcCb.Checked = (manufacturer.SupporterdInterfaces & (1 << (int)InterfaceType.PlcHdlc)) != 0;
                 LpWanCb.Checked = (manufacturer.SupporterdInterfaces & (1 << (int)InterfaceType.LPWAN)) != 0;
                 WiSunCb.Checked = (manufacturer.SupporterdInterfaces & (1 << (int)InterfaceType.WiSUN)) != 0;
+                PLCPrimeCb.Checked = (manufacturer.SupporterdInterfaces & (1 << (int)InterfaceType.PlcPrime)) != 0;
+                WiredMBusCb.Checked = (manufacturer.SupporterdInterfaces & (1 << (int)InterfaceType.WiredMBus)) != 0;
+                RawPDUCb.Checked = (manufacturer.SupporterdInterfaces & (1 << (int)InterfaceType.PDU)) != 0;
             }
             else
             {
@@ -242,6 +245,10 @@ namespace GXDLMSDirector
                 {
                     Manufacturer.SupporterdInterfaces |= 1 << (int)InterfaceType.WRAPPER;
                 }
+                if (RawPDUCb.Checked)
+                {
+                    Manufacturer.SupporterdInterfaces |= 1 << (int)InterfaceType.PDU;
+                }
                 if (WirelessMBusCb.Checked)
                 {
                     Manufacturer.SupporterdInterfaces |= 1 << (int)InterfaceType.WirelessMBus;
@@ -261,6 +268,14 @@ namespace GXDLMSDirector
                 if (WiSunCb.Checked)
                 {
                     Manufacturer.SupporterdInterfaces |= 1 << (int)InterfaceType.WiSUN;
+                }
+                if (PLCPrimeCb.Checked)
+                {
+                    Manufacturer.SupporterdInterfaces |= 1 << (int)InterfaceType.PlcPrime;
+                }
+                if (WiredMBusCb.Checked)
+                {
+                    Manufacturer.SupporterdInterfaces |= 1 << (int)InterfaceType.WiredMBus;
                 }
                 if (Manufacturer.SupporterdInterfaces == 0)
                 {

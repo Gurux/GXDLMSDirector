@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12251 $,
-//                  $Date: 2020-12-16 12:29:30 +0200 (ke, 16 joulu 2020) $
+// Version:         $Revision: 12330 $,
+//                  $Date: 2021-02-23 15:17:30 +0200 (ti, 23 helmi 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -58,6 +58,7 @@ using System.Deployment.Application;
 using Gurux.DLMS.Objects.Enums;
 using GXDLMSDirector.Macro;
 using System.Xml.Schema;
+using Gurux.DLMS.UI.Ecdsa;
 
 namespace GXDLMSDirector
 {
@@ -1101,6 +1102,7 @@ namespace GXDLMSDirector
                                         reply.Clear();
                                         dev.Comm.ReadDataBlock(it, ve.Text, 1, reply);
                                     }
+                                    ve.Value = reply.Value;
                                     InvokeAction(dev.Comm.client, ua, ve.Target, ve.Index, xmlValue, xml, null, null);
                                 }
                                 catch (Exception ex)
@@ -2232,11 +2234,37 @@ namespace GXDLMSDirector
                         return;
                     }
                     int pos = 0;
-                    foreach (GXDLMSObject it in dev.Objects)
+                    //Use access request if it is supported.
+                    if ((dev.Comm.client.ProposedConformance & Conformance.Access) != 0)
                     {
-                        OnProgress(dev, "Reading " + it.LogicalName + "...", ++pos, cnt);
-                        dev.Comm.Read(this, it, ForceRefreshBtn.Checked);
-                        DLMSItemOnChange(it, false, 0, null);
+                        List<GXDLMSAccessItem> list = new List<GXDLMSAccessItem>();
+                        bool force = ForceRefreshBtn.Checked;
+                        foreach (GXDLMSObject obj in dev.Objects)
+                        {
+                            int[] indexes = (obj as IGXDLMSBase).GetAttributeIndexToRead(force);
+                            foreach (byte it in indexes)
+                            {
+                                //If reading is not allowed.
+                                if ((obj.GetAccess(it) & AccessMode.Read) == 0)
+                                {
+                                    obj.ClearStatus(it);
+                                    continue;
+                                }
+                                list.Add(new GXDLMSAccessItem(AccessServiceCommandType.Get, obj, it));
+                            }
+                            OnProgress(dev, "Reading with access request.", 1, 1);
+                            dev.Comm.AccessRequest(DateTime.MinValue, list);
+                            GXDlmsUi.UpdateProperty(obj, 0, SelectedView, true, false);
+                        }
+                    }
+                    else
+                    {
+                        foreach (GXDLMSObject it in dev.Objects)
+                        {
+                            OnProgress(dev, "Reading " + it.LogicalName + "...", ++pos, cnt);
+                            dev.Comm.Read(this, it, ForceRefreshBtn.Checked);
+                            DLMSItemOnChange(it, false, 0, null);
+                        }
                     }
                 }
                 catch (Exception Ex)
@@ -2655,18 +2683,40 @@ namespace GXDLMSDirector
                             {
                                 dev.Comm.OnBeforeRead += new ReadEventHandler(OnBeforeRead);
                                 dev.Comm.OnAfterRead += new ReadEventHandler(OnAfterRead);
-                                if (parameters.Length == 3 && (bool)parameters[2])
+                                //Use access request if it is supported.
+                                if ((dev.Comm.client.ProposedConformance & Conformance.Access) != 0)
                                 {
-                                    List<KeyValuePair<GXDLMSObject, int>> list = new List<KeyValuePair<GXDLMSObject, int>>();
-                                    foreach (int index in ((IGXDLMSBase)obj).GetAttributeIndexToRead(ForceRefreshBtn.Checked))
+                                    List<GXDLMSAccessItem> list = new List<GXDLMSAccessItem>();
+                                    int[] indexes = (obj as IGXDLMSBase).GetAttributeIndexToRead(ForceRefreshBtn.Checked);
+                                    foreach (byte it in indexes)
                                     {
-                                        list.Add(new KeyValuePair<GXDLMSObject, int>(obj, index));
+                                        //If reading is not allowed.
+                                        if ((obj.GetAccess(it) & AccessMode.Read) == 0)
+                                        {
+                                            obj.ClearStatus(it);
+                                            continue;
+                                        }
+                                        list.Add(new GXDLMSAccessItem(AccessServiceCommandType.Get, obj, it));
                                     }
-                                    dev.Comm.ReadList(list);
+                                    OnProgress(dev, "Reading with access request.", 1, 1);
+                                    dev.Comm.AccessRequest(DateTime.MinValue, list);
+                                    GXDlmsUi.UpdateProperty(obj, 0, SelectedView, true, false);
                                 }
                                 else
                                 {
-                                    dev.Comm.Read(this, obj, ForceRefreshBtn.Checked);
+                                    if (parameters.Length == 3 && (bool)parameters[2])
+                                    {
+                                        List<KeyValuePair<GXDLMSObject, int>> list = new List<KeyValuePair<GXDLMSObject, int>>();
+                                        foreach (int index in ((IGXDLMSBase)obj).GetAttributeIndexToRead(ForceRefreshBtn.Checked))
+                                        {
+                                            list.Add(new KeyValuePair<GXDLMSObject, int>(obj, index));
+                                        }
+                                        dev.Comm.ReadList(list);
+                                    }
+                                    else
+                                    {
+                                        dev.Comm.Read(this, obj, ForceRefreshBtn.Checked);
+                                    }
                                 }
                             }
                             finally
@@ -3320,7 +3370,7 @@ namespace GXDLMSDirector
                     {
                         dev.Conformance = (int)GXDLMSClient.GetInitialConformance(dev.UseLogicalNameReferencing);
                     }
-                    if ((dev.Conformance & (int)(Conformance.ReservedZero | Conformance.ReservedSix | Conformance.ReservedSeven)) != 0)
+                    if ((dev.Conformance & (int)(Conformance.ReservedZero | Conformance.ReservedSeven)) != 0)
                     {
                         // dev.Conformance = (int)GXDLMSClient.GetInitialConformance(dev.UseLogicalNameReferencing);
                         //Old conformance. Swap bits.
@@ -4098,7 +4148,7 @@ namespace GXDLMSDirector
                 ObjectValueView.Columns.Add("Object Type");
                 ObjectValueView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
                 LoadXmlPositioning();
-
+                GXDlmsUi.GeneratorAddress = Properties.Settings.Default.GeneratorAddress;
                 Views = GXDlmsUi.GetViews(ObjectPanelFrame, OnHandleAction);
                 MacroEditor = new GXMacroView(Devices);
                 MacroEditor.OnConnect += ActionsView_OnConnect;
@@ -5342,6 +5392,7 @@ namespace GXDLMSDirector
                 GXSettingsDlg dlg = new GXSettingsDlg(events, eventsTranslator);
                 if (dlg.ShowDialog(this) == DialogResult.OK)
                 {
+                    GXDlmsUi.GeneratorAddress = Properties.Settings.Default.GeneratorAddress;
                     Properties.Settings.Default.EventsSettings = events.Settings;
                     Properties.Settings.Default.NotifySystemTitle = GXCommon.ToHex(eventsTranslator.SystemTitle, false);
                     Properties.Settings.Default.NotifyBlockCipherKey = GXCommon.ToHex(eventsTranslator.BlockCipherKey, false);
@@ -5399,7 +5450,7 @@ namespace GXDLMSDirector
                     eventsTranslator.Clear();
                     if (newDev != null)
                     {
-                        traceTranslator.Security = (byte)newDev.Security;
+                        traceTranslator.Security = newDev.Security;
                         traceTranslator.SystemTitle = GXCommon.HexToBytes(newDev.SystemTitle);
                         traceTranslator.BlockCipherKey = GXCommon.HexToBytes(newDev.BlockCipherKey);
                         traceTranslator.AuthenticationKey = GXCommon.HexToBytes(newDev.AuthenticationKey);
@@ -5417,6 +5468,10 @@ namespace GXDLMSDirector
                             if (d != null)
                             {
                                 traceTranslator.ServerSystemTitle = d.Comm.client.SourceSystemTitle;
+                            }
+                            if (traceTranslator.ServerSystemTitle == null)
+                            {
+                                traceTranslator.ServerSystemTitle = GXCommon.HexToBytes(newDev.ServerSystemTitle);
                             }
                         }
                         if (newDev.Security != Security.None || newDev.Authentication == Authentication.HighGMAC ||
@@ -5773,6 +5828,10 @@ namespace GXDLMSDirector
                     {
                         str = "https://www.gurux.fi/index.php?q=GXDLMSDirector.ConformanceTest";
                     }
+                }
+                else
+                {
+                    return;
                 }
                 // Show online help.
                 Process.Start(str);
@@ -7086,6 +7145,43 @@ namespace GXDLMSDirector
             try
             {
                 GXPlcDiscover dlg = new GXPlcDiscover(this);
+                dlg.Show(this);
+            }
+            catch (Exception Ex)
+            {
+                Error.ShowError(this, Ex);
+            }
+        }
+
+        /// <summary>
+        /// Show ECDSA keys.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void EcdsaKeysMnu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                string certificates = Path.Combine(path, "Certificates");
+                if (!Directory.Exists(certificates))
+                {
+                    Directory.CreateDirectory(certificates);
+                }
+                string keys = Path.Combine(path, "Keys");
+                if (!Directory.Exists(keys))
+                {
+                    Directory.CreateDirectory(keys);
+                }
+                GXEcdsaKeysDlg dlg = new GXEcdsaKeysDlg(Properties.Settings.Default.GeneratorAddress, keys,
+                    certificates,
+                    Properties.Resources.GXDLMSDirectorTxt,
+                    SecuritySuite.Ecdsa256,
+                    null);
                 dlg.Show(this);
             }
             catch (Exception Ex)

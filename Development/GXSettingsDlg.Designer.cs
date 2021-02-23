@@ -37,6 +37,9 @@
             this.NotificationsTab = new System.Windows.Forms.TabPage();
             this.NotificationsView = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.AuthenticationKeyAsciiCb = new System.Windows.Forms.CheckBox();
+            this.AuthenticationKeyTB = new System.Windows.Forms.TextBox();
+            this.AuthenticationKeyLbl = new System.Windows.Forms.Label();
             this.BlockCipherKeyAsciiCb = new System.Windows.Forms.CheckBox();
             this.SystemTitleAsciiCb = new System.Windows.Forms.CheckBox();
             this.SystemTitleLbl = new System.Windows.Forms.Label();
@@ -55,9 +58,8 @@
             this.CheckUpdatesBtn = new System.Windows.Forms.Button();
             this.RemoveBtn = new System.Windows.Forms.Button();
             this.AddBtn = new System.Windows.Forms.Button();
-            this.AuthenticationKeyAsciiCb = new System.Windows.Forms.CheckBox();
-            this.AuthenticationKeyTB = new System.Windows.Forms.TextBox();
-            this.AuthenticationKeyLbl = new System.Windows.Forms.Label();
+            this.CertificationServerTb = new System.Windows.Forms.TextBox();
+            this.CertificationServerLbl = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.Tabs.SuspendLayout();
             this.NotificationsTab.SuspendLayout();
@@ -127,13 +129,15 @@
             // NotificationsView
             // 
             this.NotificationsView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.NotificationsView.Location = new System.Drawing.Point(3, 96);
+            this.NotificationsView.Location = new System.Drawing.Point(3, 122);
             this.NotificationsView.Name = "NotificationsView";
-            this.NotificationsView.Size = new System.Drawing.Size(409, 155);
+            this.NotificationsView.Size = new System.Drawing.Size(409, 129);
             this.NotificationsView.TabIndex = 1;
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.CertificationServerTb);
+            this.panel3.Controls.Add(this.CertificationServerLbl);
             this.panel3.Controls.Add(this.AuthenticationKeyAsciiCb);
             this.panel3.Controls.Add(this.AuthenticationKeyTB);
             this.panel3.Controls.Add(this.AuthenticationKeyLbl);
@@ -146,8 +150,35 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(3, 3);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(409, 93);
+            this.panel3.Size = new System.Drawing.Size(409, 119);
             this.panel3.TabIndex = 0;
+            // 
+            // AuthenticationKeyAsciiCb
+            // 
+            this.AuthenticationKeyAsciiCb.AutoSize = true;
+            this.AuthenticationKeyAsciiCb.Location = new System.Drawing.Point(345, 60);
+            this.AuthenticationKeyAsciiCb.Name = "AuthenticationKeyAsciiCb";
+            this.AuthenticationKeyAsciiCb.Size = new System.Drawing.Size(53, 17);
+            this.AuthenticationKeyAsciiCb.TabIndex = 47;
+            this.AuthenticationKeyAsciiCb.Text = "ASCII";
+            this.AuthenticationKeyAsciiCb.UseVisualStyleBackColor = true;
+            this.AuthenticationKeyAsciiCb.CheckedChanged += new System.EventHandler(this.AuthenticationKeyAsciiCb_CheckedChanged);
+            // 
+            // AuthenticationKeyTB
+            // 
+            this.AuthenticationKeyTB.Location = new System.Drawing.Point(111, 58);
+            this.AuthenticationKeyTB.Name = "AuthenticationKeyTB";
+            this.AuthenticationKeyTB.Size = new System.Drawing.Size(226, 20);
+            this.AuthenticationKeyTB.TabIndex = 46;
+            // 
+            // AuthenticationKeyLbl
+            // 
+            this.AuthenticationKeyLbl.AutoSize = true;
+            this.AuthenticationKeyLbl.Location = new System.Drawing.Point(6, 61);
+            this.AuthenticationKeyLbl.Name = "AuthenticationKeyLbl";
+            this.AuthenticationKeyLbl.Size = new System.Drawing.Size(99, 13);
+            this.AuthenticationKeyLbl.TabIndex = 48;
+            this.AuthenticationKeyLbl.Text = "Authentication Key:";
             // 
             // BlockCipherKeyAsciiCb
             // 
@@ -216,7 +247,7 @@
             this.ExternalMediasTab.Location = new System.Drawing.Point(4, 22);
             this.ExternalMediasTab.Name = "ExternalMediasTab";
             this.ExternalMediasTab.Padding = new System.Windows.Forms.Padding(3);
-            this.ExternalMediasTab.Size = new System.Drawing.Size(391, 254);
+            this.ExternalMediasTab.Size = new System.Drawing.Size(415, 254);
             this.ExternalMediasTab.TabIndex = 2;
             this.ExternalMediasTab.Text = "External Medias";
             this.ExternalMediasTab.UseVisualStyleBackColor = true;
@@ -234,7 +265,7 @@
             this.MediaList.Location = new System.Drawing.Point(3, 3);
             this.MediaList.MultiSelect = false;
             this.MediaList.Name = "MediaList";
-            this.MediaList.Size = new System.Drawing.Size(385, 209);
+            this.MediaList.Size = new System.Drawing.Size(409, 209);
             this.MediaList.TabIndex = 23;
             this.MediaList.UseCompatibleStateImageBehavior = false;
             this.MediaList.View = System.Windows.Forms.View.Details;
@@ -282,7 +313,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(3, 212);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(385, 39);
+            this.panel2.Size = new System.Drawing.Size(409, 39);
             this.panel2.TabIndex = 22;
             // 
             // CheckUpdatesBtn
@@ -299,7 +330,7 @@
             // RemoveBtn
             // 
             this.RemoveBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.RemoveBtn.Location = new System.Drawing.Point(305, 6);
+            this.RemoveBtn.Location = new System.Drawing.Point(329, 6);
             this.RemoveBtn.Name = "RemoveBtn";
             this.RemoveBtn.Size = new System.Drawing.Size(75, 23);
             this.RemoveBtn.TabIndex = 27;
@@ -310,7 +341,7 @@
             // AddBtn
             // 
             this.AddBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddBtn.Location = new System.Drawing.Point(224, 6);
+            this.AddBtn.Location = new System.Drawing.Point(248, 6);
             this.AddBtn.Name = "AddBtn";
             this.AddBtn.Size = new System.Drawing.Size(75, 23);
             this.AddBtn.TabIndex = 26;
@@ -318,32 +349,23 @@
             this.AddBtn.UseVisualStyleBackColor = true;
             this.AddBtn.Click += new System.EventHandler(this.AddBtn_Click);
             // 
-            // AuthenticationKeyAsciiCb
+            // CertificationServerTb
             // 
-            this.AuthenticationKeyAsciiCb.AutoSize = true;
-            this.AuthenticationKeyAsciiCb.Location = new System.Drawing.Point(345, 60);
-            this.AuthenticationKeyAsciiCb.Name = "AuthenticationKeyAsciiCb";
-            this.AuthenticationKeyAsciiCb.Size = new System.Drawing.Size(53, 17);
-            this.AuthenticationKeyAsciiCb.TabIndex = 47;
-            this.AuthenticationKeyAsciiCb.Text = "ASCII";
-            this.AuthenticationKeyAsciiCb.UseVisualStyleBackColor = true;
-            this.AuthenticationKeyAsciiCb.CheckedChanged += new System.EventHandler(this.AuthenticationKeyAsciiCb_CheckedChanged);
+            this.CertificationServerTb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.CertificationServerTb.Location = new System.Drawing.Point(111, 84);
+            this.CertificationServerTb.Name = "CertificationServerTb";
+            this.CertificationServerTb.Size = new System.Drawing.Size(287, 20);
+            this.CertificationServerTb.TabIndex = 49;
             // 
-            // AuthenticationKeyTB
+            // CertificationServerLbl
             // 
-            this.AuthenticationKeyTB.Location = new System.Drawing.Point(111, 58);
-            this.AuthenticationKeyTB.Name = "AuthenticationKeyTB";
-            this.AuthenticationKeyTB.Size = new System.Drawing.Size(226, 20);
-            this.AuthenticationKeyTB.TabIndex = 46;
-            // 
-            // AuthenticationKeyLbl
-            // 
-            this.AuthenticationKeyLbl.AutoSize = true;
-            this.AuthenticationKeyLbl.Location = new System.Drawing.Point(6, 61);
-            this.AuthenticationKeyLbl.Name = "AuthenticationKeyLbl";
-            this.AuthenticationKeyLbl.Size = new System.Drawing.Size(99, 13);
-            this.AuthenticationKeyLbl.TabIndex = 48;
-            this.AuthenticationKeyLbl.Text = "Authentication Key:";
+            this.CertificationServerLbl.AutoSize = true;
+            this.CertificationServerLbl.Location = new System.Drawing.Point(6, 87);
+            this.CertificationServerLbl.Name = "CertificationServerLbl";
+            this.CertificationServerLbl.Size = new System.Drawing.Size(97, 13);
+            this.CertificationServerLbl.TabIndex = 50;
+            this.CertificationServerLbl.Text = "Certification server:";
             // 
             // GXSettingsDlg
             // 
@@ -403,5 +425,7 @@
         private System.Windows.Forms.CheckBox AuthenticationKeyAsciiCb;
         private System.Windows.Forms.TextBox AuthenticationKeyTB;
         private System.Windows.Forms.Label AuthenticationKeyLbl;
+        private System.Windows.Forms.TextBox CertificationServerTb;
+        private System.Windows.Forms.Label CertificationServerLbl;
     }
 }

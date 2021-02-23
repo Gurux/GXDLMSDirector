@@ -1,42 +1,25 @@
 ﻿using Gurux.Common;
 using Gurux.DLMS;
 using Gurux.DLMS.ASN;
-using Gurux.DLMS.ASN.Enums;
 using Gurux.DLMS.Enums;
-using Gurux.DLMS.Secure;
+using Gurux.DLMS.Objects.Enums;
+using Gurux.DLMS.UI;
+using Gurux.DLMS.UI.Ecdsa;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GXDLMSDirector
 {
     public partial class DLMSTranslatorForm : Form
     {
+        GXCipheringSettings Ciphering;
         GXDLMSTranslator translator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
-        string path = null;
-
         public DLMSTranslatorForm()
         {
             InitializeComponent();
             translator.Comments = true;
-            SecurityCB.Items.AddRange(new object[] { Security.None, Security.Authentication,
-                                      Security.Encryption, Security.AuthenticationEncryption});
-            SecurityCB.SelectedItem = Enum.Parse(typeof(Security), Properties.Settings.Default.Security);
-            SystemTitleTB.Text = Properties.Settings.Default.NotifySystemTitle;
-            ServerSystemTitleTB.Text = Properties.Settings.Default.ServerSystemTitle;
-            BlockCipherKeyTB.Text = Properties.Settings.Default.NotifyBlockCipherKey;
-            AuthenticationKeyTB.Text = Properties.Settings.Default.AuthenticationKey;
-            InvocationCounterTB.Text = Properties.Settings.Default.InvocationCounter.ToString();
-            ChallengeTb.Text = Properties.Settings.Default.Challenge;
-            DedicatedKeyTb.Text = Properties.Settings.Default.DedicatedKey;
-
             DataPdu.Text = Properties.Settings.Default.Data;
             tabControl1_SelectedIndexChanged(null, null);
             if (!string.IsNullOrEmpty(Properties.Settings.Default.Pdu))
@@ -47,57 +30,52 @@ namespace GXDLMSDirector
             {
                 MessagePduTB.Text = Properties.Settings.Default.Message;
             }
-
             try
             {
-                string[] certificates = Properties.Settings.Default.Certificates.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (string str in certificates)
+                string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
+                if (!Directory.Exists(path))
                 {
-                    try
-                    {
-                        if (str[0] == '0')
-                        {
-                            GXx509Certificate cert = new GXx509Certificate(str.Substring(1));
-                            ListViewItem li = new ListViewItem("Public Key");
-                            li.StateImageIndex = li.ImageIndex = 0;
-                            li.SubItems.Add(cert.Subject);
-                            li.SubItems.Add(cert.ValidFrom + "-" + cert.ValidTo);
-                            StringBuilder sb = new StringBuilder();
-                            foreach (KeyUsage it in Enum.GetValues(typeof(KeyUsage)))
-                            {
-                                if (((int)it & (int)cert.KeyUsage) != 0)
-                                {
-                                    sb.Append(it);
-                                    sb.Append(", ");
-                                }
-                            }
-                            if (sb.Length != 0)
-                            {
-                                sb.Length -= 2;
-                            }
-                            li.SubItems.Add(sb.ToString());
-                            CertificatesList.Items.Add(li).Tag = cert;
-                        }
-                        else
-                        {
-                            GXPkcs8 cert = new GXPkcs8(str.Substring(1));
-                            ListViewItem li = new ListViewItem("Private Key");
-                            li.StateImageIndex = li.ImageIndex = 1;
-                            foreach (ListViewItem it in CertificatesList.Items)
-                            {
-                                if (it.Tag is GXPkcs8)
-                                {
-                                    throw new Exception("Private key already exists. There can be only one private key.");
-                                }
-                            }
-                            CertificatesList.Items.Add(li).Tag = cert;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                    }
+                    Directory.CreateDirectory(path);
                 }
+                string certificates = Path.Combine(path, "Certificates");
+                if (!Directory.Exists(certificates))
+                {
+                    Directory.CreateDirectory(certificates);
+                }
+                string keys = Path.Combine(path, "Keys");
+                if (!Directory.Exists(keys))
+                {
+                    Directory.CreateDirectory(keys);
+                }
+                try
+                {
+                    translator.SecuritySuite = (SecuritySuite)Properties.Settings.Default.SecuritySuite;
+                    translator.Security = (Security)Enum.Parse(typeof(Security), Properties.Settings.Default.Security);
+                    translator.SystemTitle = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.NotifySystemTitle);
+                    translator.ServerSystemTitle = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.ServerSystemTitle);
+                    translator.BlockCipherKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.NotifyBlockCipherKey);
+                    translator.AuthenticationKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.AuthenticationKey);
+                    translator.InvocationCounter = (UInt32)Properties.Settings.Default.InvocationCounter;
+                    translator.DedicatedKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.DedicatedKey);
+                }
+                catch(Exception)
+                {
+                    //Set default settings if settings are corrupted.
+                    translator.Security = Security.None;
+                    translator.SystemTitle = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.NotifySystemTitle);
+                    translator.ServerSystemTitle = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.ServerSystemTitle);
+                    translator.BlockCipherKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.NotifyBlockCipherKey);
+                    translator.AuthenticationKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.AuthenticationKey);
+                    translator.InvocationCounter = 0;
+                    translator.DedicatedKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.DedicatedKey);
+                }
+                Ciphering = new GXCipheringSettings(translator, keys, certificates,
+                            Properties.Settings.Default.ClientAgreementKey,
+                            Properties.Settings.Default.ClientSigningKey,
+                            Properties.Settings.Default.ServerAgreementKey,
+                            Properties.Settings.Default.ServerSigningKey);
+                            Ciphering.Challenge = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.Challenge);
+                tabControl1.TabPages.Add(Ciphering.GetCiphetingTab());
             }
             catch (Exception ex)
             {
@@ -119,7 +97,6 @@ namespace GXDLMSDirector
                 }
                 else
                 {
-                    UpdateSecurity();
                     XmlTB.Text = translator.PduToXml(PduTB.Text);
                 }
             }
@@ -141,7 +118,6 @@ namespace GXDLMSDirector
         {
             try
             {
-                UpdateSecurity();
                 if (tabControl1.SelectedIndex == 4)
                 {
                     DataPdu.Text = GXCommon.ToHex(translator.XmlToData(DataXml.Text));
@@ -193,55 +169,20 @@ namespace GXDLMSDirector
             return sb.ToString();
         }
 
-        /// <summary>
-        /// Update security settings to the translator.
-        /// </summary>
-        private void UpdateSecurity()
-        {
-            translator.Security = Convert.ToByte(Enum.Parse(typeof(Security), SecurityCB.SelectedItem.ToString()));
-            translator.SystemTitle = GXCommon.HexToBytes(GetAsHex(SystemTitleTB.Text, SystemTitleAsciiCb.Checked));
-            translator.BlockCipherKey = GXCommon.HexToBytes(GetAsHex(BlockCipherKeyTB.Text, BlockCipherKeyAsciiCb.Checked));
-            translator.AuthenticationKey = GXCommon.HexToBytes(GetAsHex(AuthenticationKeyTB.Text, AuthenticationKeyAsciiCb.Checked));
-            if (InvocationCounterTB.Text.Length == 0)
-            {
-                translator.InvocationCounter = 0;
-            }
-            else
-            {
-                translator.InvocationCounter = UInt32.Parse(InvocationCounterTB.Text);
-            }
-            translator.ServerSystemTitle = GXCommon.HexToBytes(GetAsHex(ServerSystemTitleTB.Text, ServerSystemTitleAsciiCb.Checked));
-            translator.DedicatedKey = GXCommon.HexToBytes(GetAsHex(DedicatedKeyTb.Text, DedicatedKeyAsciiCb.Checked));
-            translator.DedicatedKey = GXCommon.HexToBytes(GetAsHex(DedicatedKeyTb.Text, DedicatedKeyAsciiCb.Checked));
-        }
-
-        private static string UpdateSystemTitle(Form parent, string title, byte[] data, string original, bool ascii)
+        private static bool UpdateSystemTitle(Form parent, string title, byte[] data, byte[] original)
         {
             if (data != null)
             {
-                string st;
-                if (ascii)
-                {
-                    st = ASCIIEncoding.ASCII.GetString(data);
-                    //If system title is not ASCII string.
-                    if (ASCIIEncoding.ASCII.GetBytes(st) != data)
-                    {
-                        st = GXCommon.ToHex(data, false);
-                    }
-                }
-                else
-                {
-                    st = GXCommon.ToHex(data, false);
-                }
-                if (GetAsHex(original, ascii) != st)
+                string st = GXDLMSTranslator.ToHex(data);
+                if (GXDLMSTranslator.ToHex(original) != st)
                 {
                     if (MessageBox.Show(parent, string.Format(title, original, st), Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)
                     {
-                        return st;
+                        return true;
                     }
                 }
             }
-            return null;
+            return false;
         }
 
         /// <summary>
@@ -255,13 +196,10 @@ namespace GXDLMSDirector
             StringBuilder sb = new StringBuilder();
             GXByteBuffer bb = new GXByteBuffer();
             //TODO: This can remove later.
-            byte s = translator.Security;
+            Security s = translator.Security;
             try
             {
                 translator.Clear();
-                UpdateSecurity();
-                translator.Security = (byte)Security.Authentication;
-
                 translator.PduOnly = PduOnlyCB.Checked;
                 GXByteBuffer pdu = new GXByteBuffer();
                 bb.Set(GXDLMSTranslator.HexToBytes(RemoveComments(MessagePduTB.Text)));
@@ -285,38 +223,32 @@ namespace GXDLMSDirector
                     last = msg.Xml;
                     if (msg.Command == Command.Aarq)
                     {
-                        if (msg.SystemTitle != null)
+                        if (msg.SystemTitle != null && msg.SystemTitle.Length == 8)
                         {
-                            string st = UpdateSystemTitle(this, "Current System title \"{0}\" is different in the parsed \"{1}\". Do you want to start using parsed one?",
-                                msg.SystemTitle, SystemTitleTB.Text, SystemTitleAsciiCb.Checked);
-                            if (st != null)
+                            if (UpdateSystemTitle(this, "Current System title \"{0}\" is different in the parsed \"{1}\". Do you want to start using parsed one?",
+                                msg.SystemTitle, translator.SystemTitle))
                             {
-                                SystemTitleTB.Text = "";
-                                SystemTitleAsciiCb.Checked = false;
-                                SystemTitleTB.Text = st;
+                                translator.SystemTitle = msg.SystemTitle;
+                                Ciphering.SystemTitle = msg.SystemTitle;
                             }
                         }
-                        if (msg.DedicatedKey != null)
+                        if (msg.DedicatedKey != null && msg.DedicatedKey.Length == 16)
                         {
-                            string key = UpdateSystemTitle(this, "Current dedicated key \"{0}\" is different in the parsed \"{1}\". Do you want to start using parsed one?",
-                                msg.DedicatedKey, DedicatedKeyTb.Text, DedicatedKeyAsciiCb.Checked);
-                            if (key != null)
+                            if (UpdateSystemTitle(this, "Current dedicated key \"{0}\" is different in the parsed \"{1}\". Do you want to start using parsed one?",
+                                msg.DedicatedKey, translator.DedicatedKey))
                             {
-                                DedicatedKeyTb.Text = "";
-                                DedicatedKeyAsciiCb.Checked = false;
-                                DedicatedKeyTb.Text = key;
+                                translator.DedicatedKey = msg.DedicatedKey;
+                                Ciphering.DedicatedKey = msg.DedicatedKey;
                             }
                         }
                     }
-                    if (msg.Command == Command.Aare && msg.SystemTitle != null)
+                    if (msg.Command == Command.Aare && msg.SystemTitle != null && msg.SystemTitle.Length == 8)
                     {
-                        string st = UpdateSystemTitle(this, "Current Server System title \"{0}\" is different in the parsed \"{1}\". Do you want to start using parsed one?",
-                            msg.SystemTitle, ServerSystemTitleTB.Text, ServerSystemTitleAsciiCb.Checked);
-                        if (st != null)
+                        if (UpdateSystemTitle(this, "Current Server System title \"{0}\" is different in the parsed \"{1}\". Do you want to start using parsed one?",
+                            msg.SystemTitle, translator.ServerSystemTitle))
                         {
-                            ServerSystemTitleTB.Text = "";
-                            SystemTitleAsciiCb.Checked = false;
-                            ServerSystemTitleTB.Text = st;
+                            translator.ServerSystemTitle = msg.SystemTitle;
+                            Ciphering.ServerSystemTitle = msg.SystemTitle;
                         }
                     }
                     if (!AllRb.Checked)
@@ -463,171 +395,33 @@ namespace GXDLMSDirector
             Properties.Settings.Default.Pdu = PduTB.Text;
             Properties.Settings.Default.Message = MessagePduTB.Text;
 
-            Properties.Settings.Default.Security = SecurityCB.SelectedItem.ToString();
-            Properties.Settings.Default.NotifySystemTitle = GetAsHex(SystemTitleTB.Text, SystemTitleAsciiCb.Checked);
-            Properties.Settings.Default.ServerSystemTitle = GetAsHex(ServerSystemTitleTB.Text, ServerSystemTitleAsciiCb.Checked);
-            Properties.Settings.Default.NotifyBlockCipherKey = GetAsHex(BlockCipherKeyTB.Text, BlockCipherKeyAsciiCb.Checked);
-            Properties.Settings.Default.AuthenticationKey = GetAsHex(AuthenticationKeyTB.Text, AuthenticationKeyAsciiCb.Checked);
-            Properties.Settings.Default.DedicatedKey = GetAsHex(DedicatedKeyTb.Text, DedicatedKeyAsciiCb.Checked);
-            if (InvocationCounterTB.Text.Length != 0)
-            {
-                Properties.Settings.Default.InvocationCounter = ulong.Parse(InvocationCounterTB.Text);
-            }
-            else
-            {
-                Properties.Settings.Default.InvocationCounter = 0;
-            }
-            Properties.Settings.Default.Challenge = GetAsHex(ChallengeTb.Text, ChallengeAsciiCb.Checked);
-            Properties.Settings.Default.Data = DataPdu.Text;
+            Properties.Settings.Default.SecuritySuite = (int)translator.SecuritySuite;
+            Properties.Settings.Default.Security = translator.Security.ToString();
+            Properties.Settings.Default.NotifySystemTitle = GXDLMSTranslator.ToHex(translator.SystemTitle);
+            Properties.Settings.Default.ServerSystemTitle = GXDLMSTranslator.ToHex(translator.ServerSystemTitle);
+            Properties.Settings.Default.NotifyBlockCipherKey = GXDLMSTranslator.ToHex(translator.BlockCipherKey);
+            Properties.Settings.Default.AuthenticationKey = GXDLMSTranslator.ToHex(translator.AuthenticationKey);
+            Properties.Settings.Default.DedicatedKey = GXDLMSTranslator.ToHex(translator.DedicatedKey);
+            Properties.Settings.Default.InvocationCounter = translator.InvocationCounter;
+            Properties.Settings.Default.Challenge = GXDLMSTranslator.ToHex(Ciphering.Challenge);
+            Properties.Settings.Default.ClientAgreementKey = Ciphering.ClientAgreementKey;
+            Properties.Settings.Default.ClientSigningKey = Ciphering.ClientSigningKey;
+            Properties.Settings.Default.ServerAgreementKey = Ciphering.ServerAgreementKey;
+            Properties.Settings.Default.ServerSigningKey = Ciphering.ServerSigningKey;
 
-            StringBuilder sb = new StringBuilder();
-            foreach (ListViewItem it in CertificatesList.Items)
+            Properties.Settings.Default.Data = DataPdu.Text;
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
+            if (!Directory.Exists(path))
             {
-                if (it.Tag is GXx509Certificate c)
-                {
-                    sb.Append("0");
-                    sb.Append(c.ToPem());
-                    sb.Append(",");
-                }
-                else if (it.Tag is GXPkcs8 pk)
-                {
-                    sb.Append("1");
-                    sb.Append(pk.ToPem());
-                    sb.Append(",");
-                }
+                Directory.CreateDirectory(path);
             }
-            Properties.Settings.Default.Certificates = sb.ToString();
+            string certificates = Path.Combine(path, "Certificates");
+            if (!Directory.Exists(certificates))
+            {
+                Directory.CreateDirectory(certificates);
+            }
             Properties.Settings.Default.Save();
         }
-
-        private static bool IsAscii(byte[] value)
-        {
-            if (value != null)
-            {
-                foreach (byte it in value)
-                {
-                    if (it < 0x21 || it > 0x7E)
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-
-        public static string GetAsHex(string value, bool ascii)
-        {
-            if (ascii)
-            {
-                return GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(value), false);
-            }
-            return GXCommon.ToHex(GXCommon.HexToBytes(value), false);
-        }
-
-        private void SystemTitleAsciiCb_CheckedChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (SystemTitleAsciiCb.Checked)
-                {
-                    if (!IsAscii(GXCommon.HexToBytes(SystemTitleTB.Text)))
-                    {
-                        SystemTitleAsciiCb.CheckedChanged -= SystemTitleAsciiCb_CheckedChanged;
-                        SystemTitleAsciiCb.Checked = !SystemTitleAsciiCb.Checked;
-                        SystemTitleAsciiCb.CheckedChanged += SystemTitleAsciiCb_CheckedChanged;
-                        throw new ArgumentOutOfRangeException("There are non ASCII chars.");
-                    }
-                    SystemTitleTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(SystemTitleTB.Text));
-                }
-                else
-                {
-                    SystemTitleTB.Text = GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(SystemTitleTB.Text), true);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, ex.Message);
-            }
-        }
-
-        private void BlockCipherKeyAsciiCb_CheckedChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (BlockCipherKeyAsciiCb.Checked)
-                {
-                    if (!IsAscii(GXCommon.HexToBytes(BlockCipherKeyTB.Text)))
-                    {
-                        BlockCipherKeyAsciiCb.CheckedChanged -= BlockCipherKeyAsciiCb_CheckedChanged;
-                        BlockCipherKeyAsciiCb.Checked = !BlockCipherKeyAsciiCb.Checked;
-                        BlockCipherKeyAsciiCb.CheckedChanged += BlockCipherKeyAsciiCb_CheckedChanged;
-                        throw new ArgumentOutOfRangeException("There are non ASCII chars.");
-                    }
-                    BlockCipherKeyTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(BlockCipherKeyTB.Text));
-                }
-                else
-                {
-                    BlockCipherKeyTB.Text = GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(BlockCipherKeyTB.Text), true);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, ex.Message);
-            }
-        }
-
-        private void AuthenticationKeyAsciiCb_CheckedChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (AuthenticationKeyAsciiCb.Checked)
-                {
-                    if (!IsAscii(GXCommon.HexToBytes(AuthenticationKeyTB.Text)))
-                    {
-                        AuthenticationKeyAsciiCb.CheckedChanged -= AuthenticationKeyAsciiCb_CheckedChanged;
-                        AuthenticationKeyAsciiCb.Checked = !AuthenticationKeyAsciiCb.Checked;
-                        AuthenticationKeyAsciiCb.CheckedChanged += AuthenticationKeyAsciiCb_CheckedChanged;
-                        throw new ArgumentOutOfRangeException("There are non ASCII chars.");
-                    }
-                    AuthenticationKeyTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(AuthenticationKeyTB.Text));
-                }
-                else
-                {
-                    AuthenticationKeyTB.Text = GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(AuthenticationKeyTB.Text), true);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, ex.Message);
-            }
-        }
-
-        private void ChallengeAsciiCb_CheckedChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (ChallengeAsciiCb.Checked)
-                {
-                    if (!IsAscii(GXCommon.HexToBytes(ChallengeTb.Text)))
-                    {
-                        ChallengeAsciiCb.CheckedChanged -= ChallengeAsciiCb_CheckedChanged;
-                        ChallengeAsciiCb.Checked = false;
-                        ChallengeAsciiCb.CheckedChanged += ChallengeAsciiCb_CheckedChanged;
-                        throw new ArgumentOutOfRangeException("There are non ASCII chars.");
-                    }
-                    ChallengeTb.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(ChallengeTb.Text));
-                }
-                else
-                {
-                    ChallengeTb.Text = GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(ChallengeTb.Text), true);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, ex.Message);
-            }
-        }
-
 
         private void StandardCB_CheckedChanged(object sender, EventArgs e)
         {
@@ -649,196 +443,6 @@ namespace GXDLMSDirector
             else if (tabControl1.SelectedIndex == 1)
             {
                 PduToXmlBtn_Click(null, null);
-            }
-        }
-
-        private void PasswordBtn_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                GXCiphering c = new GXCiphering(null);
-                c.SystemTitle = GXCommon.HexToBytes(GetAsHex(SystemTitleTB.Text, SystemTitleAsciiCb.Checked));
-                c.BlockCipherKey = GXCommon.HexToBytes(GetAsHex(BlockCipherKeyTB.Text, BlockCipherKeyAsciiCb.Checked));
-                c.AuthenticationKey = GXCommon.HexToBytes(GetAsHex(AuthenticationKeyTB.Text, AuthenticationKeyAsciiCb.Checked));
-                c.InvocationCounter = UInt32.Parse(InvocationCounterTB.Text);
-                MessageBox.Show(this, GXCommon.ToHex(c.GenerateGmacPassword(GXCommon.HexToBytes(GetAsHex(ChallengeTb.Text, ChallengeAsciiCb.Checked))), true));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, ex.Message);
-            }
-        }
-
-        private void ServerSystemTitleAsciiCb_CheckedChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (ServerSystemTitleAsciiCb.Checked)
-                {
-                    if (!IsAscii(GXCommon.HexToBytes(ServerSystemTitleTB.Text)))
-                    {
-                        ServerSystemTitleAsciiCb.CheckedChanged -= ServerSystemTitleAsciiCb_CheckedChanged;
-                        ServerSystemTitleAsciiCb.Checked = !ServerSystemTitleAsciiCb.Checked;
-                        ServerSystemTitleAsciiCb.CheckedChanged += ServerSystemTitleAsciiCb_CheckedChanged;
-                        throw new ArgumentOutOfRangeException("There are non ASCII chars.");
-                    }
-                    ServerSystemTitleTB.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(ServerSystemTitleTB.Text));
-                }
-                else
-                {
-                    ServerSystemTitleTB.Text = GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(ServerSystemTitleTB.Text), true);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, ex.Message);
-            }
-        }
-
-        private void DedicatedKeyAsciiCb_CheckedChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (DedicatedKeyAsciiCb.Checked)
-                {
-                    if (!IsAscii(GXCommon.HexToBytes(DedicatedKeyTb.Text)))
-                    {
-                        DedicatedKeyAsciiCb.CheckedChanged -= DedicatedKeyAsciiCb_CheckedChanged;
-                        DedicatedKeyAsciiCb.Checked = !DedicatedKeyAsciiCb.Checked;
-                        DedicatedKeyAsciiCb.CheckedChanged += DedicatedKeyAsciiCb_CheckedChanged;
-                        throw new ArgumentOutOfRangeException("There are non ASCII chars.");
-                    }
-                    DedicatedKeyTb.Text = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(DedicatedKeyTb.Text));
-                }
-                else
-                {
-                    DedicatedKeyTb.Text = GXCommon.ToHex(ASCIIEncoding.ASCII.GetBytes(DedicatedKeyTb.Text), true);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, ex.Message);
-            }
-        }
-
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        /// <summary>
-        /// Add new certificate.
-        /// </summary>
-        private void CertificateAddMnu_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                OpenFileDialog dlg = new OpenFileDialog();
-                dlg.Multiselect = false;
-                if (string.IsNullOrEmpty(path))
-                {
-                    dlg.InitialDirectory = Directory.GetCurrentDirectory();
-                }
-                else
-                {
-                    System.IO.FileInfo fi = new System.IO.FileInfo(path);
-                    dlg.InitialDirectory = fi.DirectoryName;
-                    dlg.FileName = fi.Name;
-                }
-                dlg.Filter = Properties.Resources.CertificateFilterTxt;
-                dlg.DefaultExt = ".pem";
-                dlg.ValidateNames = true;
-                if (dlg.ShowDialog(this) == DialogResult.OK)
-                {
-                    bool exists = false;
-                    if (File.Exists(dlg.FileName))
-                    {
-                        try
-                        {
-                            GXx509Certificate cert = GXx509Certificate.Load(dlg.FileName);
-                            foreach (ListViewItem it in CertificatesList.Items)
-                            {
-                                if (it.Tag is GXx509Certificate c)
-                                {
-                                    if (c.Subject == cert.Subject)
-                                    {
-                                        exists = true;
-                                        throw new Exception("Public key already exists.");
-                                    }
-                                }
-                            }
-                            ListViewItem li = new ListViewItem("Public Key");
-                            li.StateImageIndex = li.ImageIndex = 0;
-                            li.SubItems.Add(cert.Subject);
-                            li.SubItems.Add(cert.ValidFrom + "-" + cert.ValidTo);
-                            StringBuilder sb = new StringBuilder();
-                            foreach (KeyUsage it in Enum.GetValues(typeof(KeyUsage)))
-                            {
-                                if (((int)it & (int)cert.KeyUsage) != 0)
-                                {
-                                    sb.Append(it);
-                                    sb.Append(", ");
-                                }
-                            }
-                            if (sb.Length != 0)
-                            {
-                                sb.Length -= 2;
-                            }
-                            li.SubItems.Add(sb.ToString());
-                            CertificatesList.Items.Add(li).Tag = cert;
-                        }
-                        catch (Exception)
-                        {
-                            if (!exists)
-                            {
-                                //Check if this is private key.
-                                GXPkcs8 cert = GXPkcs8.Load(dlg.FileName);
-                                ListViewItem li = new ListViewItem("Private Key");
-                                li.StateImageIndex = li.ImageIndex = 1;
-                                foreach (ListViewItem it in CertificatesList.Items)
-                                {
-                                    if (it.Tag is GXPkcs8)
-                                    {
-                                        throw new Exception("Private key already exists. There can be only one private key.");
-                                    }
-                                }
-                                CertificatesList.Items.Add(li).Tag = cert;
-                            }
-                        }
-                        path = dlg.FileName;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Remove selected certificates.
-        /// </summary>
-        private void CertificateRemoveMnu_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (CertificatesList.SelectedItems.Count != 0)
-                {
-                    DialogResult ret = MessageBox.Show(this, Properties.Resources.CertificateRemove, Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
-                    if (ret != DialogResult.Yes)
-                    {
-                        return;
-                    }
-                    while (CertificatesList.SelectedItems.Count != 0)
-                    {
-                        ListViewItem it = CertificatesList.SelectedItems[0];
-                        it.Remove();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, ex.Message);
             }
         }
     }

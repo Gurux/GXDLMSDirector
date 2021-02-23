@@ -161,9 +161,6 @@
     <Setting Name="UseMeterTimeZone" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="Certificates" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="HdlcAddressUseOpticalProbe" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
@@ -196,6 +193,27 @@
     </Setting>
     <Setting Name="PlcSerialSettingsActiveInitiator" Type="System.String" Scope="User">
       <Value Profile="(Default)">00 11 22 33 44 55 66 77 88</Value>
+    </Setting>
+    <Setting Name="SecuritySuite" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="ClientSigningKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ClientAgreementKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ServerSigningKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ServerAgreementKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="GeneratorAddress" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://certificates.gurux.fi/api/CertificateGenerator</Value>
+    </Setting>
+    <Setting Name="KeyAgreementScheme" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12330 $,
-//                  $Date: 2021-02-23 15:17:30 +0200 (ti, 23 helmi 2021) $
+// Version:         $Revision: 12346 $,
+//                  $Date: 2021-02-25 13:04:07 +0200 (to, 25 helmi 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -3809,6 +3809,7 @@ namespace GXDLMSDirector
                     GXDLMSProfileGeneric pg = (GXDLMSProfileGeneric)parameters[0];
                     if (activeDC != null)
                     {
+                        pg.Buffer.Clear();
                         List<KeyValuePair<GXDLMSObject, byte>> list = new List<KeyValuePair<GXDLMSObject, byte>>();
                         //Buffer is updated after all else is updated.
                         foreach (byte index in (pg as IGXDLMSBase).GetAttributeIndexToRead(true))

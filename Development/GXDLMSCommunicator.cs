@@ -606,6 +606,12 @@ namespace GXDLMSDirector
                 {
                     data = "/?" + this.parent.PhysicalAddress + "!\r\n";
                 }
+                //Add custom logon string with ASCII characters for E350 meters in case of Xemex Custom selected
+                if (parent.Manufacturer == "XMX" && this.parent.HDLCAddressing == HDLCAddressType.Custom)
+                {
+                    data = "/?P07210!\r\n";
+                }
+
                 GXLogWriter.WriteLog("IEC Sending:" + data);
                 ReceiveParameters<string> p = new ReceiveParameters<string>()
                 {

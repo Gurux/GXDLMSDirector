@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12330 $,
-//                  $Date: 2021-02-23 15:17:30 +0200 (ti, 23 helmi 2021) $
+// Version:         $Revision: 12366 $,
+//                  $Date: 2021-03-04 16:19:17 +0200 (to, 04 maalis 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -127,22 +127,27 @@ namespace GXDLMSDirector
                 if (Device == null || Device.Name == null)
                 {
                     Device = new GXDLMSDevice(null);
+                    GXManufacturer man = null;
                     //Select first manufacturer.
                     if (Manufacturers.Count != 0)
                     {
                         ManufacturerCB.SelectedIndex = pos;
+                        man = (GXManufacturer)ManufacturerCB.SelectedItem;
                     }
                     Device.Conformance = (int)GXDLMSClient.GetInitialConformance(UseLNCB.Checked);
                     FrameCounterTb.ReadOnly = true;
-                    ciphering.Security = (Security)Enum.Parse(typeof(Security), Properties.Settings.Default.Security);
-                    ciphering.SecuritySuite = (SecuritySuite)Properties.Settings.Default.SecuritySuite;
-                    ciphering.KeyAgreementScheme = (KeyAgreementScheme)Properties.Settings.Default.KeyAgreementScheme;
-                    ciphering.SystemTitle = Properties.Settings.Default.NotifySystemTitle;
-                    ciphering.ServerSystemTitle = Properties.Settings.Default.ServerSystemTitle;
-                    ciphering.BlockCipherKey = Properties.Settings.Default.NotifyBlockCipherKey;
-                    ciphering.AuthenticationKey = Properties.Settings.Default.AuthenticationKey;
-                    InvocationCounterTB.Text = Properties.Settings.Default.InvocationCounter.ToString();
-                    ciphering.DedicatedKey = Properties.Settings.Default.DedicatedKey;
+                    if (man != null)
+                    {
+                        Device.Security = man.Security;
+                        Device.SecuritySuite = (SecuritySuite)Properties.Settings.Default.SecuritySuite;
+                        Device.KeyAgreementScheme = (KeyAgreementScheme)Properties.Settings.Default.KeyAgreementScheme;
+                        Device.SystemTitle = GXCommon.ToHex(man.SystemTitle, false);
+                        Device.ServerSystemTitle = GXCommon.ToHex(man.ServerSystemTitle, false);
+                        Device.BlockCipherKey = GXCommon.ToHex(man.BlockCipherKey, false);
+                        Device.AuthenticationKey = GXCommon.ToHex(man.AuthenticationKey, false);
+                        InvocationCounterTB.Text = Properties.Settings.Default.InvocationCounter.ToString();
+                        Device.DedicatedKey = Properties.Settings.Default.DedicatedKey;
+                    }
                     UpdateDeviceSettings(Device);
                 }
                 else
@@ -726,6 +731,11 @@ namespace GXDLMSDirector
             device.AuthenticationName = auth.Name;
             if (device.Authentication != Authentication.None)
             {
+                if (device.Authentication == Authentication.HighECDSA &&
+                    string.IsNullOrEmpty(ciphering.ClientSigningKey))
+                {
+                    throw new Exception("ECDSA needs client signing key. Set it in secured Connections tab.");
+                }
                 if (PasswordAsciiCb.Checked)
                 {
                     device.Password = CryptHelper.Encrypt(PasswordTB.Text, Password.Key);

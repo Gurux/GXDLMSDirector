@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12330 $,
-//                  $Date: 2021-02-23 15:17:30 +0200 (ti, 23 helmi 2021) $
+// Version:         $Revision: 12366 $,
+//                  $Date: 2021-03-04 16:19:17 +0200 (to, 04 maalis 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -880,6 +880,10 @@ namespace GXDLMSDirector
                 (client.Ciphering.Security != Security.None &&
                 parent.SecuritySuite != SecuritySuite.GMac))
             {
+                if (string.IsNullOrEmpty(parent.ClientAgreementKey))
+                {
+                    throw new Exception("Client agreement key is not set.");
+                }
                 GXPkcs8 pk = GXPkcs8.FromDer(parent.ClientAgreementKey);
                 GXx509Certificate pub = GXx509Certificate.FromDer(parent.ServerAgreementKey);
                 client.Ciphering.KeyAgreementKeyPair = new KeyValuePair<GXPrivateKey, GXPublicKey>(pk.PrivateKey, pub.PublicKey);

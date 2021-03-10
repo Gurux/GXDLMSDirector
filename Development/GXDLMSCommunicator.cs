@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12366 $,
-//                  $Date: 2021-03-04 16:19:17 +0200 (to, 04 maalis 2021) $
+// Version:         $Revision: 12376 $,
+//                  $Date: 2021-03-10 12:43:11 +0200 (ke, 10 maalis 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1009,6 +1009,10 @@ namespace GXDLMSDirector
                     formula = server.Formula;
                 }
                 client.ServerAddress = GXDLMSClient.GetServerAddress(Convert.ToInt32(parent.PhysicalAddress), formula);
+                if (client.InterfaceType != InterfaceType.HDLC && client.InterfaceType != InterfaceType.HdlcWithModeE)
+                {
+                    client.ServerAddress &= ~0x4000;
+                }
                 client.ServerAddressSize = 4;
             }
             else

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12346 $,
-//                  $Date: 2021-02-25 13:04:07 +0200 (to, 25 helmi 2021) $
+// Version:         $Revision: 12389 $,
+//                  $Date: 2021-03-16 12:39:41 +0200 (ti, 16 maalis 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -2235,7 +2235,7 @@ namespace GXDLMSDirector
                     }
                     int pos = 0;
                     //Use access request if it is supported.
-                    if ((dev.Comm.client.ProposedConformance & Conformance.Access) != 0)
+                    if ((dev.Comm.client.NegotiatedConformance & Conformance.Access) != 0)
                     {
                         List<GXDLMSAccessItem> list = new List<GXDLMSAccessItem>();
                         bool force = ForceRefreshBtn.Checked;
@@ -2684,7 +2684,7 @@ namespace GXDLMSDirector
                                 dev.Comm.OnBeforeRead += new ReadEventHandler(OnBeforeRead);
                                 dev.Comm.OnAfterRead += new ReadEventHandler(OnAfterRead);
                                 //Use access request if it is supported.
-                                if ((dev.Comm.client.ProposedConformance & Conformance.Access) != 0)
+                                if ((dev.Comm.client.NegotiatedConformance & Conformance.Access) != 0)
                                 {
                                     List<GXDLMSAccessItem> list = new List<GXDLMSAccessItem>();
                                     int[] indexes = (obj as IGXDLMSBase).GetAttributeIndexToRead(ForceRefreshBtn.Checked);

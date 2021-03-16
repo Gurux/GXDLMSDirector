@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12366 $,
-//                  $Date: 2021-03-04 16:19:17 +0200 (to, 04 maalis 2021) $
+// Version:         $Revision: 12389 $,
+//                  $Date: 2021-03-16 12:39:41 +0200 (ti, 16 maalis 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -381,8 +381,6 @@ namespace GXDLMSDirector
             ciphering.ServerSigningKey = device.ServerSigningKey;
             ciphering.ServerAgreementKey = device.ServerAgreementKey;
             ciphering.UpdateKeys();
-            device.PreEstablished = ciphering.PreEstablished;
-
             ciphering.PreEstablishedApplicationAssociations = device.PreEstablished;
             this.VerboseModeCB.Checked = device.Verbose;
             this.NameTB.Text = device.Name;
@@ -963,7 +961,7 @@ namespace GXDLMSDirector
             device.ClientAgreementKey = ciphering.ClientAgreementKey;
             device.ServerSigningKey = ciphering.ServerSigningKey;
             device.ServerAgreementKey = ciphering.ServerAgreementKey;
-            device.PreEstablished = ciphering.PreEstablished;
+            device.PreEstablished = ciphering.PreEstablishedApplicationAssociations;
             device.UseProtectedRelease = UseProtectedReleaseCb.Checked;
 
 

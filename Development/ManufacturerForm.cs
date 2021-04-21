@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12330 $,
-//                  $Date: 2021-02-23 15:17:30 +0200 (ti, 23 helmi 2021) $
+// Version:         $Revision: 12433 $,
+//                  $Date: 2021-04-21 10:36:29 +0300 (ke, 21 huhti 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -167,6 +167,7 @@ namespace GXDLMSDirector
                 AuthenticationKeyTB.Text = GXCommon.ToHex(manufacturer.AuthenticationKey, true);
             }
             UseUtcTimeZone.Checked = manufacturer.UtcTimeZone;
+            IecAddressTb.Text = manufacturer.IecAddress;
             if (manufacturer.SupporterdInterfaces != 0)
             {
                 HdlcCb.Checked = (manufacturer.SupporterdInterfaces & (1 << (int)InterfaceType.HDLC)) != 0;
@@ -213,6 +214,7 @@ namespace GXDLMSDirector
                 Manufacturer.UseLogicalNameReferencing = UseLNCB.Checked;
                 Manufacturer.Standard = (Standard)StandardCb.SelectedItem;
                 Manufacturer.UtcTimeZone = UseUtcTimeZone.Checked;
+                Manufacturer.IecAddress = IecAddressTb.Text;
 
                 GXAuthentication authentication = Manufacturer.GetActiveAuthentication();
                 authentication.ClientAddress = Convert.ToInt32(this.ClientAddTB.Value);

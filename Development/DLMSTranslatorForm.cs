@@ -91,7 +91,7 @@ namespace GXDLMSDirector
             string xml = null;
             try
             {
-                if (tabControl1.SelectedIndex == 3)
+                if (tabControl1.SelectedTab == tabPage5)
                 {
                     translator.DataToXml(DataPdu.Text, out xml);
                 }
@@ -176,7 +176,7 @@ namespace GXDLMSDirector
                 string st = GXDLMSTranslator.ToHex(data);
                 if (GXDLMSTranslator.ToHex(original) != st)
                 {
-                    if (MessageBox.Show(parent, string.Format(title, original, st), Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)
+                    if (MessageBox.Show(parent, string.Format(title, GXDLMSTranslator.ToHex(original), st), Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)
                     {
                         return true;
                     }

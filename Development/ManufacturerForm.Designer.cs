@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12330 $,
-//                  $Date: 2021-02-23 15:17:30 +0200 (ti, 23 helmi 2021) $
+// Version:         $Revision: 12433 $,
+//                  $Date: 2021-04-21 10:36:29 +0300 (ke, 21 huhti 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -95,6 +95,9 @@ namespace GXDLMSDirector
             this.StandardLbl = new System.Windows.Forms.Label();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.RawPDUCb = new System.Windows.Forms.CheckBox();
+            this.PLCPrimeCb = new System.Windows.Forms.CheckBox();
+            this.WiredMBusCb = new System.Windows.Forms.CheckBox();
             this.WrapperCb = new System.Windows.Forms.CheckBox();
             this.WiSunCb = new System.Windows.Forms.CheckBox();
             this.LpWanCb = new System.Windows.Forms.CheckBox();
@@ -117,9 +120,8 @@ namespace GXDLMSDirector
             this.SecurityLbl = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.InfoTB = new System.Windows.Forms.TextBox();
-            this.WiredMBusCb = new System.Windows.Forms.CheckBox();
-            this.PLCPrimeCb = new System.Windows.Forms.CheckBox();
-            this.RawPDUCb = new System.Windows.Forms.CheckBox();
+            this.IecAddressTb = new System.Windows.Forms.TextBox();
+            this.IecAddressLbl = new System.Windows.Forms.Label();
             this.AddressingGB.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ClientAddTB)).BeginInit();
@@ -422,6 +424,8 @@ namespace GXDLMSDirector
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.IecAddressTb);
+            this.tabPage1.Controls.Add(this.IecAddressLbl);
             this.tabPage1.Controls.Add(this.UseUtcTimeZone);
             this.tabPage1.Controls.Add(this.StandardCb);
             this.tabPage1.Controls.Add(this.StandardLbl);
@@ -456,9 +460,9 @@ namespace GXDLMSDirector
             // 
             this.StandardCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.StandardCb.FormattingEnabled = true;
-            this.StandardCb.Location = new System.Drawing.Point(119, 55);
+            this.StandardCb.Location = new System.Drawing.Point(89, 55);
             this.StandardCb.Name = "StandardCb";
-            this.StandardCb.Size = new System.Drawing.Size(194, 21);
+            this.StandardCb.Size = new System.Drawing.Size(101, 21);
             this.StandardCb.TabIndex = 41;
             // 
             // StandardLbl
@@ -500,6 +504,36 @@ namespace GXDLMSDirector
             this.groupBox3.TabIndex = 0;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Supported interfaces";
+            // 
+            // RawPDUCb
+            // 
+            this.RawPDUCb.AutoSize = true;
+            this.RawPDUCb.Location = new System.Drawing.Point(15, 249);
+            this.RawPDUCb.Name = "RawPDUCb";
+            this.RawPDUCb.Size = new System.Drawing.Size(74, 17);
+            this.RawPDUCb.TabIndex = 10;
+            this.RawPDUCb.Text = "Raw PDU";
+            this.RawPDUCb.UseVisualStyleBackColor = true;
+            // 
+            // PLCPrimeCb
+            // 
+            this.PLCPrimeCb.AutoSize = true;
+            this.PLCPrimeCb.Location = new System.Drawing.Point(15, 200);
+            this.PLCPrimeCb.Name = "PLCPrimeCb";
+            this.PLCPrimeCb.Size = new System.Drawing.Size(78, 17);
+            this.PLCPrimeCb.TabIndex = 8;
+            this.PLCPrimeCb.Text = "PLC Prime ";
+            this.PLCPrimeCb.UseVisualStyleBackColor = true;
+            // 
+            // WiredMBusCb
+            // 
+            this.WiredMBusCb.AutoSize = true;
+            this.WiredMBusCb.Location = new System.Drawing.Point(15, 226);
+            this.WiredMBusCb.Name = "WiredMBusCb";
+            this.WiredMBusCb.Size = new System.Drawing.Size(87, 17);
+            this.WiredMBusCb.TabIndex = 9;
+            this.WiredMBusCb.Text = "Wired M-Bus";
+            this.WiredMBusCb.UseVisualStyleBackColor = true;
             // 
             // WrapperCb
             // 
@@ -728,35 +762,21 @@ namespace GXDLMSDirector
             this.InfoTB.Size = new System.Drawing.Size(398, 367);
             this.InfoTB.TabIndex = 1;
             // 
-            // WiredMBusCb
+            // IecAddressTb
             // 
-            this.WiredMBusCb.AutoSize = true;
-            this.WiredMBusCb.Location = new System.Drawing.Point(15, 226);
-            this.WiredMBusCb.Name = "WiredMBusCb";
-            this.WiredMBusCb.Size = new System.Drawing.Size(87, 17);
-            this.WiredMBusCb.TabIndex = 9;
-            this.WiredMBusCb.Text = "Wired M-Bus";
-            this.WiredMBusCb.UseVisualStyleBackColor = true;
+            this.IecAddressTb.Location = new System.Drawing.Point(90, 123);
+            this.IecAddressTb.Name = "IecAddressTb";
+            this.IecAddressTb.Size = new System.Drawing.Size(246, 20);
+            this.IecAddressTb.TabIndex = 44;
             // 
-            // PLCPrimeCb
+            // IecAddressLbl
             // 
-            this.PLCPrimeCb.AutoSize = true;
-            this.PLCPrimeCb.Location = new System.Drawing.Point(15, 200);
-            this.PLCPrimeCb.Name = "PLCPrimeCb";
-            this.PLCPrimeCb.Size = new System.Drawing.Size(78, 17);
-            this.PLCPrimeCb.TabIndex = 8;
-            this.PLCPrimeCb.Text = "PLC Prime ";
-            this.PLCPrimeCb.UseVisualStyleBackColor = true;
-            // 
-            // RawPDUCb
-            // 
-            this.RawPDUCb.AutoSize = true;
-            this.RawPDUCb.Location = new System.Drawing.Point(15, 249);
-            this.RawPDUCb.Name = "RawPDUCb";
-            this.RawPDUCb.Size = new System.Drawing.Size(74, 17);
-            this.RawPDUCb.TabIndex = 10;
-            this.RawPDUCb.Text = "Raw PDU";
-            this.RawPDUCb.UseVisualStyleBackColor = true;
+            this.IecAddressLbl.AutoSize = true;
+            this.IecAddressLbl.Location = new System.Drawing.Point(10, 126);
+            this.IecAddressLbl.Name = "IecAddressLbl";
+            this.IecAddressLbl.Size = new System.Drawing.Size(68, 13);
+            this.IecAddressLbl.TabIndex = 45;
+            this.IecAddressLbl.Text = "IEC Address:";
             // 
             // ManufacturerForm
             // 
@@ -856,5 +876,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.CheckBox WiredMBusCb;
         private System.Windows.Forms.CheckBox PLCPrimeCb;
         private System.Windows.Forms.CheckBox RawPDUCb;
+        private System.Windows.Forms.TextBox IecAddressTb;
+        private System.Windows.Forms.Label IecAddressLbl;
     }
 }

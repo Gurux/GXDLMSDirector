@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12389 $,
-//                  $Date: 2021-03-16 12:39:41 +0200 (ti, 16 maalis 2021) $
+// Version:         $Revision: 12424 $,
+//                  $Date: 2021-04-13 12:12:45 +0300 (ti, 13 huhti 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -3584,10 +3584,13 @@ namespace GXDLMSDirector
                         dev.InactivityTimeout = 120 - 10;
                         foreach (GXDLMSHdlcSetup it in dev.Objects.GetObjects(ObjectType.IecHdlcSetup))
                         {
-                            d.Comm.ReadValue(it, 8);
-                            if (dev.InactivityTimeout > it.InactivityTimeout && it.InactivityTimeout > 10)
+                            if (it.CanRead(8))
                             {
-                                dev.InactivityTimeout = it.InactivityTimeout - 10;
+                                d.Comm.ReadValue(it, 8);
+                                if (dev.InactivityTimeout > it.InactivityTimeout && it.InactivityTimeout > 10)
+                                {
+                                    dev.InactivityTimeout = it.InactivityTimeout - 10;
+                                }
                             }
                         }
                     }

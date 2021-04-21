@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12376 $,
-//                  $Date: 2021-03-10 12:43:11 +0200 (ke, 10 maalis 2021) $
+// Version:         $Revision: 12433 $,
+//                  $Date: 2021-04-21 10:36:29 +0300 (ke, 21 huhti 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -553,6 +553,15 @@ namespace GXDLMSDirector
                 case 19200:
                     rate = '6';
                     break;
+                case 38400:
+                    rate = '7';
+                    break;
+                case 57600:
+                    rate = '8';
+                    break;
+                case 115200:
+                    rate = '9';
+                    break;
                 default:
                     throw new Exception("Unknown baud rate.");
             }
@@ -578,10 +587,11 @@ namespace GXDLMSDirector
 
         internal string InitializeIEC()
         {
+            GXManufacturer manufacturer = null;
             string manufactureID = null;
             if (parent.Manufacturer != null)
             {
-                GXManufacturer manufacturer = this.parent.Manufacturers.FindByIdentification(parent.Manufacturer);
+                manufacturer = this.parent.Manufacturers.FindByIdentification(parent.Manufacturer);
                 if (manufacturer == null)
                 {
                     throw new Exception("Unknown manufacturer " + parent.Manufacturer);
@@ -602,9 +612,16 @@ namespace GXDLMSDirector
             if (serial != null && parent.InterfaceType == InterfaceType.HdlcWithModeE)
             {
                 string data = "/?!\r\n";
-                if (this.parent.HDLCAddressing == HDLCAddressType.SerialNumber)
+                if (manufacturer != null && !string.IsNullOrEmpty(manufacturer.IecAddress))
                 {
-                    data = "/?" + this.parent.PhysicalAddress + "!\r\n";
+                    data = manufacturer.IecAddress;
+                }
+                else
+                {
+                    if (this.parent.HDLCAddressing == HDLCAddressType.SerialNumber)
+                    {
+                        data = "/?" + this.parent.PhysicalAddress + "!\r\n";
+                    }
                 }
                 GXLogWriter.WriteLog("IEC Sending:" + data);
                 ReceiveParameters<string> p = new ReceiveParameters<string>()
@@ -698,6 +715,15 @@ namespace GXDLMSDirector
                         break;
                     case '6':
                         BaudRate = 19200;
+                        break;
+                    case '7':
+                        BaudRate = 38400;
+                        break;
+                    case '8':
+                        BaudRate = 57600;
+                        break;
+                    case '9':
+                        BaudRate = 115200;
                         break;
                     default:
                         throw new Exception("Unknown baud rate.");
@@ -858,8 +884,15 @@ namespace GXDLMSDirector
                 {
                     formula = server.Formula;
                 }
-                client.ServerAddress = GXDLMSClient.GetServerAddress(Convert.ToInt32(parent.PhysicalAddress), formula);
                 client.ServerAddressSize = 4;
+                if (client.InterfaceType == InterfaceType.HDLC || client.InterfaceType == InterfaceType.HdlcWithModeE)
+                {
+                    client.ServerAddress = GXDLMSClient.GetServerAddressFromSerialNumber(Convert.ToInt32(parent.PhysicalAddress), 1, formula);
+                }
+                else
+                {
+                    client.ServerAddress = GXDLMSClient.GetServerAddressFromSerialNumber(Convert.ToInt32(parent.PhysicalAddress), 0, formula);
+                }
             }
             else
             {
@@ -1008,10 +1041,13 @@ namespace GXDLMSDirector
                 {
                     formula = server.Formula;
                 }
-                client.ServerAddress = GXDLMSClient.GetServerAddress(Convert.ToInt32(parent.PhysicalAddress), formula);
-                if (client.InterfaceType != InterfaceType.HDLC && client.InterfaceType != InterfaceType.HdlcWithModeE)
+                if (client.InterfaceType == InterfaceType.HDLC || client.InterfaceType == InterfaceType.HdlcWithModeE)
                 {
-                    client.ServerAddress &= ~0x4000;
+                    client.ServerAddress = GXDLMSClient.GetServerAddressFromSerialNumber(Convert.ToInt32(parent.PhysicalAddress), 1, formula);
+                }
+                else
+                {
+                    client.ServerAddress = GXDLMSClient.GetServerAddressFromSerialNumber(Convert.ToInt32(parent.PhysicalAddress), 0, formula);
                 }
                 client.ServerAddressSize = 4;
             }

@@ -887,7 +887,7 @@ namespace GXDLMSDirector
                 client.ServerAddressSize = 4;
                 if (client.InterfaceType == InterfaceType.HDLC || client.InterfaceType == InterfaceType.HdlcWithModeE)
                 {
-                    client.ServerAddress = GXDLMSClient.GetServerAddressFromSerialNumber(Convert.ToInt32(parent.PhysicalAddress), 1, formula);
+                    client.ServerAddress = GXDLMSClient.GetServerAddressFromSerialNumber(Convert.ToInt32(parent.PhysicalAddress), parent.LogicalAddress, formula);
                 }
                 else
                 {
@@ -1043,7 +1043,7 @@ namespace GXDLMSDirector
                 }
                 if (client.InterfaceType == InterfaceType.HDLC || client.InterfaceType == InterfaceType.HdlcWithModeE)
                 {
-                    client.ServerAddress = GXDLMSClient.GetServerAddressFromSerialNumber(Convert.ToInt32(parent.PhysicalAddress), 1, formula);
+                    client.ServerAddress = GXDLMSClient.GetServerAddressFromSerialNumber(Convert.ToInt32(parent.PhysicalAddress), parent.LogicalAddress, formula);
                 }
                 else
                 {
@@ -1358,7 +1358,7 @@ namespace GXDLMSDirector
                 {
                     ReadDataBlock(it, text, multiplier, tryCount, reply);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     //Update frame ID if meter returns error.
                     if (client.InterfaceType == InterfaceType.HDLC ||
@@ -1370,7 +1370,7 @@ namespace GXDLMSDirector
                         GXDLMSClient.GetHdlcAddressInfo(new GXByteBuffer(it), out target, out source, out type);
                         client.HdlcSettings.SenderFrame = type;
                     }
-                    throw ex;
+                    throw;
                 }
             }
         }
@@ -1590,6 +1590,11 @@ namespace GXDLMSDirector
             int[] indexes = (obj as IGXDLMSBase).GetAttributeIndexToRead(forceRead);
             foreach (int it in indexes)
             {
+                //Logical name is not read again.
+                if (it == 1)
+                {
+                    continue;
+                }
                 //If reading is not allowed.
                 if ((obj.GetAccess(it) & AccessMode.Read) == 0)
                 {

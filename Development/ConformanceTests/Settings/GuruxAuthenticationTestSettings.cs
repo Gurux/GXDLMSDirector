@@ -57,6 +57,35 @@ namespace GXDLMSDirector
             set;
         }
 
+
+        [Description("DLMS version number is read from the association object and it must be 8.")]
+        [DefaultValue(false)]
+        [Category("Accessibility")]
+        public bool DLMSVersionNumber
+        {
+            get;
+            set;
+        }
+
+
+        [Description("Client SAP is read from the association object and it must be equal to client address.")]
+        [DefaultValue(false)]
+        [Category("Accessibility")]
+        public bool ClientSAP
+        {
+            get;
+            set;
+        }
+
+        [Description("Server SAP is read from the association object and it must be equal to server address.")]
+        [DefaultValue(false)]
+        [Category("Accessibility")]
+        public bool ServerSAP
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// Return included tests.
         /// </summary>

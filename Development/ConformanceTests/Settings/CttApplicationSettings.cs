@@ -39,94 +39,131 @@ namespace GXDLMSDirector
 {
     public class CttApplicationSettings : IGXConformanceSettings
     {
-        [Description("Exclude COSEM application layer tests #1.")]
+        [Description("Exclude COSEM application layer tests T_APPL_IDLE_N1.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
-        public bool ExcludeTest1
+        public bool T_APPL_IDLE_N1
         {
             get;
             set;
         }
+
+        [Description("Exclude COSEM application layer tests T_APPL_OPEN_1.")]
+        [DefaultValue(false)]
+        [Category("Accessibility")]
+        public bool T_APPL_OPEN_1
+        {
+            get;
+            set;
+        }
+
+        [Description("Exclude COSEM application layer tests T_APPL_OPEN_3.")]
+        [DefaultValue(false)]
+        [Category("Accessibility")]
+        public bool T_APPL_OPEN_3
+        {
+            get;
+            set;
+        }
+
         [Description("Exclude COSEM application layer tests #4.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
-        public bool ExcludeTest4
+        public bool Appl_04
         {
             get;
             set;
         }
-        [Description("Exclude COSEM application layer tests #5.")]
+        [Description("Exclude COSEM application layer tests T_APPL_OPEN_5.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
-        public bool ExcludeTest5
+        public bool T_APPL_OPEN_5
         {
             get;
             set;
         }
-        [Description("Exclude COSEM application layer tests #6.")]
+        [Description("Exclude COSEM application layer tests T_APPL_OPEN_6.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
-        public bool ExcludeTest6
+        public bool T_APPL_OPEN_6
         {
             get;
             set;
         }
-        [Description("Exclude COSEM application layer tests #7.")]
+        [Description("Exclude COSEM application layer tests T_APPL_OPEN_7.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
-        public bool ExcludeTest7
+        public bool T_APPL_OPEN_7
         {
             get;
             set;
         }
-        [Description("Exclude COSEM application layer tests #9.")]
+        [Description("Exclude COSEM application layer tests T_APPL_OPEN_9.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
-        public bool ExcludeTest9
+        public bool T_APPL_OPEN_9
         {
             get;
             set;
         }
-        [Description("Exclude COSEM application layer tests #11.")]
+        [Description("Exclude COSEM application layer tests T_APPL_OPEN_11.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
-        public bool ExcludeTest11
-        {
-            get;
-            set;
-        }
-
-        [Description("Exclude COSEM application layer tests #12.")]
-        [DefaultValue(false)]
-        [Category("Accessibility")]
-        public bool ExcludeTest12
+        public bool T_APPL_OPEN_11
         {
             get;
             set;
         }
 
-        [Description("Exclude COSEM application layer tests #14.")]
+        [Description("Exclude COSEM application layer tests T_APPL_OPEN_12.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
-        public bool ExcludeTest14
+        public bool T_APPL_OPEN_12
         {
             get;
             set;
         }
 
-        [Description("Exclude COSEM application layer tests #15.")]
+        [Description("Exclude COSEM application layer tests T_APPL_OPEN_14.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
-        public bool ExcludeTest15
+        public bool T_APPL_OPEN_14
         {
             get;
             set;
         }
 
-        [Description("Exclude COSEM application layer tests #16.")]
+        [Description("Exclude COSEM application layer tests T_APPL_DATA_LN_N1.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
-        public bool ExcludeTest16
+        public bool T_APPL_DATA_LN_N1
+        {
+            get;
+            set;
+        }
+
+        [Description("Exclude COSEM application layer tests T_APPL_DATA_LN_N3.")]
+        [DefaultValue(false)]
+        [Category("Accessibility")]
+        public bool T_APPL_DATA_LN_N3
+        {
+            get;
+            set;
+        }
+
+        [Description("Exclude COSEM application layer tests T_APPL_DATA_LN_N4.")]
+        [DefaultValue(false)]
+        [Category("Accessibility")]
+        public bool T_APPL_DATA_LN_N4
+        {
+            get;
+            set;
+        }
+
+        [Description("Exclude application layer tests APPL_REL_P1.")]
+        [DefaultValue(false)]
+        [Category("Accessibility")]
+        public bool T_APPL_REL_P1
         {
             get;
             set;
@@ -145,7 +182,7 @@ namespace GXDLMSDirector
             {
                 if (it.GetValue(this).Equals(false))
                 {
-                    list.Add(it.Name.Substring("ExcludeTest".Length));
+                    list.Add(it.Name);
                 }
             }
 

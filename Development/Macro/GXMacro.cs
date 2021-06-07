@@ -69,6 +69,7 @@ namespace GXDLMSDirector.Macro
             target.Name = Name;
             target.Device = Device;
             target.ObjectType = ObjectType;
+            target.ObjectVersion = ObjectVersion;
             target.LogicalName = LogicalName;
             target.Index = Index;
             target.Value = Value;
@@ -145,6 +146,16 @@ namespace GXDLMSDirector.Macro
         /// </summary>
         [DefaultValue(0)]
         public int ObjectType
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Object version.
+        /// </summary>
+        [DefaultValue(0)]
+        public byte ObjectVersion
         {
             get;
             set;

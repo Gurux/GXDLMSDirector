@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12433 $,
-//                  $Date: 2021-04-21 10:36:29 +0300 (ke, 21 huhti 2021) $
+// Version:         $Revision: 12483 $,
+//                  $Date: 2021-06-07 12:52:24 +0300 (ma, 07 kesä 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -910,19 +910,26 @@ namespace GXDLMSDirector
             client.Ciphering.SecuritySuite = parent.SecuritySuite;
             client.Ciphering.KeyAgreementScheme = parent.KeyAgreementScheme;
             if (client.Authentication == Authentication.HighECDSA ||
-                (client.Ciphering.Security != Security.None &&
-                parent.SecuritySuite != SecuritySuite.GMac))
+                client.Ciphering.Security == Security.DigitallySigned)
             {
+                GXPkcs8 pk;
+                GXx509Certificate pub;
                 if (string.IsNullOrEmpty(parent.ClientAgreementKey))
                 {
                     throw new Exception("Client agreement key is not set.");
                 }
-                GXPkcs8 pk = GXPkcs8.FromDer(parent.ClientAgreementKey);
-                GXx509Certificate pub = GXx509Certificate.FromDer(parent.ServerAgreementKey);
-                client.Ciphering.KeyAgreementKeyPair = new KeyValuePair<GXPrivateKey, GXPublicKey>(pk.PrivateKey, pub.PublicKey);
-                pk = GXPkcs8.FromDer(parent.ClientSigningKey);
-                pub = GXx509Certificate.FromDer(parent.ServerSigningKey);
-                client.Ciphering.SigningKeyPair = new KeyValuePair<GXPrivateKey, GXPublicKey>(pk.PrivateKey, pub.PublicKey);
+                if (parent.ClientAgreementKey != null && parent.ServerAgreementKey != null)
+                {
+                    pk = GXPkcs8.FromDer(parent.ClientAgreementKey);
+                    pub = GXx509Certificate.FromDer(parent.ServerAgreementKey);
+                    client.Ciphering.KeyAgreementKeyPair = new KeyValuePair<GXPublicKey, GXPrivateKey>(pub.PublicKey, pk.PrivateKey);
+                }
+                if (parent.ClientSigningKey != null && parent.ServerSigningKey != null)
+                {
+                    pk = GXPkcs8.FromDer(parent.ClientSigningKey);
+                    pub = GXx509Certificate.FromDer(parent.ServerSigningKey);
+                    client.Ciphering.SigningKeyPair = new KeyValuePair<GXPublicKey, GXPrivateKey>(pub.PublicKey, pk.PrivateKey);
+                }
             }
             if (parent.SystemTitle != null && parent.BlockCipherKey != null && parent.AuthenticationKey != null)
             {

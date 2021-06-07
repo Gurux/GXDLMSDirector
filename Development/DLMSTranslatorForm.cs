@@ -19,6 +19,16 @@ namespace GXDLMSDirector
         public DLMSTranslatorForm()
         {
             InitializeComponent();
+            InterfaceTypeCb.Items.Add("");
+            foreach (InterfaceType it in Enum.GetValues(typeof(InterfaceType)))
+            {
+                if (it != InterfaceType.HdlcWithModeE)
+                {
+                    InterfaceTypeCb.Items.Add(it);
+                }
+            }
+            translator.OnKeys += Translator_OnKeys;
+            InterfaceTypeCb.SelectedIndex = 0;
             translator.Comments = true;
             DataPdu.Text = Properties.Settings.Default.Data;
             tabControl1_SelectedIndexChanged(null, null);
@@ -58,7 +68,7 @@ namespace GXDLMSDirector
                     translator.InvocationCounter = (UInt32)Properties.Settings.Default.InvocationCounter;
                     translator.DedicatedKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.DedicatedKey);
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     //Set default settings if settings are corrupted.
                     translator.Security = Security.None;
@@ -74,12 +84,29 @@ namespace GXDLMSDirector
                             Properties.Settings.Default.ClientSigningKey,
                             Properties.Settings.Default.ServerAgreementKey,
                             Properties.Settings.Default.ServerSigningKey);
-                            Ciphering.Challenge = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.Challenge);
+                Ciphering.Challenge = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.Challenge);
                 tabControl1.TabPages.Add(Ciphering.GetCiphetingTab());
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Find correct key.
+        /// </summary>
+        private void Translator_OnKeys(object sender, GXCryptoKeyParameter args)
+        {
+            if (args.Encrypt)
+            {
+                //Private key is used when data is encrypted.
+                args.PrivateKey = Ciphering.FindPrivateKey(args.SecuritySuite, args.CertificateType, args.SystemTitle);
+            }
+            else
+            {
+                //Public key is used for data decrypt.
+                args.PublicKey = Ciphering.FindPublicKey(args.SecuritySuite, args.CertificateType, args.SystemTitle);
             }
         }
 
@@ -97,7 +124,7 @@ namespace GXDLMSDirector
                 }
                 else
                 {
-                    XmlTB.Text = translator.PduToXml(PduTB.Text);
+                    XmlTB.Text = translator.PduToXml(RemoveComments(PduTB.Text));
                 }
             }
             catch (Exception ex)
@@ -142,22 +169,28 @@ namespace GXDLMSDirector
         private String RemoveComments(String data)
         {
             StringBuilder sb = new StringBuilder();
-            foreach (String it in data.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (string it in data.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
             {
-                if (!it.StartsWith("#"))
+                string tmp = it;
+                int pos = tmp.IndexOf("//");
+                if (pos != -1)
                 {
-                    if (WrapperCb.Checked)
+                    tmp = tmp.Substring(0, pos);
+                }
+                if (!tmp.StartsWith("#"))
+                {
+                    if (InterfaceTypeCb.SelectedItem is InterfaceType && (InterfaceType)InterfaceTypeCb.SelectedItem == InterfaceType.WRAPPER)
                     {
-                        int pos = it.IndexOf("0001");
+                        pos = tmp.IndexOf("0001");
                         if (pos != -1)
                         {
-                            sb.Append(it.Substring(pos));
+                            sb.Append(tmp.Substring(pos));
                             sb.Append(Environment.NewLine);
                         }
                     }
                     else
                     {
-                        sb.Append(it);
+                        sb.Append(tmp);
                         sb.Append(Environment.NewLine);
                     }
                 }
@@ -193,6 +226,14 @@ namespace GXDLMSDirector
         private void TranslateBtn_Click(object sender, EventArgs e)
         {
             MessageXmlTB.Text = "";
+            if (translator.BlockCipherKey != null)
+            {
+                MessageXmlTB.Text = "BlockCipher key: " + GXDLMSTranslator.ToHex(translator.BlockCipherKey) + Environment.NewLine;
+            }
+            if (translator.AuthenticationKey != null)
+            {
+                MessageXmlTB.Text += "Authentication Key:" + GXDLMSTranslator.ToHex(translator.AuthenticationKey) + Environment.NewLine;
+            }
             StringBuilder sb = new StringBuilder();
             GXByteBuffer bb = new GXByteBuffer();
             //TODO: This can remove later.
@@ -203,7 +244,15 @@ namespace GXDLMSDirector
                 translator.PduOnly = PduOnlyCB.Checked;
                 GXByteBuffer pdu = new GXByteBuffer();
                 bb.Set(GXDLMSTranslator.HexToBytes(RemoveComments(MessagePduTB.Text)));
-                InterfaceType type = GXDLMSTranslator.GetDlmsFraming(bb);
+                InterfaceType type;
+                if (InterfaceTypeCb.SelectedItem is string)
+                {
+                    type = GXDLMSTranslator.GetDlmsFraming(bb);
+                }
+                else
+                {
+                    type = (InterfaceType)InterfaceTypeCb.SelectedItem;
+                }
                 int cnt = 1;
                 string last = "";
                 while (translator.FindNextFrame(bb, pdu, type))
@@ -325,6 +374,7 @@ namespace GXDLMSDirector
                             case Command.GeneralGloCiphering:
                             case Command.GeneralDedCiphering:
                             case Command.GeneralCiphering:
+                            case Command.GeneralSigning:
                             case Command.InformationReport:
                             case Command.EventNotification:
                             case Command.DedConfirmedServiceError:
@@ -339,7 +389,7 @@ namespace GXDLMSDirector
                     sb.Append(msg.Xml);
                     pdu.Clear();
                 }
-                MessageXmlTB.Text = sb.ToString();
+                MessageXmlTB.Text += sb.ToString();
                 translator.Security = s;
             }
             catch (Exception ex)

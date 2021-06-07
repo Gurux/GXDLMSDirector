@@ -145,12 +145,39 @@ namespace GXDLMSDirector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Copyright© 1998-2020 Gurux Ltd.
+        ///   Looks up a localized string similar to Copyright© 1998-2021 Gurux Ltd.
         ///All rights reserved..
         /// </summary>
         internal static string CopyrightTxt {
             get {
                 return ResourceManager.GetString("CopyrightTxt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Subtest {0} failed..
+        /// </summary>
+        internal static string CTTSubTestFailed {
+            get {
+                return ResourceManager.GetString("CTTSubTestFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to test.
+        /// </summary>
+        internal static string CTTTest {
+            get {
+                return ResourceManager.GetString("CTTTest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to test failed..
+        /// </summary>
+        internal static string CTTTestFailed {
+            get {
+                return ResourceManager.GetString("CTTTestFailed", resourceCulture);
             }
         }
         
@@ -448,15 +475,6 @@ namespace GXDLMSDirector.Properties {
         internal static string SystemTitleTxt {
             get {
                 return ResourceManager.GetString("SystemTitleTxt", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to New Device Manufacturer settings are available. Do you want to update them online from Gurux Web?.
-        /// </summary>
-        internal static string UpdateManufacturersOnline2Txt {
-            get {
-                return ResourceManager.GetString("UpdateManufacturersOnline2Txt", resourceCulture);
             }
         }
         

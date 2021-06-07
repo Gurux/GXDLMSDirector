@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12250 $,
-//                  $Date: 2020-12-16 12:25:15 +0200 (ke, 16 joulu 2020) $
+// Version:         $Revision: 12483 $,
+//                  $Date: 2021-06-07 12:52:24 +0300 (ma, 07 kesä 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -242,7 +242,8 @@ namespace GXDLMSDirector
             {
                 try
                 {
-                    if (MessageBox.Show(this, GXDLMSDirector.Properties.Resources.UpdateManufacturersOnline2Txt, GXDLMSDirector.Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
+                    if (MessageBox.Show(this, Properties.Resources.UpdateManufacturersOnlineTxt,
+                        Properties.Resources.GXDLMSDirectorTxt, MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
                     {
                         GXManufacturerCollection.UpdateManufactureSettings();
                         Manufacturers = new GXManufacturerCollection();

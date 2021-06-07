@@ -93,13 +93,17 @@ namespace GXDLMSDirector
             PropertyDescriptorCollection props = TypeDescriptor.GetProperties(target);
             foreach (PropertyDescriptor it in props)
             {
-                if (it.GetValue(target) is IGXConformanceSettings)
+                object val = it.GetValue(target);
+                if (val != null)
                 {
-                    SetAll(it.GetValue(target), value);
-                }
-                else if (it.GetValue(target).Equals(false))
-                {
-                    it.SetValue(target, value);
+                    if (val is IGXConformanceSettings)
+                    {
+                        SetAll(val, value);
+                    }
+                    else if (val.Equals(false))
+                    {
+                        it.SetValue(target, value);
+                    }
                 }
             }
         }
@@ -125,9 +129,13 @@ namespace GXDLMSDirector
             PropertyDescriptorCollection props = TypeDescriptor.GetProperties(target);
             foreach (PropertyDescriptor it in props)
             {
-                if (it.GetValue(target).Equals(false))
+                object val = it.GetValue(target);
+                if (val != null)
                 {
-                    return true;
+                    if (val.Equals(false))
+                    {
+                        return true;
+                    }
                 }
             }
             return false;

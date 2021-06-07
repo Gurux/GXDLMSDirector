@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12389 $,
-//                  $Date: 2021-03-16 12:39:41 +0200 (ti, 16 maalis 2021) $
+// Version:         $Revision: 12483 $,
+//                  $Date: 2021-06-07 12:52:24 +0300 (ma, 07 kesä 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -139,7 +139,6 @@ namespace GXDLMSDirector
                     if (man != null)
                     {
                         Device.Security = man.Security;
-                        Device.SecuritySuite = (SecuritySuite)Properties.Settings.Default.SecuritySuite;
                         Device.KeyAgreementScheme = (KeyAgreementScheme)Properties.Settings.Default.KeyAgreementScheme;
                         Device.SystemTitle = GXCommon.ToHex(man.SystemTitle, false);
                         Device.ServerSystemTitle = GXCommon.ToHex(man.ServerSystemTitle, false);
@@ -332,8 +331,8 @@ namespace GXDLMSDirector
             }
             StandardCb.SelectedItem = device.Standard;
             ciphering.KeyAgreementScheme = device.KeyAgreementScheme;
-            ciphering.Security = device.Security;
             ciphering.SecuritySuite = device.SecuritySuite;
+            ciphering.Security = device.Security;
             if (!string.IsNullOrEmpty(device.SystemTitle) && IsAscii(GXCommon.HexToBytes(device.SystemTitle)))
             {
                 ciphering.SystemTitleAscii = true;
@@ -378,8 +377,10 @@ namespace GXDLMSDirector
             ciphering.ServerSystemTitle = device.ServerSystemTitle;
             ciphering.ClientSigningKey = device.ClientSigningKey;
             ciphering.ClientAgreementKey = device.ClientAgreementKey;
+            ciphering.ClientTls = device.ClientTlsKey;
             ciphering.ServerSigningKey = device.ServerSigningKey;
             ciphering.ServerAgreementKey = device.ServerAgreementKey;
+            ciphering.ServerTls = device.ServerTlsKey;
             ciphering.UpdateKeys();
             ciphering.PreEstablishedApplicationAssociations = device.PreEstablished;
             this.VerboseModeCB.Checked = device.Verbose;
@@ -959,8 +960,10 @@ namespace GXDLMSDirector
             device.DedicatedKey = ciphering.DedicatedKey;
             device.ClientSigningKey = ciphering.ClientSigningKey;
             device.ClientAgreementKey = ciphering.ClientAgreementKey;
+            device.ClientTlsKey = ciphering.ClientTls;
             device.ServerSigningKey = ciphering.ServerSigningKey;
             device.ServerAgreementKey = ciphering.ServerAgreementKey;
+            device.ServerTlsKey = ciphering.ServerTls;
             device.PreEstablished = ciphering.PreEstablishedApplicationAssociations;
             device.UseProtectedRelease = UseProtectedReleaseCb.Checked;
 

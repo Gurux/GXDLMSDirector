@@ -30,12 +30,12 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DLMSTranslatorForm));
             this.panel2 = new System.Windows.Forms.Panel();
+            this.InterfaceTypeCb = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.RemoveDuplicatesCb = new System.Windows.Forms.CheckBox();
             this.ReceivedRb = new System.Windows.Forms.RadioButton();
             this.SentRb = new System.Windows.Forms.RadioButton();
             this.AllRb = new System.Windows.Forms.RadioButton();
-            this.WrapperCb = new System.Windows.Forms.CheckBox();
             this.StandardCB = new System.Windows.Forms.CheckBox();
             this.CompletePDUCb = new System.Windows.Forms.CheckBox();
             this.PduOnlyCB = new System.Windows.Forms.CheckBox();
@@ -66,8 +66,8 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.InterfaceTypeCb);
             this.panel2.Controls.Add(this.groupBox1);
-            this.panel2.Controls.Add(this.WrapperCb);
             this.panel2.Controls.Add(this.StandardCB);
             this.panel2.Controls.Add(this.CompletePDUCb);
             this.panel2.Controls.Add(this.PduOnlyCB);
@@ -78,8 +78,16 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(924, 47);
+            this.panel2.Size = new System.Drawing.Size(984, 47);
             this.panel2.TabIndex = 3;
+            // 
+            // InterfaceTypeCb
+            // 
+            this.InterfaceTypeCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.InterfaceTypeCb.Location = new System.Drawing.Point(504, 14);
+            this.InterfaceTypeCb.Name = "InterfaceTypeCb";
+            this.InterfaceTypeCb.Size = new System.Drawing.Size(121, 21);
+            this.InterfaceTypeCb.TabIndex = 11;
             // 
             // groupBox1
             // 
@@ -88,7 +96,7 @@
             this.groupBox1.Controls.Add(this.SentRb);
             this.groupBox1.Controls.Add(this.AllRb);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.groupBox1.Location = new System.Drawing.Point(586, 0);
+            this.groupBox1.Location = new System.Drawing.Point(646, 0);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(338, 47);
             this.groupBox1.TabIndex = 10;
@@ -140,16 +148,6 @@
             this.AllRb.Text = "All";
             this.AllRb.UseVisualStyleBackColor = true;
             this.AllRb.Click += new System.EventHandler(this.TranslateBtn_Click);
-            // 
-            // WrapperCb
-            // 
-            this.WrapperCb.AutoSize = true;
-            this.WrapperCb.Location = new System.Drawing.Point(517, 12);
-            this.WrapperCb.Name = "WrapperCb";
-            this.WrapperCb.Size = new System.Drawing.Size(67, 17);
-            this.WrapperCb.TabIndex = 7;
-            this.WrapperCb.Text = "Wrapper";
-            this.WrapperCb.UseVisualStyleBackColor = true;
             // 
             // StandardCB
             // 
@@ -236,7 +234,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 47);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(924, 490);
+            this.tabControl1.Size = new System.Drawing.Size(984, 543);
             this.tabControl1.TabIndex = 4;
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
@@ -248,7 +246,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(916, 464);
+            this.tabPage1.Size = new System.Drawing.Size(976, 517);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Messages";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -261,14 +259,14 @@
             this.MessageXmlTB.Multiline = true;
             this.MessageXmlTB.Name = "MessageXmlTB";
             this.MessageXmlTB.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.MessageXmlTB.Size = new System.Drawing.Size(739, 458);
+            this.MessageXmlTB.Size = new System.Drawing.Size(799, 511);
             this.MessageXmlTB.TabIndex = 3;
             // 
             // splitter1
             // 
             this.splitter1.Location = new System.Drawing.Point(171, 3);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(3, 458);
+            this.splitter1.Size = new System.Drawing.Size(3, 511);
             this.splitter1.TabIndex = 2;
             this.splitter1.TabStop = false;
             // 
@@ -280,7 +278,7 @@
             this.MessagePduTB.Multiline = true;
             this.MessagePduTB.Name = "MessagePduTB";
             this.MessagePduTB.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.MessagePduTB.Size = new System.Drawing.Size(168, 458);
+            this.MessagePduTB.Size = new System.Drawing.Size(168, 511);
             this.MessagePduTB.TabIndex = 1;
             this.MessagePduTB.Text = resources.GetString("MessagePduTB.Text");
             // 
@@ -292,7 +290,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(916, 464);
+            this.tabPage2.Size = new System.Drawing.Size(916, 517);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Pdu";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -304,7 +302,7 @@
             this.XmlTB.Multiline = true;
             this.XmlTB.Name = "XmlTB";
             this.XmlTB.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.XmlTB.Size = new System.Drawing.Size(910, 355);
+            this.XmlTB.Size = new System.Drawing.Size(910, 408);
             this.XmlTB.TabIndex = 4;
             // 
             // splitter2
@@ -334,7 +332,7 @@
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(916, 464);
+            this.tabPage5.Size = new System.Drawing.Size(916, 517);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Data to XML";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -347,7 +345,7 @@
             this.DataXml.Multiline = true;
             this.DataXml.Name = "DataXml";
             this.DataXml.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.DataXml.Size = new System.Drawing.Size(742, 458);
+            this.DataXml.Size = new System.Drawing.Size(742, 511);
             this.DataXml.TabIndex = 5;
             // 
             // DataPdu
@@ -358,7 +356,7 @@
             this.DataPdu.Multiline = true;
             this.DataPdu.Name = "DataPdu";
             this.DataPdu.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.DataPdu.Size = new System.Drawing.Size(168, 458);
+            this.DataPdu.Size = new System.Drawing.Size(168, 511);
             this.DataPdu.TabIndex = 4;
             // 
             // helpProvider1
@@ -369,7 +367,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(924, 537);
+            this.ClientSize = new System.Drawing.Size(984, 590);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.panel2);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -396,7 +394,6 @@
         #endregion
 
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.CheckBox WrapperCb;
         private System.Windows.Forms.CheckBox StandardCB;
         private System.Windows.Forms.CheckBox CompletePDUCb;
         private System.Windows.Forms.CheckBox PduOnlyCB;
@@ -422,5 +419,6 @@
         private System.Windows.Forms.RadioButton SentRb;
         private System.Windows.Forms.RadioButton AllRb;
         private System.Windows.Forms.CheckBox RemoveDuplicatesCb;
+        private System.Windows.Forms.ComboBox InterfaceTypeCb;
     }
 }

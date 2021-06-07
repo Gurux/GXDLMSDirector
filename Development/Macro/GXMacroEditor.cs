@@ -499,7 +499,7 @@ namespace GXDLMSDirector
                     {
                         if (macro.ObjectType != 0)
                         {
-                            GXDLMSObject obj = GXDLMSClient.CreateObject((ObjectType)macro.ObjectType);
+                            GXDLMSObject obj = GXDLMSClient.CreateObject((ObjectType)macro.ObjectType, macro.ObjectVersion);
                             if (obj != null)
                             {
                                 obj.LogicalName = macro.LogicalName;

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12424 $,
-//                  $Date: 2021-04-13 12:12:45 +0300 (ti, 13 huhti 2021) $
+// Version:         $Revision: 12483 $,
+//                  $Date: 2021-06-07 12:52:24 +0300 (ma, 07 kesä 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -213,12 +213,6 @@ namespace GXDLMSDirector
             column.ReadOnly = true;
             Accessrights.Columns.Add(column);
             Accessrights.Columns.Add(CreateAccessRightColumns());
-            /*
-            column = new DataGridViewTextBoxColumn();
-            column.DataPropertyName = "AccessSelector";
-            column.Name = "Access Selector";
-            column.ReadOnly = true;
-            */
             Accessrights.Columns.Add(CreateAccessSelector());
             Accessrights.Columns.Add(CreateStaticColumns());
             Accessrights.Columns.Add(CreateTypeColumns("Type"));
@@ -229,6 +223,28 @@ namespace GXDLMSDirector
             Accessrights.AllowUserToAddRows = false;
             Accessrights.AllowUserToDeleteRows = false;
             Accessrights.AutoSize = true;
+
+            //Add method access rights.
+
+            //Add access right view.
+            MethodAccess.AutoGenerateColumns = false;
+            MethodAccess.AutoSize = true;
+            MethodAccess.Columns.Clear();
+            column = new DataGridViewTextBoxColumn();
+            column.DataPropertyName = "Index";
+            column.Name = "Attribute Index";
+            column.ReadOnly = true;
+            MethodAccess.Columns.Add(column);
+            column = new DataGridViewTextBoxColumn();
+            column.DataPropertyName = "Name";
+            column.Name = "Description";
+            column.ReadOnly = true;
+            MethodAccess.Columns.Add(column);
+            MethodAccess.Columns.Add(CreateMethodAccessRightColumns());
+            MethodAccess.CellValueChanged += Accessrights_MethodCellValueChanged;
+            MethodAccess.AllowUserToAddRows = false;
+            MethodAccess.AllowUserToDeleteRows = false;
+            MethodAccess.AutoSize = true;
 
             //Add property error view.
             PropertyErrorView.AutoGenerateColumns = false;
@@ -422,7 +438,6 @@ namespace GXDLMSDirector
             }
         }
 
-
         private void SelectItem(object obj)
         {
             try
@@ -546,12 +561,14 @@ namespace GXDLMSDirector
                         ProposedConformanceTB.Text = ((Conformance)d.Conformance).ToString();
                         NegotiatedConformanceTB.Text = d.Comm.client.NegotiatedConformance.ToString();
                         UpdateDeviceUI(d, d.Status);
+                        CommandLineTb.Text = d.GetCommandLineParameters();
                     }
                     else
                     {
                         ManufacturerValueLbl.Text = dev.Manufacturer;
                         ProposedConformanceTB.Text = "";
                         NegotiatedConformanceTB.Text = "";
+                        CommandLineTb.Text = "";
                     }
                     DeviceInfoView.BringToFront();
                     ErrorsView.Items.Clear();
@@ -737,13 +754,58 @@ namespace GXDLMSDirector
                             bindingSource1.Add(it.Value);
                         }
                         Accessrights.DataSource = bindingSource1;
-                        ShowLastErrors(obj as GXDLMSObject);
                     }
                     catch (Exception)
                     {
                         //Skip error if this fails.
                         Accessrights.DataSource = null;
                     }
+
+                    try
+                    {
+                        //Show method access levels of COSEM object.
+                        bindingSource3.Clear();
+                        SortedList<int, GXDLMSAttributeSettings> list = new SortedList<int, GXDLMSAttributeSettings>();
+                        foreach (GXDLMSAttributeSettings it in (obj as GXDLMSObject).MethodAttributes)
+                        {
+                            try
+                            {
+                                list.Add(it.Index, it);
+                            }
+                            catch
+                            {
+                                //Skip all errors.
+                            }
+                        }
+                        //Add all methods.
+                        string[] names = (obj as IGXDLMSBase).GetMethodNames();
+                        for (int pos = 0; pos != (obj as IGXDLMSBase).GetMethodCount(); ++pos)
+                        {
+                            if (!list.ContainsKey(pos + 1))
+                            {
+                                list.Add(pos + 1, new GXDLMSAttributeSettings() { Index = pos + 1, Name = names[pos] });
+                            }
+                            else
+                            {
+                                GXDLMSAttributeSettings a = list[pos + 1];
+                                if (string.IsNullOrEmpty(a.Name))
+                                {
+                                    a.Name = names[pos];
+                                }
+                            }
+                        }
+                        foreach (var it in list)
+                        {
+                            bindingSource3.Add(it.Value);
+                        }
+                        MethodAccess.DataSource = bindingSource3;
+                    }
+                    catch (Exception)
+                    {
+                        //Skip error if this fails.
+                        Accessrights.DataSource = null;
+                    }
+                    ShowLastErrors(obj as GXDLMSObject);
                 }
             }
             catch (Exception Ex)
@@ -826,15 +888,40 @@ namespace GXDLMSDirector
             SetDirty(true);
         }
 
+        private void Accessrights_MethodCellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                GXDLMSAttributeSettings a = (GXDLMSAttributeSettings)bindingSource3[e.RowIndex];
+                if (SelectedView.Target.Attributes.Find(a.Index) == null)
+                {
+                    SelectedView.Target.Attributes.Add(a);
+                }
+            }
+            catch (Exception)
+            {
+                //Skip error if this fails.
+            }
+            SetDirty(true);
+        }
+
         BindingSource bindingSource1 = new BindingSource();
         BindingSource bindingSource2 = new BindingSource();
+        BindingSource bindingSource3 = new BindingSource();
 
-        DataGridViewComboBoxColumn CreateAccessRightColumns()
+        DataGridViewTextBoxColumn CreateAccessRightColumns()
         {
-            DataGridViewComboBoxColumn combo = new DataGridViewComboBoxColumn();
-            combo.DataSource = Enum.GetValues(typeof(AccessMode));
-            combo.DataPropertyName = "Access";
+            DataGridViewTextBoxColumn combo = new DataGridViewTextBoxColumn();
+            combo.DataPropertyName = "AccessModeAsString";
             combo.Name = "Access";
+            return combo;
+        }
+
+        DataGridViewTextBoxColumn CreateMethodAccessRightColumns()
+        {
+            DataGridViewTextBoxColumn combo = new DataGridViewTextBoxColumn();
+            combo.DataPropertyName = "MethodAccessAsString";
+            combo.Name = "Method access";
             return combo;
         }
 
@@ -849,22 +936,11 @@ namespace GXDLMSDirector
 
         DataGridViewColumn CreateTypeColumns(string name)
         {
-            if (name == "Type")
-            {
-                DataGridViewColumn column = new DataGridViewTextBoxColumn();
-                column.DataPropertyName = name;
-                column.Name = name;
-                column.ReadOnly = true;
-                return column;
-            }
-            else
-            {
-                DataGridViewComboBoxColumn combo = new DataGridViewComboBoxColumn();
-                combo.DataSource = Enum.GetValues(typeof(DataType));
-                combo.DataPropertyName = name;
-                combo.Name = name;
-                return combo;
-            }
+            DataGridViewComboBoxColumn combo = new DataGridViewComboBoxColumn();
+            combo.DataSource = Enum.GetValues(typeof(DataType));
+            combo.DataPropertyName = name;
+            combo.Name = name;
+            return combo;
         }
 
         DataGridViewCheckBoxColumn CreateStaticColumns()
@@ -2543,6 +2619,7 @@ namespace GXDLMSDirector
                 MacroEditor.AddAction(new GXMacro()
                 {
                     ObjectType = (int)sender.ObjectType,
+                    ObjectVersion = (byte)sender.Version,
                     LogicalName = sender.LogicalName,
                     Index = index,
                     Type = type,
@@ -2690,13 +2767,16 @@ namespace GXDLMSDirector
                                     int[] indexes = (obj as IGXDLMSBase).GetAttributeIndexToRead(ForceRefreshBtn.Checked);
                                     foreach (byte it in indexes)
                                     {
-                                        //If reading is not allowed.
-                                        if ((obj.GetAccess(it) & AccessMode.Read) == 0)
+                                        if (it != 1)
                                         {
-                                            obj.ClearStatus(it);
-                                            continue;
+                                            //If reading is not allowed.
+                                            if ((obj.GetAccess(it) & AccessMode.Read) == 0)
+                                            {
+                                                obj.ClearStatus(it);
+                                                continue;
+                                            }
+                                            list.Add(new GXDLMSAccessItem(AccessServiceCommandType.Get, obj, it));
                                         }
-                                        list.Add(new GXDLMSAccessItem(AccessServiceCommandType.Get, obj, it));
                                     }
                                     OnProgress(dev, "Reading with access request.", 1, 1);
                                     dev.Comm.AccessRequest(DateTime.MinValue, list);
@@ -3220,6 +3300,7 @@ namespace GXDLMSDirector
                 }
                 obj.SetValues(a.Index, a.Values);
                 obj.SetAccess(a.Index, a.Access);
+                obj.SetAccess3(a.Index, a.Access3);
                 obj.SetXml(a.Index, a.Xml);
                 obj.SetUIValueType(a.Index, a.UIValueType);
             }
@@ -4390,7 +4471,7 @@ namespace GXDLMSDirector
         private void MacroEditor_OnAction(GXMacro act)
         {
             GXDLMSDevice dev = GetDevice(ObjectTree.SelectedNode) as GXDLMSDevice;
-            GXDLMSObject obj = GXDLMSClient.CreateObject((ObjectType)act.ObjectType);
+            GXDLMSObject obj = GXDLMSClient.CreateObject((ObjectType)act.ObjectType, act.ObjectVersion);
             if (obj != null)
             {
                 obj.LogicalName = act.LogicalName;
@@ -4403,7 +4484,7 @@ namespace GXDLMSDirector
         private void MacroEditor_OnSet(GXMacro act)
         {
             GXDLMSDevice dev = GetDevice(ObjectTree.SelectedNode) as GXDLMSDevice;
-            GXDLMSObject obj = GXDLMSClient.CreateObject((ObjectType)act.ObjectType);
+            GXDLMSObject obj = GXDLMSClient.CreateObject((ObjectType)act.ObjectType, act.ObjectVersion);
             if (obj != null)
             {
                 obj.LogicalName = act.LogicalName;
@@ -4424,7 +4505,7 @@ namespace GXDLMSDirector
         private void ActionsView_OnGet(GXMacro macro)
         {
             GXDLMSDevice dev = GetDevice(ObjectTree.SelectedNode) as GXDLMSDevice;
-            GXDLMSObject obj = GXDLMSClient.CreateObject((ObjectType)macro.ObjectType);
+            GXDLMSObject obj = GXDLMSClient.CreateObject((ObjectType)macro.ObjectType, macro.ObjectVersion);
             if (obj != null)
             {
                 GXReplyData reply = new GXReplyData();
@@ -4521,7 +4602,7 @@ namespace GXDLMSDirector
                         break;
                     case UserActionType.Get:
                         {
-                            GXDLMSObject obj = GXDLMSClient.CreateObject((ObjectType)act.ObjectType);
+                            GXDLMSObject obj = GXDLMSClient.CreateObject((ObjectType)act.ObjectType, act.ObjectVersion);
                             if (obj != null)
                             {
                                 GXReplyData reply = new GXReplyData();
@@ -5483,13 +5564,22 @@ namespace GXDLMSDirector
                         {
                             ClientSystemTitleTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.SystemTitle));
                             ServerSystemTitleTb.Text = GXCommon.ToHex(traceTranslator.ServerSystemTitle);
+                            SuiteTb.Text = newDev.SecuritySuite.ToString();
                             SecurityTb.Text = newDev.Security.ToString();
+                            if (newDev.Security == Security.DigitallySigned)
+                            {
+                                SchemeTb.Text = newDev.KeyAgreementScheme.ToString();
+                            }
+                            else
+                            {
+                                SchemeTb.Text = "";
+                            }
                             AuthenticationKeyTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.AuthenticationKey));
                             BlockCipherKeyTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.BlockCipherKey));
                         }
                         else
                         {
-                            AuthenticationKeyTb.Text = BlockCipherKeyTb.Text = SecurityTb.Text = ClientSystemTitleTb.Text = ServerSystemTitleTb.Text = "";
+                            SchemeTb.Text = SuiteTb.Text = AuthenticationKeyTb.Text = BlockCipherKeyTb.Text = SecurityTb.Text = ClientSystemTitleTb.Text = ServerSystemTitleTb.Text = "";
                         }
                         NetworkIDTb.Text = newDev.NetworkId.ToString();
                         PhysicalDeviceAddressTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.PhysicalDeviceAddress));
@@ -7184,7 +7274,7 @@ namespace GXDLMSDirector
                 GXEcdsaKeysDlg dlg = new GXEcdsaKeysDlg(Properties.Settings.Default.GeneratorAddress, keys,
                     certificates,
                     Properties.Resources.GXDLMSDirectorTxt,
-                    SecuritySuite.Ecdsa256,
+                    SecuritySuite.Suite1,
                     null);
                 dlg.Show(this);
             }

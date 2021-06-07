@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12250 $,
-//                  $Date: 2020-12-16 12:25:15 +0200 (ke, 16 joulu 2020) $
+// Version:         $Revision: 12483 $,
+//                  $Date: 2021-06-07 12:52:24 +0300 (ma, 07 kesä 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -43,6 +43,10 @@ using Gurux.DLMS;
 using Gurux.DLMS.Enums;
 using Gurux.DLMS.ManufacturerSettings;
 using Gurux.DLMS.Objects;
+using System.Text;
+using Gurux.Net;
+using Gurux.Serial;
+using Gurux.DLMS.Objects.Enums;
 
 namespace GXDLMSDirector
 {
@@ -64,6 +68,128 @@ namespace GXDLMSDirector
             {
                 OnStatusChanged(this, m_Status);
             }
+        }
+
+        public string GetCommandLineParameters()
+        {
+            StringBuilder sb = new StringBuilder();
+            if (communicator.media is GXNet n)
+            {
+                if (n.HostName == null)
+                {
+                    n.Settings = MediaSettings;
+                }
+                sb.Append("-h " + n.HostName);
+                sb.Append(" -p " + n.Port);
+            }
+            if (communicator.media is GXSerial s)
+            {
+                if (s.PortName == null)
+                {
+                    s.Settings = MediaSettings;
+                }
+                sb.Append("-S " + s.PortName);
+                sb.Append(":" + s.BaudRate);
+                sb.Append(":" + s.DataBits);
+                sb.Append(s.Parity);
+                sb.Append(s.StopBits);
+            }
+            if (!UseLogicalNameReferencing)
+            {
+                sb.Append(" -r sn");
+            }
+            if (InterfaceType != InterfaceType.HDLC)
+            {
+                sb.Append(" -i" + InterfaceType.ToString());
+            }
+            if (ClientAddress != 16)
+            {
+                sb.Append(" -c " + ClientAddress);
+            }
+            if (HDLCAddressing == HDLCAddressType.Default)
+            {
+                if (PhysicalAddress != 1 && LogicalAddress != 0)
+                {
+                    if (InterfaceType == InterfaceType.HDLC || InterfaceType == InterfaceType.HdlcWithModeE || InterfaceType == InterfaceType.PlcHdlc)
+                    {
+                        sb.Append(" -s " + GXDLMSClient.GetServerAddress(LogicalAddress, Convert.ToInt32(PhysicalAddress)));
+                    }
+                    else
+                    {
+                        sb.Append(" -s " + communicator.client.ServerAddress);
+                    }
+                }
+            }
+            else if (HDLCAddressing == HDLCAddressType.SerialNumber)
+            {
+                if (PhysicalAddress != 1)
+                {
+                    sb.Append(" -n " + PhysicalAddress);
+                }
+            }
+
+            if (Authentication != Authentication.None)
+            {
+                sb.Append(" -a " + Authentication);
+                if (!string.IsNullOrEmpty(Password))
+                {
+                    string pw = ASCIIEncoding.ASCII.GetString(CryptHelper.Decrypt(Password, GXDLMSDirector.Password.Key));
+                    if (!string.IsNullOrEmpty(pw))
+                    {
+                        sb.Append(" -P " + pw);
+                    }
+                }
+                if (HexPassword != null && HexPassword.Length != 0)
+                {
+                    sb.Append(" -P 0x" + ASCIIEncoding.ASCII.GetString(CryptHelper.Decrypt(HexPassword, GXDLMSDirector.Password.Key)));
+                }
+            }
+            if (Security != Security.None)
+            {
+                sb.Append(" -C " + Security);
+                if (SecuritySuite != SecuritySuite.Suite0)
+                {
+                    sb.Append(" -V " + SecuritySuite);
+                    sb.Append(" -K " + KeyAgreementScheme);
+                }
+            }
+            if (Authentication == Authentication.HighSHA256 ||
+                Authentication == Authentication.HighECDSA || Security != Security.None)
+            {
+                if (!string.IsNullOrEmpty(SystemTitle))
+                {
+                    sb.Append(" -T " + SystemTitle);
+                }
+                if (!string.IsNullOrEmpty(ServerSystemTitle))
+                {
+                    sb.Append(" -M " + ServerSystemTitle);
+                }
+                if (Security != Security.None)
+                {
+                    if (!string.IsNullOrEmpty(AuthenticationKey))
+                    {
+                        sb.Append(" -A " + AuthenticationKey);
+                    }
+                    if (!string.IsNullOrEmpty(BlockCipherKey))
+                    {
+                        sb.Append(" -B " + BlockCipherKey);
+                    }
+                    if (Security != Security.DigitallySigned && !string.IsNullOrEmpty(DedicatedKey))
+                    {
+                        sb.Append(" -D " + DedicatedKey);
+                    }
+                }
+                if (!string.IsNullOrEmpty(FrameCounter))
+                {
+                    sb.Append(" -v " + FrameCounter);
+                }
+            }
+            if (Standard != Standard.DLMS)
+            {
+                sb.Append(" -d " + Standard);
+            }
+            sb.Append(" -t Verbose");
+            return sb.ToString();
         }
 
         [Browsable(false)]

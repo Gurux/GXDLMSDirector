@@ -197,7 +197,7 @@
     <value>Certificate Files (*.pem)|*.pem|All files (*.*)|*.*</value>
   </data>
   <data name="CopyrightTxt" xml:space="preserve">
-    <value>Copyright© 1998-2020 Gurux Ltd.
+    <value>Copyright© 1998-2021 Gurux Ltd.
 All rights reserved.</value>
   </data>
   <data name="BlockCipherKeyTxt" xml:space="preserve">
@@ -205,9 +205,6 @@ All rights reserved.</value>
   </data>
   <data name="OptionsMnu" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\OptionsMnu.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="UpdateManufacturersOnline2Txt" xml:space="preserve">
-    <value>New Device Manufacturer settings are available. Do you want to update them online from Gurux Web?</value>
   </data>
   <data name="InvalidDurationFile" xml:space="preserve">
     <value>Dutations are not available.</value>
@@ -259,5 +256,14 @@ All rights reserved.</value>
   </data>
   <data name="help" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\help.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CTTTestFailed" xml:space="preserve">
+    <value>test failed.</value>
+  </data>
+  <data name="CTTTest" xml:space="preserve">
+    <value>test</value>
+  </data>
+  <data name="CTTSubTestFailed" xml:space="preserve">
+    <value>Subtest {0} failed.</value>
   </data>
 </root>

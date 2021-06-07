@@ -135,35 +135,35 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Gurux.Common, Version=8.1.2103.1001, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Common.8.1.2103.1001\lib\net46\Gurux.Common.dll</HintPath>
+    <Reference Include="Gurux.Common, Version=8.1.2106.101, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Common.8.1.2106.101\lib\net46\Gurux.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=9.0.2104.2801, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.9.0.2104.2801\lib\net46\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=9.0.2106.401, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.9.0.2106.401\lib\net46\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.AMI.Messages, Version=8.1.2104.2901, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.AMI.Messages.8.1.2104.2901\lib\net46\Gurux.DLMS.AMI.Messages.dll</HintPath>
+    <Reference Include="Gurux.DLMS.AMI.Messages, Version=8.1.2106.701, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.AMI.Messages.8.1.2106.701\lib\net46\Gurux.DLMS.AMI.Messages.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.DLMS.AMI.UI, Version=8.1.2104.2901, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.DLMS.AMI.UI.8.1.2104.2901\lib\net46\Gurux.DLMS.AMI.UI.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=9.0.2104.2901, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.9.0.2104.2901\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=9.0.2106.701, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.9.0.2106.701\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.MQTT, Version=8.1.2104.801, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.MQTT.8.1.2104.801\lib\net46\Gurux.MQTT.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.Net, Version=8.1.2011.1101, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Net.8.1.2011.1101\lib\net46\Gurux.Net.dll</HintPath>
+    <Reference Include="Gurux.Net, Version=8.1.2106.102, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Net.8.1.2106.102\lib\net46\Gurux.Net.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.Serial, Version=8.1.2002.1901, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Serial.8.1.2002.1901\lib\net46\Gurux.Serial.dll</HintPath>
+    <Reference Include="Gurux.Serial, Version=8.1.2106.102, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Serial.8.1.2106.102\lib\net46\Gurux.Serial.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.Service, Version=1.1.2103.2902, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Service.1.1.2103.2902\lib\net46\Gurux.Service.dll</HintPath>
+    <Reference Include="Gurux.Service, Version=1.1.2106.101, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Service.1.1.2106.101\lib\net46\Gurux.Service.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.Terminal, Version=8.1.2002.1901, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Terminal.8.1.2002.1901\lib\net46\Gurux.Terminal.dll</HintPath>
+    <Reference Include="Gurux.Terminal, Version=8.1.2106.101, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Terminal.8.1.2106.101\lib\net46\Gurux.Terminal.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Win32.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -275,6 +275,8 @@
     </Compile>
     <Compile Include="ConformanceTests\GXConformanceEditor.cs" />
     <Compile Include="ConformanceTests\GXConformanceTest.cs" />
+    <Compile Include="ConformanceTests\GXHDLCConformanceTests.cs" />
+    <Compile Include="ConformanceTests\GXAppConformanceTests.cs" />
     <Compile Include="ConformanceTests\GXConformanceTests.cs" />
     <Compile Include="ConformanceTests\Internal\GXConformanceValue.cs" />
     <Compile Include="ConformanceTests\Internal\GXConformanceValueConverter.cs" />

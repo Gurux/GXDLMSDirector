@@ -135,8 +135,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Gurux.Common, Version=8.1.2106.101, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Common.8.1.2106.101\lib\net46\Gurux.Common.dll</HintPath>
+    <Reference Include="Gurux.Common, Version=8.1.2106.901, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Common.8.1.2106.901\lib\net46\Gurux.Common.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.DLMS, Version=9.0.2106.401, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.DLMS.9.0.2106.401\lib\net46\Gurux.DLMS.dll</HintPath>
@@ -144,14 +144,17 @@
     <Reference Include="Gurux.DLMS.UI, Version=9.0.2106.701, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.DLMS.UI.9.0.2106.701\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.Net, Version=8.1.2106.102, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Net.8.1.2106.102\lib\net46\Gurux.Net.dll</HintPath>
+    <Reference Include="Gurux.MQTT, Version=8.1.2106.901, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.MQTT.8.1.2106.901\lib\net46\Gurux.MQTT.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.Serial, Version=8.1.2106.102, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Serial.8.1.2106.102\lib\net46\Gurux.Serial.dll</HintPath>
+    <Reference Include="Gurux.Net, Version=8.1.2106.901, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Net.8.1.2106.901\lib\net46\Gurux.Net.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.Terminal, Version=8.1.2106.101, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Terminal.8.1.2106.101\lib\net46\Gurux.Terminal.dll</HintPath>
+    <Reference Include="Gurux.Serial, Version=8.1.2106.901, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Serial.8.1.2106.901\lib\net46\Gurux.Serial.dll</HintPath>
+    </Reference>
+    <Reference Include="Gurux.Terminal, Version=8.1.2106.901, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Terminal.8.1.2106.901\lib\net46\Gurux.Terminal.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />

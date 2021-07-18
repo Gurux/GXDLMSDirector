@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12483 $,
-//                  $Date: 2021-06-07 12:52:24 +0300 (ma, 07 kesä 2021) $
+// Version:         $Revision: 12522 $,
+//                  $Date: 2021-07-18 12:50:49 +0300 (su, 18 heinä 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1099,7 +1099,19 @@ namespace GXDLMSDirector
                                         xml = t.PduToXml(value);
                                         XmlDocument doc2 = new XmlDocument();
                                         doc2.LoadXml(xml);
-                                        xml = doc2.GetElementsByTagName("MethodInvocationParameters")[0].InnerXml;
+                                        XmlNodeList list = doc2.GetElementsByTagName("MethodInvocationParameters");
+                                        if (list.Count != 0)
+                                        {
+                                            xml = list[0].InnerXml;
+                                        }
+                                        else
+                                        {
+                                            list = doc2.GetElementsByTagName("RawData");
+                                            if (list.Count != 0)
+                                            {
+                                                t.DataToXml(GXDLMSTranslator.HexToBytes(list[0].Attributes["Value"].InnerXml), out xml);
+                                            }
+                                        }
                                         xmlValue = GXDLMSTranslator.XmlToValue(xml);
                                     }
                                     break;
@@ -5525,7 +5537,7 @@ namespace GXDLMSDirector
                     if (!MacroEditor.TargetChanged(e.Node.Tag))
                     {
                         e.Cancel = true;
-                        throw new Exception("Can't change device while reconding or running macro.");
+                        throw new Exception("Can't change device while recording or running macro.");
                     }
                 }
                 GXDLMSMeter oldDev = GetDevice(ObjectTree.SelectedNode);

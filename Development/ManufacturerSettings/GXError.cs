@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12046 $,
-//                  $Date: 2020-08-27 15:16:33 +0300 (to, 27 elo 2020) $
+// Version:         $Revision: 12508 $,
+//                  $Date: 2021-06-21 13:37:17 +0300 (ma, 21 kesä 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -99,11 +99,25 @@ namespace GXDLMS.Common
             {
                 if (ctrl != null && ctrl.IsDisposed)
                 {
-                    System.Windows.Forms.MessageBox.Show(Ex.Message, "Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                    if (Ex.HelpLink != null)
+                    {
+                        System.Windows.Forms.MessageBox.Show(null, Ex.Message, "Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error, System.Windows.Forms.MessageBoxDefaultButton.Button1, 0, Ex.HelpLink);
+                    }
+                    else
+                    {
+                        System.Windows.Forms.MessageBox.Show(null, Ex.Message, "Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                    }
                 }
                 else
                 {
-                    System.Windows.Forms.MessageBox.Show(owner, Ex.Message, "Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                    if (Ex.HelpLink != null)
+                    {
+                        System.Windows.Forms.MessageBox.Show(owner, Ex.Message, "Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error, System.Windows.Forms.MessageBoxDefaultButton.Button1, 0, Ex.HelpLink);
+                    }
+                    else
+                    {
+                        System.Windows.Forms.MessageBox.Show(owner, Ex.Message, "Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                    }
                 }
             }
         }

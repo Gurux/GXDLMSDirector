@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12483 $,
-//                  $Date: 2021-06-07 12:52:24 +0300 (ma, 07 kesä 2021) $
+// Version:         $Revision: 12522 $,
+//                  $Date: 2021-07-18 12:50:49 +0300 (su, 18 heinä 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -678,9 +678,9 @@ namespace GXDLMSDirector
                 }
                 int pos = 0;
                 //With some meters there might be some extra invalid chars. Remove them.
-                while (pos < p.Reply.Length && p.Reply[pos] != '/')
+                if (p.Reply != null)
                 {
-                    ++pos;
+                    p.Reply = p.Reply.Replace("?", "");
                 }
                 GXLogWriter.WriteLog("HDLC received: " + p.Reply);
                 if (p.Reply[pos] != '/')
@@ -835,12 +835,12 @@ namespace GXDLMSDirector
             GXManufacturer manufacturer = null;
             if (!string.IsNullOrEmpty(this.parent.Manufacturer))
             {
-                manufacturer = this.parent.Manufacturers.FindByIdentification(id);
+                manufacturer = this.parent.Manufacturers.FindByIdentification(parent.Manufacturer);
                 if (manufacturer == null)
                 {
                     throw new Exception("Unknown manufacturer " + id);
                 }
-                this.parent.Manufacturer = manufacturer.Identification;
+                parent.Manufacturer = manufacturer.Identification;
             }
             client.Standard = this.parent.Standard;
             client.Authentication = this.parent.Authentication;
@@ -852,6 +852,14 @@ namespace GXDLMSDirector
             else if (this.parent.HexPassword != null)
             {
                 client.Password = CryptHelper.Decrypt(this.parent.HexPassword, Password.Key);
+            }
+            //Update client signing key.
+            GXPkcs8 pk = null;
+            if (client.Authentication == Authentication.HighECDSA && client.Ciphering.SigningKeyPair.Value == null
+                && !string.IsNullOrEmpty(parent.ClientSigningKey))
+            {
+                pk = GXPkcs8.FromDer(parent.ClientSigningKey);
+                client.Ciphering.SigningKeyPair = new KeyValuePair<GXPublicKey, GXPrivateKey>(client.Ciphering.SigningKeyPair.Key, pk.PrivateKey);
             }
             client.UseLogicalNameReferencing = this.parent.UseLogicalNameReferencing;
             client.ProposedConformance = (Conformance)parent.Conformance;
@@ -912,7 +920,6 @@ namespace GXDLMSDirector
             if (client.Authentication == Authentication.HighECDSA ||
                 client.Ciphering.Security == Security.DigitallySigned)
             {
-                GXPkcs8 pk;
                 GXx509Certificate pub;
                 if (string.IsNullOrEmpty(parent.ClientAgreementKey))
                 {
@@ -924,11 +931,18 @@ namespace GXDLMSDirector
                     pub = GXx509Certificate.FromDer(parent.ServerAgreementKey);
                     client.Ciphering.KeyAgreementKeyPair = new KeyValuePair<GXPublicKey, GXPrivateKey>(pub.PublicKey, pk.PrivateKey);
                 }
-                if (parent.ClientSigningKey != null && parent.ServerSigningKey != null)
+                if (parent.ClientSigningKey != null)
                 {
                     pk = GXPkcs8.FromDer(parent.ClientSigningKey);
-                    pub = GXx509Certificate.FromDer(parent.ServerSigningKey);
-                    client.Ciphering.SigningKeyPair = new KeyValuePair<GXPublicKey, GXPrivateKey>(pub.PublicKey, pk.PrivateKey);
+                    if (string.IsNullOrEmpty(parent.ServerSigningKey))
+                    {
+                        pub = null;
+                    }
+                    else
+                    {
+                        pub = GXx509Certificate.FromDer(parent.ServerSigningKey);
+                    }
+                    client.Ciphering.SigningKeyPair = new KeyValuePair<GXPublicKey, GXPrivateKey>(pub != null ? pub.PublicKey : null, pk.PrivateKey);
                 }
             }
             if (parent.SystemTitle != null && parent.BlockCipherKey != null && parent.AuthenticationKey != null)
@@ -1275,11 +1289,12 @@ namespace GXDLMSDirector
                         ReadDataBlock(client.GetApplicationAssociationRequest(), "Authenticating.", reply);
                         client.ParseApplicationAssociationResponse(reply.Data);
                     }
+                    parent.KeepAliveStart();
                 }
             }
             catch (Exception)
             {
-                if (media is GXSerial && parent.StartProtocol == StartProtocolType.IEC)
+                if (media is GXSerial && parent.InterfaceType == InterfaceType.HdlcWithModeE)
                 {
                     ReceiveParameters<string> p = new ReceiveParameters<string>()
                     {
@@ -1295,7 +1310,6 @@ namespace GXDLMSDirector
                 }
                 throw;
             }
-            parent.KeepAliveStart();
         }
 
         void NotifyProgress(string description, int current, int maximium)

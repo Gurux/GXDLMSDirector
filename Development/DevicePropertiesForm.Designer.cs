@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12330 $,
-//                  $Date: 2021-02-23 15:17:30 +0200 (ti, 23 helmi 2021) $
+// Version:         $Revision: 12543 $,
+//                  $Date: 2021-08-19 12:25:59 +0300 (to, 19 elo 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -108,6 +108,7 @@ namespace GXDLMSDirector
             this.InvocationCounterLbl = new System.Windows.Forms.Label();
             this.InvocationCounterTB = new System.Windows.Forms.TextBox();
             this.DeviceSettingsTab = new System.Windows.Forms.TabPage();
+            this.SigningKeyCb = new System.Windows.Forms.ComboBox();
             this.InterfaceCb = new System.Windows.Forms.ComboBox();
             this.InterfaceLbl = new System.Windows.Forms.Label();
             this.WaitTimeTB = new System.Windows.Forms.DateTimePicker();
@@ -158,6 +159,7 @@ namespace GXDLMSDirector
             this.SerialPortCB = new System.Windows.Forms.ComboBox();
             this.DeviceTab = new System.Windows.Forms.TabControl();
             this.AdvancedTab = new System.Windows.Forms.TabPage();
+            this.SecurityChangeCheckCb = new System.Windows.Forms.CheckBox();
             this.IgnoreTimeStatusCb = new System.Windows.Forms.CheckBox();
             this.IgnoreTimeZoneCb = new System.Windows.Forms.CheckBox();
             this.UseProtectedReleaseCb = new System.Windows.Forms.CheckBox();
@@ -193,6 +195,10 @@ namespace GXDLMSDirector
             this.MACSourceAddressTb = new System.Windows.Forms.NumericUpDown();
             this.MACTargetAddressLbl = new System.Windows.Forms.Label();
             this.MACSourceAddressLbl = new System.Windows.Forms.Label();
+            this.PduFrame = new System.Windows.Forms.TabPage();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.PduWaitTimeTb = new System.Windows.Forms.TextBox();
+            this.PduWaitTimelbl = new System.Windows.Forms.Label();
             this.GatewayTab = new System.Windows.Forms.TabPage();
             this.UseGatewayCb = new System.Windows.Forms.CheckBox();
             this.PhysicalDeviceAddressAsciiCb = new System.Windows.Forms.CheckBox();
@@ -209,10 +215,6 @@ namespace GXDLMSDirector
             this.helpProvider1 = new System.Windows.Forms.HelpProvider();
             this.conformanceHelpProvider = new System.Windows.Forms.HelpProvider();
             this.ShowAsHex = new System.Windows.Forms.CheckBox();
-            this.PduFrame = new System.Windows.Forms.TabPage();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.PduWaitTimelbl = new System.Windows.Forms.Label();
-            this.PduWaitTimeTb = new System.Windows.Forms.TextBox();
             this.SupportedServicesTab.SuspendLayout();
             this.SNSettings.SuspendLayout();
             this.LNSettings.SuspendLayout();
@@ -234,10 +236,10 @@ namespace GXDLMSDirector
             this.PlcGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MACTargetAddressTb)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MACSourceAddressTb)).BeginInit();
-            this.GatewayTab.SuspendLayout();
-            this.XmlTab.SuspendLayout();
             this.PduFrame.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.GatewayTab.SuspendLayout();
+            this.XmlTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // CancelBtn
@@ -831,6 +833,7 @@ namespace GXDLMSDirector
             this.DeviceSettingsTab.Controls.Add(this.NetworkSettingsGB);
             this.DeviceSettingsTab.Controls.Add(this.TerminalSettingsGB);
             this.DeviceSettingsTab.Controls.Add(this.SerialSettingsGB);
+            this.DeviceSettingsTab.Controls.Add(this.SigningKeyCb);
             this.helpProvider1.SetHelpKeyword(this.DeviceSettingsTab, "Advanced");
             this.helpProvider1.SetHelpNavigator(this.DeviceSettingsTab, System.Windows.Forms.HelpNavigator.Topic);
             this.DeviceSettingsTab.Location = new System.Drawing.Point(4, 22);
@@ -841,6 +844,20 @@ namespace GXDLMSDirector
             this.DeviceSettingsTab.TabIndex = 0;
             this.DeviceSettingsTab.Text = "Device Settings";
             this.DeviceSettingsTab.UseVisualStyleBackColor = true;
+            // 
+            // SigningKeyCb
+            // 
+            this.SigningKeyCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SigningKeyCb.FormattingEnabled = true;
+            this.helpProvider1.SetHelpKeyword(this.SigningKeyCb, "Authentication");
+            this.helpProvider1.SetHelpNavigator(this.SigningKeyCb, System.Windows.Forms.HelpNavigator.Topic);
+            this.SigningKeyCb.Location = new System.Drawing.Point(109, 116);
+            this.SigningKeyCb.Name = "SigningKeyCb";
+            this.helpProvider1.SetShowHelp(this.SigningKeyCb, true);
+            this.SigningKeyCb.Size = new System.Drawing.Size(345, 21);
+            this.SigningKeyCb.TabIndex = 64;
+            this.SigningKeyCb.SelectedIndexChanged += new System.EventHandler(this.SigningKeyCb_SelectedIndexChanged);
+            this.SigningKeyCb.Format += new System.Windows.Forms.ListControlConvertEventHandler(this.SigningKeyCb_Format);
             // 
             // InterfaceCb
             // 
@@ -1415,6 +1432,7 @@ namespace GXDLMSDirector
             // 
             // AdvancedTab
             // 
+            this.AdvancedTab.Controls.Add(this.SecurityChangeCheckCb);
             this.AdvancedTab.Controls.Add(this.IgnoreTimeStatusCb);
             this.AdvancedTab.Controls.Add(this.IgnoreTimeZoneCb);
             this.AdvancedTab.Controls.Add(this.UseProtectedReleaseCb);
@@ -1441,6 +1459,18 @@ namespace GXDLMSDirector
             this.AdvancedTab.TabIndex = 3;
             this.AdvancedTab.Text = "Advanced";
             this.AdvancedTab.UseVisualStyleBackColor = true;
+            // 
+            // SecurityChangeCheckCb
+            // 
+            this.SecurityChangeCheckCb.AutoSize = true;
+            this.helpProvider1.SetHelpString(this.SecurityChangeCheckCb, "Is protected release used.");
+            this.SecurityChangeCheckCb.Location = new System.Drawing.Point(11, 219);
+            this.SecurityChangeCheckCb.Name = "SecurityChangeCheckCb";
+            this.helpProvider1.SetShowHelp(this.SecurityChangeCheckCb, true);
+            this.SecurityChangeCheckCb.Size = new System.Drawing.Size(136, 17);
+            this.SecurityChangeCheckCb.TabIndex = 60;
+            this.SecurityChangeCheckCb.Text = "Security change check";
+            this.SecurityChangeCheckCb.UseVisualStyleBackColor = true;
             // 
             // IgnoreTimeStatusCb
             // 
@@ -1842,6 +1872,51 @@ namespace GXDLMSDirector
             this.MACSourceAddressLbl.TabIndex = 38;
             this.MACSourceAddressLbl.Text = "MAC Source Address:";
             // 
+            // PduFrame
+            // 
+            this.PduFrame.Controls.Add(this.groupBox1);
+            this.PduFrame.Location = new System.Drawing.Point(4, 22);
+            this.PduFrame.Name = "PduFrame";
+            this.PduFrame.Padding = new System.Windows.Forms.Padding(3);
+            this.PduFrame.Size = new System.Drawing.Size(511, 388);
+            this.PduFrame.TabIndex = 9;
+            this.PduFrame.Text = "Framing";
+            this.PduFrame.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.PduWaitTimeTb);
+            this.groupBox1.Controls.Add(this.PduWaitTimelbl);
+            this.helpProvider1.SetHelpKeyword(this.groupBox1, "advanced");
+            this.helpProvider1.SetHelpNavigator(this.groupBox1, System.Windows.Forms.HelpNavigator.Topic);
+            this.groupBox1.Location = new System.Drawing.Point(8, 6);
+            this.groupBox1.Name = "groupBox1";
+            this.helpProvider1.SetShowHelp(this.groupBox1, true);
+            this.groupBox1.Size = new System.Drawing.Size(375, 149);
+            this.groupBox1.TabIndex = 61;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "PDU settings";
+            // 
+            // PduWaitTimeTb
+            // 
+            this.helpProvider1.SetHelpKeyword(this.PduWaitTimeTb, "Password");
+            this.helpProvider1.SetHelpNavigator(this.PduWaitTimeTb, System.Windows.Forms.HelpNavigator.Topic);
+            this.helpProvider1.SetHelpString(this.PduWaitTimeTb, "Authentication is not used.");
+            this.PduWaitTimeTb.Location = new System.Drawing.Point(121, 23);
+            this.PduWaitTimeTb.Name = "PduWaitTimeTb";
+            this.helpProvider1.SetShowHelp(this.PduWaitTimeTb, true);
+            this.PduWaitTimeTb.Size = new System.Drawing.Size(139, 20);
+            this.PduWaitTimeTb.TabIndex = 42;
+            // 
+            // PduWaitTimelbl
+            // 
+            this.PduWaitTimelbl.AutoSize = true;
+            this.PduWaitTimelbl.Location = new System.Drawing.Point(10, 23);
+            this.PduWaitTimelbl.Name = "PduWaitTimelbl";
+            this.PduWaitTimelbl.Size = new System.Drawing.Size(51, 13);
+            this.PduWaitTimelbl.TabIndex = 38;
+            this.PduWaitTimelbl.Text = "Wait time";
+            // 
             // GatewayTab
             // 
             this.GatewayTab.Controls.Add(this.UseGatewayCb);
@@ -1998,51 +2073,6 @@ namespace GXDLMSDirector
             this.ShowAsHex.UseVisualStyleBackColor = true;
             this.ShowAsHex.CheckedChanged += new System.EventHandler(this.ShowAsHex_CheckedChanged);
             // 
-            // PduFrame
-            // 
-            this.PduFrame.Controls.Add(this.groupBox1);
-            this.PduFrame.Location = new System.Drawing.Point(4, 22);
-            this.PduFrame.Name = "PduFrame";
-            this.PduFrame.Padding = new System.Windows.Forms.Padding(3);
-            this.PduFrame.Size = new System.Drawing.Size(511, 388);
-            this.PduFrame.TabIndex = 9;
-            this.PduFrame.Text = "Framing";
-            this.PduFrame.UseVisualStyleBackColor = true;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.PduWaitTimeTb);
-            this.groupBox1.Controls.Add(this.PduWaitTimelbl);
-            this.helpProvider1.SetHelpKeyword(this.groupBox1, "advanced");
-            this.helpProvider1.SetHelpNavigator(this.groupBox1, System.Windows.Forms.HelpNavigator.Topic);
-            this.groupBox1.Location = new System.Drawing.Point(8, 6);
-            this.groupBox1.Name = "groupBox1";
-            this.helpProvider1.SetShowHelp(this.groupBox1, true);
-            this.groupBox1.Size = new System.Drawing.Size(375, 149);
-            this.groupBox1.TabIndex = 61;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "PDU settings";
-            // 
-            // PduWaitTimelbl
-            // 
-            this.PduWaitTimelbl.AutoSize = true;
-            this.PduWaitTimelbl.Location = new System.Drawing.Point(10, 23);
-            this.PduWaitTimelbl.Name = "PduWaitTimelbl";
-            this.PduWaitTimelbl.Size = new System.Drawing.Size(51, 13);
-            this.PduWaitTimelbl.TabIndex = 38;
-            this.PduWaitTimelbl.Text = "Wait time";
-            // 
-            // PduWaitTimeTb
-            // 
-            this.helpProvider1.SetHelpKeyword(this.PduWaitTimeTb, "Password");
-            this.helpProvider1.SetHelpNavigator(this.PduWaitTimeTb, System.Windows.Forms.HelpNavigator.Topic);
-            this.helpProvider1.SetHelpString(this.PduWaitTimeTb, "Authentication is not used.");
-            this.PduWaitTimeTb.Location = new System.Drawing.Point(121, 23);
-            this.PduWaitTimeTb.Name = "PduWaitTimeTb";
-            this.helpProvider1.SetShowHelp(this.PduWaitTimeTb, true);
-            this.PduWaitTimeTb.Size = new System.Drawing.Size(139, 20);
-            this.PduWaitTimeTb.TabIndex = 42;
-            // 
             // DevicePropertiesForm
             // 
             this.AcceptButton = this.OKBtn;
@@ -2095,13 +2125,13 @@ namespace GXDLMSDirector
             this.PlcGroup.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MACTargetAddressTb)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MACSourceAddressTb)).EndInit();
+            this.PduFrame.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.GatewayTab.ResumeLayout(false);
             this.GatewayTab.PerformLayout();
             this.XmlTab.ResumeLayout(false);
             this.XmlTab.PerformLayout();
-            this.PduFrame.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2258,5 +2288,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label PduWaitTimelbl;
         private System.Windows.Forms.TextBox PduWaitTimeTb;
+        private System.Windows.Forms.CheckBox SecurityChangeCheckCb;
+        private System.Windows.Forms.ComboBox SigningKeyCb;
     }
 }

@@ -6,6 +6,7 @@ using Gurux.DLMS.Objects.Enums;
 using Gurux.DLMS.UI;
 using Gurux.DLMS.UI.Ecdsa;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -82,8 +83,10 @@ namespace GXDLMSDirector
                 Ciphering = new GXCipheringSettings(translator, keys, certificates,
                             Properties.Settings.Default.ClientAgreementKey,
                             Properties.Settings.Default.ClientSigningKey,
+                            Properties.Settings.Default.ClientTls,
                             Properties.Settings.Default.ServerAgreementKey,
-                            Properties.Settings.Default.ServerSigningKey);
+                            Properties.Settings.Default.ServerSigningKey,
+                            Properties.Settings.Default.ServerTls);
                 Ciphering.Challenge = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.Challenge);
                 tabControl1.TabPages.Add(Ciphering.GetCiphetingTab());
             }
@@ -110,12 +113,27 @@ namespace GXDLMSDirector
             }
         }
 
+        private void UpdateSecuritySettings()
+        {
+            translator.SecuritySuite = Ciphering.SecuritySuite;
+            translator.Security = Ciphering.Security;
+            translator.SystemTitle = Ciphering.SystemTitle;
+            translator.ServerSystemTitle = Ciphering.ServerSystemTitle;
+            translator.BlockCipherKey = Ciphering.BlockCipherKey;
+            translator.AuthenticationKey = Ciphering.AuthenticationKey;
+            translator.InvocationCounter = Ciphering.InvocationCounter;
+            translator.DedicatedKey = Ciphering.DedicatedKey;
+            translator.Keys.Clear();
+            translator.Keys.AddRange(Ciphering.KeyPairs);
+        }
+
         /// <summary>
         /// Convert PDU to XML.
         /// </summary>
         private void PduToXmlBtn_Click(object sender, EventArgs e)
         {
             string xml = null;
+            UpdateSecuritySettings();
             try
             {
                 if (tabControl1.SelectedTab == tabPage5)
@@ -225,6 +243,7 @@ namespace GXDLMSDirector
         /// <param name="e"></param>
         private void TranslateBtn_Click(object sender, EventArgs e)
         {
+            UpdateSecuritySettings();
             MessageXmlTB.Text = "";
             if (translator.BlockCipherKey != null)
             {
@@ -456,8 +475,10 @@ namespace GXDLMSDirector
             Properties.Settings.Default.Challenge = GXDLMSTranslator.ToHex(Ciphering.Challenge);
             Properties.Settings.Default.ClientAgreementKey = Ciphering.ClientAgreementKey;
             Properties.Settings.Default.ClientSigningKey = Ciphering.ClientSigningKey;
+            Properties.Settings.Default.ClientTls = Ciphering.ClientTls;           
             Properties.Settings.Default.ServerAgreementKey = Ciphering.ServerAgreementKey;
             Properties.Settings.Default.ServerSigningKey = Ciphering.ServerSigningKey;
+            Properties.Settings.Default.ServerTls = Ciphering.ServerTls;
 
             Properties.Settings.Default.Data = DataPdu.Text;
             string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12522 $,
-//                  $Date: 2021-07-18 12:50:49 +0300 (su, 18 heinä 2021) $
+// Version:         $Revision: 12543 $,
+//                  $Date: 2021-08-19 12:25:59 +0300 (to, 19 elo 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -49,6 +49,7 @@ using System.Collections.Generic;
 using System.Xml;
 using Gurux.DLMS.ASN;
 using Gurux.DLMS.Ecdsa;
+using System.IO;
 
 namespace GXDLMSDirector
 {
@@ -88,6 +89,77 @@ namespace GXDLMSDirector
             this.parent = parent;
             this.media = media;
             client = new GXDLMSSecureClient();
+            //Get ECDSA keys when needed.
+            client.OnKeys += Client_OnKeys;
+        }
+
+        /// <summary>
+        /// Return correct path.
+        /// </summary>
+        /// <param name="securitySuite">Security Suite.</param>
+        /// <param name="type">Certificate type.</param>
+        /// <param name="path">Folder.</param>
+        /// <param name="systemTitle">System title.</param>
+        /// <returns>Path to the certificate file or folder if system title is not given.</returns>
+        private static string GetPath(SecuritySuite securitySuite, CertificateType type, string path, byte[] systemTitle)
+        {
+            string pre;
+            if (securitySuite == SecuritySuite.Suite2)
+            {
+                path = Path.Combine(path, "384");
+            }
+            if (systemTitle == null)
+            {
+                return path;
+            }
+            switch (type)
+            {
+                case CertificateType.DigitalSignature:
+                    pre = "D";
+                    break;
+                case CertificateType.KeyAgreement:
+                    pre = "A";
+                    break;
+                default:
+                    throw new Exception("Invalid type.");
+            }
+            return Path.Combine(path, pre + GXDLMSTranslator.ToHex(systemTitle, false) + ".pem");
+        }
+        private void Client_OnKeys(object sender, GXCryptoKeyParameter args)
+        {
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            string certificates = Path.Combine(path, "Certificates");
+            if (!Directory.Exists(certificates))
+            {
+                Directory.CreateDirectory(certificates);
+            }
+            string keys = Path.Combine(path, "Keys");
+            if (!Directory.Exists(keys))
+            {
+                Directory.CreateDirectory(keys);
+            }
+            if (args.Encrypt)
+            {
+                //Find private key.
+                path = GetPath(args.SecuritySuite, args.CertificateType, keys, args.SystemTitle);
+                if (!string.IsNullOrEmpty(path) && File.Exists(path))
+                {
+                    args.PrivateKey = GXPkcs8.Load(path).PrivateKey;
+                }
+            }
+            else
+            {
+                //Find public key.
+                path = GetPath(args.SecuritySuite, args.CertificateType, certificates, null);
+                if (!string.IsNullOrEmpty(path) && File.Exists(path))
+                {
+                    args.PublicKey = GXx509Certificate.Search(path, args.SystemTitle).PublicKey;
+                }
+            }
         }
 
         public ProgressEventHandler OnProgress;
@@ -614,7 +686,7 @@ namespace GXDLMSDirector
                 string data = "/?!\r\n";
                 if (manufacturer != null && !string.IsNullOrEmpty(manufacturer.IecAddress))
                 {
-                    data = manufacturer.IecAddress;
+                    data = manufacturer.IecAddress + "\r\n";
                 }
                 else
                 {
@@ -921,7 +993,7 @@ namespace GXDLMSDirector
                 client.Ciphering.Security == Security.DigitallySigned)
             {
                 GXx509Certificate pub;
-                if (string.IsNullOrEmpty(parent.ClientAgreementKey))
+                if (parent.KeyAgreementScheme != KeyAgreementScheme.GeneralSigning && string.IsNullOrEmpty(parent.ClientAgreementKey))
                 {
                     throw new Exception("Client agreement key is not set.");
                 }

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12483 $,
-//                  $Date: 2021-06-07 12:52:24 +0300 (ma, 07 kesä 2021) $
+// Version:         $Revision: 12543 $,
+//                  $Date: 2021-08-19 12:25:59 +0300 (to, 19 elo 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -156,6 +156,7 @@ namespace GXDLMSDirector
                 ManufacturerCB.DrawMode = MediasCB.DrawMode = DrawMode.OwnerDrawFixed;
                 UpdateMediaSettings();
                 UseProtectedReleaseCb.Checked = Device.UseProtectedRelease;
+                SecurityChangeCheckCb.Checked = Device.SecurityChangeCheck;
                 while (tab.Controls.Count != 0)
                 {
                     Control ctr = tab.Controls[0];
@@ -966,7 +967,7 @@ namespace GXDLMSDirector
             device.ServerTlsKey = ciphering.ServerTls;
             device.PreEstablished = ciphering.PreEstablishedApplicationAssociations;
             device.UseProtectedRelease = UseProtectedReleaseCb.Checked;
-
+            device.SecurityChangeCheck = SecurityChangeCheckCb.Checked;
 
             //Check security settings.
             if (validate && (device.Security != Security.None ||
@@ -1102,6 +1103,34 @@ namespace GXDLMSDirector
                 GXAuthentication authentication = (GXAuthentication)AuthenticationCB.SelectedItem;
                 PasswordTB.Enabled = authentication.Type != Authentication.None && authentication.Type != Authentication.HighGMAC && authentication.Type != Authentication.HighECDSA;
                 this.ClientAddTB.Value = authentication.ClientAddress;
+                PasswordAsciiCb.Visible = PasswordTB.Visible = authentication.Type != Authentication.HighECDSA;
+                SigningKeyCb.Visible = authentication.Type == Authentication.HighECDSA;
+                if (authentication.Type == Authentication.HighECDSA)
+                {
+                    PasswordLbl.Text = "Signing key:";
+                }
+                else
+                {
+                    PasswordLbl.Text = "Password:";
+                }
+                GXPkcs8 pk = null;
+                if (!string.IsNullOrEmpty(Device.ClientSigningKey))
+                {
+                    pk = GXPkcs8.FromDer(Device.ClientSigningKey);
+                }
+
+                if (authentication.Type == Authentication.HighECDSA)
+                {
+                    SigningKeyCb.Items.Clear();
+                    foreach (var it in ciphering.GetClientKeys(Device.SystemTitle))
+                    {
+                        int pos = SigningKeyCb.Items.Add(it);
+                        if (it.Key.Equals(pk))
+                        {
+                            SigningKeyCb.SelectedIndex = pos;
+                        }
+                    }
+                }
             }
             catch (Exception Ex)
             {
@@ -1828,6 +1857,37 @@ namespace GXDLMSDirector
             catch (Exception ex)
             {
                 MessageBox.Show(this, ex.Message);
+            }
+        }
+
+        private void SigningKeyCb_Format(object sender, ListControlConvertEventArgs e)
+        {
+            if (e.Value is KeyValuePair<GXPkcs8, GXx509Certificate> kp)
+            {
+                if (kp.Value != null)
+                {
+                    e.Value = kp.Value.Subject + " #" + kp.Value.SerialNumber;
+                }
+                else
+                {
+                    e.Value = kp.Key.PrivateKey.ToHex();
+                }
+            }
+        }
+
+        /// <summary>
+        /// User selects new signing key.
+        /// </summary>
+        private void SigningKeyCb_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (SigningKeyCb.SelectedItem is KeyValuePair<GXPkcs8, GXx509Certificate> kp)
+            {
+                ciphering.ClientSigningKey = kp.Key.ToDer();
+            }
+            else
+            {
+                Device.ClientSigningKey = null;
+                Device.ServerSigningKey = null;
             }
         }
     }

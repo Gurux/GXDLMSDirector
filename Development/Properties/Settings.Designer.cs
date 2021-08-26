@@ -866,12 +866,12 @@ namespace GXDLMSDirector.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int KeyAgreementScheme {
+        public int Signing {
             get {
-                return ((int)(this["KeyAgreementScheme"]));
+                return ((int)(this["Signing"]));
             }
             set {
-                this["KeyAgreementScheme"] = value;
+                this["Signing"] = value;
             }
         }
         

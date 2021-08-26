@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12543 $,
-//                  $Date: 2021-08-19 12:25:59 +0300 (to, 19 elo 2021) $
+// Version:         $Revision: 12553 $,
+//                  $Date: 2021-08-26 11:13:00 +0300 (to, 26 elo 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -986,14 +986,17 @@ namespace GXDLMSDirector
                     client.ServerAddressSize = parent.ServerAddressSize;
                 }
             }
+            client.Ciphering.Signing = parent.Signing;
             client.Ciphering.Security = parent.Security;
             client.Ciphering.SecuritySuite = parent.SecuritySuite;
-            client.Ciphering.KeyAgreementScheme = parent.KeyAgreementScheme;
             if (client.Authentication == Authentication.HighECDSA ||
-                client.Ciphering.Security == Security.DigitallySigned)
+                client.Ciphering.Signing == Signing.OnePassDiffieHellman ||
+                client.Ciphering.Signing == Signing.StaticUnifiedModel)
             {
                 GXx509Certificate pub;
-                if (parent.KeyAgreementScheme != KeyAgreementScheme.GeneralSigning && string.IsNullOrEmpty(parent.ClientAgreementKey))
+                if ((client.Ciphering.Signing == Signing.OnePassDiffieHellman ||
+                    client.Ciphering.Signing == Signing.StaticUnifiedModel) && 
+                    string.IsNullOrEmpty(parent.ClientAgreementKey))
                 {
                     throw new Exception("Client agreement key is not set.");
                 }
@@ -1244,18 +1247,20 @@ namespace GXDLMSDirector
                 byte[] data;
                 UpdateSettings();
                 //Read frame counter if GeneralProtection is used.
-                if (!string.IsNullOrEmpty(parent.FrameCounter) && client.Ciphering != null && client.Ciphering.Security != (byte)Security.None)
+                if (!string.IsNullOrEmpty(parent.FrameCounter) && client.Ciphering != null && client.Ciphering.Security != Security.None)
                 {
                     reply.Clear();
                     int add = client.ClientAddress;
                     Authentication auth = client.Authentication;
                     Security security = client.Ciphering.Security;
                     byte[] challenge = client.CtoSChallenge;
+                    Signing signing = client.Ciphering.Signing;
                     try
                     {
                         client.ClientAddress = 16;
                         client.Authentication = Authentication.None;
                         client.Ciphering.Security = Security.None;
+                        client.Ciphering.Signing = Signing.None;
 
                         data = SNRMRequest();
                         if (data != null)
@@ -1308,6 +1313,7 @@ namespace GXDLMSDirector
                         client.Authentication = auth;
                         client.Ciphering.Security = security;
                         client.CtoSChallenge = challenge;
+                        client.Ciphering.Signing = signing;
                     }
                 }
                 data = SNRMRequest();

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12483 $,
-//                  $Date: 2021-06-07 12:52:24 +0300 (ma, 07 kesä 2021) $
+// Version:         $Revision: 12553 $,
+//                  $Date: 2021-08-26 11:13:00 +0300 (to, 26 elo 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -147,11 +147,14 @@ namespace GXDLMSDirector
             if (Security != Security.None)
             {
                 sb.Append(" -C " + Security);
-                if (SecuritySuite != SecuritySuite.Suite0)
-                {
-                    sb.Append(" -V " + SecuritySuite);
-                    sb.Append(" -K " + KeyAgreementScheme);
-                }
+            }
+            if (SecuritySuite != SecuritySuite.Suite0)
+            {
+                sb.Append(" -V " + SecuritySuite);
+            }
+            if (Signing != Signing.None)
+            {
+                sb.Append(" -K " + Signing);
             }
             if (Authentication == Authentication.HighSHA256 ||
                 Authentication == Authentication.HighECDSA || Security != Security.None)
@@ -174,7 +177,7 @@ namespace GXDLMSDirector
                     {
                         sb.Append(" -B " + BlockCipherKey);
                     }
-                    if (Security != Security.DigitallySigned && !string.IsNullOrEmpty(DedicatedKey))
+                    if (!string.IsNullOrEmpty(DedicatedKey))
                     {
                         sb.Append(" -D " + DedicatedKey);
                     }

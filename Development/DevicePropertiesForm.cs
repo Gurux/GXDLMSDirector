@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12543 $,
-//                  $Date: 2021-08-19 12:25:59 +0300 (to, 19 elo 2021) $
+// Version:         $Revision: 12553 $,
+//                  $Date: 2021-08-26 11:13:00 +0300 (to, 26 elo 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -139,7 +139,7 @@ namespace GXDLMSDirector
                     if (man != null)
                     {
                         Device.Security = man.Security;
-                        Device.KeyAgreementScheme = (KeyAgreementScheme)Properties.Settings.Default.KeyAgreementScheme;
+                        Device.Signing = (Signing)Properties.Settings.Default.Signing;
                         Device.SystemTitle = GXCommon.ToHex(man.SystemTitle, false);
                         Device.ServerSystemTitle = GXCommon.ToHex(man.ServerSystemTitle, false);
                         Device.BlockCipherKey = GXCommon.ToHex(man.BlockCipherKey, false);
@@ -331,7 +331,7 @@ namespace GXDLMSDirector
                 throw new Exception("Invalid manufacturer. " + device.Manufacturer);
             }
             StandardCb.SelectedItem = device.Standard;
-            ciphering.KeyAgreementScheme = device.KeyAgreementScheme;
+            ciphering.Signing = device.Signing;
             ciphering.SecuritySuite = device.SecuritySuite;
             ciphering.Security = device.Security;
             if (!string.IsNullOrEmpty(device.SystemTitle) && IsAscii(GXCommon.HexToBytes(device.SystemTitle)))
@@ -376,6 +376,7 @@ namespace GXDLMSDirector
                 ciphering.DedicatedKey = device.DedicatedKey;
             }
             ciphering.ServerSystemTitle = device.ServerSystemTitle;
+            ciphering.Signing = device.Signing;
             ciphering.ClientSigningKey = device.ClientSigningKey;
             ciphering.ClientAgreementKey = device.ClientAgreementKey;
             ciphering.ClientTls = device.ClientTlsKey;
@@ -952,7 +953,6 @@ namespace GXDLMSDirector
             device.LogicalAddress = Convert.ToInt32(LogicalServerAddressTB.Value);
             Properties.Settings.Default.SelectedManufacturer = man.Name;
             device.Security = ciphering.Security;
-            device.KeyAgreementScheme = ciphering.KeyAgreementScheme;
             device.SecuritySuite = ciphering.SecuritySuite;
             device.SystemTitle = ciphering.SystemTitle;
             device.BlockCipherKey = ciphering.BlockCipherKey;
@@ -960,6 +960,7 @@ namespace GXDLMSDirector
             device.ServerSystemTitle = ciphering.ServerSystemTitle;
             device.DedicatedKey = ciphering.DedicatedKey;
             device.ClientSigningKey = ciphering.ClientSigningKey;
+            device.Signing = ciphering.Signing;
             device.ClientAgreementKey = ciphering.ClientAgreementKey;
             device.ClientTlsKey = ciphering.ClientTls;
             device.ServerSigningKey = ciphering.ServerSigningKey;
@@ -1333,7 +1334,7 @@ namespace GXDLMSDirector
                     }
                     UpdateStartProtocol();
                     ciphering.Security = man.Security;
-                    ciphering.KeyAgreementScheme = man.KeyAgreementScheme;
+                    ciphering.Signing = man.Signing;
 
                     ciphering.SystemTitleAscii = IsAscii(man.SystemTitle);
                     if (ciphering.SystemTitleAscii)

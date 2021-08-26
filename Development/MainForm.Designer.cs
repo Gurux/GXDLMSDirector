@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12483 $,
-//                  $Date: 2021-06-07 12:52:24 +0300 (ma, 07 kesä 2021) $
+// Version:         $Revision: 12553 $,
+//                  $Date: 2021-08-26 11:13:00 +0300 (to, 26 elo 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -304,6 +304,10 @@ namespace GXDLMSDirector
             this.AuthenticationTb = new System.Windows.Forms.Label();
             this.AuthenticationLbl = new System.Windows.Forms.Label();
             this.Ciphering = new System.Windows.Forms.GroupBox();
+            this.SigningTb = new System.Windows.Forms.Label();
+            this.SchemeLbl = new System.Windows.Forms.Label();
+            this.SuiteTb = new System.Windows.Forms.Label();
+            this.SuiteLbl = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.PhysicalDeviceAddressLbl = new System.Windows.Forms.Label();
             this.PhysicalDeviceAddressTb = new System.Windows.Forms.TextBox();
@@ -338,10 +342,6 @@ namespace GXDLMSDirector
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.DeviceListView = new System.Windows.Forms.TabControl();
             this.DevicesTab = new System.Windows.Forms.TabPage();
-            this.SuiteTb = new System.Windows.Forms.Label();
-            this.SuiteLbl = new System.Windows.Forms.Label();
-            this.SchemeTb = new System.Windows.Forms.Label();
-            this.SchemeLbl = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -2419,7 +2419,7 @@ namespace GXDLMSDirector
             this.Ciphering.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.Ciphering.Controls.Add(this.SchemeTb);
+            this.Ciphering.Controls.Add(this.SigningTb);
             this.Ciphering.Controls.Add(this.SchemeLbl);
             this.Ciphering.Controls.Add(this.SuiteTb);
             this.Ciphering.Controls.Add(this.SuiteLbl);
@@ -2443,6 +2443,42 @@ namespace GXDLMSDirector
             this.Ciphering.TabIndex = 68;
             this.Ciphering.TabStop = false;
             this.Ciphering.Text = "Ciphering";
+            // 
+            // SigningTb
+            // 
+            this.SigningTb.AutoSize = true;
+            this.SigningTb.Location = new System.Drawing.Point(511, 16);
+            this.SigningTb.Name = "SigningTb";
+            this.SigningTb.Size = new System.Drawing.Size(42, 13);
+            this.SigningTb.TabIndex = 79;
+            this.SigningTb.Text = "Signing";
+            // 
+            // SchemeLbl
+            // 
+            this.SchemeLbl.AutoSize = true;
+            this.SchemeLbl.Location = new System.Drawing.Point(406, 16);
+            this.SchemeLbl.Name = "SchemeLbl";
+            this.SchemeLbl.Size = new System.Drawing.Size(45, 13);
+            this.SchemeLbl.TabIndex = 78;
+            this.SchemeLbl.Text = "Signing:";
+            // 
+            // SuiteTb
+            // 
+            this.SuiteTb.AutoSize = true;
+            this.SuiteTb.Location = new System.Drawing.Point(284, 16);
+            this.SuiteTb.Name = "SuiteTb";
+            this.SuiteTb.Size = new System.Drawing.Size(31, 13);
+            this.SuiteTb.TabIndex = 77;
+            this.SuiteTb.Text = "Suite";
+            // 
+            // SuiteLbl
+            // 
+            this.SuiteLbl.AutoSize = true;
+            this.SuiteLbl.Location = new System.Drawing.Point(236, 16);
+            this.SuiteLbl.Name = "SuiteLbl";
+            this.SuiteLbl.Size = new System.Drawing.Size(34, 13);
+            this.SuiteLbl.TabIndex = 76;
+            this.SuiteLbl.Text = "Suite:";
             // 
             // groupBox1
             // 
@@ -2716,7 +2752,7 @@ namespace GXDLMSDirector
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(510, 450);
+            this.tabPage5.Size = new System.Drawing.Size(651, 450);
             this.tabPage5.TabIndex = 1;
             this.tabPage5.Text = "Last errors";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -2730,7 +2766,7 @@ namespace GXDLMSDirector
             this.ErrorsView.Location = new System.Drawing.Point(3, 3);
             this.ErrorsView.MultiSelect = false;
             this.ErrorsView.Name = "ErrorsView";
-            this.ErrorsView.Size = new System.Drawing.Size(504, 444);
+            this.ErrorsView.Size = new System.Drawing.Size(645, 444);
             this.ErrorsView.TabIndex = 35;
             this.ErrorsView.UseCompatibleStateImageBehavior = false;
             this.ErrorsView.View = System.Windows.Forms.View.Details;
@@ -2760,42 +2796,6 @@ namespace GXDLMSDirector
             this.DevicesTab.TabIndex = 0;
             this.DevicesTab.Text = "Devices";
             this.DevicesTab.UseVisualStyleBackColor = true;
-            // 
-            // SuiteTb
-            // 
-            this.SuiteTb.AutoSize = true;
-            this.SuiteTb.Location = new System.Drawing.Point(247, 16);
-            this.SuiteTb.Name = "SuiteTb";
-            this.SuiteTb.Size = new System.Drawing.Size(31, 13);
-            this.SuiteTb.TabIndex = 77;
-            this.SuiteTb.Text = "Suite";
-            // 
-            // SuiteLbl
-            // 
-            this.SuiteLbl.AutoSize = true;
-            this.SuiteLbl.Location = new System.Drawing.Point(199, 16);
-            this.SuiteLbl.Name = "SuiteLbl";
-            this.SuiteLbl.Size = new System.Drawing.Size(34, 13);
-            this.SuiteLbl.TabIndex = 76;
-            this.SuiteLbl.Text = "Suite:";
-            // 
-            // SchemeTb
-            // 
-            this.SchemeTb.AutoSize = true;
-            this.SchemeTb.Location = new System.Drawing.Point(511, 16);
-            this.SchemeTb.Name = "SchemeTb";
-            this.SchemeTb.Size = new System.Drawing.Size(46, 13);
-            this.SchemeTb.TabIndex = 79;
-            this.SchemeTb.Text = "Scheme";
-            // 
-            // SchemeLbl
-            // 
-            this.SchemeLbl.AutoSize = true;
-            this.SchemeLbl.Location = new System.Drawing.Point(406, 16);
-            this.SchemeLbl.Name = "SchemeLbl";
-            this.SchemeLbl.Size = new System.Drawing.Size(49, 13);
-            this.SchemeLbl.TabIndex = 78;
-            this.SchemeLbl.Text = "Scheme:";
             // 
             // MainForm
             // 
@@ -3145,7 +3145,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.DataGridView MethodAccess;
         private System.Windows.Forms.Label SuiteTb;
         private System.Windows.Forms.Label SuiteLbl;
-        private System.Windows.Forms.Label SchemeTb;
+        private System.Windows.Forms.Label SigningTb;
         private System.Windows.Forms.Label SchemeLbl;
     }
 }

@@ -212,7 +212,7 @@
     <Setting Name="GeneratorAddress" Type="System.String" Scope="User">
       <Value Profile="(Default)">https://certificates.gurux.fi/api/CertificateGenerator</Value>
     </Setting>
-    <Setting Name="KeyAgreementScheme" Type="System.Int32" Scope="User">
+    <Setting Name="Signing" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="ClientTls" Type="System.String" Scope="User">

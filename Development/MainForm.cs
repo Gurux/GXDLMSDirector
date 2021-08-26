@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12522 $,
-//                  $Date: 2021-07-18 12:50:49 +0300 (su, 18 heinä 2021) $
+// Version:         $Revision: 12553 $,
+//                  $Date: 2021-08-26 11:13:00 +0300 (to, 26 elo 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -5578,20 +5578,13 @@ namespace GXDLMSDirector
                             ServerSystemTitleTb.Text = GXCommon.ToHex(traceTranslator.ServerSystemTitle);
                             SuiteTb.Text = newDev.SecuritySuite.ToString();
                             SecurityTb.Text = newDev.Security.ToString();
-                            if (newDev.Security == Security.DigitallySigned)
-                            {
-                                SchemeTb.Text = newDev.KeyAgreementScheme.ToString();
-                            }
-                            else
-                            {
-                                SchemeTb.Text = "";
-                            }
+                            SigningTb.Text = newDev.Signing.ToString();
                             AuthenticationKeyTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.AuthenticationKey));
                             BlockCipherKeyTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.BlockCipherKey));
                         }
                         else
                         {
-                            SchemeTb.Text = SuiteTb.Text = AuthenticationKeyTb.Text = BlockCipherKeyTb.Text = SecurityTb.Text = ClientSystemTitleTb.Text = ServerSystemTitleTb.Text = "";
+                            SigningTb.Text = SuiteTb.Text = AuthenticationKeyTb.Text = BlockCipherKeyTb.Text = SecurityTb.Text = ClientSystemTitleTb.Text = ServerSystemTitleTb.Text = "";
                         }
                         NetworkIDTb.Text = newDev.NetworkId.ToString();
                         PhysicalDeviceAddressTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.PhysicalDeviceAddress));

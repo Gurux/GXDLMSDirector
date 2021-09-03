@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12553 $,
-//                  $Date: 2021-08-26 11:13:00 +0300 (to, 26 elo 2021) $
+// Version:         $Revision: 12563 $,
+//                  $Date: 2021-09-03 08:52:38 +0300 (pe, 03 syys 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1545,7 +1545,7 @@ namespace GXDLMSDirector
                 }
                 while (reply.IsMoreData)
                 {
-                    data = client.ReceiverReady(reply.MoreData);
+                    data = client.ReceiverReady(reply);
                     if ((reply.MoreData & RequestTypes.Frame) != 0)
                     {
                         GXLogWriter.WriteLog("Get next frame.");
@@ -1854,7 +1854,7 @@ namespace GXDLMSDirector
                     catch (Exception ex)
                     {
                         obj.SetLastError(it, ex);
-                        throw ex;
+                        throw;
                     }
                     if (obj is IGXDLMSBase)
                     {

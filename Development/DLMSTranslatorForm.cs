@@ -7,6 +7,7 @@ using Gurux.DLMS.UI;
 using Gurux.DLMS.UI.Ecdsa;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -83,10 +84,8 @@ namespace GXDLMSDirector
                 Ciphering = new GXCipheringSettings(translator, keys, certificates,
                             Properties.Settings.Default.ClientAgreementKey,
                             Properties.Settings.Default.ClientSigningKey,
-                            Properties.Settings.Default.ClientTls,
                             Properties.Settings.Default.ServerAgreementKey,
-                            Properties.Settings.Default.ServerSigningKey,
-                            Properties.Settings.Default.ServerTls);
+                            Properties.Settings.Default.ServerSigningKey);
                 Ciphering.Challenge = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.Challenge);
                 tabControl1.TabPages.Add(Ciphering.GetCiphetingTab());
             }
@@ -475,10 +474,8 @@ namespace GXDLMSDirector
             Properties.Settings.Default.Challenge = GXDLMSTranslator.ToHex(Ciphering.Challenge);
             Properties.Settings.Default.ClientAgreementKey = Ciphering.ClientAgreementKey;
             Properties.Settings.Default.ClientSigningKey = Ciphering.ClientSigningKey;
-            Properties.Settings.Default.ClientTls = Ciphering.ClientTls;           
             Properties.Settings.Default.ServerAgreementKey = Ciphering.ServerAgreementKey;
             Properties.Settings.Default.ServerSigningKey = Ciphering.ServerSigningKey;
-            Properties.Settings.Default.ServerTls = Ciphering.ServerTls;
 
             Properties.Settings.Default.Data = DataPdu.Text;
             string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");

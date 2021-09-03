@@ -108,7 +108,7 @@ namespace GXDLMSDirector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Certificate Files (*.pem)|*.pem|All files (*.*)|*.*.
+        ///   Looks up a localized string similar to Pem files (*.pem)|*.pem|Security files (*.cer)|*.cer|All files (*.*)|*.*.
         /// </summary>
         internal static string CertificateFilterTxt {
             get {

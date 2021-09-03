@@ -194,7 +194,7 @@
     <value>Action Implemented.</value>
   </data>
   <data name="CertificateFilterTxt" xml:space="preserve">
-    <value>Certificate Files (*.pem)|*.pem|All files (*.*)|*.*</value>
+    <value>Pem files (*.pem)|*.pem|Security files (*.cer)|*.cer|All files (*.*)|*.*</value>
   </data>
   <data name="CopyrightTxt" xml:space="preserve">
     <value>Copyright© 1998-2021 Gurux Ltd.

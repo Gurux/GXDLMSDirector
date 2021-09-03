@@ -874,29 +874,5 @@ namespace GXDLMSDirector.Properties {
                 this["Signing"] = value;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ClientTls {
-            get {
-                return ((string)(this["ClientTls"]));
-            }
-            set {
-                this["ClientTls"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ServerTls {
-            get {
-                return ((string)(this["ServerTls"]));
-            }
-            set {
-                this["ServerTls"] = value;
-            }
-        }
     }
 }

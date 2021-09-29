@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12563 $,
-//                  $Date: 2021-09-03 08:52:38 +0300 (pe, 03 syys 2021) $
+// Version:         $Revision: 12616 $,
+//                  $Date: 2021-09-29 13:11:54 +0300 (ke, 29 syys 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -95,6 +95,11 @@ namespace GXDLMSDirector
                 ServerAddressSizeCb.Items.Add((byte)1);
                 ServerAddressSizeCb.Items.Add((byte)2);
                 ServerAddressSizeCb.Items.Add((byte)4);
+                ChallengeSizeCb.Items.Add("Random");
+                ChallengeSizeCb.Items.Add((byte)8);
+                ChallengeSizeCb.Items.Add((byte)16);
+                ChallengeSizeCb.Items.Add((byte)32);
+                ChallengeSizeCb.Items.Add((byte)64);
                 foreach (object it in Enum.GetValues(typeof(Standard)))
                 {
                     StandardCb.Items.Add(it);
@@ -332,6 +337,7 @@ namespace GXDLMSDirector
             }
             StandardCb.SelectedItem = device.Standard;
             ciphering.Signing = device.Signing;
+            ciphering.SignInitiateRequestResponse = device.SignInitiateRequestResponse;
             ciphering.SecuritySuite = device.SecuritySuite;
             ciphering.Security = device.Security;
             if (!string.IsNullOrEmpty(device.SystemTitle) && IsAscii(GXCommon.HexToBytes(device.SystemTitle)))
@@ -377,6 +383,7 @@ namespace GXDLMSDirector
             }
             ciphering.ServerSystemTitle = device.ServerSystemTitle;
             ciphering.Signing = device.Signing;
+            ciphering.SignInitiateRequestResponse = device.SignInitiateRequestResponse;
             ciphering.ClientSigningKey = device.ClientSigningKey;
             ciphering.ClientAgreementKey = device.ClientAgreementKey;
             ciphering.ServerSigningKey = device.ServerSigningKey;
@@ -449,6 +456,19 @@ namespace GXDLMSDirector
                 //Forse to use server address size.
                 ServerAddressSizeCb.SelectedItem = device.ServerAddressSize;
             }
+
+            if (device.ChallengeSize == 0)
+            {
+                ChallengeSizeCb.SelectedIndex = 0;
+            }
+            else
+            {
+                //Forse to use server address size.
+                ChallengeSizeCb.SelectedItem = device.ChallengeSize;
+            }
+            IncludePublicKeyCb.Checked = device.PublicKeyInInitialize;
+            SignInitiateRequestResponseCb.Checked = device.SignInitiateRequestResponse;
+
             if (device.PhysicalDeviceAddress != null)
             {
                 UseGatewayCb.Checked = true;
@@ -849,6 +869,18 @@ namespace GXDLMSDirector
             {
                 device.ServerAddressSize = Convert.ToByte(ServerAddressSizeCb.SelectedItem);
             }
+
+            if (ChallengeSizeCb.SelectedItem is string)
+            {
+                device.ChallengeSize = 0;
+            }
+            else
+            {
+                device.ChallengeSize = Convert.ToByte(ChallengeSizeCb.SelectedItem);
+            }
+            device.PublicKeyInInitialize = IncludePublicKeyCb.Checked;
+            device.SignInitiateRequestResponse = SignInitiateRequestResponseCb.Checked;
+
             if (PduWaitTimeTb.Text != "")
             {
                 device.PduWaitTime = int.Parse(PduWaitTimeTb.Text);
@@ -959,6 +991,7 @@ namespace GXDLMSDirector
             device.DedicatedKey = ciphering.DedicatedKey;
             device.ClientSigningKey = ciphering.ClientSigningKey;
             device.Signing = ciphering.Signing;
+            device.SignInitiateRequestResponse = ciphering.SignInitiateRequestResponse;
             device.ClientAgreementKey = ciphering.ClientAgreementKey;
             device.ServerSigningKey = ciphering.ServerSigningKey;
             device.ServerAgreementKey = ciphering.ServerAgreementKey;
@@ -1115,11 +1148,17 @@ namespace GXDLMSDirector
                 {
                     pk = GXPkcs8.FromDer(Device.ClientSigningKey);
                 }
-
+                SignInitiateRequestResponseCb.Enabled = IncludePublicKeyCb.Enabled = authentication.Type == Authentication.HighECDSA;
                 if (authentication.Type == Authentication.HighECDSA)
                 {
+                    ChallengeSizeCb.SelectedItem = (byte)32;
                     SigningKeyCb.Items.Clear();
-                    foreach (var it in ciphering.GetClientKeys(Device.SystemTitle))
+                    string st = ciphering.SystemTitle;
+                    if (st == "4142434445464748")
+                    {
+                        st = null;
+                    }
+                    foreach (var it in ciphering.GetClientKeys(st))
                     {
                         int pos = SigningKeyCb.Items.Add(it);
                         if (it.Key.Equals(pk))
@@ -1127,6 +1166,10 @@ namespace GXDLMSDirector
                             SigningKeyCb.SelectedIndex = pos;
                         }
                     }
+                }
+                else
+                {
+                    ChallengeSizeCb.SelectedItem = (byte)16;
                 }
             }
             catch (Exception Ex)
@@ -1879,6 +1922,16 @@ namespace GXDLMSDirector
         {
             if (SigningKeyCb.SelectedItem is KeyValuePair<GXPkcs8, GXx509Certificate> kp)
             {
+                string certificateSt = GXDLMSTranslator.ToHex(GXAsn1Converter.SystemTitleFromSubject(kp.Value.Subject), false);
+                if (ciphering.SystemTitle != certificateSt)
+                {
+                    if (MessageBox.Show(Parent, string.Format("System title '{0}' of the client is different than in the certificate '{1}'. Do you want to update the system title from the certificate?", ciphering.SystemTitle, certificateSt), "", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) != DialogResult.Yes)
+                    {
+                        return;
+                    }
+                    ciphering.SystemTitleAscii = false;
+                    ciphering.SystemTitle = certificateSt;
+                }
                 ciphering.ClientSigningKey = kp.Key.ToDer();
             }
             else

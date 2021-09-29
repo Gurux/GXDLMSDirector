@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12563 $,
-//                  $Date: 2021-09-03 08:52:38 +0300 (pe, 03 syys 2021) $
+// Version:         $Revision: 12617 $,
+//                  $Date: 2021-09-29 13:14:52 +0300 (ke, 29 syys 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -927,9 +927,16 @@ namespace GXDLMSDirector
             }
             //Update client signing key.
             GXPkcs8 pk = null;
-            if (client.Authentication == Authentication.HighECDSA && client.Ciphering.SigningKeyPair.Value == null
+            if ((parent.Authentication == Authentication.HighECDSA 
+                || parent.Signing != Signing.None)
+                && client.Ciphering.SigningKeyPair.Value == null
                 && !string.IsNullOrEmpty(parent.ClientSigningKey))
             {
+                if (client.Ciphering.SigningKeyPair.Key == null && !string.IsNullOrEmpty(parent.ServerSigningKey))
+                {
+                    GXx509Certificate cert = GXx509Certificate.FromDer(parent.ServerSigningKey);
+                    client.Ciphering.SigningKeyPair = new KeyValuePair<GXPublicKey, GXPrivateKey>(cert.PublicKey, null);
+                }
                 pk = GXPkcs8.FromDer(parent.ClientSigningKey);
                 client.Ciphering.SigningKeyPair = new KeyValuePair<GXPublicKey, GXPrivateKey>(client.Ciphering.SigningKeyPair.Key, pk.PrivateKey);
             }
@@ -1204,6 +1211,8 @@ namespace GXDLMSDirector
             {
                 client.ServerSystemTitle = GXCommon.HexToBytes(parent.ServerSystemTitle);
             }
+            client.ChallengeSize = parent.ChallengeSize;
+
         }
 
         public void InitializeConnection(bool force)
@@ -1255,6 +1264,7 @@ namespace GXDLMSDirector
                     Security security = client.Ciphering.Security;
                     byte[] challenge = client.CtoSChallenge;
                     Signing signing = client.Ciphering.Signing;
+                    UInt16 pduSize = client.MaxReceivePDUSize;
                     try
                     {
                         client.ClientAddress = 16;
@@ -1314,6 +1324,7 @@ namespace GXDLMSDirector
                         client.Ciphering.Security = security;
                         client.CtoSChallenge = challenge;
                         client.Ciphering.Signing = signing;
+                        client.MaxReceivePDUSize = pduSize;
                     }
                 }
                 data = SNRMRequest();

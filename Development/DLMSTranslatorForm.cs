@@ -1,6 +1,7 @@
 ﻿using Gurux.Common;
 using Gurux.DLMS;
 using Gurux.DLMS.ASN;
+using Gurux.DLMS.Ecdsa;
 using Gurux.DLMS.Enums;
 using Gurux.DLMS.Objects.Enums;
 using Gurux.DLMS.UI;
@@ -9,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Numerics;
 using System.Text;
 using System.Windows.Forms;
 
@@ -112,6 +114,19 @@ namespace GXDLMSDirector
             }
         }
 
+        private KeyValuePair<GXPkcs8, GXx509Certificate> FindKey(string SerialNumber)
+        {
+            BigInteger value = BigInteger.Parse(SerialNumber);
+            foreach(var it in Ciphering.KeyPairs)
+            {
+                if(it.Value.SerialNumber == value)
+                {
+                    return it;
+                }
+            }
+            return new KeyValuePair<GXPkcs8, GXx509Certificate>();
+        }
+
         private void UpdateSecuritySettings()
         {
             translator.SecuritySuite = Ciphering.SecuritySuite;
@@ -124,6 +139,28 @@ namespace GXDLMSDirector
             translator.DedicatedKey = Ciphering.DedicatedKey;
             translator.Keys.Clear();
             translator.Keys.AddRange(Ciphering.KeyPairs);
+            if (!string.IsNullOrEmpty(Ciphering.ClientSigningKey))
+            {
+                KeyValuePair<GXPkcs8, GXx509Certificate> it = FindKey(Ciphering.ClientSigningKey);
+                GXPrivateKey pk = null;
+                if (it.Key != null)
+                {
+                    pk = it.Key.PrivateKey;
+                    pk.SystemTitle = it.Value != null ? GXAsn1Converter.SystemTitleFromSubject(it.Value.Subject) : null;
+                }
+                translator.SigningKeyPair = new KeyValuePair<GXPublicKey, GXPrivateKey>(translator.SigningKeyPair.Key, pk);
+            }
+            if (!string.IsNullOrEmpty(Ciphering.ServerSigningKey))
+            {
+                KeyValuePair<GXPkcs8, GXx509Certificate> it = FindKey(Ciphering.ServerSigningKey);
+                GXPublicKey pub = null;
+                if (it.Value != null)
+                {
+                    pub = it.Value.PublicKey;
+                    pub.SystemTitle = it.Value != null ? GXAsn1Converter.SystemTitleFromSubject(it.Value.Subject) : null;
+                }
+                translator.SigningKeyPair = new KeyValuePair<GXPublicKey, GXPrivateKey>(pub, translator.SigningKeyPair.Value);
+            }
         }
 
         /// <summary>
@@ -183,7 +220,7 @@ namespace GXDLMSDirector
         /// </summary>
         /// <param name="data">Input.</param>
         /// <returns>Data where comments are removed.</returns>
-        private String RemoveComments(String data)
+        private String RemoveComments(string data)
         {
             StringBuilder sb = new StringBuilder();
             foreach (string it in data.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
@@ -198,7 +235,7 @@ namespace GXDLMSDirector
                 {
                     if (InterfaceTypeCb.SelectedItem is InterfaceType && (InterfaceType)InterfaceTypeCb.SelectedItem == InterfaceType.WRAPPER)
                     {
-                        pos = tmp.IndexOf("0001");
+                        pos = tmp.Replace(" ", "").IndexOf("0001");
                         if (pos != -1)
                         {
                             sb.Append(tmp.Substring(pos));
@@ -266,6 +303,7 @@ namespace GXDLMSDirector
                 if (InterfaceTypeCb.SelectedItem is string)
                 {
                     type = GXDLMSTranslator.GetDlmsFraming(bb);
+                    InterfaceTypeCb.SelectedItem = type;
                 }
                 else
                 {

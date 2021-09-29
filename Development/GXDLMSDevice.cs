@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12553 $,
-//                  $Date: 2021-08-26 11:13:00 +0300 (to, 26 elo 2021) $
+// Version:         $Revision: 12615 $,
+//                  $Date: 2021-09-29 12:56:47 +0300 (ke, 29 syys 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -323,7 +323,7 @@ namespace GXDLMSDirector
 
         [Browsable(false)]
         [XmlIgnore()]
-        public Gurux.DLMS.ManufacturerSettings.GXObisCodeCollection ObisCodes
+        public GXObisCodeCollection ObisCodes
         {
             get
             {

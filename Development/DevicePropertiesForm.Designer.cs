@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12543 $,
-//                  $Date: 2021-08-19 12:25:59 +0300 (to, 19 elo 2021) $
+// Version:         $Revision: 12616 $,
+//                  $Date: 2021-09-29 13:11:54 +0300 (ke, 29 syys 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -108,7 +108,6 @@ namespace GXDLMSDirector
             this.InvocationCounterLbl = new System.Windows.Forms.Label();
             this.InvocationCounterTB = new System.Windows.Forms.TextBox();
             this.DeviceSettingsTab = new System.Windows.Forms.TabPage();
-            this.SigningKeyCb = new System.Windows.Forms.ComboBox();
             this.InterfaceCb = new System.Windows.Forms.ComboBox();
             this.InterfaceLbl = new System.Windows.Forms.Label();
             this.WaitTimeTB = new System.Windows.Forms.DateTimePicker();
@@ -157,8 +156,13 @@ namespace GXDLMSDirector
             this.AdvancedBtn = new System.Windows.Forms.Button();
             this.SerialPortLbl = new System.Windows.Forms.Label();
             this.SerialPortCB = new System.Windows.Forms.ComboBox();
+            this.SigningKeyCb = new System.Windows.Forms.ComboBox();
             this.DeviceTab = new System.Windows.Forms.TabControl();
             this.AdvancedTab = new System.Windows.Forms.TabPage();
+            this.SignInitiateRequestResponseCb = new System.Windows.Forms.CheckBox();
+            this.IncludePublicKeyCb = new System.Windows.Forms.CheckBox();
+            this.ChallengeSizeCb = new System.Windows.Forms.ComboBox();
+            this.ChallengeSizeLbl = new System.Windows.Forms.Label();
             this.SecurityChangeCheckCb = new System.Windows.Forms.CheckBox();
             this.IgnoreTimeStatusCb = new System.Windows.Forms.CheckBox();
             this.IgnoreTimeZoneCb = new System.Windows.Forms.CheckBox();
@@ -845,20 +849,6 @@ namespace GXDLMSDirector
             this.DeviceSettingsTab.Text = "Device Settings";
             this.DeviceSettingsTab.UseVisualStyleBackColor = true;
             // 
-            // SigningKeyCb
-            // 
-            this.SigningKeyCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.SigningKeyCb.FormattingEnabled = true;
-            this.helpProvider1.SetHelpKeyword(this.SigningKeyCb, "Authentication");
-            this.helpProvider1.SetHelpNavigator(this.SigningKeyCb, System.Windows.Forms.HelpNavigator.Topic);
-            this.SigningKeyCb.Location = new System.Drawing.Point(109, 116);
-            this.SigningKeyCb.Name = "SigningKeyCb";
-            this.helpProvider1.SetShowHelp(this.SigningKeyCb, true);
-            this.SigningKeyCb.Size = new System.Drawing.Size(345, 21);
-            this.SigningKeyCb.TabIndex = 64;
-            this.SigningKeyCb.SelectedIndexChanged += new System.EventHandler(this.SigningKeyCb_SelectedIndexChanged);
-            this.SigningKeyCb.Format += new System.Windows.Forms.ListControlConvertEventHandler(this.SigningKeyCb_Format);
-            // 
             // InterfaceCb
             // 
             this.InterfaceCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -1406,6 +1396,20 @@ namespace GXDLMSDirector
             this.SerialPortCB.Size = new System.Drawing.Size(139, 21);
             this.SerialPortCB.TabIndex = 11;
             // 
+            // SigningKeyCb
+            // 
+            this.SigningKeyCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SigningKeyCb.FormattingEnabled = true;
+            this.helpProvider1.SetHelpKeyword(this.SigningKeyCb, "Authentication");
+            this.helpProvider1.SetHelpNavigator(this.SigningKeyCb, System.Windows.Forms.HelpNavigator.Topic);
+            this.SigningKeyCb.Location = new System.Drawing.Point(109, 116);
+            this.SigningKeyCb.Name = "SigningKeyCb";
+            this.helpProvider1.SetShowHelp(this.SigningKeyCb, true);
+            this.SigningKeyCb.Size = new System.Drawing.Size(345, 21);
+            this.SigningKeyCb.TabIndex = 64;
+            this.SigningKeyCb.SelectedIndexChanged += new System.EventHandler(this.SigningKeyCb_SelectedIndexChanged);
+            this.SigningKeyCb.Format += new System.Windows.Forms.ListControlConvertEventHandler(this.SigningKeyCb_Format);
+            // 
             // DeviceTab
             // 
             this.DeviceTab.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -1432,6 +1436,10 @@ namespace GXDLMSDirector
             // 
             // AdvancedTab
             // 
+            this.AdvancedTab.Controls.Add(this.SignInitiateRequestResponseCb);
+            this.AdvancedTab.Controls.Add(this.IncludePublicKeyCb);
+            this.AdvancedTab.Controls.Add(this.ChallengeSizeCb);
+            this.AdvancedTab.Controls.Add(this.ChallengeSizeLbl);
             this.AdvancedTab.Controls.Add(this.SecurityChangeCheckCb);
             this.AdvancedTab.Controls.Add(this.IgnoreTimeStatusCb);
             this.AdvancedTab.Controls.Add(this.IgnoreTimeZoneCb);
@@ -1460,10 +1468,56 @@ namespace GXDLMSDirector
             this.AdvancedTab.Text = "Advanced";
             this.AdvancedTab.UseVisualStyleBackColor = true;
             // 
+            // SignInitiateRequestResponseCb
+            // 
+            this.SignInitiateRequestResponseCb.AutoSize = true;
+            this.helpProvider1.SetHelpString(this.SignInitiateRequestResponseCb, "Is protected release used.");
+            this.SignInitiateRequestResponseCb.Location = new System.Drawing.Point(14, 293);
+            this.SignInitiateRequestResponseCb.Name = "SignInitiateRequestResponseCb";
+            this.helpProvider1.SetShowHelp(this.SignInitiateRequestResponseCb, true);
+            this.SignInitiateRequestResponseCb.Size = new System.Drawing.Size(186, 17);
+            this.SignInitiateRequestResponseCb.TabIndex = 65;
+            this.SignInitiateRequestResponseCb.Text = "Sign Initiate request and response";
+            this.SignInitiateRequestResponseCb.UseVisualStyleBackColor = true;
+            // 
+            // IncludePublicKeyCb
+            // 
+            this.IncludePublicKeyCb.AutoSize = true;
+            this.helpProvider1.SetHelpNavigator(this.IncludePublicKeyCb, System.Windows.Forms.HelpNavigator.Topic);
+            this.helpProvider1.SetHelpString(this.IncludePublicKeyCb, "SendPublicKeyCertificateInInitialize");
+            this.IncludePublicKeyCb.Location = new System.Drawing.Point(14, 270);
+            this.IncludePublicKeyCb.Name = "IncludePublicKeyCb";
+            this.helpProvider1.SetShowHelp(this.IncludePublicKeyCb, true);
+            this.IncludePublicKeyCb.Size = new System.Drawing.Size(203, 17);
+            this.IncludePublicKeyCb.TabIndex = 64;
+            this.IncludePublicKeyCb.Text = "Send Public Key certificate in initialize";
+            this.IncludePublicKeyCb.UseVisualStyleBackColor = true;
+            // 
+            // ChallengeSizeCb
+            // 
+            this.ChallengeSizeCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.helpProvider1.SetHelpKeyword(this.ChallengeSizeCb, "ChallengeSize");
+            this.helpProvider1.SetHelpNavigator(this.ChallengeSizeCb, System.Windows.Forms.HelpNavigator.Topic);
+            this.ChallengeSizeCb.Location = new System.Drawing.Point(154, 234);
+            this.ChallengeSizeCb.Name = "ChallengeSizeCb";
+            this.helpProvider1.SetShowHelp(this.ChallengeSizeCb, true);
+            this.ChallengeSizeCb.Size = new System.Drawing.Size(93, 21);
+            this.ChallengeSizeCb.TabIndex = 63;
+            // 
+            // ChallengeSizeLbl
+            // 
+            this.ChallengeSizeLbl.AutoSize = true;
+            this.ChallengeSizeLbl.Location = new System.Drawing.Point(11, 242);
+            this.ChallengeSizeLbl.Name = "ChallengeSizeLbl";
+            this.ChallengeSizeLbl.Size = new System.Drawing.Size(80, 13);
+            this.ChallengeSizeLbl.TabIndex = 62;
+            this.ChallengeSizeLbl.Text = "Challenge Size:";
+            // 
             // SecurityChangeCheckCb
             // 
             this.SecurityChangeCheckCb.AutoSize = true;
-            this.helpProvider1.SetHelpString(this.SecurityChangeCheckCb, "Is protected release used.");
+            this.helpProvider1.SetHelpNavigator(this.SecurityChangeCheckCb, System.Windows.Forms.HelpNavigator.Topic);
+            this.helpProvider1.SetHelpString(this.SecurityChangeCheckCb, "SecurityChangeCheck");
             this.SecurityChangeCheckCb.Location = new System.Drawing.Point(11, 219);
             this.SecurityChangeCheckCb.Name = "SecurityChangeCheckCb";
             this.helpProvider1.SetShowHelp(this.SecurityChangeCheckCb, true);
@@ -1503,7 +1557,8 @@ namespace GXDLMSDirector
             // UseProtectedReleaseCb
             // 
             this.UseProtectedReleaseCb.AutoSize = true;
-            this.helpProvider1.SetHelpString(this.UseProtectedReleaseCb, "Is protected release used.");
+            this.helpProvider1.SetHelpNavigator(this.UseProtectedReleaseCb, System.Windows.Forms.HelpNavigator.Topic);
+            this.helpProvider1.SetHelpString(this.UseProtectedReleaseCb, "UseProtectedRelease");
             this.UseProtectedReleaseCb.Location = new System.Drawing.Point(11, 196);
             this.UseProtectedReleaseCb.Name = "UseProtectedReleaseCb";
             this.helpProvider1.SetShowHelp(this.UseProtectedReleaseCb, true);
@@ -2290,5 +2345,9 @@ namespace GXDLMSDirector
         private System.Windows.Forms.TextBox PduWaitTimeTb;
         private System.Windows.Forms.CheckBox SecurityChangeCheckCb;
         private System.Windows.Forms.ComboBox SigningKeyCb;
+        private System.Windows.Forms.ComboBox ChallengeSizeCb;
+        private System.Windows.Forms.Label ChallengeSizeLbl;
+        private System.Windows.Forms.CheckBox SignInitiateRequestResponseCb;
+        private System.Windows.Forms.CheckBox IncludePublicKeyCb;
     }
 }

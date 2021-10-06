@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12553 $,
-//                  $Date: 2021-08-26 11:13:00 +0300 (to, 26 elo 2021) $
+// Version:         $Revision: 12635 $,
+//                  $Date: 2021-10-06 11:59:58 +0300 (ke, 06 loka 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -3300,6 +3300,7 @@ namespace GXDLMSDirector
         {
             obj.Version = it.Version;
             obj.LogicalName = it.LogicalName;
+            obj.Version = it.Version;
             foreach (GXDLMSAttributeSettings a in it.Attributes)
             {
                 if (a.UIType != DataType.None)

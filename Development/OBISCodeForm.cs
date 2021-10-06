@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 11324 $,
-//                  $Date: 2020-01-12 17:20:31 +0200 (Sun, 12 Jan 2020) $
+// Version:         $Revision: 12635 $,
+//                  $Date: 2021-10-06 11:59:58 +0300 (ke, 06 loka 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -86,7 +86,9 @@ namespace GXDLMSDirector
             //If logical name is not given set default value.
             if (string.IsNullOrEmpty(Target.LogicalName))
             {
-                Target.LogicalName = "0.0.0.0.0.255";
+                //Get default logical name.
+                GXDLMSObject obj = GXDLMSClient.CreateObject(Target.ObjectType);
+                Target.LogicalName = obj.LogicalName;
             }
             Target.Attributes.Clear();
             GXObisCode code = ObisCodeCollection.FindByLN(Target.ObjectType, Target.LogicalName, null);
@@ -121,6 +123,7 @@ namespace GXDLMSDirector
             try
             {
                 GXDLMSObject.ValidateLogicalName(Target.LogicalName);
+                OriginalTarget.Version = Target.Version;
                 OriginalTarget.Description = Target.Description;
                 OriginalTarget.ObjectType = Target.ObjectType;
                 OriginalTarget.LogicalName = Target.LogicalName.Trim();
@@ -164,6 +167,7 @@ namespace GXDLMSDirector
                 Target.ObjectType = (ObjectType)InterfaceCB.SelectedItem;
                 if (bChange)
                 {
+                    Target.LogicalName = null;
                     UpdateTarget();
                 }
             }

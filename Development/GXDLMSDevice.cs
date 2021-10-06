@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12615 $,
-//                  $Date: 2021-09-29 12:56:47 +0300 (ke, 29 syys 2021) $
+// Version:         $Revision: 12635 $,
+//                  $Date: 2021-10-06 11:59:58 +0300 (ke, 06 loka 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -251,7 +251,7 @@ namespace GXDLMSDirector
         /// Used logical client ID.
         /// </summary>
         /// <remarks>
-        /// This is opsolite. Use ClientAddress.
+        /// This is obsolete. Use ClientAddress.
         /// </remarks>
         [DefaultValue(null)]
         public object ClientID

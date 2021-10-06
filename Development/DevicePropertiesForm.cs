@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12616 $,
-//                  $Date: 2021-09-29 13:11:54 +0300 (ke, 29 syys 2021) $
+// Version:         $Revision: 12635 $,
+//                  $Date: 2021-10-06 11:59:58 +0300 (ke, 06 loka 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1923,7 +1923,9 @@ namespace GXDLMSDirector
             if (SigningKeyCb.SelectedItem is KeyValuePair<GXPkcs8, GXx509Certificate> kp)
             {
                 string certificateSt = GXDLMSTranslator.ToHex(GXAsn1Converter.SystemTitleFromSubject(kp.Value.Subject), false);
-                if (ciphering.SystemTitle != certificateSt)
+                if (ciphering.SystemTitle != certificateSt &&
+                    //ciphering.SystemTitle is not set on load.
+                    Device.SystemTitle != certificateSt)
                 {
                     if (MessageBox.Show(Parent, string.Format("System title '{0}' of the client is different than in the certificate '{1}'. Do you want to update the system title from the certificate?", ciphering.SystemTitle, certificateSt), "", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) != DialogResult.Yes)
                     {

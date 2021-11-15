@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12617 $,
-//                  $Date: 2021-09-29 13:14:52 +0300 (ke, 29 syys 2021) $
+// Version:         $Revision: 12719 $,
+//                  $Date: 2021-11-15 15:18:25 +0200 (ma, 15 marras 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -388,7 +388,8 @@ namespace GXDLMSDirector
                 AllData = client.InterfaceType == InterfaceType.PDU,
                 Eop = eop,
                 Count = eop == null ? 8 : 5,
-                WaitTime = parent.WaitTime * 1000,
+                //If wait time is negative it's ms.
+                WaitTime = parent.WaitTime > 0 ? parent.WaitTime * 1000 : -parent.WaitTime,
             };
             DateTime start = DateTime.Now;
             GXByteBuffer rd = new GXByteBuffer();
@@ -450,7 +451,6 @@ namespace GXDLMSDirector
                         p.Count = 1;
                         media.Receive(p);
                     }
-
                     while (rd.GetUInt8(0) == '\t')
                     {
                         pos = 1;
@@ -473,9 +473,7 @@ namespace GXDLMSDirector
                     }
 
                     //Loop until whole COSEM packet is received.
-                    //If received data is echo.
-                    while (rd.Compare(data) ||
-                        !client.GetData(rd, reply, notify))
+                    while (!client.GetData(rd, reply, notify))
                     {
                         int framePosition = rd.Position;
                         rd.Position = 0;
@@ -601,7 +599,7 @@ namespace GXDLMSDirector
 
         private char GetIecBaudRate(int baudrate)
         {
-            char rate = '5';
+            char rate;
             switch (baudrate)
             {
                 case 300:
@@ -927,7 +925,7 @@ namespace GXDLMSDirector
             }
             //Update client signing key.
             GXPkcs8 pk = null;
-            if ((parent.Authentication == Authentication.HighECDSA 
+            if ((parent.Authentication == Authentication.HighECDSA
                 || parent.Signing != Signing.None)
                 && client.Ciphering.SigningKeyPair.Value == null
                 && !string.IsNullOrEmpty(parent.ClientSigningKey))
@@ -1002,7 +1000,7 @@ namespace GXDLMSDirector
             {
                 GXx509Certificate pub;
                 if ((client.Ciphering.Signing == Signing.OnePassDiffieHellman ||
-                    client.Ciphering.Signing == Signing.StaticUnifiedModel) && 
+                    client.Ciphering.Signing == Signing.StaticUnifiedModel) &&
                     string.IsNullOrEmpty(parent.ClientAgreementKey))
                 {
                     throw new Exception("Client agreement key is not set.");
@@ -1204,6 +1202,7 @@ namespace GXDLMSDirector
             client.HdlcSettings.MaxInfoRX = parent.MaxInfoRX;
             client.HdlcSettings.MaxInfoTX = parent.MaxInfoTX;
             client.MaxReceivePDUSize = parent.PduSize;
+            client.GbtWindowSize = parent.GbtWindowSize;
             client.UserId = parent.UserId;
             client.Priority = parent.Priority;
             client.ServiceClass = parent.ServiceClass;
@@ -1252,6 +1251,7 @@ namespace GXDLMSDirector
             }
             try
             {
+                client.ManufacturerId = parent.Manufacturer;
                 GXReplyData reply = new GXReplyData();
                 byte[] data;
                 UpdateSettings();
@@ -1542,42 +1542,53 @@ namespace GXDLMSDirector
             {
                 parent.OnTrace(lastTransaction, parent, text + "\r\nTX:\t", data, 0, LogFile, 0);
             }
-            ReadDLMSPacket(data, tryCount, reply);
-
-            if (OnDataReceived != null)
+            //Synchronous lock is needed because GBT might cause that there are multiple replies and 
+            //we don't want to handle them as notifications.
+            lock (media.Synchronous)
             {
-                OnDataReceived(this, reply);
-            }
-            if (reply.IsMoreData)
-            {
-                if (reply.TotalCount != 1)
+                ReadDLMSPacket(data, tryCount, reply);
+                if (OnDataReceived != null)
                 {
-                    NotifyProgress(text, 1, multiplier * reply.TotalCount);
+                    OnDataReceived(this, reply);
                 }
-                while (reply.IsMoreData)
+                if (reply.IsMoreData)
                 {
-                    data = client.ReceiverReady(reply);
-                    if ((reply.MoreData & RequestTypes.Frame) != 0)
-                    {
-                        GXLogWriter.WriteLog("Get next frame.");
-                    }
-                    else
-                    {
-                        GXLogWriter.WriteLog("Get Next Data block.");
-                    }
-                    if (parent.OnTrace != null)
-                    {
-                        parent.OnTrace(DateTime.Now, parent, "\r\nTX:\t", data, 0, LogFile, 0);
-                    }
-                    GXLogWriter.WriteLog(text, data);
-                    ReadDLMSPacket(data, reply);
-                    if (OnDataReceived != null)
-                    {
-                        OnDataReceived(this, reply);
-                    }
                     if (reply.TotalCount != 1)
                     {
-                        NotifyProgress(text, reply.Count, multiplier * reply.TotalCount);
+                        NotifyProgress(text, 1, multiplier * reply.TotalCount);
+                    }
+                    while (reply.IsMoreData)
+                    {
+                        if (!reply.IsStreaming())
+                        {
+                            data = client.ReceiverReady(reply);
+                            if ((reply.MoreData & RequestTypes.Frame) != 0)
+                            {
+                                GXLogWriter.WriteLog("Get next frame.");
+                            }
+                            else
+                            {
+                                GXLogWriter.WriteLog("Get Next Data block.");
+                            }
+                            if (parent.OnTrace != null)
+                            {
+                                parent.OnTrace(DateTime.Now, parent, "\r\nTX:\t", data, 0, LogFile, 0);
+                            }
+                            GXLogWriter.WriteLog(text, data);
+                        }
+                        else
+                        {
+                            data = null;
+                        }
+                        ReadDLMSPacket(data, reply);
+                        if (OnDataReceived != null)
+                        {
+                            OnDataReceived(this, reply);
+                        }
+                        if (reply.TotalCount != 1)
+                        {
+                            NotifyProgress(text, reply.Count, multiplier * reply.TotalCount);
+                        }
                     }
                 }
             }

@@ -215,5 +215,23 @@
     <Setting Name="Signing" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
+    <Setting Name="HdlcServerAddresses" Type="System.String" Scope="User">
+      <Value Profile="(Default)">1, 145, 127,16383</Value>
+    </Setting>
+    <Setting Name="HdlcClientAddresses" Type="System.String" Scope="User">
+      <Value Profile="(Default)">16, 1, 100</Value>
+    </Setting>
+    <Setting Name="HdlcSearchInitialWaitTime" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="HdlcSearchWaitTime" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">100</Value>
+    </Setting>
+    <Setting Name="TestFoundMetersFirst" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="TestFailedClientsLast" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

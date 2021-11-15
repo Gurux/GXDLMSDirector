@@ -138,17 +138,17 @@
     <Reference Include="Gurux.Common, Version=8.1.2109.2401, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Common.8.1.2109.2401\lib\net46\Gurux.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=9.0.2110.602, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.9.0.2110.602\lib\net46\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=9.0.2111.1502, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.9.0.2111.1502\lib\net46\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.AMI.Messages, Version=8.1.2110.602, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.AMI.Messages.8.1.2110.602\lib\net46\Gurux.DLMS.AMI.Messages.dll</HintPath>
+    <Reference Include="Gurux.DLMS.AMI.Messages, Version=8.1.2111.1501, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.AMI.Messages.8.1.2111.1501\lib\net46\Gurux.DLMS.AMI.Messages.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.AMI.UI, Version=8.1.2110.602, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.AMI.UI.8.1.2110.602\lib\net46\Gurux.DLMS.AMI.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.AMI.UI, Version=8.1.2111.1501, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.AMI.UI.8.1.2111.1501\lib\net46\Gurux.DLMS.AMI.UI.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=9.0.2110.602, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.9.0.2110.602\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=9.0.2111.1501, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.9.0.2111.1501\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.MQTT, Version=8.1.2109.2401, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.MQTT.8.1.2109.2401\lib\net46\Gurux.MQTT.dll</HintPath>
@@ -291,6 +291,12 @@
     <Compile Include="ConformanceTests\Settings\GXConformanceSettings.cs" />
     <Compile Include="ConformanceTests\Settings\IGXConformanceSettings.cs" />
     <Compile Include="GXByteConverter.cs" />
+    <Compile Include="GXHdlcAddressesResolverDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GXHdlcAddressesResolverDlg.Designer.cs">
+      <DependentUpon>GXHdlcAddressesResolverDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="GXHdlcAddressResolver.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -419,6 +425,9 @@
     </Compile>
     <EmbeddedResource Include="ConformanceTests\GXConformanceDlg.resx">
       <DependentUpon>GXConformanceDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GXHdlcAddressesResolverDlg.resx">
+      <DependentUpon>GXHdlcAddressesResolverDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GXHdlcAddressResolver.resx">
       <DependentUpon>GXHdlcAddressResolver.cs</DependentUpon>

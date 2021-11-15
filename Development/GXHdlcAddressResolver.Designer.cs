@@ -71,29 +71,28 @@ namespace GXDLMSDirector
             this.MediaMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.SerialMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.NetworkMnu = new System.Windows.Forms.ToolStripMenuItem();
-            this.MediaSettingsMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.UseOpticalProbeMnu = new System.Windows.Forms.ToolStripMenuItem();
-            this.ScanBaudRateMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.StatusLbl = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.ProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.ScanBaudRatesBtn = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.SerialBtn = new System.Windows.Forms.ToolStripButton();
             this.NetworkBtn = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.OpticalProbeBtn = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.ScanBtn = new System.Windows.Forms.ToolStripButton();
+            this.ScanBaudRatesBtn = new System.Windows.Forms.ToolStripButton();
             this.MediaSettingsBtn = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.ScanBtn = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.TabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.ProgressTb = new System.Windows.Forms.TextBox();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.TraceView = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -127,19 +126,19 @@ namespace GXDLMSDirector
             // ScanMnu
             // 
             this.ScanMnu.Name = "ScanMnu";
-            this.ScanMnu.Size = new System.Drawing.Size(180, 22);
+            this.ScanMnu.Size = new System.Drawing.Size(99, 22);
             this.ScanMnu.Text = "&Scan";
             this.ScanMnu.Click += new System.EventHandler(this.ScanMnu_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(96, 6);
             // 
             // ExitMnu
             // 
             this.ExitMnu.Name = "ExitMnu";
-            this.ExitMnu.Size = new System.Drawing.Size(180, 22);
+            this.ExitMnu.Size = new System.Drawing.Size(99, 22);
             this.ExitMnu.Text = "Exit";
             this.ExitMnu.Click += new System.EventHandler(this.ExitMnu_Click);
             // 
@@ -147,10 +146,9 @@ namespace GXDLMSDirector
             // 
             this.EditMnu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MediaMnu,
-            this.MediaSettingsMnu,
+            this.settingsToolStripMenuItem,
             this.toolStripSeparator2,
-            this.UseOpticalProbeMnu,
-            this.ScanBaudRateMnu});
+            this.UseOpticalProbeMnu});
             this.EditMnu.Name = "EditMnu";
             this.EditMnu.Size = new System.Drawing.Size(39, 20);
             this.EditMnu.Text = "Edit";
@@ -167,23 +165,23 @@ namespace GXDLMSDirector
             // SerialMnu
             // 
             this.SerialMnu.Name = "SerialMnu";
-            this.SerialMnu.Size = new System.Drawing.Size(180, 22);
+            this.SerialMnu.Size = new System.Drawing.Size(119, 22);
             this.SerialMnu.Text = "Serial";
             this.SerialMnu.Click += new System.EventHandler(this.OnMediaTypeChanged);
             // 
             // NetworkMnu
             // 
             this.NetworkMnu.Name = "NetworkMnu";
-            this.NetworkMnu.Size = new System.Drawing.Size(180, 22);
+            this.NetworkMnu.Size = new System.Drawing.Size(119, 22);
             this.NetworkMnu.Text = "Network";
             this.NetworkMnu.Click += new System.EventHandler(this.OnMediaTypeChanged);
             // 
-            // MediaSettingsMnu
+            // settingsToolStripMenuItem
             // 
-            this.MediaSettingsMnu.Name = "MediaSettingsMnu";
-            this.MediaSettingsMnu.Size = new System.Drawing.Size(180, 22);
-            this.MediaSettingsMnu.Text = "Media Settings...";
-            this.MediaSettingsMnu.Click += new System.EventHandler(this.MediaSettingsMnu_Click);
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.settingsToolStripMenuItem.Text = "Settings...";
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.Settings_Click);
             // 
             // toolStripSeparator2
             // 
@@ -196,13 +194,6 @@ namespace GXDLMSDirector
             this.UseOpticalProbeMnu.Size = new System.Drawing.Size(180, 22);
             this.UseOpticalProbeMnu.Text = "Use Optical Probe";
             this.UseOpticalProbeMnu.Click += new System.EventHandler(this.UseOpticalProbeMnu_Click);
-            // 
-            // ScanBaudRateMnu
-            // 
-            this.ScanBaudRateMnu.Name = "ScanBaudRateMnu";
-            this.ScanBaudRateMnu.Size = new System.Drawing.Size(180, 22);
-            this.ScanBaudRateMnu.Text = "Scan Baud Rates";
-            this.ScanBaudRateMnu.Click += new System.EventHandler(this.ScanBaudRateMnu_Click);
             // 
             // statusStrip1
             // 
@@ -256,21 +247,6 @@ namespace GXDLMSDirector
             this.toolStrip1.TabIndex = 69;
             this.toolStrip1.Text = "toolStrip1";
             // 
-            // ScanBaudRatesBtn
-            // 
-            this.ScanBaudRatesBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ScanBaudRatesBtn.Image = ((System.Drawing.Image)(resources.GetObject("ScanBaudRatesBtn.Image")));
-            this.ScanBaudRatesBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ScanBaudRatesBtn.Name = "ScanBaudRatesBtn";
-            this.ScanBaudRatesBtn.Size = new System.Drawing.Size(23, 22);
-            this.ScanBaudRatesBtn.ToolTipText = "Scan Baud Rates";
-            this.ScanBaudRatesBtn.Click += new System.EventHandler(this.ScanBaudRateMnu_Click);
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
-            // 
             // SerialBtn
             // 
             this.SerialBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -307,15 +283,29 @@ namespace GXDLMSDirector
             this.OpticalProbeBtn.ToolTipText = "Optical Probe";
             this.OpticalProbeBtn.Click += new System.EventHandler(this.UseOpticalProbeMnu_Click);
             // 
-            // toolStripButton1
+            // ScanBaudRatesBtn
             // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton1.Text = "Technical support...";
-            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            this.ScanBaudRatesBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ScanBaudRatesBtn.Image = ((System.Drawing.Image)(resources.GetObject("ScanBaudRatesBtn.Image")));
+            this.ScanBaudRatesBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ScanBaudRatesBtn.Name = "ScanBaudRatesBtn";
+            this.ScanBaudRatesBtn.Size = new System.Drawing.Size(23, 22);
+            this.ScanBaudRatesBtn.ToolTipText = "Scan Baud Rates";
+            this.ScanBaudRatesBtn.Click += new System.EventHandler(this.ScanBaudRateMnu_Click);
+            // 
+            // MediaSettingsBtn
+            // 
+            this.MediaSettingsBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.MediaSettingsBtn.Image = ((System.Drawing.Image)(resources.GetObject("MediaSettingsBtn.Image")));
+            this.MediaSettingsBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.MediaSettingsBtn.Name = "MediaSettingsBtn";
+            this.MediaSettingsBtn.Size = new System.Drawing.Size(23, 22);
+            this.MediaSettingsBtn.Click += new System.EventHandler(this.Settings_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
             // ScanBtn
             // 
@@ -326,19 +316,20 @@ namespace GXDLMSDirector
             this.ScanBtn.Size = new System.Drawing.Size(23, 22);
             this.ScanBtn.Click += new System.EventHandler(this.ScanMnu_Click);
             // 
-            // MediaSettingsBtn
-            // 
-            this.MediaSettingsBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.MediaSettingsBtn.Image = ((System.Drawing.Image)(resources.GetObject("MediaSettingsBtn.Image")));
-            this.MediaSettingsBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.MediaSettingsBtn.Name = "MediaSettingsBtn";
-            this.MediaSettingsBtn.Size = new System.Drawing.Size(23, 22);
-            this.MediaSettingsBtn.Click += new System.EventHandler(this.MediaSettingsMnu_Click);
-            // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
             this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton1.Text = "Technical support...";
+            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
             // TabControl1
             // 
@@ -362,6 +353,16 @@ namespace GXDLMSDirector
             this.tabPage1.Text = "Progress";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // ProgressTb
+            // 
+            this.ProgressTb.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ProgressTb.Location = new System.Drawing.Point(3, 3);
+            this.ProgressTb.Multiline = true;
+            this.ProgressTb.Name = "ProgressTb";
+            this.ProgressTb.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.ProgressTb.Size = new System.Drawing.Size(393, 90);
+            this.ProgressTb.TabIndex = 71;
+            // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.TraceView);
@@ -373,21 +374,13 @@ namespace GXDLMSDirector
             this.tabPage2.Text = "Trace";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // ProgressTb
-            // 
-            this.ProgressTb.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ProgressTb.Location = new System.Drawing.Point(3, 3);
-            this.ProgressTb.Multiline = true;
-            this.ProgressTb.Name = "ProgressTb";
-            this.ProgressTb.Size = new System.Drawing.Size(393, 90);
-            this.ProgressTb.TabIndex = 71;
-            // 
             // TraceView
             // 
             this.TraceView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TraceView.Location = new System.Drawing.Point(3, 3);
             this.TraceView.Multiline = true;
             this.TraceView.Name = "TraceView";
+            this.TraceView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.TraceView.Size = new System.Drawing.Size(393, 90);
             this.TraceView.TabIndex = 72;
             // 
@@ -436,8 +429,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.ToolStripMenuItem MediaMnu;
         private System.Windows.Forms.ToolStripMenuItem SerialMnu;
         private System.Windows.Forms.ToolStripMenuItem NetworkMnu;
-        private System.Windows.Forms.ToolStripMenuItem MediaSettingsMnu;
-        private System.Windows.Forms.ToolStripMenuItem ScanBaudRateMnu;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel StatusLbl;
@@ -459,5 +450,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.TextBox ProgressTb;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TextBox TraceView;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
     }
 }

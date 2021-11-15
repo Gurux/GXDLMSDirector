@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12508 $,
-//                  $Date: 2021-06-21 13:37:17 +0300 (ma, 21 kesä 2021) $
+// Version:         $Revision: 12719 $,
+//                  $Date: 2021-11-15 15:18:25 +0200 (ma, 15 marras 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -87,9 +87,18 @@ namespace GXDLMS.Common
                 System.IO.Directory.CreateDirectory(path);
             }
             path = System.IO.Path.Combine(path, "LastError.log");
-            System.IO.TextWriter tw = System.IO.File.CreateText(path);
-            tw.Write(Ex.ToString());
-            tw.Close();
+            try
+            {
+                using (System.IO.TextWriter tw = System.IO.File.CreateText(path))
+                {
+                    tw.Write(Ex.ToString());
+                    tw.Close();
+                }
+            }
+            catch (Exception)
+            {
+                //Skip all errors.
+            }
             System.Windows.Forms.Control ctrl = owner as System.Windows.Forms.Control;
             if (ctrl != null && !ctrl.IsDisposed && ctrl.InvokeRequired)
             {

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12616 $,
-//                  $Date: 2021-09-29 13:11:54 +0300 (ke, 29 syys 2021) $
+// Version:         $Revision: 12719 $,
+//                  $Date: 2021-11-15 15:18:25 +0200 (ma, 15 marras 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -159,6 +159,8 @@ namespace GXDLMSDirector
             this.SigningKeyCb = new System.Windows.Forms.ComboBox();
             this.DeviceTab = new System.Windows.Forms.TabControl();
             this.AdvancedTab = new System.Windows.Forms.TabPage();
+            this.GBTWindowSizeTb = new System.Windows.Forms.TextBox();
+            this.GBTWindowSizeLbl = new System.Windows.Forms.Label();
             this.SignInitiateRequestResponseCb = new System.Windows.Forms.CheckBox();
             this.IncludePublicKeyCb = new System.Windows.Forms.CheckBox();
             this.ChallengeSizeCb = new System.Windows.Forms.ComboBox();
@@ -1436,6 +1438,8 @@ namespace GXDLMSDirector
             // 
             // AdvancedTab
             // 
+            this.AdvancedTab.Controls.Add(this.GBTWindowSizeTb);
+            this.AdvancedTab.Controls.Add(this.GBTWindowSizeLbl);
             this.AdvancedTab.Controls.Add(this.SignInitiateRequestResponseCb);
             this.AdvancedTab.Controls.Add(this.IncludePublicKeyCb);
             this.AdvancedTab.Controls.Add(this.ChallengeSizeCb);
@@ -1468,11 +1472,30 @@ namespace GXDLMSDirector
             this.AdvancedTab.Text = "Advanced";
             this.AdvancedTab.UseVisualStyleBackColor = true;
             // 
+            // GBTWindowSizeTb
+            // 
+            this.helpProvider1.SetHelpKeyword(this.GBTWindowSizeTb, "MaxPdu");
+            this.helpProvider1.SetHelpNavigator(this.GBTWindowSizeTb, System.Windows.Forms.HelpNavigator.Topic);
+            this.GBTWindowSizeTb.Location = new System.Drawing.Point(154, 153);
+            this.GBTWindowSizeTb.Name = "GBTWindowSizeTb";
+            this.helpProvider1.SetShowHelp(this.GBTWindowSizeTb, true);
+            this.GBTWindowSizeTb.Size = new System.Drawing.Size(93, 20);
+            this.GBTWindowSizeTb.TabIndex = 66;
+            // 
+            // GBTWindowSizeLbl
+            // 
+            this.GBTWindowSizeLbl.AutoSize = true;
+            this.GBTWindowSizeLbl.Location = new System.Drawing.Point(11, 157);
+            this.GBTWindowSizeLbl.Name = "GBTWindowSizeLbl";
+            this.GBTWindowSizeLbl.Size = new System.Drawing.Size(95, 13);
+            this.GBTWindowSizeLbl.TabIndex = 67;
+            this.GBTWindowSizeLbl.Text = "GBT Window size:";
+            // 
             // SignInitiateRequestResponseCb
             // 
             this.SignInitiateRequestResponseCb.AutoSize = true;
             this.helpProvider1.SetHelpString(this.SignInitiateRequestResponseCb, "Is protected release used.");
-            this.SignInitiateRequestResponseCb.Location = new System.Drawing.Point(14, 293);
+            this.SignInitiateRequestResponseCb.Location = new System.Drawing.Point(14, 331);
             this.SignInitiateRequestResponseCb.Name = "SignInitiateRequestResponseCb";
             this.helpProvider1.SetShowHelp(this.SignInitiateRequestResponseCb, true);
             this.SignInitiateRequestResponseCb.Size = new System.Drawing.Size(186, 17);
@@ -1485,7 +1508,7 @@ namespace GXDLMSDirector
             this.IncludePublicKeyCb.AutoSize = true;
             this.helpProvider1.SetHelpNavigator(this.IncludePublicKeyCb, System.Windows.Forms.HelpNavigator.Topic);
             this.helpProvider1.SetHelpString(this.IncludePublicKeyCb, "SendPublicKeyCertificateInInitialize");
-            this.IncludePublicKeyCb.Location = new System.Drawing.Point(14, 270);
+            this.IncludePublicKeyCb.Location = new System.Drawing.Point(14, 308);
             this.IncludePublicKeyCb.Name = "IncludePublicKeyCb";
             this.helpProvider1.SetShowHelp(this.IncludePublicKeyCb, true);
             this.IncludePublicKeyCb.Size = new System.Drawing.Size(203, 17);
@@ -1498,7 +1521,7 @@ namespace GXDLMSDirector
             this.ChallengeSizeCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.helpProvider1.SetHelpKeyword(this.ChallengeSizeCb, "ChallengeSize");
             this.helpProvider1.SetHelpNavigator(this.ChallengeSizeCb, System.Windows.Forms.HelpNavigator.Topic);
-            this.ChallengeSizeCb.Location = new System.Drawing.Point(154, 234);
+            this.ChallengeSizeCb.Location = new System.Drawing.Point(154, 272);
             this.ChallengeSizeCb.Name = "ChallengeSizeCb";
             this.helpProvider1.SetShowHelp(this.ChallengeSizeCb, true);
             this.ChallengeSizeCb.Size = new System.Drawing.Size(93, 21);
@@ -1507,7 +1530,7 @@ namespace GXDLMSDirector
             // ChallengeSizeLbl
             // 
             this.ChallengeSizeLbl.AutoSize = true;
-            this.ChallengeSizeLbl.Location = new System.Drawing.Point(11, 242);
+            this.ChallengeSizeLbl.Location = new System.Drawing.Point(11, 280);
             this.ChallengeSizeLbl.Name = "ChallengeSizeLbl";
             this.ChallengeSizeLbl.Size = new System.Drawing.Size(80, 13);
             this.ChallengeSizeLbl.TabIndex = 62;
@@ -1518,7 +1541,7 @@ namespace GXDLMSDirector
             this.SecurityChangeCheckCb.AutoSize = true;
             this.helpProvider1.SetHelpNavigator(this.SecurityChangeCheckCb, System.Windows.Forms.HelpNavigator.Topic);
             this.helpProvider1.SetHelpString(this.SecurityChangeCheckCb, "SecurityChangeCheck");
-            this.SecurityChangeCheckCb.Location = new System.Drawing.Point(11, 219);
+            this.SecurityChangeCheckCb.Location = new System.Drawing.Point(11, 257);
             this.SecurityChangeCheckCb.Name = "SecurityChangeCheckCb";
             this.helpProvider1.SetShowHelp(this.SecurityChangeCheckCb, true);
             this.SecurityChangeCheckCb.Size = new System.Drawing.Size(136, 17);
@@ -1532,7 +1555,7 @@ namespace GXDLMSDirector
             this.helpProvider1.SetHelpKeyword(this.IgnoreTimeStatusCb, "IgnoreTimeStatus");
             this.helpProvider1.SetHelpNavigator(this.IgnoreTimeStatusCb, System.Windows.Forms.HelpNavigator.Topic);
             this.helpProvider1.SetHelpString(this.IgnoreTimeStatusCb, "");
-            this.IgnoreTimeStatusCb.Location = new System.Drawing.Point(319, 89);
+            this.IgnoreTimeStatusCb.Location = new System.Drawing.Point(130, 108);
             this.IgnoreTimeStatusCb.Name = "IgnoreTimeStatusCb";
             this.helpProvider1.SetShowHelp(this.IgnoreTimeStatusCb, true);
             this.IgnoreTimeStatusCb.Size = new System.Drawing.Size(115, 17);
@@ -1546,7 +1569,7 @@ namespace GXDLMSDirector
             this.helpProvider1.SetHelpKeyword(this.IgnoreTimeZoneCb, "IgnoreTimeZone");
             this.helpProvider1.SetHelpNavigator(this.IgnoreTimeZoneCb, System.Windows.Forms.HelpNavigator.Topic);
             this.helpProvider1.SetHelpString(this.IgnoreTimeZoneCb, "");
-            this.IgnoreTimeZoneCb.Location = new System.Drawing.Point(203, 89);
+            this.IgnoreTimeZoneCb.Location = new System.Drawing.Point(14, 108);
             this.IgnoreTimeZoneCb.Name = "IgnoreTimeZoneCb";
             this.helpProvider1.SetShowHelp(this.IgnoreTimeZoneCb, true);
             this.IgnoreTimeZoneCb.Size = new System.Drawing.Size(110, 17);
@@ -1559,7 +1582,7 @@ namespace GXDLMSDirector
             this.UseProtectedReleaseCb.AutoSize = true;
             this.helpProvider1.SetHelpNavigator(this.UseProtectedReleaseCb, System.Windows.Forms.HelpNavigator.Topic);
             this.helpProvider1.SetHelpString(this.UseProtectedReleaseCb, "UseProtectedRelease");
-            this.UseProtectedReleaseCb.Location = new System.Drawing.Point(11, 196);
+            this.UseProtectedReleaseCb.Location = new System.Drawing.Point(11, 234);
             this.UseProtectedReleaseCb.Name = "UseProtectedReleaseCb";
             this.helpProvider1.SetShowHelp(this.UseProtectedReleaseCb, true);
             this.UseProtectedReleaseCb.Size = new System.Drawing.Size(130, 17);
@@ -1603,7 +1626,7 @@ namespace GXDLMSDirector
             this.StandardCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.helpProvider1.SetHelpKeyword(this.StandardCb, "Standard");
             this.helpProvider1.SetHelpNavigator(this.StandardCb, System.Windows.Forms.HelpNavigator.Topic);
-            this.StandardCb.Location = new System.Drawing.Point(154, 166);
+            this.StandardCb.Location = new System.Drawing.Point(154, 204);
             this.StandardCb.Name = "StandardCb";
             this.helpProvider1.SetShowHelp(this.StandardCb, true);
             this.StandardCb.Size = new System.Drawing.Size(93, 21);
@@ -1633,7 +1656,7 @@ namespace GXDLMSDirector
             // StandardLbl
             // 
             this.StandardLbl.AutoSize = true;
-            this.StandardLbl.Location = new System.Drawing.Point(11, 170);
+            this.StandardLbl.Location = new System.Drawing.Point(11, 208);
             this.StandardLbl.Name = "StandardLbl";
             this.StandardLbl.Size = new System.Drawing.Size(53, 13);
             this.StandardLbl.TabIndex = 58;
@@ -1652,7 +1675,7 @@ namespace GXDLMSDirector
             // 
             this.helpProvider1.SetHelpKeyword(this.UserIdTb, "UserId");
             this.helpProvider1.SetHelpNavigator(this.UserIdTb, System.Windows.Forms.HelpNavigator.Topic);
-            this.UserIdTb.Location = new System.Drawing.Point(154, 140);
+            this.UserIdTb.Location = new System.Drawing.Point(154, 178);
             this.UserIdTb.Name = "UserIdTb";
             this.helpProvider1.SetShowHelp(this.UserIdTb, true);
             this.UserIdTb.Size = new System.Drawing.Size(93, 20);
@@ -1661,7 +1684,7 @@ namespace GXDLMSDirector
             // UserIDLbl
             // 
             this.UserIDLbl.AutoSize = true;
-            this.UserIDLbl.Location = new System.Drawing.Point(11, 144);
+            this.UserIDLbl.Location = new System.Drawing.Point(11, 182);
             this.UserIDLbl.Name = "UserIDLbl";
             this.UserIDLbl.Size = new System.Drawing.Size(46, 13);
             this.UserIDLbl.TabIndex = 54;
@@ -1671,7 +1694,7 @@ namespace GXDLMSDirector
             // 
             this.helpProvider1.SetHelpKeyword(this.MaxPduTb, "MaxPdu");
             this.helpProvider1.SetHelpNavigator(this.MaxPduTb, System.Windows.Forms.HelpNavigator.Topic);
-            this.MaxPduTb.Location = new System.Drawing.Point(154, 114);
+            this.MaxPduTb.Location = new System.Drawing.Point(154, 127);
             this.MaxPduTb.Name = "MaxPduTb";
             this.helpProvider1.SetShowHelp(this.MaxPduTb, true);
             this.MaxPduTb.Size = new System.Drawing.Size(93, 20);
@@ -1680,7 +1703,7 @@ namespace GXDLMSDirector
             // MaxPduLbl
             // 
             this.MaxPduLbl.AutoSize = true;
-            this.MaxPduLbl.Location = new System.Drawing.Point(11, 118);
+            this.MaxPduLbl.Location = new System.Drawing.Point(11, 131);
             this.MaxPduLbl.Name = "MaxPduLbl";
             this.MaxPduLbl.Size = new System.Drawing.Size(77, 13);
             this.MaxPduLbl.TabIndex = 48;
@@ -1694,9 +1717,9 @@ namespace GXDLMSDirector
             this.UseUtcTimeZone.Location = new System.Drawing.Point(14, 89);
             this.UseUtcTimeZone.Name = "UseUtcTimeZone";
             this.helpProvider1.SetShowHelp(this.UseUtcTimeZone, true);
-            this.UseUtcTimeZone.Size = new System.Drawing.Size(183, 17);
+            this.UseUtcTimeZone.Size = new System.Drawing.Size(216, 17);
             this.UseUtcTimeZone.TabIndex = 3;
-            this.UseUtcTimeZone.Text = "Use UTC time zone, not standard";
+            this.UseUtcTimeZone.Text = "Use UTC time zone, not DLMS standard";
             this.UseUtcTimeZone.UseVisualStyleBackColor = true;
             // 
             // HdlcFrameTab
@@ -2349,5 +2372,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label ChallengeSizeLbl;
         private System.Windows.Forms.CheckBox SignInitiateRequestResponseCb;
         private System.Windows.Forms.CheckBox IncludePublicKeyCb;
+        private System.Windows.Forms.TextBox GBTWindowSizeTb;
+        private System.Windows.Forms.Label GBTWindowSizeLbl;
     }
 }

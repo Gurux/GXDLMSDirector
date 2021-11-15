@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12635 $,
-//                  $Date: 2021-10-06 11:59:58 +0300 (ke, 06 loka 2021) $
+// Version:         $Revision: 12719 $,
+//                  $Date: 2021-11-15 15:18:25 +0200 (ma, 15 marras 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -440,6 +440,7 @@ namespace GXDLMSDirector
             WindowSizeRXTb.Text = device.WindowSizeRX.ToString();
             InactivityTimeoutTb.Text = device.InactivityTimeout.ToString();
             MaxPduTb.Text = device.PduSize.ToString();
+            GBTWindowSizeTb.Text = device.GbtWindowSize.ToString();
             if (device.UserId != -1)
             {
                 UserIdTb.Text = device.UserId.ToString();
@@ -836,6 +837,7 @@ namespace GXDLMSDirector
             {
                 device.PduSize = UInt16.Parse(MaxPduTb.Text);
             }
+            device.GbtWindowSize = Byte.Parse(GBTWindowSizeTb.Text);
             byte v;
             if (byte.TryParse(UserIdTb.Text, out v))
             {
@@ -1853,6 +1855,16 @@ namespace GXDLMSDirector
             try
             {
                 ciphering.Standard = (Standard)StandardCb.SelectedItem;
+                switch (ciphering.Standard)
+                {
+                    case Standard.India:
+                    case Standard.Italy:
+                    case Standard.SaudiArabia:
+                        UseUtcTimeZone.Checked = true;
+                        break;
+                    default:
+                        break;
+                }
             }
             catch (Exception)
             {

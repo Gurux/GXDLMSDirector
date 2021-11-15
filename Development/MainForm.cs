@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12635 $,
-//                  $Date: 2021-10-06 11:59:58 +0300 (ke, 06 loka 2021) $
+// Version:         $Revision: 12719 $,
+//                  $Date: 2021-11-15 15:18:25 +0200 (ma, 15 marras 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -57,7 +57,6 @@ using System.Reflection;
 using System.Deployment.Application;
 using Gurux.DLMS.Objects.Enums;
 using GXDLMSDirector.Macro;
-using System.Xml.Schema;
 using Gurux.DLMS.UI.Ecdsa;
 
 namespace GXDLMSDirector

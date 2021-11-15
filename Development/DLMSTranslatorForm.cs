@@ -233,7 +233,8 @@ namespace GXDLMSDirector
                 }
                 if (!tmp.StartsWith("#"))
                 {
-                    if (InterfaceTypeCb.SelectedItem is InterfaceType && (InterfaceType)InterfaceTypeCb.SelectedItem == InterfaceType.WRAPPER)
+                    if (tabControl1.SelectedTab == tabPage1 && 
+                        InterfaceTypeCb.SelectedItem is InterfaceType && (InterfaceType)InterfaceTypeCb.SelectedItem == InterfaceType.WRAPPER)
                     {
                         pos = tmp.Replace(" ", "").IndexOf("0001");
                         if (pos != -1)

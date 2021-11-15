@@ -874,5 +874,77 @@ namespace GXDLMSDirector.Properties {
                 this["Signing"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1, 145, 127,16383")]
+        public string HdlcServerAddresses {
+            get {
+                return ((string)(this["HdlcServerAddresses"]));
+            }
+            set {
+                this["HdlcServerAddresses"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("16, 1, 100")]
+        public string HdlcClientAddresses {
+            get {
+                return ((string)(this["HdlcClientAddresses"]));
+            }
+            set {
+                this["HdlcClientAddresses"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int HdlcSearchInitialWaitTime {
+            get {
+                return ((int)(this["HdlcSearchInitialWaitTime"]));
+            }
+            set {
+                this["HdlcSearchInitialWaitTime"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int HdlcSearchWaitTime {
+            get {
+                return ((int)(this["HdlcSearchWaitTime"]));
+            }
+            set {
+                this["HdlcSearchWaitTime"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool TestFoundMetersFirst {
+            get {
+                return ((bool)(this["TestFoundMetersFirst"]));
+            }
+            set {
+                this["TestFoundMetersFirst"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool TestFailedClientsLast {
+            get {
+                return ((bool)(this["TestFailedClientsLast"]));
+            }
+            set {
+                this["TestFailedClientsLast"] = value;
+            }
+        }
     }
 }

@@ -72,25 +72,25 @@ namespace GXDLMSDirector
             this.BaudRatesCl = new System.Windows.Forms.CheckedListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.InitializeWaitTimeLbl = new System.Windows.Forms.Label();
-            this.InitializeWaitTimeTb = new System.Windows.Forms.TextBox();
-            this.SearchWaitTimeLbl = new System.Windows.Forms.Label();
-            this.SearchWaitTimeTb = new System.Windows.Forms.TextBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.TestFailedClientsLastCb = new System.Windows.Forms.CheckBox();
-            this.TestFoundMetersFirstCb = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.HexCb = new System.Windows.Forms.CheckBox();
             this.ClientAddressesTb = new System.Windows.Forms.TextBox();
             this.ClientAddressesLbl = new System.Windows.Forms.Label();
             this.ServerAddressesTb = new System.Windows.Forms.TextBox();
             this.ServerAddressesLbl = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.TestFailedClientsLastCb = new System.Windows.Forms.CheckBox();
+            this.TestFoundMetersFirstCb = new System.Windows.Forms.CheckBox();
+            this.InitializeWaitTimeLbl = new System.Windows.Forms.Label();
+            this.InitializeWaitTimeTb = new System.Windows.Forms.TextBox();
+            this.SearchWaitTimeLbl = new System.Windows.Forms.Label();
+            this.SearchWaitTimeTb = new System.Windows.Forms.TextBox();
+            this.HexCb = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.BaudRatesPanel.SuspendLayout();
             this.tabPage2.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // OKBtn
@@ -194,71 +194,6 @@ namespace GXDLMSDirector
             this.tabPage2.Text = "Search settings";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // InitializeWaitTimeLbl
-            // 
-            this.InitializeWaitTimeLbl.AutoSize = true;
-            this.InitializeWaitTimeLbl.Location = new System.Drawing.Point(214, 8);
-            this.InitializeWaitTimeLbl.Name = "InitializeWaitTimeLbl";
-            this.InitializeWaitTimeLbl.Size = new System.Drawing.Size(108, 13);
-            this.InitializeWaitTimeLbl.TabIndex = 21;
-            this.InitializeWaitTimeLbl.Text = "Initialize Wait time (s):";
-            // 
-            // InitializeWaitTimeTb
-            // 
-            this.InitializeWaitTimeTb.Location = new System.Drawing.Point(333, 7);
-            this.InitializeWaitTimeTb.Name = "InitializeWaitTimeTb";
-            this.InitializeWaitTimeTb.Size = new System.Drawing.Size(66, 20);
-            this.InitializeWaitTimeTb.TabIndex = 20;
-            this.InitializeWaitTimeTb.Text = "1";
-            // 
-            // SearchWaitTimeLbl
-            // 
-            this.SearchWaitTimeLbl.AutoSize = true;
-            this.SearchWaitTimeLbl.Location = new System.Drawing.Point(8, 7);
-            this.SearchWaitTimeLbl.Name = "SearchWaitTimeLbl";
-            this.SearchWaitTimeLbl.Size = new System.Drawing.Size(113, 13);
-            this.SearchWaitTimeLbl.TabIndex = 19;
-            this.SearchWaitTimeLbl.Text = "Search Wait time (ms):";
-            // 
-            // SearchWaitTimeTb
-            // 
-            this.SearchWaitTimeTb.Location = new System.Drawing.Point(127, 6);
-            this.SearchWaitTimeTb.Name = "SearchWaitTimeTb";
-            this.SearchWaitTimeTb.Size = new System.Drawing.Size(66, 20);
-            this.SearchWaitTimeTb.TabIndex = 18;
-            this.SearchWaitTimeTb.Text = "100";
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.TestFailedClientsLastCb);
-            this.groupBox1.Controls.Add(this.TestFoundMetersFirstCb);
-            this.groupBox1.Location = new System.Drawing.Point(3, 33);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(535, 50);
-            this.groupBox1.TabIndex = 27;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Performance";
-            // 
-            // TestFailedClientsLastCb
-            // 
-            this.TestFailedClientsLastCb.AutoSize = true;
-            this.TestFailedClientsLastCb.Location = new System.Drawing.Point(189, 19);
-            this.TestFailedClientsLastCb.Name = "TestFailedClientsLastCb";
-            this.TestFailedClientsLastCb.Size = new System.Drawing.Size(159, 17);
-            this.TestFailedClientsLastCb.TabIndex = 28;
-            this.TestFailedClientsLastCb.Text = "Failed clients are tested last.";
-            this.TestFailedClientsLastCb.UseVisualStyleBackColor = true;
-            // 
-            // TestFoundMetersFirstCb
-            // 
-            this.TestFoundMetersFirstCb.AutoSize = true;
-            this.TestFoundMetersFirstCb.Location = new System.Drawing.Point(6, 19);
-            this.TestFoundMetersFirstCb.Name = "TestFoundMetersFirstCb";
-            this.TestFoundMetersFirstCb.Size = new System.Drawing.Size(162, 17);
-            this.TestFoundMetersFirstCb.TabIndex = 27;
-            this.TestFoundMetersFirstCb.Text = "Found meters are tested first.";
-            this.TestFoundMetersFirstCb.UseVisualStyleBackColor = true;
-            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.ClientAddressesTb);
@@ -271,16 +206,6 @@ namespace GXDLMSDirector
             this.groupBox2.TabIndex = 28;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Used addresses";
-            // 
-            // HexCb
-            // 
-            this.HexCb.AutoSize = true;
-            this.HexCb.Location = new System.Drawing.Point(12, 450);
-            this.HexCb.Name = "HexCb";
-            this.HexCb.Size = new System.Drawing.Size(45, 17);
-            this.HexCb.TabIndex = 29;
-            this.HexCb.Text = "Hex";
-            this.HexCb.UseVisualStyleBackColor = true;
             // 
             // ClientAddressesTb
             // 
@@ -320,6 +245,82 @@ namespace GXDLMSDirector
             this.ServerAddressesLbl.TabIndex = 25;
             this.ServerAddressesLbl.Text = "Server addresses:";
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.TestFailedClientsLastCb);
+            this.groupBox1.Controls.Add(this.TestFoundMetersFirstCb);
+            this.groupBox1.Location = new System.Drawing.Point(3, 33);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(535, 50);
+            this.groupBox1.TabIndex = 27;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Performance";
+            // 
+            // TestFailedClientsLastCb
+            // 
+            this.TestFailedClientsLastCb.AutoSize = true;
+            this.TestFailedClientsLastCb.Location = new System.Drawing.Point(189, 19);
+            this.TestFailedClientsLastCb.Name = "TestFailedClientsLastCb";
+            this.TestFailedClientsLastCb.Size = new System.Drawing.Size(159, 17);
+            this.TestFailedClientsLastCb.TabIndex = 28;
+            this.TestFailedClientsLastCb.Text = "Failed clients are tested last.";
+            this.TestFailedClientsLastCb.UseVisualStyleBackColor = true;
+            // 
+            // TestFoundMetersFirstCb
+            // 
+            this.TestFoundMetersFirstCb.AutoSize = true;
+            this.TestFoundMetersFirstCb.Location = new System.Drawing.Point(6, 19);
+            this.TestFoundMetersFirstCb.Name = "TestFoundMetersFirstCb";
+            this.TestFoundMetersFirstCb.Size = new System.Drawing.Size(162, 17);
+            this.TestFoundMetersFirstCb.TabIndex = 27;
+            this.TestFoundMetersFirstCb.Text = "Found meters are tested first.";
+            this.TestFoundMetersFirstCb.UseVisualStyleBackColor = true;
+            // 
+            // InitializeWaitTimeLbl
+            // 
+            this.InitializeWaitTimeLbl.AutoSize = true;
+            this.InitializeWaitTimeLbl.Location = new System.Drawing.Point(214, 8);
+            this.InitializeWaitTimeLbl.Name = "InitializeWaitTimeLbl";
+            this.InitializeWaitTimeLbl.Size = new System.Drawing.Size(108, 13);
+            this.InitializeWaitTimeLbl.TabIndex = 21;
+            this.InitializeWaitTimeLbl.Text = "Initialize Wait time (s):";
+            // 
+            // InitializeWaitTimeTb
+            // 
+            this.InitializeWaitTimeTb.Location = new System.Drawing.Point(333, 7);
+            this.InitializeWaitTimeTb.Name = "InitializeWaitTimeTb";
+            this.InitializeWaitTimeTb.Size = new System.Drawing.Size(66, 20);
+            this.InitializeWaitTimeTb.TabIndex = 20;
+            this.InitializeWaitTimeTb.Text = "1";
+            // 
+            // SearchWaitTimeLbl
+            // 
+            this.SearchWaitTimeLbl.AutoSize = true;
+            this.SearchWaitTimeLbl.Location = new System.Drawing.Point(8, 7);
+            this.SearchWaitTimeLbl.Name = "SearchWaitTimeLbl";
+            this.SearchWaitTimeLbl.Size = new System.Drawing.Size(113, 13);
+            this.SearchWaitTimeLbl.TabIndex = 19;
+            this.SearchWaitTimeLbl.Text = "Search Wait time (ms):";
+            // 
+            // SearchWaitTimeTb
+            // 
+            this.SearchWaitTimeTb.Location = new System.Drawing.Point(127, 6);
+            this.SearchWaitTimeTb.Name = "SearchWaitTimeTb";
+            this.SearchWaitTimeTb.Size = new System.Drawing.Size(66, 20);
+            this.SearchWaitTimeTb.TabIndex = 18;
+            this.SearchWaitTimeTb.Text = "100";
+            // 
+            // HexCb
+            // 
+            this.HexCb.AutoSize = true;
+            this.HexCb.Location = new System.Drawing.Point(12, 450);
+            this.HexCb.Name = "HexCb";
+            this.HexCb.Size = new System.Drawing.Size(45, 17);
+            this.HexCb.TabIndex = 29;
+            this.HexCb.Text = "Hex";
+            this.HexCb.UseVisualStyleBackColor = true;
+            this.HexCb.CheckedChanged += new System.EventHandler(this.HexCb_CheckedChanged);
+            // 
             // GXHdlcAddressesResolverDlg
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -342,10 +343,10 @@ namespace GXDLMSDirector
             this.BaudRatesPanel.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 

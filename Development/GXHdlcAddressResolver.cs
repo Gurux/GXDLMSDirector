@@ -493,10 +493,6 @@ namespace GXDLMSDirector
                     media.OnReceived += OnReceived;
                     media.OnTrace += MediaOnTrace;
                     media.Trace = TraceLevel.Verbose;
-                    if (GXSerial.GetPortNames().Length == 0)
-                    {
-                        MediaSettingsBtn.Enabled = settingsToolStripMenuItem.Enabled = false;
-                    }
                     Settings.Default.HdlcAddressMedia = "GXSerial";
                 }
                 else
@@ -508,7 +504,6 @@ namespace GXDLMSDirector
                     media.OnReceived += OnReceived;
                     media.OnTrace += MediaOnTrace;
                     media.Trace = TraceLevel.Verbose;
-                    MediaSettingsBtn.Enabled = settingsToolStripMenuItem.Enabled = true;
                     Settings.Default.HdlcAddressMedia = "GXNet";
                 }
                 UpdateStatus("Ready.");

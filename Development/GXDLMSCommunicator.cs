@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12756 $,
-//                  $Date: 2021-12-09 11:30:56 +0200 (to, 09 joulu 2021) $
+// Version:         $Revision: 12762 $,
+//                  $Date: 2021-12-09 17:36:24 +0200 (to, 09 joulu 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1249,10 +1249,10 @@ namespace GXDLMSDirector
                     media.Open();
                 }
             }
+            GXReplyData reply = new GXReplyData();
             try
             {
                 client.ManufacturerId = parent.Manufacturer;
-                GXReplyData reply = new GXReplyData();
                 byte[] data;
                 UpdateSettings();
                 //Read frame counter if GeneralProtection is used.
@@ -1380,6 +1380,10 @@ namespace GXDLMSDirector
             }
             catch (Exception)
             {
+                reply.Clear();
+                ReadDLMSPacket(ReleaseRequest(), 1, reply);
+                reply.Clear();
+                ReadDLMSPacket(DisconnectRequest(), 1, reply);
                 if (media is GXSerial && parent.InterfaceType == InterfaceType.HdlcWithModeE)
                 {
                     ReceiveParameters<string> p = new ReceiveParameters<string>()

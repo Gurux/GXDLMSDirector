@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12719 $,
-//                  $Date: 2021-11-15 15:18:25 +0200 (ma, 15 marras 2021) $
+// Version:         $Revision: 12756 $,
+//                  $Date: 2021-12-09 11:30:56 +0200 (to, 09 joulu 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -702,11 +702,14 @@ namespace GXDLMSDirector
                     }
                     SelectedView.Target.OnChange += new ObjectChangeEventHandler(DLMSItemOnChange);
                     DeviceState s = DeviceState.Connected;
+                    GXDLMSClient c = null;
                     if (d != null)
                     {
                         s = d.Status;
+                        c = d.Comm.client;
                     }
-                    GXDlmsUi.ObjectChanged(SelectedView, obj as GXDLMSObject, (s & DeviceState.Connected) != 0);
+
+                    GXDlmsUi.ObjectChanged(SelectedView, c, obj as GXDLMSObject, (s & DeviceState.Connected) != 0);
                     ObjectPanelFrame.Controls.Add((Form)SelectedView);
                     ((Form)SelectedView).Show();
                     UpdateDeviceUI(GetDevice(SelectedView.Target), s);
@@ -1041,7 +1044,17 @@ namespace GXDLMSDirector
                         node.ImageIndex = node.SelectedImageIndex = dirty ? 10 : 7;
                     }
                 }
-                if ((sender.GetAccess(attributeIndex) & AccessMode.Write) != 0)
+                GXDLMSMeter m = sender.Parent.Tag as GXDLMSMeter;
+                GXDLMSDevice dev = m as GXDLMSDevice;
+                GXDLMSClient client = dev.Comm.client;
+                if (client == null)
+                {
+                    if ((sender.GetAccess(attributeIndex) & AccessMode.Write) != 0)
+                    {
+                        UpdateWriteEnabled();
+                    }
+                }
+                else if (client.CanRead(sender, attributeIndex))
                 {
                     UpdateWriteEnabled();
                 }
@@ -1078,7 +1091,7 @@ namespace GXDLMSDirector
                 ve.Client = new GXDLMSClient(m.UseLogicalNameReferencing);
             }
             ve.Action = btn.Action;
-            GXDlmsUi.UpdateAccessRights(btn.View, btn.Target, false);
+            GXDlmsUi.UpdateAccessRights(btn.View, dev.Comm.client, btn.Target, false);
             try
             {
                 do
@@ -1209,7 +1222,7 @@ namespace GXDLMSDirector
                                 else
                                 {
                                     //Is reading allowed.
-                                    if ((ve.Target.GetAccess(ve.Index) & AccessMode.Read) != 0)
+                                    if (ve.Client.CanRead(ve.Target, ve.Index))
                                     {
                                         OnBeforeRead(dev.Comm.client, ve.Target, ve.Index, null, null, null);
                                         try
@@ -1236,7 +1249,7 @@ namespace GXDLMSDirector
                                 else
                                 {
                                     //Is writing allowed.
-                                    if ((ve.Target.GetAccess(ve.Index) & AccessMode.Write) != 0)
+                                    if (ve.Client.CanWrite(ve.Target, ve.Index))
                                     {
                                         try
                                         {
@@ -1257,7 +1270,7 @@ namespace GXDLMSDirector
                                         //Update UI.
                                         if (SelectedView != null && SelectedView.Target == ve.Target)
                                         {
-                                            GXDlmsUi.UpdateProperty(ve.Target, ve.Index, SelectedView, true, false);
+                                            GXDlmsUi.UpdateProperty(ve.Client, ve.Target, ve.Index, SelectedView, true, false);
                                         }
                                     }
                                 }
@@ -1328,18 +1341,18 @@ namespace GXDLMSDirector
                         //It's ok if this fails.
                     }
                     OnStatusChanged(null, DeviceState.Initialized);
-                    GXDlmsUi.ObjectChanged(SelectedView, btn.Target, false);
+                    GXDlmsUi.ObjectChanged(SelectedView, dev.Comm.client, btn.Target, false);
                 }
                 else
                 {
                     if (dev != null)
                     {
                         dev.KeepAliveStart();
-                        GXDlmsUi.UpdateAccessRights(btn.View, btn.Target, (dev.Status & DeviceState.Connected) != 0);
+                        GXDlmsUi.UpdateAccessRights(btn.View, dev.Comm.client, btn.Target, (dev.Status & DeviceState.Connected) != 0);
                     }
                     else
                     {
-                        GXDlmsUi.UpdateAccessRights(btn.View, btn.Target, true);
+                        GXDlmsUi.UpdateAccessRights(btn.View, dev.Comm.client, btn.Target, true);
                     }
                     UpdateTransaction(false);
                 }
@@ -1378,13 +1391,13 @@ namespace GXDLMSDirector
             }
         }
 
-        delegate void ValueChangedEventHandler(IGXDLMSView view, int index, object value, bool changeByUser, bool connected);
+        delegate void ValueChangedEventHandler(IGXDLMSView view, GXDLMSViewArguments arg);
 
-        void OnValueChanged(IGXDLMSView view, int index, object value, bool changeByUser, bool connected)
+        void OnValueChanged(IGXDLMSView view, GXDLMSViewArguments arg)
         {
             try
             {
-                view.OnValueChanged(index, value, changeByUser, connected);
+                view.OnValueChanged(arg);
             }
             catch (Exception ex)
             {
@@ -1785,7 +1798,7 @@ namespace GXDLMSDirector
                     Connect(sender, work, new object[] { devices });
                     if (tmp.Count == 1)
                     {
-                        GXDlmsUi.ObjectChanged(SelectedView, tmp[0] as GXDLMSObject, true);
+                        GXDlmsUi.ObjectChanged(SelectedView, devices[0].Comm.client, tmp[0] as GXDLMSObject, true);
                     }
                 }
                 else
@@ -1803,7 +1816,7 @@ namespace GXDLMSDirector
                         traceTranslator.ServerSystemTitle = dev.Comm.client.SourceSystemTitle;
                     }
                     traceTranslator.DedicatedKey = dev.Comm.client.Ciphering.DedicatedKey;
-                    GXDlmsUi.ObjectChanged(SelectedView, tmp as GXDLMSObject, true);
+                    GXDlmsUi.ObjectChanged(SelectedView, dev.Comm.client, tmp as GXDLMSObject, true);
                 }
             }
             catch (ThreadAbortException)
@@ -1876,7 +1889,7 @@ namespace GXDLMSDirector
                     Disconnect(sender, work, new object[] { devices });
                     if (tmp.Count == 1)
                     {
-                        GXDlmsUi.ObjectChanged(SelectedView, tmp[0] as GXDLMSObject, false);
+                        GXDlmsUi.ObjectChanged(SelectedView, devices[0].Comm.client, tmp[0] as GXDLMSObject, false);
                     }
                 }
                 else
@@ -1885,7 +1898,7 @@ namespace GXDLMSDirector
                     GXDLMSObject tmp = obj as GXDLMSObject;
                     GXDLMSDevice dev = tmp.Parent.Tag as GXDLMSDevice;
                     dev.Disconnect();
-                    GXDlmsUi.ObjectChanged(SelectedView, tmp, false);
+                    GXDlmsUi.ObjectChanged(SelectedView, dev.Comm.client, tmp, false);
                 }
             }
             catch (ThreadAbortException)
@@ -2332,7 +2345,7 @@ namespace GXDLMSDirector
                             foreach (byte it in indexes)
                             {
                                 //If reading is not allowed.
-                                if ((obj.GetAccess(it) & AccessMode.Read) == 0)
+                                if (!dev.Comm.client.CanRead(obj, it))
                                 {
                                     obj.ClearStatus(it);
                                     continue;
@@ -2341,7 +2354,7 @@ namespace GXDLMSDirector
                             }
                             OnProgress(dev, "Reading with access request.", 1, 1);
                             dev.Comm.AccessRequest(DateTime.MinValue, list);
-                            GXDlmsUi.UpdateProperty(obj, 0, SelectedView, true, false);
+                            GXDlmsUi.UpdateProperty(dev.Comm.client, obj, 0, SelectedView, true, false);
                         }
                     }
                     else
@@ -2480,6 +2493,7 @@ namespace GXDLMSDirector
         {
             try
             {
+                sender.SetLastReadTime(index, DateTime.Now);
                 if (this.InvokeRequired)
                 {
                     this.Invoke(new ReadEventHandler(OnBeforeRead), new object[] { client, sender, index, data, parameters, ex });
@@ -2690,7 +2704,7 @@ namespace GXDLMSDirector
                 }
                 if (SelectedView != null && SelectedView.Target == sender)
                 {
-                    GXDlmsUi.UpdateProperty(sender as GXDLMSObject, index, SelectedView, true, false);
+                    GXDlmsUi.UpdateProperty(client, sender as GXDLMSObject, index, SelectedView, true, false);
                 }
                 ListViewItem lv = ObjectValueItems[sender] as ListViewItem;
                 if (lv != null)
@@ -2781,7 +2795,7 @@ namespace GXDLMSDirector
                                         if (it != 1)
                                         {
                                             //If reading is not allowed.
-                                            if ((obj.GetAccess(it) & AccessMode.Read) == 0)
+                                            if (!dev.Comm.client.CanRead(obj, it))
                                             {
                                                 obj.ClearStatus(it);
                                                 continue;
@@ -2791,7 +2805,7 @@ namespace GXDLMSDirector
                                     }
                                     OnProgress(dev, "Reading with access request.", 1, 1);
                                     dev.Comm.AccessRequest(DateTime.MinValue, list);
-                                    GXDlmsUi.UpdateProperty(obj, 0, SelectedView, true, false);
+                                    GXDlmsUi.UpdateProperty(dev.Comm.client, obj, 0, SelectedView, true, false);
                                 }
                                 else
                                 {
@@ -2987,7 +3001,7 @@ namespace GXDLMSDirector
                             foreach (GXDLMSObject obj in objects)
                             {
                                 dev.Comm.Write(obj, 0);
-                                GXDlmsUi.UpdateProperty(obj as GXDLMSObject, 0, SelectedView, true, false);
+                                GXDlmsUi.UpdateProperty(dev.Comm.client, obj as GXDLMSObject, 0, SelectedView, true, false);
                                 ShowLastErrors(obj);
                             }
                         }
@@ -3027,7 +3041,7 @@ namespace GXDLMSDirector
                                 dev.Comm.OnAfterWrite += OnAfterWrite;
                                 OnProgress(dev, "Writing...", 0, 1);
                                 dev.Comm.Write(obj, 0);
-                                GXDlmsUi.UpdateProperty(obj as GXDLMSObject, 0, SelectedView, true, false);
+                                GXDlmsUi.UpdateProperty(dev.Comm.client, obj as GXDLMSObject, 0, SelectedView, true, false);
                                 ShowLastErrors(obj);
                             }
                             finally
@@ -3943,13 +3957,14 @@ namespace GXDLMSDirector
                         connected = (dev.Status & DeviceState.Connected) != 0;
                     }
                     ((GXDLMSProfileGenericView)SelectedView).Target = parameters[0] as GXDLMSProfileGeneric;
+                    GXDLMSViewArguments arg = new GXDLMSViewArguments() { Index = 3, Connected = connected };
                     if (InvokeRequired)
                     {
-                        this.Invoke(new ValueChangedEventHandler(OnValueChanged), new object[] { SelectedView, 3, null, false, connected });
+                        Invoke(new ValueChangedEventHandler(OnValueChanged), arg);
                     }
                     else
                     {
-                        SelectedView.OnValueChanged(3, null, false, connected);
+                        SelectedView.OnValueChanged(arg);
                     }
                 }
                 else

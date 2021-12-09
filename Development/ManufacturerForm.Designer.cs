@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12433 $,
-//                  $Date: 2021-04-21 10:36:29 +0300 (ke, 21 huhti 2021) $
+// Version:         $Revision: 12756 $,
+//                  $Date: 2021-12-09 11:30:56 +0200 (to, 09 joulu 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -90,6 +90,8 @@ namespace GXDLMSDirector
             this.WebAddressLbl = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.IecAddressTb = new System.Windows.Forms.TextBox();
+            this.IecAddressLbl = new System.Windows.Forms.Label();
             this.UseUtcTimeZone = new System.Windows.Forms.CheckBox();
             this.StandardCb = new System.Windows.Forms.ComboBox();
             this.StandardLbl = new System.Windows.Forms.Label();
@@ -120,8 +122,8 @@ namespace GXDLMSDirector
             this.SecurityLbl = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.InfoTB = new System.Windows.Forms.TextBox();
-            this.IecAddressTb = new System.Windows.Forms.TextBox();
-            this.IecAddressLbl = new System.Windows.Forms.Label();
+            this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.AppendSignatureCb = new System.Windows.Forms.CheckBox();
             this.AddressingGB.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ClientAddTB)).BeginInit();
@@ -134,6 +136,7 @@ namespace GXDLMSDirector
             this.groupBox3.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tabPage5.SuspendLayout();
             this.SuspendLayout();
             // 
             // OKBtn
@@ -416,6 +419,7 @@ namespace GXDLMSDirector
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage5);
             this.tabControl1.Location = new System.Drawing.Point(1, 2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -444,6 +448,22 @@ namespace GXDLMSDirector
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // IecAddressTb
+            // 
+            this.IecAddressTb.Location = new System.Drawing.Point(90, 123);
+            this.IecAddressTb.Name = "IecAddressTb";
+            this.IecAddressTb.Size = new System.Drawing.Size(246, 20);
+            this.IecAddressTb.TabIndex = 44;
+            // 
+            // IecAddressLbl
+            // 
+            this.IecAddressLbl.AutoSize = true;
+            this.IecAddressLbl.Location = new System.Drawing.Point(10, 126);
+            this.IecAddressLbl.Name = "IecAddressLbl";
+            this.IecAddressLbl.Size = new System.Drawing.Size(68, 13);
+            this.IecAddressLbl.TabIndex = 45;
+            this.IecAddressLbl.Text = "IEC Address:";
             // 
             // UseUtcTimeZone
             // 
@@ -762,21 +782,25 @@ namespace GXDLMSDirector
             this.InfoTB.Size = new System.Drawing.Size(398, 367);
             this.InfoTB.TabIndex = 1;
             // 
-            // IecAddressTb
+            // tabPage5
             // 
-            this.IecAddressTb.Location = new System.Drawing.Point(90, 123);
-            this.IecAddressTb.Name = "IecAddressTb";
-            this.IecAddressTb.Size = new System.Drawing.Size(246, 20);
-            this.IecAddressTb.TabIndex = 44;
+            this.tabPage5.Controls.Add(this.AppendSignatureCb);
+            this.tabPage5.Location = new System.Drawing.Point(4, 22);
+            this.tabPage5.Name = "tabPage5";
+            this.tabPage5.Size = new System.Drawing.Size(404, 373);
+            this.tabPage5.TabIndex = 4;
+            this.tabPage5.Text = "Custom Settings";
+            this.tabPage5.UseVisualStyleBackColor = true;
             // 
-            // IecAddressLbl
+            // AppendSignatureCb
             // 
-            this.IecAddressLbl.AutoSize = true;
-            this.IecAddressLbl.Location = new System.Drawing.Point(10, 126);
-            this.IecAddressLbl.Name = "IecAddressLbl";
-            this.IecAddressLbl.Size = new System.Drawing.Size(68, 13);
-            this.IecAddressLbl.TabIndex = 45;
-            this.IecAddressLbl.Text = "IEC Address:";
+            this.AppendSignatureCb.AutoSize = true;
+            this.AppendSignatureCb.Location = new System.Drawing.Point(7, 14);
+            this.AppendSignatureCb.Name = "AppendSignatureCb";
+            this.AppendSignatureCb.Size = new System.Drawing.Size(181, 17);
+            this.AppendSignatureCb.TabIndex = 3;
+            this.AppendSignatureCb.Text = "Sign firmware image with ECDSA";
+            this.AppendSignatureCb.UseVisualStyleBackColor = true;
             // 
             // ManufacturerForm
             // 
@@ -812,6 +836,8 @@ namespace GXDLMSDirector
             this.tabPage3.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.tabPage5.ResumeLayout(false);
+            this.tabPage5.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -878,5 +904,7 @@ namespace GXDLMSDirector
         private System.Windows.Forms.CheckBox RawPDUCb;
         private System.Windows.Forms.TextBox IecAddressTb;
         private System.Windows.Forms.Label IecAddressLbl;
+        private System.Windows.Forms.TabPage tabPage5;
+        private System.Windows.Forms.CheckBox AppendSignatureCb;
     }
 }

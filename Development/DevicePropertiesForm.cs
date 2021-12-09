@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12719 $,
-//                  $Date: 2021-11-15 15:18:25 +0200 (ma, 15 marras 2021) $
+// Version:         $Revision: 12756 $,
+//                  $Date: 2021-12-09 11:30:56 +0200 (to, 09 joulu 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -469,7 +469,7 @@ namespace GXDLMSDirector
             }
             IncludePublicKeyCb.Checked = device.PublicKeyInInitialize;
             SignInitiateRequestResponseCb.Checked = device.SignInitiateRequestResponse;
-
+            OverwriteAttributeAccessRightsCb.Checked = device.OverwriteAttributeAccessRights;
             if (device.PhysicalDeviceAddress != null)
             {
                 UseGatewayCb.Checked = true;
@@ -746,7 +746,12 @@ namespace GXDLMSDirector
                 throw new Exception("Invalid Serial Number.");
             }
             GXManufacturer man = (GXManufacturer)ManufacturerCB.SelectedItem;
-            GXAuthentication auth = ((GXAuthentication)this.AuthenticationCB.SelectedItem);
+            GXAuthentication auth = ((GXAuthentication)AuthenticationCB.SelectedItem);
+            if (auth == null)
+            {
+                AuthenticationCB.SelectedIndex = 0;
+                auth = ((GXAuthentication)AuthenticationCB.SelectedItem);
+            }
             device.Authentication = auth.Type;
             device.AuthenticationName = auth.Name;
             if (device.Authentication != Authentication.None)
@@ -882,7 +887,7 @@ namespace GXDLMSDirector
             }
             device.PublicKeyInInitialize = IncludePublicKeyCb.Checked;
             device.SignInitiateRequestResponse = SignInitiateRequestResponseCb.Checked;
-
+            device.OverwriteAttributeAccessRights = OverwriteAttributeAccessRightsCb.Checked;
             if (PduWaitTimeTb.Text != "")
             {
                 device.PduWaitTime = int.Parse(PduWaitTimeTb.Text);

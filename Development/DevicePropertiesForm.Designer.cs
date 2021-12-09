@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12719 $,
-//                  $Date: 2021-11-15 15:18:25 +0200 (ma, 15 marras 2021) $
+// Version:         $Revision: 12756 $,
+//                  $Date: 2021-12-09 11:30:56 +0200 (to, 09 joulu 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -221,6 +221,7 @@ namespace GXDLMSDirector
             this.helpProvider1 = new System.Windows.Forms.HelpProvider();
             this.conformanceHelpProvider = new System.Windows.Forms.HelpProvider();
             this.ShowAsHex = new System.Windows.Forms.CheckBox();
+            this.OverwriteAttributeAccessRightsCb = new System.Windows.Forms.CheckBox();
             this.SupportedServicesTab.SuspendLayout();
             this.SNSettings.SuspendLayout();
             this.LNSettings.SuspendLayout();
@@ -1438,6 +1439,7 @@ namespace GXDLMSDirector
             // 
             // AdvancedTab
             // 
+            this.AdvancedTab.Controls.Add(this.OverwriteAttributeAccessRightsCb);
             this.AdvancedTab.Controls.Add(this.GBTWindowSizeTb);
             this.AdvancedTab.Controls.Add(this.GBTWindowSizeLbl);
             this.AdvancedTab.Controls.Add(this.SignInitiateRequestResponseCb);
@@ -2151,6 +2153,18 @@ namespace GXDLMSDirector
             this.ShowAsHex.UseVisualStyleBackColor = true;
             this.ShowAsHex.CheckedChanged += new System.EventHandler(this.ShowAsHex_CheckedChanged);
             // 
+            // OverwriteAttributeAccessRightsCb
+            // 
+            this.OverwriteAttributeAccessRightsCb.AutoSize = true;
+            this.helpProvider1.SetHelpString(this.OverwriteAttributeAccessRightsCb, "Is protected release used.");
+            this.OverwriteAttributeAccessRightsCb.Location = new System.Drawing.Point(14, 354);
+            this.OverwriteAttributeAccessRightsCb.Name = "OverwriteAttributeAccessRightsCb";
+            this.helpProvider1.SetShowHelp(this.OverwriteAttributeAccessRightsCb, true);
+            this.OverwriteAttributeAccessRightsCb.Size = new System.Drawing.Size(177, 17);
+            this.OverwriteAttributeAccessRightsCb.TabIndex = 68;
+            this.OverwriteAttributeAccessRightsCb.Text = "Overwrite attribute access rights";
+            this.OverwriteAttributeAccessRightsCb.UseVisualStyleBackColor = true;
+            // 
             // DevicePropertiesForm
             // 
             this.AcceptButton = this.OKBtn;
@@ -2374,5 +2388,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.CheckBox IncludePublicKeyCb;
         private System.Windows.Forms.TextBox GBTWindowSizeTb;
         private System.Windows.Forms.Label GBTWindowSizeLbl;
+        private System.Windows.Forms.CheckBox OverwriteAttributeAccessRightsCb;
     }
 }

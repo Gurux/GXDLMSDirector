@@ -74,6 +74,7 @@ namespace GXDLMSDirector
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.UseOpticalProbeMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.ScanBaudRatesMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.StatusLbl = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -148,7 +149,8 @@ namespace GXDLMSDirector
             this.MediaMnu,
             this.settingsToolStripMenuItem,
             this.toolStripSeparator2,
-            this.UseOpticalProbeMnu});
+            this.UseOpticalProbeMnu,
+            this.ScanBaudRatesMnu});
             this.EditMnu.Name = "EditMnu";
             this.EditMnu.Size = new System.Drawing.Size(39, 20);
             this.EditMnu.Text = "Edit";
@@ -159,7 +161,7 @@ namespace GXDLMSDirector
             this.SerialMnu,
             this.NetworkMnu});
             this.MediaMnu.Name = "MediaMnu";
-            this.MediaMnu.Size = new System.Drawing.Size(180, 22);
+            this.MediaMnu.Size = new System.Drawing.Size(168, 22);
             this.MediaMnu.Text = "Media";
             // 
             // SerialMnu
@@ -179,21 +181,28 @@ namespace GXDLMSDirector
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.settingsToolStripMenuItem.Text = "Settings...";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.Settings_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(165, 6);
             // 
             // UseOpticalProbeMnu
             // 
             this.UseOpticalProbeMnu.Name = "UseOpticalProbeMnu";
-            this.UseOpticalProbeMnu.Size = new System.Drawing.Size(180, 22);
+            this.UseOpticalProbeMnu.Size = new System.Drawing.Size(168, 22);
             this.UseOpticalProbeMnu.Text = "Use Optical Probe";
             this.UseOpticalProbeMnu.Click += new System.EventHandler(this.UseOpticalProbeMnu_Click);
+            // 
+            // ScanBaudRatesMnu
+            // 
+            this.ScanBaudRatesMnu.Name = "ScanBaudRatesMnu";
+            this.ScanBaudRatesMnu.Size = new System.Drawing.Size(168, 22);
+            this.ScanBaudRatesMnu.Text = "Scan Baud Rates";
+            this.ScanBaudRatesMnu.Click += new System.EventHandler(this.ScanBaudRateMnu_Click);
             // 
             // statusStrip1
             // 
@@ -393,6 +402,7 @@ namespace GXDLMSDirector
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
+            this.HelpButton = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
@@ -451,5 +461,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TextBox TraceView;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ScanBaudRatesMnu;
     }
 }

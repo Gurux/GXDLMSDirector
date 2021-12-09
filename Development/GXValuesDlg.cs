@@ -73,7 +73,7 @@ namespace GXDLMSDirector
                 GXDLMSObject obj = (GXDLMSObject)e.Item.Tag;
                 IGXDLMSView SelectedView = GXDlmsUi.GetView(Views, obj);
                 SelectedView.Target = obj;
-                GXDlmsUi.ObjectChanged(SelectedView, obj, false);
+                GXDlmsUi.ObjectChanged(SelectedView, null, obj, false);
                 ObjectPanelFrame.Controls.Add(((Form)SelectedView));
                 ((Form)SelectedView).Show();
             }

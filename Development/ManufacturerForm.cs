@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12433 $,
-//                  $Date: 2021-04-21 10:36:29 +0300 (ke, 21 huhti 2021) $
+// Version:         $Revision: 12756 $,
+//                  $Date: 2021-12-09 11:30:56 +0200 (to, 09 joulu 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -187,6 +187,7 @@ namespace GXDLMSDirector
                 //Select default interfaces.
                 HdlcCb.Checked = HdlcWithModeECb.Checked = WrapperCb.Checked = true;
             }
+            AppendSignatureCb.Checked = (manufacturer.ManucatureSettings & ManufactureSettings.SignImageWithEcdsa) != 0;
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
@@ -282,6 +283,11 @@ namespace GXDLMSDirector
                 if (Manufacturer.SupporterdInterfaces == 0)
                 {
                     throw new Exception("Supporterd interfaces are not selected.");
+                }
+                Manufacturer.ManucatureSettings = ManufactureSettings.None;
+                if (AppendSignatureCb.Checked)
+                {
+                    Manufacturer.ManucatureSettings |= ManufactureSettings.SignImageWithEcdsa;
                 }
             }
             catch (Exception Ex)

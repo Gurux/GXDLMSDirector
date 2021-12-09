@@ -246,7 +246,7 @@ namespace GXDLMSDirector
                         rd.Set(p.Reply);
                         if (cl.GetData(rd, reply))
                         {
-                            List<GXDLMSPlcMeterInfo> list = cl.Plc.ParseDiscover(reply.Data, (UInt16)reply.ClientAddress, (UInt16)reply.ServerAddress);
+                            List<GXDLMSPlcMeterInfo> list = cl.Plc.ParseDiscover(reply.Data, (UInt16)reply.TargetAddress, (UInt16)reply.SourceAddress);
                             BeginInvoke(new AppendMeterEventHandler(OnAppendMeter), list);
                         }
                     }

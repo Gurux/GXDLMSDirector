@@ -69,6 +69,8 @@ namespace GXDLMSDirector
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.CustomSettings = new System.Windows.Forms.Panel();
             this.BaudRatesPanel = new System.Windows.Forms.Panel();
+            this.ConnectionDelayLbl = new System.Windows.Forms.Label();
+            this.ConnectionDelayTb = new System.Windows.Forms.TextBox();
             this.BaudRatesCl = new System.Windows.Forms.CheckedListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -85,6 +87,8 @@ namespace GXDLMSDirector
             this.SearchWaitTimeLbl = new System.Windows.Forms.Label();
             this.SearchWaitTimeTb = new System.Windows.Forms.TextBox();
             this.HexCb = new System.Windows.Forms.CheckBox();
+            this.ServerGenerateAllBtn = new System.Windows.Forms.Button();
+            this.ClientGenerateAllBtn = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.BaudRatesPanel.SuspendLayout();
@@ -146,33 +150,53 @@ namespace GXDLMSDirector
             this.CustomSettings.Dock = System.Windows.Forms.DockStyle.Fill;
             this.CustomSettings.Location = new System.Drawing.Point(3, 3);
             this.CustomSettings.Name = "CustomSettings";
-            this.CustomSettings.Size = new System.Drawing.Size(547, 253);
+            this.CustomSettings.Size = new System.Drawing.Size(547, 194);
             this.CustomSettings.TabIndex = 2;
             // 
             // BaudRatesPanel
             // 
+            this.BaudRatesPanel.Controls.Add(this.ConnectionDelayLbl);
+            this.BaudRatesPanel.Controls.Add(this.ConnectionDelayTb);
             this.BaudRatesPanel.Controls.Add(this.BaudRatesCl);
             this.BaudRatesPanel.Controls.Add(this.label1);
             this.BaudRatesPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.BaudRatesPanel.Location = new System.Drawing.Point(3, 256);
+            this.BaudRatesPanel.Location = new System.Drawing.Point(3, 197);
             this.BaudRatesPanel.Name = "BaudRatesPanel";
-            this.BaudRatesPanel.Size = new System.Drawing.Size(547, 152);
+            this.BaudRatesPanel.Size = new System.Drawing.Size(547, 211);
             this.BaudRatesPanel.TabIndex = 1;
+            // 
+            // ConnectionDelayLbl
+            // 
+            this.ConnectionDelayLbl.AutoSize = true;
+            this.ConnectionDelayLbl.Location = new System.Drawing.Point(132, 5);
+            this.ConnectionDelayLbl.Name = "ConnectionDelayLbl";
+            this.ConnectionDelayLbl.Size = new System.Drawing.Size(100, 13);
+            this.ConnectionDelayLbl.TabIndex = 27;
+            this.ConnectionDelayLbl.Text = "Connections delay :";
+            // 
+            // ConnectionDelayTb
+            // 
+            this.ConnectionDelayTb.Location = new System.Drawing.Point(251, 3);
+            this.ConnectionDelayTb.Name = "ConnectionDelayTb";
+            this.ConnectionDelayTb.Size = new System.Drawing.Size(66, 20);
+            this.ConnectionDelayTb.TabIndex = 26;
+            this.ConnectionDelayTb.Text = "5";
             // 
             // BaudRatesCl
             // 
-            this.BaudRatesCl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.BaudRatesCl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.BaudRatesCl.FormattingEnabled = true;
             this.BaudRatesCl.Location = new System.Drawing.Point(3, 25);
             this.BaudRatesCl.Name = "BaudRatesCl";
-            this.BaudRatesCl.Size = new System.Drawing.Size(544, 124);
+            this.BaudRatesCl.Size = new System.Drawing.Size(544, 184);
             this.BaudRatesCl.TabIndex = 25;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 3);
+            this.label1.Location = new System.Drawing.Point(3, 5);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(94, 13);
             this.label1.TabIndex = 24;
@@ -196,6 +220,8 @@ namespace GXDLMSDirector
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.ClientGenerateAllBtn);
+            this.groupBox2.Controls.Add(this.ServerGenerateAllBtn);
             this.groupBox2.Controls.Add(this.ClientAddressesTb);
             this.groupBox2.Controls.Add(this.ClientAddressesLbl);
             this.groupBox2.Controls.Add(this.ServerAddressesTb);
@@ -312,6 +338,7 @@ namespace GXDLMSDirector
             // 
             // HexCb
             // 
+            this.HexCb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.HexCb.AutoSize = true;
             this.HexCb.Location = new System.Drawing.Point(12, 450);
             this.HexCb.Name = "HexCb";
@@ -321,15 +348,38 @@ namespace GXDLMSDirector
             this.HexCb.UseVisualStyleBackColor = true;
             this.HexCb.CheckedChanged += new System.EventHandler(this.HexCb_CheckedChanged);
             // 
+            // ServerGenerateAllBtn
+            // 
+            this.ServerGenerateAllBtn.Location = new System.Drawing.Point(419, 19);
+            this.ServerGenerateAllBtn.Name = "ServerGenerateAllBtn";
+            this.ServerGenerateAllBtn.Size = new System.Drawing.Size(82, 23);
+            this.ServerGenerateAllBtn.TabIndex = 29;
+            this.ServerGenerateAllBtn.Text = "Generate All";
+            this.ServerGenerateAllBtn.UseVisualStyleBackColor = true;
+            this.ServerGenerateAllBtn.Click += new System.EventHandler(this.ServerGenerateAllBtn_Click);
+            // 
+            // ClientGenerateAllBtn
+            // 
+            this.ClientGenerateAllBtn.Location = new System.Drawing.Point(419, 201);
+            this.ClientGenerateAllBtn.Name = "ClientGenerateAllBtn";
+            this.ClientGenerateAllBtn.Size = new System.Drawing.Size(82, 23);
+            this.ClientGenerateAllBtn.TabIndex = 30;
+            this.ClientGenerateAllBtn.Text = "Generate All";
+            this.ClientGenerateAllBtn.UseVisualStyleBackColor = true;
+            this.ClientGenerateAllBtn.Click += new System.EventHandler(this.ClientGenerateAllBtn_Click);
+            // 
             // GXHdlcAddressesResolverDlg
             // 
+            this.AcceptButton = this.OKBtn;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.CancelBtn;
             this.ClientSize = new System.Drawing.Size(575, 481);
             this.Controls.Add(this.HexCb);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.OKBtn);
             this.Controls.Add(this.CancelBtn);
+            this.HelpButton = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -376,5 +426,9 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label ClientAddressesLbl;
         private System.Windows.Forms.TextBox ServerAddressesTb;
         private System.Windows.Forms.Label ServerAddressesLbl;
+        private System.Windows.Forms.Label ConnectionDelayLbl;
+        private System.Windows.Forms.TextBox ConnectionDelayTb;
+        private System.Windows.Forms.Button ServerGenerateAllBtn;
+        private System.Windows.Forms.Button ClientGenerateAllBtn;
     }
 }

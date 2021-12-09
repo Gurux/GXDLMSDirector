@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12719 $,
-//                  $Date: 2021-11-15 15:18:25 +0200 (ma, 15 marras 2021) $
+// Version:         $Revision: 12756 $,
+//                  $Date: 2021-12-09 11:30:56 +0200 (to, 09 joulu 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1211,7 +1211,7 @@ namespace GXDLMSDirector
                 client.ServerSystemTitle = GXCommon.HexToBytes(parent.ServerSystemTitle);
             }
             client.ChallengeSize = parent.ChallengeSize;
-
+            client.OverwriteAttributeAccessRights = parent.OverwriteAttributeAccessRights;
         }
 
         public void InitializeConnection(bool force)
@@ -1264,14 +1264,12 @@ namespace GXDLMSDirector
                     Security security = client.Ciphering.Security;
                     byte[] challenge = client.CtoSChallenge;
                     Signing signing = client.Ciphering.Signing;
-                    UInt16 pduSize = client.MaxReceivePDUSize;
                     try
                     {
                         client.ClientAddress = 16;
                         client.Authentication = Authentication.None;
                         client.Ciphering.Security = Security.None;
                         client.Ciphering.Signing = Signing.None;
-
                         data = SNRMRequest();
                         if (data != null)
                         {
@@ -1324,7 +1322,6 @@ namespace GXDLMSDirector
                         client.Ciphering.Security = security;
                         client.CtoSChallenge = challenge;
                         client.Ciphering.Signing = signing;
-                        client.MaxReceivePDUSize = pduSize;
                     }
                 }
                 data = SNRMRequest();
@@ -1636,7 +1633,7 @@ namespace GXDLMSDirector
                             {
                                 //Some meters are returning invalid data here.
                             }
-                            else if (obj.GetAccess(1) != AccessMode.NoAccess)
+                            else if (client.CanRead(obj, 1))
                             {
                                 objs.Add(obj);
                             }
@@ -1717,7 +1714,7 @@ namespace GXDLMSDirector
                     continue;
                 }
                 //If reading is not allowed.
-                if ((obj.GetAccess(it) & AccessMode.Read) == 0)
+                if (!client.CanRead(obj, it))
                 {
                     obj.ClearStatus(it);
                     continue;
@@ -1845,7 +1842,7 @@ namespace GXDLMSDirector
                     {
                         OnBeforeRead(client, obj, it, null, null, null);
                     }
-                    byte[][] data = client.Read(obj.Name, obj.ObjectType, it);
+                    byte[][] data = client.Read(obj, it);
                     try
                     {
                         ReadDataBlock(data, "Read object type " + obj.ObjectType + " index: " + it, reply);

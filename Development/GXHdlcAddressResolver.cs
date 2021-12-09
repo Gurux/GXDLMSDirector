@@ -255,11 +255,11 @@ namespace GXDLMSDirector
                             dev.Comm.ReadDataBlock(data, "Send SNRM request.", 0, 0, reply);
                             //Try to establish the connection to the meter.
                             int logical, physical;
-                            GXDLMSTranslator.GetLogicalAndPhysicalAddress(reply.ServerAddress, out logical, out physical);
+                            GXDLMSTranslator.GetLogicalAndPhysicalAddress(reply.SourceAddress, out logical, out physical);
                             dev.Comm.client.ParseUAResponse(reply.Data);
-                            if (serverAddresses[0] != reply.ServerAddress)
+                            if (serverAddresses[0] != reply.SourceAddress)
                             {
-                                BeginInvoke(new ChangeAddressEventHandler(OnChangeAddress), reply.ServerAddress, true);
+                                BeginInvoke(new ChangeAddressEventHandler(OnChangeAddress), reply.SourceAddress, true);
                             }
                             serverFound = true;
                             sb.AppendLine("++++++++++++++++++++++++++++++++++++");
@@ -277,6 +277,10 @@ namespace GXDLMSDirector
                             {
                                 sb.AppendLine("Meter returned an exception:");
                                 sb.AppendLine(ex.Message);
+                                if (ex.Result == AssociationResult.PermanentRejected)
+                                {
+                                    BeginInvoke(new ChangeAddressEventHandler(OnChangeAddress), clientAddresses[0], false);
+                                }
                             }
                             catch (Exception ex)
                             {
@@ -287,8 +291,8 @@ namespace GXDLMSDirector
                             {
                                 sb.AppendLine("Used baud rate: " + (media as GXSerial).BaudRate);
                             }
-                            sb.AppendLine("Client address: " + reply.ClientAddress + " (0x" + reply.ClientAddress.ToString("X") + ")");
-                            sb.AppendLine("Server address: " + reply.ServerAddress + " (0x" + reply.ServerAddress.ToString("X") + ")");
+                            sb.AppendLine("Client address: " + reply.TargetAddress + " (0x" + reply.TargetAddress.ToString("X") + ")");
+                            sb.AppendLine("Server address: " + reply.SourceAddress + " (0x" + reply.SourceAddress.ToString("X") + ")");
                             sb.Append("Logical address: " + logical + " (0x" + logical.ToString("X") + ") ");
                             sb.AppendLine("Physical address: " + physical + " (0x" + physical.ToString("X") + ")");
                             BeginInvoke(new AppendTextEventHandler(OnAppendText), sb.ToString());
@@ -304,7 +308,7 @@ namespace GXDLMSDirector
                         }
                         catch (TimeoutException)
                         {
-                            if (serverFound && clientAddresses[0] == reply.ClientAddress)
+                            if (serverFound && clientAddresses[0] == reply.TargetAddress)
                             {
                                 BeginInvoke(new ChangeAddressEventHandler(OnChangeAddress), clientAddresses[0], false);
                             }
@@ -312,12 +316,17 @@ namespace GXDLMSDirector
                         }
                         catch (Exception ex)
                         {
-                            if (serverFound && clientAddresses[0] == reply.ClientAddress)
+                            //If user has close the media.
+                            if (!media.IsOpen)
+                            {
+                                return true;
+                            }
+                            if (serverFound && clientAddresses[0] == reply.TargetAddress)
                             {
                                 BeginInvoke(new ChangeAddressEventHandler(OnChangeAddress), clientAddresses[0], false);
                             }
                             int logical, physical;
-                            GXDLMSTranslator.GetLogicalAndPhysicalAddress(reply.ServerAddress, out logical, out physical);
+                            GXDLMSTranslator.GetLogicalAndPhysicalAddress(reply.SourceAddress, out logical, out physical);
                             sb.AppendLine("Meter returned an exception:");
                             sb.AppendLine(ex.Message);
                             sb.AppendLine("Try to change the client address:");
@@ -325,8 +334,8 @@ namespace GXDLMSDirector
                             {
                                 sb.AppendLine("Used baud rate: " + (media as GXSerial).BaudRate);
                             }
-                            sb.AppendLine("Client address: " + reply.ClientAddress + " (0x" + reply.ClientAddress.ToString("X") + ")");
-                            sb.AppendLine("Server address: " + reply.ServerAddress + " (0x" + reply.ServerAddress.ToString("X") + ")");
+                            sb.AppendLine("Client address: " + reply.TargetAddress + " (0x" + reply.TargetAddress.ToString("X") + ")");
+                            sb.AppendLine("Server address: " + reply.SourceAddress + " (0x" + reply.SourceAddress.ToString("X") + ")");
                             sb.Append("Logical address: " + logical + " (0x" + logical.ToString("X") + ") ");
                             sb.AppendLine("Physical address: " + physical + " (0x" + physical.ToString("X") + ")");
                             BeginInvoke(new AppendTextEventHandler(OnAppendText), sb.ToString());
@@ -357,7 +366,7 @@ namespace GXDLMSDirector
         private void FindSettings(object sender, GXAsyncWork work, object[] parameters)
         {
             GXDLMSDevice dev = new GXDLMSDevice(media);
-            dev.UseLogicalNameReferencing = true;
+            dev.Comm.client.UseLogicalNameReferencing = dev.UseLogicalNameReferencing = true;
             dev.Conformance = (int)new GXDLMSClient(true).ProposedConformance;
             dev.WaitTime = -Properties.Settings.Default.HdlcSearchWaitTime;
             if ((media is GXSerial serial) && Settings.Default.HdlcAddressUseOpticalProbe)
@@ -406,15 +415,21 @@ namespace GXDLMSDirector
                     if (rate != 0)
                     {
                         (media as GXSerial).BaudRate = rate;
-                        Thread.Sleep(1000);
                         BeginInvoke(new AppendTextEventHandler(OnAppendText),
                             "++++++++++++++++++++++++++++++++++++" + Environment.NewLine +
                             "Checking device with baud rate " + rate + Environment.NewLine);
-                        if (!CheckSnrm(dev, rates.Count, first))
+                        if (CheckSnrm(dev, rates.Count, first))
                         {
-                            break;
+                            return;
                         }
                         first = false;
+                        if (Settings.Default.HdlcConnectionDelay != 0)
+                        {
+                            BeginInvoke(new AppendTextEventHandler(OnAppendText),
+                                   string.Format("Waiting {0} seconds before the new try.", Settings.Default.HdlcConnectionDelay)
+                                   + Environment.NewLine);
+                            Thread.Sleep(Settings.Default.HdlcConnectionDelay * 1000);
+                        }
                     }
                     --count;
                 }
@@ -494,6 +509,14 @@ namespace GXDLMSDirector
                     media.OnTrace += MediaOnTrace;
                     media.Trace = TraceLevel.Verbose;
                     Settings.Default.HdlcAddressMedia = "GXSerial";
+                    if (Settings.Default.HdlcAddressScanBaudRates)
+                    {
+                        (media as GXSerial).ConfigurableSettings = Gurux.Serial.AvailableMediaSettings.All & ~Gurux.Serial.AvailableMediaSettings.BaudRate;
+                    }
+                    else
+                    {
+                        (media as GXSerial).ConfigurableSettings = Gurux.Serial.AvailableMediaSettings.All;
+                    }
                 }
                 else
                 {
@@ -509,7 +532,7 @@ namespace GXDLMSDirector
                 UpdateStatus("Ready.");
                 SerialBtn.Checked = UseOpticalProbeMnu.Enabled = SerialMnu.Checked = isSerial;
                 NetworkBtn.Checked = NetworkMnu.Checked = !isSerial;
-                ScanBaudRatesBtn.Enabled = OpticalProbeBtn.Enabled = UseOpticalProbeMnu.Enabled = isSerial;
+                ScanBaudRatesMnu.Enabled = ScanBaudRatesBtn.Enabled = OpticalProbeBtn.Enabled = UseOpticalProbeMnu.Enabled = isSerial;
             }
             catch (Exception ex)
             {
@@ -531,11 +554,11 @@ namespace GXDLMSDirector
 
         private void UpdateStatus(string text)
         {
-            if (Settings.Default.HdlcAddressScanBaudRates)
+            if (Settings.Default.HdlcAddressScanBaudRates && media is GXSerial serial)
             {
-                StatusLbl.Text = text + " " + (media as GXSerial).PortName + " with multiple baud rates.";
+                StatusLbl.Text = text + " " + serial.PortName + " with multiple baud rates.";
             }
-            else if (Settings.Default.HdlcAddressUseOpticalProbe)
+            else if (Settings.Default.HdlcAddressUseOpticalProbe && media is GXSerial)
             {
                 StatusLbl.Text = text + " " + media.ToString() + " with optical probe.";
             }
@@ -597,16 +620,31 @@ namespace GXDLMSDirector
         {
             OpticalProbeBtn.Checked = UseOpticalProbeMnu.Checked = !UseOpticalProbeMnu.Checked;
             Settings.Default.HdlcAddressUseOpticalProbe = UseOpticalProbeMnu.Checked;
-            ScanBaudRatesBtn.Enabled = !UseOpticalProbeMnu.Checked;
+            ScanBaudRatesMnu.Enabled = ScanBaudRatesBtn.Enabled = !UseOpticalProbeMnu.Checked;
             if (media is GXSerial serial)
             {
-                media.Settings = Settings.Default.HdlcAddressSerialSettings;
                 if (Settings.Default.HdlcAddressUseOpticalProbe)
                 {
                     serial.BaudRate = 300;
                     serial.DataBits = 7;
                     serial.Parity = Parity.Even;
                     serial.StopBits = StopBits.One;
+                }
+                else
+                {
+                    serial.BaudRate = 9600;
+                    serial.DataBits = 8;
+                    serial.Parity = Parity.None;
+                    serial.StopBits = StopBits.One;
+                }
+                Settings.Default.HdlcAddressSerialSettings = media.Settings;
+                if (Settings.Default.HdlcAddressScanBaudRates)
+                {
+                    (media as GXSerial).ConfigurableSettings = Gurux.Serial.AvailableMediaSettings.All & ~Gurux.Serial.AvailableMediaSettings.BaudRate;
+                }
+                else
+                {
+                    (media as GXSerial).ConfigurableSettings = Gurux.Serial.AvailableMediaSettings.All;
                 }
             }
             UpdateStatus("Ready.");
@@ -617,9 +655,20 @@ namespace GXDLMSDirector
         /// </summary>
         private void ScanBaudRateMnu_Click(object sender, EventArgs e)
         {
-            ScanBaudRatesBtn.Checked = !ScanBaudRatesBtn.Checked;
+            ScanBaudRatesMnu.Checked = ScanBaudRatesBtn.Checked = !ScanBaudRatesBtn.Checked;
             Settings.Default.HdlcAddressScanBaudRates = ScanBaudRatesBtn.Checked;
             OpticalProbeBtn.Enabled = UseOpticalProbeMnu.Enabled = !ScanBaudRatesBtn.Checked;
+            if (media is GXSerial serial)
+            {
+                if (Settings.Default.HdlcAddressScanBaudRates)
+                {
+                    serial.ConfigurableSettings = Gurux.Serial.AvailableMediaSettings.All & ~Gurux.Serial.AvailableMediaSettings.BaudRate;
+                }
+                else
+                {
+                    serial.ConfigurableSettings = Gurux.Serial.AvailableMediaSettings.All;
+                }
+            }
             UpdateStatus("Ready.");
         }
 
@@ -635,7 +684,7 @@ namespace GXDLMSDirector
         {
             try
             {
-                Process.Start("https://www.gurux.fi/index.php?q=GXDLMSDirectorHelp");
+                Process.Start("https://www.gurux.fi/index.php?q=GXDLMSHdlcAddressResolverHelp");
             }
             catch (Exception Ex)
             {

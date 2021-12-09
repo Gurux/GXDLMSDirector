@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12331 $,
-//                  $Date: 2021-02-23 15:18:17 +0200 (ti, 23 helmi 2021) $
+// Version:         $Revision: 12756 $,
+//                  $Date: 2021-12-09 11:30:56 +0200 (to, 09 joulu 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -44,6 +44,7 @@ using Gurux.DLMS;
 using Gurux.DLMS.Ecdsa;
 using System.Numerics;
 using Gurux.DLMS.Secure;
+using Gurux.DLMS.ASN;
 
 namespace GXDLMSDirector
 {

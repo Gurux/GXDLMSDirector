@@ -554,7 +554,7 @@ namespace GXDLMSDirector
                                         SelectedView = GXDlmsUi.GetView(Views, obj, Target.Comm.client.Standard);
                                     }
                                     SelectedView.Target = obj;
-                                    GXDlmsUi.ObjectChanged(SelectedView, obj, false);
+                                    GXDlmsUi.ObjectChanged(SelectedView, Target.Comm.client, obj, false);
                                     SelectedView.OnDirtyChange(macro.Index, true);
                                     ObjectPanelFrame.Controls.Add(((Form)SelectedView));
                                     ((Form)SelectedView).Show();
@@ -562,7 +562,7 @@ namespace GXDLMSDirector
                                 else
                                 {
                                     SelectedView.Target = obj;
-                                    GXDlmsUi.ObjectChanged(SelectedView, obj, false);
+                                    GXDlmsUi.ObjectChanged(SelectedView, Target.Comm.client, obj, false);
                                     SelectedView.OnDirtyChange(macro.Index, true);
                                 }
                             }

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12635 $,
-//                  $Date: 2021-10-06 11:59:58 +0300 (ke, 06 loka 2021) $
+// Version:         $Revision: 12756 $,
+//                  $Date: 2021-12-09 11:30:56 +0200 (to, 09 joulu 2021) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -817,11 +817,11 @@ namespace GXDLMSDirector
                     List<KeyValuePair<GXDLMSObject, int>> list = new List<KeyValuePair<GXDLMSObject, int>>();
                     foreach (GXDLMSObject it in Objects)
                     {
-                        if (it is GXDLMSRegister && (it.GetAccess(3) & AccessMode.Read) != 0)
+                        if (it is GXDLMSRegister && Comm.client.CanRead(it, 3))
                         {
                             list.Add(new KeyValuePair<GXDLMSObject, int>(it, 3));
                         }
-                        if (it is GXDLMSDemandRegister && (it.GetAccess(4) & AccessMode.Read) != 0)
+                        if (it is GXDLMSDemandRegister && Comm.client.CanRead(it, 4))
                         {
                             list.Add(new KeyValuePair<GXDLMSObject, int>(it, 4));
                         }
@@ -848,7 +848,7 @@ namespace GXDLMSDirector
                             //Read scaler first.
                             try
                             {
-                                if ((it.GetAccess(3) & AccessMode.Read) != 0)
+                                if (Comm.client.CanRead(it, 3))
                                 {
                                     Comm.ReadValue(it, 3);
                                 }
@@ -869,7 +869,7 @@ namespace GXDLMSDirector
                             //Read scaler first.
                             try
                             {
-                                if ((it.GetAccess(4) & AccessMode.Read) != 0)
+                                if (Comm.client.CanRead(it, 4))
                                 {
                                     Comm.ReadValue(it, 4);
                                 }

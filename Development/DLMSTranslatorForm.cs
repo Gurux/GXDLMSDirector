@@ -9,6 +9,7 @@ using Gurux.DLMS.UI.Ecdsa;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Numerics;
 using System.Text;
@@ -16,26 +17,82 @@ using System.Windows.Forms;
 
 namespace GXDLMSDirector
 {
+    enum ShowMessages
+    {
+        All,
+        Sent,
+        Received,
+        Failed
+    }
+
+    /// <summary>
+    /// How frames are followed.
+    /// </summary>
+    [Flags]
+    enum Follow
+    {
+        /// <summary>
+        /// Frames are not followed and all the frames ar shown.
+        /// </summary>
+        None = 0,
+        /// <summary>
+        /// Frames are followed by server address.
+        /// </summary>
+        Meter = 1,
+        /// <summary>
+        /// Frames are followed by client address.
+        /// </summary>
+        Client = 2,
+        /// <summary>
+        /// Frames are followed by client and server address.
+        /// </summary>
+        Both = 3
+    }
+
     public partial class DLMSTranslatorForm : Form
     {
+        string searchText = null;
         GXCipheringSettings Ciphering;
         GXDLMSTranslator translator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
+
         public DLMSTranslatorForm()
         {
             InitializeComponent();
-            InterfaceTypeCb.Items.Add("");
+            InterfaceCb.Items.Add("");
             foreach (InterfaceType it in Enum.GetValues(typeof(InterfaceType)))
             {
-                if (it != InterfaceType.HdlcWithModeE)
+                if (it != InterfaceType.HdlcWithModeE &&
+                    it != InterfaceType.LPWAN &&
+                    it != InterfaceType.WiSUN &&
+                    it != InterfaceType.PlcPrime)
                 {
-                    InterfaceTypeCb.Items.Add(it);
+                    InterfaceCb.Items.Add(it);
                 }
             }
+            foreach (ShowMessages it in Enum.GetValues(typeof(ShowMessages)))
+            {
+                ShowCb.Items.Add(it);
+            }
+            foreach (Follow it in Enum.GetValues(typeof(Follow)))
+            {
+                FollowmessagesCb.Items.Add(it);
+            }
+            try
+            {
+                InterfaceCb.SelectedIndex = Properties.Settings.Default.TranslatorInterface;
+            }
+            catch(Exception)
+            {
+                InterfaceCb.SelectedIndex = 0;
+            }
+            ShowCb.SelectedIndex = Properties.Settings.Default.TranslatorShow;
+            FollowmessagesCb.SelectedIndex = Properties.Settings.Default.TranslatorFollow;
             translator.OnKeys += Translator_OnKeys;
-            InterfaceTypeCb.SelectedIndex = 0;
             translator.Comments = true;
             DataPdu.Text = Properties.Settings.Default.Data;
             tabControl1_SelectedIndexChanged(null, null);
+            StandardMnu.Checked = Properties.Settings.Default.TranslatorStandard;
+            HexMnu.Checked = Properties.Settings.Default.TranslatorHex;
             if (!string.IsNullOrEmpty(Properties.Settings.Default.Pdu))
             {
                 PduTB.Text = Properties.Settings.Default.Pdu;
@@ -117,9 +174,9 @@ namespace GXDLMSDirector
         private KeyValuePair<GXPkcs8, GXx509Certificate> FindKey(string SerialNumber)
         {
             BigInteger value = BigInteger.Parse(SerialNumber);
-            foreach(var it in Ciphering.KeyPairs)
+            foreach (var it in Ciphering.KeyPairs)
             {
-                if(it.Value.SerialNumber == value)
+                if (it.Value.SerialNumber == value)
                 {
                     return it;
                 }
@@ -168,29 +225,16 @@ namespace GXDLMSDirector
         /// </summary>
         private void PduToXmlBtn_Click(object sender, EventArgs e)
         {
-            string xml = null;
             UpdateSecuritySettings();
             try
             {
-                if (tabControl1.SelectedTab == tabPage5)
-                {
-                    translator.DataToXml(DataPdu.Text, out xml);
-                }
-                else
-                {
-                    XmlTB.Text = translator.PduToXml(RemoveComments(PduTB.Text));
-                }
+                XmlTB.Text = translator.PduToXml(RemoveComments(PduTB.Text));
             }
             catch (Exception ex)
             {
                 MessageBox.Show(this, ex.Message);
             }
-            finally
-            {
-                DataXml.Text = xml;
-            }
         }
-
 
         /// <summary>
         /// Convert XML to PDU.
@@ -233,21 +277,8 @@ namespace GXDLMSDirector
                 }
                 if (!tmp.StartsWith("#"))
                 {
-                    if (tabControl1.SelectedTab == tabPage1 && 
-                        InterfaceTypeCb.SelectedItem is InterfaceType && (InterfaceType)InterfaceTypeCb.SelectedItem == InterfaceType.WRAPPER)
-                    {
-                        pos = tmp.Replace(" ", "").IndexOf("0001");
-                        if (pos != -1)
-                        {
-                            sb.Append(tmp.Substring(pos));
-                            sb.Append(Environment.NewLine);
-                        }
-                    }
-                    else
-                    {
-                        sb.Append(tmp);
-                        sb.Append(Environment.NewLine);
-                    }
+                    sb.Append(tmp);
+                    sb.Append(Environment.NewLine);
                 }
             }
             if (sb.Length != 0)
@@ -257,8 +288,15 @@ namespace GXDLMSDirector
             return sb.ToString();
         }
 
+        delegate bool UpdateSystemTitleEventHandler(Form parent, string title, byte[] data, byte[] original);
+
         private static bool UpdateSystemTitle(Form parent, string title, byte[] data, byte[] original)
         {
+            if (parent.InvokeRequired)
+            {
+                return (bool) parent.Invoke(new UpdateSystemTitleEventHandler(UpdateSystemTitle), parent, title, data, original);
+                //return parent.BeginInvoke(new Func<bool>(() => { return UpdateSystemTitle(parent, title, data, original); });
+            }
             if (data != null)
             {
                 string st = GXDLMSTranslator.ToHex(data);
@@ -273,6 +311,245 @@ namespace GXDLMSDirector
             return false;
         }
 
+        delegate void AppendMessageEventHandler(string text, Color color);
+
+        int FindNextTag(string text, int startIndex, out string tag)
+        {
+            tag = null;
+            int pos, index = -1;
+            //Find tags.
+            List<string> tags = new List<string>();
+            //Add comment start tag.
+            tags.Add("<!--");
+            //Add comment end tag.
+            tags.Add("-->");
+            tags.Add("<ExceptionResponse>");
+            tags.Add("Manufacturer Code:");
+            tags.Add("<ConformanceBit");
+            foreach (string it in tags)
+            {
+                pos = text.IndexOf(it, startIndex);
+                if (pos != -1)
+                {
+                    if ((pos < index || index == -1))
+                    {
+                        index = pos;
+                        tag = it;
+                    }
+                }
+            }
+            return index;
+        }
+
+        void OnAppendMessage(string text)
+        {
+            OnAppendMessage(text, Color.White);
+        }
+
+        void UpdateConformanceBits(string text, ref int startIndex, ref int lastIndex)
+        {
+            string tag = "\" />" + Environment.NewLine;
+            int end = text.IndexOf(tag, startIndex);
+            if (end != -1)
+            {
+                startIndex += "<ConformanceBit Name=\"".Length;
+                MessageXmlTB.AppendText(text.Substring(lastIndex, startIndex - lastIndex));
+                MessageXmlTB.SelectionStart = MessageXmlTB.TextLength;
+                MessageXmlTB.SelectionLength = 0;
+                Color old = MessageXmlTB.SelectionColor;
+                MessageXmlTB.SelectionColor = Color.Blue;
+                MessageXmlTB.AppendText(text.Substring(startIndex, end - startIndex));
+                MessageXmlTB.SelectionColor = old;
+                MessageXmlTB.SelectionStart = MessageXmlTB.TextLength;
+                MessageXmlTB.SelectionLength = 0;
+                MessageXmlTB.AppendText(text.Substring(end, tag.Length));
+                end += tag.Length;
+                lastIndex = end;
+                startIndex += tag.Length;
+            }
+        }
+
+        void OnAppendMessage(string text, Color color)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new AppendMessageEventHandler(OnAppendMessage), text, color);
+            }
+            else
+            {
+                int lastIndex = 0;
+                int startIndex = 0;
+                string tag;
+                while ((startIndex = FindNextTag(text, startIndex, out tag)) != -1)
+                {
+                    if (tag == "<!--")
+                    {
+                        int commentEnd = FindNextTag(text, startIndex + tag.Length, out tag);
+                        if (commentEnd != -1)
+                        {
+                            commentEnd += tag.Length;
+                            if (tag == "<ConformanceBit")
+                            {
+                                UpdateConformanceBits(text, ref startIndex, ref lastIndex);
+                            }
+                            else if (tag == "Manufacturer Code:")
+                            {
+                                MessageXmlTB.SelectionStart = MessageXmlTB.TextLength;
+                                MessageXmlTB.SelectionLength = 0;
+                                Color old = MessageXmlTB.SelectionColor;
+                                MessageXmlTB.SelectionColor = Color.Green;
+                                MessageXmlTB.AppendText(text.Substring(lastIndex, startIndex - lastIndex));
+                                //Add tag.
+                                MessageXmlTB.SelectionStart = MessageXmlTB.TextLength;
+                                MessageXmlTB.SelectionLength = 0;
+                                MessageXmlTB.SelectionColor = Color.Green;
+                                MessageXmlTB.AppendText(text.Substring(commentEnd - tag.Length, tag.Length));
+                                MessageXmlTB.SelectionStart = MessageXmlTB.TextLength;
+                                MessageXmlTB.SelectionLength = 0;
+                                //Add link.
+                                MessageXmlTB.SelectionColor = Color.Blue;
+                                MessageXmlTB.AppendText(text.Substring(commentEnd, 4));
+                                MessageXmlTB.SelectionColor = old;
+
+                                /*
+                                LinkLabel link = new LinkLabel();
+                                link.Tag = MessageXmlTB.TextLength;
+                                link.Text = text.Substring(commentEnd, 4);
+                                link.LinkClicked += Link_LinkClicked;
+                                LinkLabel.Link data = new LinkLabel.Link();
+                                data.LinkData = "https://www.gurux.fi/GuruxDLMSTranslator?manufacturer=" + link.Text.Trim();
+                                link.Links.Add(data);
+                                link.AutoSize = true;
+                                link.Location = MessageXmlTB.GetPositionFromCharIndex(MessageXmlTB.TextLength);
+                                MessageXmlTB.Controls.Add(link);
+                                MessageXmlTB.AppendText(link.Text + "   ");
+                                MessageXmlTB.SelectionStart = MessageXmlTB.TextLength;
+                                */
+                                //Flag ID is 3 chars.
+                                commentEnd += 4;
+                                lastIndex = commentEnd;
+                                startIndex = commentEnd;
+                            }
+                            else
+                            {
+                                MessageXmlTB.AppendText(text.Substring(lastIndex, startIndex - lastIndex));
+                                MessageXmlTB.SelectionStart = MessageXmlTB.TextLength;
+                                MessageXmlTB.SelectionLength = 0;
+                                Color old = MessageXmlTB.SelectionColor;
+                                MessageXmlTB.SelectionColor = Color.Green;
+                                MessageXmlTB.AppendText(text.Substring(startIndex, commentEnd - startIndex));
+                                MessageXmlTB.SelectionColor = old;
+                                lastIndex = commentEnd;
+                                startIndex = commentEnd;
+                            }
+                        }
+                    }
+                    else if (tag == "-->")
+                    {
+                        startIndex += tag.Length;
+                        Color old = MessageXmlTB.SelectionColor;
+                        MessageXmlTB.SelectionColor = Color.Green;
+                        MessageXmlTB.AppendText(text.Substring(lastIndex, startIndex - lastIndex));
+                        MessageXmlTB.SelectionColor = old;
+                        lastIndex = startIndex;
+                    }
+                    else if (tag == "<ExceptionResponse>")
+                    {
+                        tag = "</ExceptionResponse>";
+                        int end = text.IndexOf(tag, startIndex);
+                        if (end != -1)
+                        {
+                            end += tag.Length;
+                            MessageXmlTB.AppendText(text.Substring(lastIndex, startIndex - lastIndex));
+                            MessageXmlTB.SelectionStart = MessageXmlTB.TextLength;
+                            MessageXmlTB.SelectionLength = 0;
+                            Color old = MessageXmlTB.SelectionColor;
+                            MessageXmlTB.SelectionColor = Color.Red;
+                            MessageXmlTB.AppendText(text.Substring(startIndex, end - startIndex));
+                            MessageXmlTB.SelectionColor = old;
+                            lastIndex = end;
+                            startIndex += tag.Length;
+                        }
+                    }
+                    else if (tag == "<ConformanceBit")
+                    {
+                        UpdateConformanceBits(text, ref startIndex, ref lastIndex);
+                    }
+                }
+                if (color != Color.White)
+                {
+                    MessageXmlTB.SelectionStart = MessageXmlTB.TextLength;
+                    MessageXmlTB.SelectionLength = 0;
+                    Color old = MessageXmlTB.SelectionColor;
+                    MessageXmlTB.SelectionColor = color;
+                    MessageXmlTB.AppendText(text.Substring(lastIndex));
+                    MessageXmlTB.SelectionColor = old;
+                }
+                else
+                {
+                    MessageXmlTB.AppendText(text.Substring(lastIndex));
+                }
+            }
+        }
+
+        delegate void UpdateProgressBarEventHandler(int value);
+
+        void UpdateProgress(int value)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new UpdateProgressBarEventHandler(UpdateProgress), value);
+            }
+            else
+            {
+                ProgressBar.Value = value;
+            }
+        }
+
+        delegate void UpdateProgressBarMaxEventHandler(int value, int count);
+
+        void UpdateMaxProgress(int value, int count)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new UpdateProgressBarMaxEventHandler(UpdateMaxProgress), value, count);
+            }
+            else
+            {
+                if (value == 0)
+                {
+                    if (count != 0)
+                    {
+                        StatusLbl.Text = "Ready " + count + " frames found";
+                    }
+                    else
+                    {
+                        StatusLbl.Text = "Ready";
+                    }
+                    ProgressBar.Value = 0;
+                    ProgressBar.Visible = false;
+                }
+                else
+                {
+                    ProgressBar.Maximum = value;
+                }
+            }
+        }
+
+        delegate void UpdateInterfaceEventHandler(object value);
+
+        void UpdateInterface(object type)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new UpdateInterfaceEventHandler(UpdateInterface), type);
+            }
+            else
+            {
+                InterfaceCb.SelectedItem = type;
+            }
+        }
+
         /// <summary>
         /// Convert message to XML.
         /// </summary>
@@ -280,184 +557,220 @@ namespace GXDLMSDirector
         /// <param name="e"></param>
         private void TranslateBtn_Click(object sender, EventArgs e)
         {
+            Follow follow = (Follow)FollowmessagesCb.SelectedItem;
+            ShowMessages show = (ShowMessages)ShowCb.SelectedItem;
+            MessageXmlTB.Text = null;
+            ProgressBar.Visible = true;
+            object selectedInterface = InterfaceCb.SelectedItem;
             UpdateSecuritySettings();
-            MessageXmlTB.Text = "";
-            if (translator.BlockCipherKey != null)
-            {
-                MessageXmlTB.Text = "BlockCipher key: " + GXDLMSTranslator.ToHex(translator.BlockCipherKey) + Environment.NewLine;
-            }
-            if (translator.AuthenticationKey != null)
-            {
-                MessageXmlTB.Text += "Authentication Key:" + GXDLMSTranslator.ToHex(translator.AuthenticationKey) + Environment.NewLine;
-            }
-            StringBuilder sb = new StringBuilder();
+            StatusLbl.Text = "Finding frames";
             GXByteBuffer bb = new GXByteBuffer();
-            //TODO: This can remove later.
-            Security s = translator.Security;
-            try
+            bb.Set(GXDLMSTranslator.HexToBytes(RemoveComments(string.Join(Environment.NewLine, MessagePduTB.Lines))));
+            System.Threading.Tasks.Task.Run(() =>
             {
-                translator.Clear();
-                translator.PduOnly = PduOnlyCB.Checked;
-                GXByteBuffer pdu = new GXByteBuffer();
-                bb.Set(GXDLMSTranslator.HexToBytes(RemoveComments(MessagePduTB.Text)));
-                InterfaceType type;
-                if (InterfaceTypeCb.SelectedItem is string)
+                if (translator.BlockCipherKey != null)
                 {
-                    type = GXDLMSTranslator.GetDlmsFraming(bb);
-                    InterfaceTypeCb.SelectedItem = type;
+                    OnAppendMessage("BlockCipher key: " +
+                        GXDLMSTranslator.ToHex(translator.BlockCipherKey) + Environment.NewLine, Color.Green);
                 }
-                else
+                if (translator.AuthenticationKey != null)
                 {
-                    type = (InterfaceType)InterfaceTypeCb.SelectedItem;
+                    OnAppendMessage("Authentication Key:" +
+                        GXDLMSTranslator.ToHex(translator.AuthenticationKey) + Environment.NewLine, Color.Green);
                 }
-                int cnt = 1;
-                string last = "";
-                while (translator.FindNextFrame(bb, pdu, type))
+                StringBuilder sb = new StringBuilder();
+                Security s = translator.Security;
+                int count = 1;
+                try
                 {
-                    int start = bb.Position;
-                    GXDLMSTranslatorMessage msg = new GXDLMSTranslatorMessage();
-                    msg.Message = bb;
-                    translator.MessageToXml(msg);
-                    //Remove duplicate messages.
-                    if (RemoveDuplicatesCb.Checked)
+                    translator.Clear();
+                    translator.PduOnly = PduOnlyMnu.Checked;
+                    GXByteBuffer pdu = new GXByteBuffer();
+                    UpdateProgress(0);
+                    UpdateMaxProgress(bb.Size, 0);
+                    GXDLMSTranslatorMessage frame = new GXDLMSTranslatorMessage();
+                    frame.Message = bb;
+                    if (selectedInterface is string)
                     {
-                        if (last == msg.Xml)
-                        {
-                            continue;
-                        }
+                        frame.InterfaceType = GXDLMSTranslator.GetDlmsFraming(bb);
+                        UpdateInterface(frame.InterfaceType);
                     }
-                    last = msg.Xml;
-                    if (msg.Command == Command.Aarq)
+                    else
                     {
-                        if (msg.SystemTitle != null && msg.SystemTitle.Length == 8)
+                        frame.InterfaceType = (InterfaceType)selectedInterface;
+                    }
+                    string last = "";
+                    int clientAddress = 0, serverAddress = 0;
+                    while (translator.FindNextFrame(frame, pdu, clientAddress, serverAddress))
+                    {
+                        int start = bb.Position;
+                        UpdateProgress(start);
+                        GXDLMSTranslatorMessage msg = new GXDLMSTranslatorMessage();
+                        msg.Message = bb;
+                        translator.MessageToXml(msg);
+                        if (follow != Follow.None)
                         {
-                            if (UpdateSystemTitle(this, "Current System title \"{0}\" is different in the parsed \"{1}\". Do you want to start using parsed one?",
-                                msg.SystemTitle, translator.SystemTitle))
+                            if ((follow & Follow.Client) != 0 && clientAddress == 0)
                             {
-                                translator.SystemTitle = msg.SystemTitle;
-                                Ciphering.SystemTitle = msg.SystemTitle;
+                                clientAddress = msg.SourceAddress;
+                            }
+                            if ((follow & Follow.Meter) != 0 && serverAddress == 0)
+                            {
+                                serverAddress = msg.TargetAddress;
                             }
                         }
-                        if (msg.DedicatedKey != null && msg.DedicatedKey.Length == 16)
+                        //Remove duplicate messages.
+                        if (RemoveDuplicatesMnu.Checked)
                         {
-                            if (UpdateSystemTitle(this, "Current dedicated key \"{0}\" is different in the parsed \"{1}\". Do you want to start using parsed one?",
-                                msg.DedicatedKey, translator.DedicatedKey))
+                            if (last == msg.Xml)
                             {
-                                translator.DedicatedKey = msg.DedicatedKey;
-                                Ciphering.DedicatedKey = msg.DedicatedKey;
+                                continue;
                             }
                         }
-                    }
-                    if (msg.Command == Command.Aare && msg.SystemTitle != null && msg.SystemTitle.Length == 8)
-                    {
-                        if (UpdateSystemTitle(this, "Current Server System title \"{0}\" is different in the parsed \"{1}\". Do you want to start using parsed one?",
-                            msg.SystemTitle, translator.ServerSystemTitle))
+                        last = msg.Xml;
+                        if (msg.Command == Command.Aarq)
                         {
-                            translator.ServerSystemTitle = msg.SystemTitle;
-                            Ciphering.ServerSystemTitle = msg.SystemTitle;
+                            if (msg.SystemTitle != null && msg.SystemTitle.Length == 8)
+                            {
+                                if (UpdateSystemTitle(this, "Current System title \"{0}\" is different in the parsed \"{1}\". Do you want to start using parsed one?",
+                                    msg.SystemTitle, translator.SystemTitle))
+                                {
+                                    translator.SystemTitle = msg.SystemTitle;
+                                    Ciphering.SystemTitle = msg.SystemTitle;
+                                }
+                            }
+                            if (msg.DedicatedKey != null && msg.DedicatedKey.Length == 16)
+                            {
+                                if (UpdateSystemTitle(this, "Current dedicated key \"{0}\" is different in the parsed \"{1}\". Do you want to start using parsed one?",
+                                    msg.DedicatedKey, translator.DedicatedKey))
+                                {
+                                    translator.DedicatedKey = msg.DedicatedKey;
+                                    Ciphering.DedicatedKey = msg.DedicatedKey;
+                                }
+                            }
                         }
-                    }
-                    if (!AllRb.Checked)
-                    {
-                        switch (msg.Command)
+                        if (msg.Command == Command.Aare && msg.SystemTitle != null && msg.SystemTitle.Length == 8)
                         {
-                            case Command.None:
-                                break;
-                            case Command.InitiateRequest:
-                            case Command.ReadRequest:
-                            case Command.WriteRequest:
-                            case Command.GetRequest:
-                            case Command.SetRequest:
-                            case Command.MethodRequest:
-                            case Command.Snrm:
-                            case Command.Aarq:
-                            case Command.ReleaseRequest:
-                            case Command.DisconnectRequest:
-                            case Command.AccessRequest:
-                            case Command.GloGetRequest:
-                            case Command.GloSetRequest:
-                            case Command.GloMethodRequest:
-                            case Command.GloInitiateRequest:
-                            case Command.GloReadRequest:
-                            case Command.GloWriteRequest:
-                            case Command.DedInitiateRequest:
-                            case Command.DedReadRequest:
-                            case Command.DedWriteRequest:
-                            case Command.DedGetRequest:
-                            case Command.DedSetRequest:
-                            case Command.DedMethodRequest:
-                            case Command.GatewayRequest:
-                                if (ReceivedRb.Checked)
-                                {
-                                    continue;
-                                }
-                                break;
-                            case Command.InitiateResponse:
-                            case Command.ReadResponse:
-                            case Command.WriteResponse:
-                            case Command.GetResponse:
-                            case Command.SetResponse:
-                            case Command.MethodResponse:
-                            case Command.Ua:
-                            case Command.Aare:
-                            case Command.ReleaseResponse:
-                            case Command.AccessResponse:
-                            case Command.GloGetResponse:
-                            case Command.GloSetResponse:
-                            case Command.GloMethodResponse:
-                            case Command.GloInitiateResponse:
-                            case Command.GloReadResponse:
-                            case Command.GloWriteResponse:
-                            case Command.DedInitiateResponse:
-                            case Command.DedReadResponse:
-                            case Command.DedWriteResponse:
-                            case Command.DedGetResponse:
-                            case Command.DedSetResponse:
-                            case Command.DedMethodResponse:
-                            case Command.GatewayResponse:
-                                if (SentRb.Checked)
-                                {
-                                    continue;
-                                }
-                                break;
-                            case Command.DisconnectMode:
-                            case Command.UnacceptableFrame:
-                            case Command.ConfirmedServiceError:
-                            case Command.ExceptionResponse:
-                            case Command.GeneralBlockTransfer:
-                            case Command.DataNotification:
-                            case Command.GloEventNotification:
-                            case Command.GloConfirmedServiceError:
-                            case Command.GeneralGloCiphering:
-                            case Command.GeneralDedCiphering:
-                            case Command.GeneralCiphering:
-                            case Command.GeneralSigning:
-                            case Command.InformationReport:
-                            case Command.EventNotification:
-                            case Command.DedConfirmedServiceError:
-                            case Command.DedUnconfirmedWriteRequest:
-                            case Command.DedInformationReport:
-                            case Command.DedEventNotification:
-                                break;
+                            if (UpdateSystemTitle(this, "Current Server System title \"{0}\" is different in the parsed \"{1}\". Do you want to start using parsed one?",
+                                msg.SystemTitle, translator.ServerSystemTitle))
+                            {
+                                translator.ServerSystemTitle = msg.SystemTitle;
+                                Ciphering.ServerSystemTitle = msg.SystemTitle;
+                            }
                         }
+                        if (show != ShowMessages.All)
+                        {
+                            switch (msg.Command)
+                            {
+                                case Command.None:
+                                    break;
+                                case Command.InitiateRequest:
+                                case Command.ReadRequest:
+                                case Command.WriteRequest:
+                                case Command.GetRequest:
+                                case Command.SetRequest:
+                                case Command.MethodRequest:
+                                case Command.Snrm:
+                                case Command.Aarq:
+                                case Command.ReleaseRequest:
+                                case Command.DisconnectRequest:
+                                case Command.AccessRequest:
+                                case Command.GloGetRequest:
+                                case Command.GloSetRequest:
+                                case Command.GloMethodRequest:
+                                case Command.GloInitiateRequest:
+                                case Command.GloReadRequest:
+                                case Command.GloWriteRequest:
+                                case Command.DedInitiateRequest:
+                                case Command.DedReadRequest:
+                                case Command.DedWriteRequest:
+                                case Command.DedGetRequest:
+                                case Command.DedSetRequest:
+                                case Command.DedMethodRequest:
+                                case Command.GatewayRequest:
+                                    if (show == ShowMessages.Received)
+                                    {
+                                        continue;
+                                    }
+                                    break;
+                                case Command.InitiateResponse:
+                                case Command.ReadResponse:
+                                case Command.WriteResponse:
+                                case Command.GetResponse:
+                                case Command.SetResponse:
+                                case Command.MethodResponse:
+                                case Command.Ua:
+                                case Command.Aare:
+                                case Command.ReleaseResponse:
+                                case Command.AccessResponse:
+                                case Command.GloGetResponse:
+                                case Command.GloSetResponse:
+                                case Command.GloMethodResponse:
+                                case Command.GloInitiateResponse:
+                                case Command.GloReadResponse:
+                                case Command.GloWriteResponse:
+                                case Command.DedInitiateResponse:
+                                case Command.DedReadResponse:
+                                case Command.DedWriteResponse:
+                                case Command.DedGetResponse:
+                                case Command.DedSetResponse:
+                                case Command.DedMethodResponse:
+                                case Command.GatewayResponse:
+                                    if (show == ShowMessages.Sent)
+                                    {
+                                        continue;
+                                    }
+                                    break;
+                                case Command.DisconnectMode:
+                                case Command.UnacceptableFrame:
+                                case Command.ConfirmedServiceError:
+                                case Command.ExceptionResponse:
+                                case Command.GeneralBlockTransfer:
+                                case Command.DataNotification:
+                                case Command.GloEventNotification:
+                                case Command.GloConfirmedServiceError:
+                                case Command.GeneralGloCiphering:
+                                case Command.GeneralDedCiphering:
+                                case Command.GeneralCiphering:
+                                case Command.GeneralSigning:
+                                case Command.InformationReport:
+                                case Command.EventNotification:
+                                case Command.DedConfirmedServiceError:
+                                case Command.DedUnconfirmedWriteRequest:
+                                case Command.DedInformationReport:
+                                case Command.DedEventNotification:
+                                    break;
+                            }
+                        }
+                        sb.AppendLine(count + ": " + bb.ToHex(true, start, bb.Position - start));
+                        sb.Append(msg.Xml);
+                        if (msg.Exception != null)
+                        {
+                            ++count;
+                            OnAppendMessage(sb.ToString(), Color.Red);
+                        }
+                        else if (show != ShowMessages.Failed)
+                        {
+                            ++count;
+                            OnAppendMessage(sb.ToString());
+                        }
+                        sb.Clear();
+                        pdu.Clear();
                     }
-                    sb.AppendLine(cnt + ": " + bb.ToHex(true, start, bb.Position - start));
-                    ++cnt;
-                    sb.Append(msg.Xml);
-                    pdu.Clear();
+                    OnAppendMessage(sb.ToString());
+                    translator.Security = s;
                 }
-                MessageXmlTB.Text += sb.ToString();
-                translator.Security = s;
-            }
-            catch (Exception ex)
-            {
-                translator.Security = s;
-                MessageXmlTB.AppendText(sb.ToString());
-                MessageXmlTB.AppendText(Environment.NewLine);
-                MessageXmlTB.AppendText(bb.RemainingHexString(true));
-
-                MessageBox.Show(this, ex.Message);
-            }
+                catch (Exception ex)
+                {
+                    translator.Security = s;
+                    OnAppendMessage(sb.ToString());
+                    OnAppendMessage(Environment.NewLine);
+                    OnAppendMessage(bb.RemainingHexString(true));
+                    MessageBox.Show(ex.Message);
+                }
+                //Count starts from 1.
+                UpdateMaxProgress(0, count - 1);
+            });
         }
 
         /// <summary>
@@ -465,9 +778,10 @@ namespace GXDLMSDirector
         /// </summary>
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            bool page1 = tabControl1.SelectedIndex == 0;
-            PduOnlyCB.Visible = CompletePDUCb.Visible = TranslateBtn.Visible = page1;
-            PduToXmlBtn.Visible = XMLToPduBtn.Visible = !page1;
+            InterfaceCb.Enabled = ShowCb.Enabled = FollowmessagesCb.Enabled = CompletePduMnu.Visible = PduOnlyMnu.Visible = TranslateMnu.Visible = tabControl1.SelectedTab == MessagesTab;
+            PduToXmlMnu.Visible = XmlToPduMnu.Visible = tabControl1.SelectedTab == PduTab;
+            ConvertMnu.Visible = tabControl1.SelectedTab == DataTab;
+            TranslateBtn.Enabled = tabControl1.SelectedTab == MessagesTab || tabControl1.SelectedTab == PduTab || tabControl1.SelectedTab == DataTab;
         }
 
         /// <summary>
@@ -475,26 +789,11 @@ namespace GXDLMSDirector
         /// </summary>
         private void HexCB_CheckedChanged(object sender, EventArgs e)
         {
-            translator.Hex = HexCB.Checked;
+            translator.Hex = HexMnu.Checked;
             if (tabControl1.SelectedIndex == 0)
             {
                 TranslateBtn_Click(null, null);
             }
-        }
-
-        /// <summary>
-        /// Show only PDU.
-        /// </summary>
-        private void PduOnlyCB_CheckedChanged(object sender, EventArgs e)
-        {
-            translator.PduOnly = PduOnlyCB.Checked;
-            TranslateBtn_Click(null, null);
-        }
-
-        private void CompletePDUCb_CheckedChanged(object sender, EventArgs e)
-        {
-            translator.CompletePdu = CompletePDUCb.Checked;
-            TranslateBtn_Click(null, null);
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -515,7 +814,9 @@ namespace GXDLMSDirector
             Properties.Settings.Default.ClientSigningKey = Ciphering.ClientSigningKey;
             Properties.Settings.Default.ServerAgreementKey = Ciphering.ServerAgreementKey;
             Properties.Settings.Default.ServerSigningKey = Ciphering.ServerSigningKey;
-
+            Properties.Settings.Default.TranslatorInterface = InterfaceCb.SelectedIndex;
+            Properties.Settings.Default.TranslatorShow = ShowCb.SelectedIndex;
+            Properties.Settings.Default.TranslatorFollow = FollowmessagesCb.SelectedIndex;
             Properties.Settings.Default.Data = DataPdu.Text;
             string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
             if (!Directory.Exists(path))
@@ -530,9 +831,33 @@ namespace GXDLMSDirector
             Properties.Settings.Default.Save();
         }
 
-        private void StandardCB_CheckedChanged(object sender, EventArgs e)
+        private void ExitMnu_Click(object sender, EventArgs e)
         {
-            if (StandardCB.Checked)
+            Close();
+        }
+
+        /// <summary>
+        /// Show only PDU.
+        /// </summary>
+        private void PduOnlyMnu_Click(object sender, EventArgs e)
+        {
+            PduOnlyMnu.Checked = !PduOnlyMnu.Checked;
+            translator.PduOnly = PduOnlyMnu.Checked;
+            TranslateBtn_Click(null, null);
+        }
+
+        private void ComplatePduMnu_Click(object sender, EventArgs e)
+        {
+            CompletePduMnu.Checked = !CompletePduMnu.Checked;
+            translator.CompletePdu = CompletePduMnu.Checked;
+            TranslateBtn_Click(null, null);
+        }
+
+        private void StandardMnu_Click(object sender, EventArgs e)
+        {
+            StandardMnu.Checked = !StandardMnu.Checked;
+            Properties.Settings.Default.TranslatorStandard = StandardMnu.Checked;
+            if (StandardMnu.Checked)
             {
                 translator = new GXDLMSTranslator(TranslatorOutputType.StandardXml);
             }
@@ -540,9 +865,9 @@ namespace GXDLMSDirector
             {
                 translator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
             }
-            translator.PduOnly = PduOnlyCB.Checked;
+            translator.PduOnly = PduOnlyMnu.Checked;
             translator.Comments = true;
-            translator.Hex = HexCB.Checked;
+            translator.Hex = HexMnu.Checked;
             if (tabControl1.SelectedIndex == 0)
             {
                 TranslateBtn_Click(null, null);
@@ -550,6 +875,180 @@ namespace GXDLMSDirector
             else if (tabControl1.SelectedIndex == 1)
             {
                 PduToXmlBtn_Click(null, null);
+            }
+        }
+
+        private void HexMnu_Click(object sender, EventArgs e)
+        {
+            HexMnu.Checked = !HexMnu.Checked;
+            Properties.Settings.Default.TranslatorHex = HexMnu.Checked;
+
+            translator.Hex = HexMnu.Checked;
+            if (tabControl1.SelectedIndex == 0)
+            {
+                TranslateBtn_Click(null, null);
+            }
+            else if (tabControl1.SelectedIndex == 1)
+            {
+                PduToXmlBtn_Click(null, null);
+            }
+        }
+
+        private void RemoveDuplicatesMnu_Click(object sender, EventArgs e)
+        {
+            RemoveDuplicatesMnu.Checked = !RemoveDuplicatesMnu.Checked;
+            TranslateBtn_Click(null, null);
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Process.Start("https://www.gurux.fi/index.php?q=GXDLMSTranslatorHelp");
+            }
+            catch (Exception Ex)
+            {
+                GXDLMS.Common.Error.ShowError(this, Ex);
+            }
+        }
+
+        private void ScanBtn_Click(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedTab == MessagesTab)
+            {
+                TranslateBtn_Click(null, null);
+            }
+            else if (tabControl1.SelectedTab == PduTab)
+            {
+                PduToXmlBtn_Click(null, null);
+            }
+            else if (tabControl1.SelectedTab == DataTab)
+            {
+                ConvertMnu_Click(null, null);
+            }
+        }
+
+        /// <summary>
+        /// Convert value data to XML.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ConvertMnu_Click(object sender, EventArgs e)
+        {
+            string xml = null;
+            UpdateSecuritySettings();
+            try
+            {
+                translator.DataToXml(DataPdu.Text, out xml);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message);
+            }
+            finally
+            {
+                DataXml.Text = xml;
+            }
+        }
+
+        private void FindMnu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                GXFindParameters p = new GXFindParameters();
+                p.Hide = SearchDialogHidden.Obis;
+                p.Text = searchText;
+                if (GXDlmsUi.Find(this, p))
+                {
+                    searchText = p.Text;
+                    FindNextMnu.Enabled = true;
+                    FindNextMnu_Click(null, null);
+                }
+            }
+            catch (Exception Ex)
+            {
+                GXDLMS.Common.Error.ShowError(this, Ex);
+            }
+        }
+
+        private void FindNextMnu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (searchText == null)
+                {
+                    FindMnu_Click(sender, e);
+                    return;
+                }
+                int pos = MessageXmlTB.Text.IndexOf(searchText, MessageXmlTB.SelectionStart + 1, StringComparison.InvariantCultureIgnoreCase);
+                if (pos != -1)
+                {
+                    MessageXmlTB.Select(pos, searchText.Length);
+                }
+            }
+            catch (Exception Ex)
+            {
+                GXDLMS.Common.Error.ShowError(this, Ex);
+            }
+        }
+
+        private void Link_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                Process.Start(e.Link.LinkData.ToString());
+            }
+            catch (Exception Ex)
+            {
+                GXDLMS.Common.Error.ShowError(this, Ex);
+            }
+        }
+
+        private void MessageXmlTB_LinkClicked(object sender, LinkClickedEventArgs e)
+        {
+            try
+            {
+                Process.Start(e.LinkText);
+            }
+            catch (Exception Ex)
+            {
+                GXDLMS.Common.Error.ShowError(this, Ex);
+            }
+        }
+
+        /// <summary>
+        /// Update link location on scrolling.
+        /// </summary>
+        private void MessageXmlTB_Scroll(object sender, EventArgs e)
+        {
+            foreach(var it in MessageXmlTB.Controls)
+            {
+                if (it is LinkLabel l)
+                {
+                    int pos = (int)l.Tag;
+                    Point p = MessageXmlTB.GetPositionFromCharIndex(pos);
+                    l.Top = p.Y;
+                    l.Left = p.X;
+                }
+            }
+
+        }
+
+
+        /// <summary>
+        /// Update link location on scrolling.
+        /// </summary>
+        private void MessageXmlTB_SizeChanged(object sender, EventArgs e)
+        {
+            foreach (var it in MessageXmlTB.Controls)
+            {
+                if (it is LinkLabel l)
+                {
+                    int pos = (int)l.Tag;
+                    Point p = MessageXmlTB.GetPositionFromCharIndex(pos);
+                    l.Top = p.Y;
+                    l.Left = p.X;
+                }
             }
         }
     }

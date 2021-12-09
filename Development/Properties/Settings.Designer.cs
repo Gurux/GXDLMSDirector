@@ -946,5 +946,77 @@ namespace GXDLMSDirector.Properties {
                 this["TestFailedClientsLast"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int TranslatorInterface {
+            get {
+                return ((int)(this["TranslatorInterface"]));
+            }
+            set {
+                this["TranslatorInterface"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int TranslatorShow {
+            get {
+                return ((int)(this["TranslatorShow"]));
+            }
+            set {
+                this["TranslatorShow"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int TranslatorFollow {
+            get {
+                return ((int)(this["TranslatorFollow"]));
+            }
+            set {
+                this["TranslatorFollow"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public int HdlcConnectionDelay {
+            get {
+                return ((int)(this["HdlcConnectionDelay"]));
+            }
+            set {
+                this["HdlcConnectionDelay"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool TranslatorStandard {
+            get {
+                return ((bool)(this["TranslatorStandard"]));
+            }
+            set {
+                this["TranslatorStandard"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool TranslatorHex {
+            get {
+                return ((bool)(this["TranslatorHex"]));
+            }
+            set {
+                this["TranslatorHex"] = value;
+            }
+        }
     }
 }

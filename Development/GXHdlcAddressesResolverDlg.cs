@@ -36,6 +36,8 @@ using Gurux.Common;
 using Gurux.Serial;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -49,13 +51,14 @@ namespace GXDLMSDirector
         public GXHdlcAddressesResolverDlg(IGXMedia media)
         {
             InitializeComponent();
-            if (!Properties.Settings.Default.HdlcAddressUseOpticalProbe && (media is GXSerial s))
+            if (Properties.Settings.Default.HdlcAddressScanBaudRates && (media is GXSerial s))
             {
+                List<string> list = new List<string>(Properties.Settings.Default.HdlcAddressBaudRates.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
                 foreach (int rate in s.GetAvailableBaudRates(null))
                 {
                     if (rate != 0)
                     {
-                        bool c = Properties.Settings.Default.HdlcAddressBaudRates.Contains(rate.ToString());
+                        bool c = list.Contains(rate.ToString());
                         BaudRatesCl.Items.Add(rate.ToString(), c);
                     }
                 }
@@ -87,6 +90,7 @@ namespace GXDLMSDirector
             ClientAddressesTb.Text = Properties.Settings.Default.HdlcClientAddresses.Replace(",", Environment.NewLine);
             InitializeWaitTimeTb.Text = Properties.Settings.Default.HdlcSearchInitialWaitTime.ToString();
             SearchWaitTimeTb.Text = Properties.Settings.Default.HdlcSearchWaitTime.ToString();
+            ConnectionDelayTb.Text = Properties.Settings.Default.HdlcConnectionDelay.ToString();
         }
 
         private void UpdateAddresses(bool hex, List<int> serverAddresses, List<int> clientAddresses)
@@ -95,11 +99,13 @@ namespace GXDLMSDirector
             //Restore default values if not set.
             if (ServerAddressesTb.Text == "")
             {
-                ServerAddressesTb.Text = "1, 145, 127,16383".Replace(",", Environment.NewLine);
+                //127 is broadcast address for one byte.
+                //16383 is broadcast address for two byte.
+                ServerAddressesTb.Text = "1,145,28672,127,16383".Replace(",", Environment.NewLine);
             }
             if (ClientAddressesTb.Text == "")
             {
-                ClientAddressesTb.Text = "16, 1, 100".Replace(",", Environment.NewLine);
+                ClientAddressesTb.Text = "16,1,100".Replace(",", Environment.NewLine);
             }
             serverAddresses.AddRange(ServerAddressesTb.Text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Select(q => int.Parse(q, style)).ToArray());
             if (serverAddresses.Count == 0)
@@ -127,6 +133,11 @@ namespace GXDLMSDirector
                 {
                     throw new Exception("Invalid initial wait time value.");
                 }
+                Properties.Settings.Default.HdlcConnectionDelay = int.Parse(ConnectionDelayTb.Text);
+                if (Properties.Settings.Default.HdlcConnectionDelay < 0)
+                {
+                    throw new Exception("Invalid HDLC connection delay.");
+                }
                 List<int> serverAddresses = new List<int>();
                 List<int> clientAddresses = new List<int>();
                 UpdateAddresses(HexCb.Checked, serverAddresses, clientAddresses);
@@ -134,6 +145,19 @@ namespace GXDLMSDirector
                 Properties.Settings.Default.HdlcClientAddresses = string.Join(",", clientAddresses);
                 Properties.Settings.Default.TestFoundMetersFirst = TestFoundMetersFirstCb.Checked;
                 Properties.Settings.Default.TestFailedClientsLast = TestFailedClientsLastCb.Checked;
+                if (BaudRatesPanel.Visible)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    foreach (var it in BaudRatesCl.CheckedItems)
+                    {
+                        if (sb.Length != 0)
+                        {
+                            sb.Append(';');
+                        }
+                        sb.Append(it);
+                    }
+                    Properties.Settings.Default.HdlcAddressBaudRates = sb.ToString();
+                }
             }
             catch (Exception Ex)
             {
@@ -179,6 +203,52 @@ namespace GXDLMSDirector
                     }
                 }
                 ClientAddressesTb.Text = sb.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Generate all posible server address variables.
+        /// </summary>
+        private void ServerGenerateAllBtn_Click(object sender, EventArgs e)
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int pos = 1; pos <= 16383; ++pos)
+            {
+                sb.AppendLine(pos.ToString());
+            }
+            ServerAddressesTb.Text = sb.ToString();
+        }
+
+        /// <summary>
+        /// Generate all posible client address variables.
+        /// </summary>
+        private void ClientGenerateAllBtn_Click(object sender, EventArgs e)
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int pos = 1; pos <= 127; ++pos)
+            {
+                sb.AppendLine(pos.ToString());
+            }
+            ClientAddressesTb.Text = sb.ToString();
+        }
+
+        /// <summary>
+        /// Show help not available message.
+        /// </summary>
+        /// <param name="hevent">A HelpEventArgs that contains the event data.</param>
+        protected override void OnHelpRequested(HelpEventArgs hevent)
+        {
+            try
+            {
+                string str = "https://www.gurux.fi/index.php?q=GXDLMSHdlcAddressResolverHelp";
+                // Show online help.
+                Process.Start(str);
+                // Set flag to show that the Help event as been handled
+                hevent.Handled = true;
+            }
+            catch (Exception Ex)
+            {
+                GXDLMS.Common.Error.ShowError(this, Ex);
             }
         }
     }

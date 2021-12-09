@@ -1362,7 +1362,8 @@ namespace GXDLMSDirector
                     {
                         GXReplyData reply = new GXReplyData();
                         dev.Comm.client.UseLogicalNameReferencing = false;
-                        dev.Comm.ReadDataBlock(dev.Comm.client.Write((ushort)0xFA00, null, DataType.Array, ObjectType.AssociationShortName, 1), "Read service test", 1, 0, reply);
+                        GXDLMSAssociationShortName sn = new GXDLMSAssociationShortName();
+                        dev.Comm.ReadDataBlock(dev.Comm.client.Write(sn, 1), "Read service test", 1, 0, reply);
                         AddError(test, dev, output.Errors, "Write service test failed");
                     }
                 }

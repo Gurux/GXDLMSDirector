@@ -159,6 +159,7 @@ namespace GXDLMSDirector
             this.SigningKeyCb = new System.Windows.Forms.ComboBox();
             this.DeviceTab = new System.Windows.Forms.TabControl();
             this.AdvancedTab = new System.Windows.Forms.TabPage();
+            this.OverwriteAttributeAccessRightsCb = new System.Windows.Forms.CheckBox();
             this.GBTWindowSizeTb = new System.Windows.Forms.TextBox();
             this.GBTWindowSizeLbl = new System.Windows.Forms.Label();
             this.SignInitiateRequestResponseCb = new System.Windows.Forms.CheckBox();
@@ -221,7 +222,6 @@ namespace GXDLMSDirector
             this.helpProvider1 = new System.Windows.Forms.HelpProvider();
             this.conformanceHelpProvider = new System.Windows.Forms.HelpProvider();
             this.ShowAsHex = new System.Windows.Forms.CheckBox();
-            this.OverwriteAttributeAccessRightsCb = new System.Windows.Forms.CheckBox();
             this.SupportedServicesTab.SuspendLayout();
             this.SNSettings.SuspendLayout();
             this.LNSettings.SuspendLayout();
@@ -403,7 +403,7 @@ namespace GXDLMSDirector
             // ReadBlockTransferCB
             // 
             this.ReadBlockTransferCB.AutoSize = true;
-            this.conformanceHelpProvider.SetHelpKeyword(this.ReadBlockTransferCB, "ReadBlockTransfer");
+            this.conformanceHelpProvider.SetHelpKeyword(this.ReadBlockTransferCB, "BlockTransferWithGetOrRead");
             this.conformanceHelpProvider.SetHelpNavigator(this.ReadBlockTransferCB, System.Windows.Forms.HelpNavigator.Topic);
             this.ReadBlockTransferCB.Location = new System.Drawing.Point(6, 120);
             this.ReadBlockTransferCB.Name = "ReadBlockTransferCB";
@@ -416,7 +416,7 @@ namespace GXDLMSDirector
             // WriteBlockTransferCB
             // 
             this.WriteBlockTransferCB.AutoSize = true;
-            this.conformanceHelpProvider.SetHelpKeyword(this.WriteBlockTransferCB, "WriteBlockTransfer");
+            this.conformanceHelpProvider.SetHelpKeyword(this.WriteBlockTransferCB, "BlockTransferWithSetOrWrite");
             this.conformanceHelpProvider.SetHelpNavigator(this.WriteBlockTransferCB, System.Windows.Forms.HelpNavigator.Topic);
             this.WriteBlockTransferCB.Location = new System.Drawing.Point(6, 100);
             this.WriteBlockTransferCB.Name = "WriteBlockTransferCB";
@@ -588,7 +588,7 @@ namespace GXDLMSDirector
             // GetBlockTransferCB
             // 
             this.GetBlockTransferCB.AutoSize = true;
-            this.conformanceHelpProvider.SetHelpKeyword(this.GetBlockTransferCB, "GetBlockTransfer");
+            this.conformanceHelpProvider.SetHelpKeyword(this.GetBlockTransferCB, "BlockTransferWithGetOrRead");
             this.conformanceHelpProvider.SetHelpNavigator(this.GetBlockTransferCB, System.Windows.Forms.HelpNavigator.Topic);
             this.GetBlockTransferCB.Location = new System.Drawing.Point(6, 220);
             this.GetBlockTransferCB.Name = "GetBlockTransferCB";
@@ -601,7 +601,7 @@ namespace GXDLMSDirector
             // SetBlockTransferCB
             // 
             this.SetBlockTransferCB.AutoSize = true;
-            this.conformanceHelpProvider.SetHelpKeyword(this.SetBlockTransferCB, "SetBlockTransfer");
+            this.conformanceHelpProvider.SetHelpKeyword(this.SetBlockTransferCB, "BlockTransferWithSetOrWrite ");
             this.conformanceHelpProvider.SetHelpNavigator(this.SetBlockTransferCB, System.Windows.Forms.HelpNavigator.Topic);
             this.SetBlockTransferCB.Location = new System.Drawing.Point(6, 200);
             this.SetBlockTransferCB.Name = "SetBlockTransferCB";
@@ -614,7 +614,7 @@ namespace GXDLMSDirector
             // ActionBlockTransferCB
             // 
             this.ActionBlockTransferCB.AutoSize = true;
-            this.conformanceHelpProvider.SetHelpKeyword(this.ActionBlockTransferCB, "ActionBlockTransfer");
+            this.conformanceHelpProvider.SetHelpKeyword(this.ActionBlockTransferCB, "BlockTransferWithAction");
             this.conformanceHelpProvider.SetHelpNavigator(this.ActionBlockTransferCB, System.Windows.Forms.HelpNavigator.Topic);
             this.ActionBlockTransferCB.Location = new System.Drawing.Point(6, 180);
             this.ActionBlockTransferCB.Name = "ActionBlockTransferCB";
@@ -1474,6 +1474,18 @@ namespace GXDLMSDirector
             this.AdvancedTab.Text = "Advanced";
             this.AdvancedTab.UseVisualStyleBackColor = true;
             // 
+            // OverwriteAttributeAccessRightsCb
+            // 
+            this.OverwriteAttributeAccessRightsCb.AutoSize = true;
+            this.helpProvider1.SetHelpString(this.OverwriteAttributeAccessRightsCb, "Is protected release used.");
+            this.OverwriteAttributeAccessRightsCb.Location = new System.Drawing.Point(14, 354);
+            this.OverwriteAttributeAccessRightsCb.Name = "OverwriteAttributeAccessRightsCb";
+            this.helpProvider1.SetShowHelp(this.OverwriteAttributeAccessRightsCb, true);
+            this.OverwriteAttributeAccessRightsCb.Size = new System.Drawing.Size(177, 17);
+            this.OverwriteAttributeAccessRightsCb.TabIndex = 68;
+            this.OverwriteAttributeAccessRightsCb.Text = "Overwrite attribute access rights";
+            this.OverwriteAttributeAccessRightsCb.UseVisualStyleBackColor = true;
+            // 
             // GBTWindowSizeTb
             // 
             this.helpProvider1.SetHelpKeyword(this.GBTWindowSizeTb, "MaxPdu");
@@ -2152,18 +2164,6 @@ namespace GXDLMSDirector
             this.ShowAsHex.Text = "Hex";
             this.ShowAsHex.UseVisualStyleBackColor = true;
             this.ShowAsHex.CheckedChanged += new System.EventHandler(this.ShowAsHex_CheckedChanged);
-            // 
-            // OverwriteAttributeAccessRightsCb
-            // 
-            this.OverwriteAttributeAccessRightsCb.AutoSize = true;
-            this.helpProvider1.SetHelpString(this.OverwriteAttributeAccessRightsCb, "Is protected release used.");
-            this.OverwriteAttributeAccessRightsCb.Location = new System.Drawing.Point(14, 354);
-            this.OverwriteAttributeAccessRightsCb.Name = "OverwriteAttributeAccessRightsCb";
-            this.helpProvider1.SetShowHelp(this.OverwriteAttributeAccessRightsCb, true);
-            this.OverwriteAttributeAccessRightsCb.Size = new System.Drawing.Size(177, 17);
-            this.OverwriteAttributeAccessRightsCb.TabIndex = 68;
-            this.OverwriteAttributeAccessRightsCb.Text = "Overwrite attribute access rights";
-            this.OverwriteAttributeAccessRightsCb.UseVisualStyleBackColor = true;
             // 
             // DevicePropertiesForm
             // 

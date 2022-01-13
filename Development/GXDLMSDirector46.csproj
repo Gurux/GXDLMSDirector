@@ -281,6 +281,7 @@
     <Compile Include="ConformanceTests\Internal\GXConformanceValue.cs" />
     <Compile Include="ConformanceTests\Internal\GXConformanceValueConverter.cs" />
     <Compile Include="ConformanceTests\Internal\GXConformanceValueDescriptorCollection.cs" />
+    <Compile Include="ConformanceTests\Settings\ConformanceTestAttribute.cs" />
     <Compile Include="ConformanceTests\Settings\CttApplicationSettings.cs" />
     <Compile Include="ConformanceTests\Settings\CttHdlcSettings.cs" />
     <Compile Include="ConformanceTests\Settings\GuruxAuthenticationTestSettings.cs" />

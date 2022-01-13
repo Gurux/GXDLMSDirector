@@ -38,6 +38,8 @@ using Gurux.DLMS.Enums;
 using Gurux.DLMS.Objects;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Text;
 using System.Threading;
 
 namespace GXDLMSDirector
@@ -47,6 +49,56 @@ namespace GXDLMSDirector
     /// </summary>
     class GXAppConformanceTests
     {
+        /// <summary>
+        /// Return included tests.
+        /// </summary>
+        /// <returns></returns>
+        public static string ToString(object target)
+        {
+            StringBuilder sb = new StringBuilder();
+            List<string> list = new List<string>();
+            PropertyDescriptorCollection props = TypeDescriptor.GetProperties(target);
+            //Are all tests run.
+            bool all = true;
+            foreach (PropertyDescriptor it in props)
+            {
+                if (it.Attributes[typeof(ConformanceTestAttribute)] != null)
+                {
+                    if (it.GetValue(target) is bool value)
+                    {
+                        if (value)
+                        {
+                            all = false;
+                        }
+                        else
+                        {
+                            list.Add(it.Name);
+                        }
+                    }
+                }
+            }
+
+            if (all)
+            {
+                sb.Append("Running all tests.");
+            }
+            else if (list.Count == 0)
+            {
+                sb.Append("All tests are excluded.");
+            }
+            else
+            {
+                sb.Append("Running tests: ");
+                foreach (string it in list)
+                {
+                    sb.Append(it);
+                    sb.Append(", ");
+                }
+                sb.Length -= 2;
+            }
+            return sb.ToString();
+        }
+
         /// <summary>
         /// COSEM application layer tests
         /// </summary>

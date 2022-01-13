@@ -39,6 +39,7 @@ namespace GXDLMSDirector
 {
     public class GuruxProfileGenericTestSettings : IGXConformanceSettings
     {
+        [ConformanceTest]
         [Description("Try to read by entry using start index 0.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -48,6 +49,7 @@ namespace GXDLMSDirector
             set;
         }
 
+        [ConformanceTest]
         [Description("Read first two lines and read by range and check the values.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -57,6 +59,7 @@ namespace GXDLMSDirector
             set;
         }
 
+        [ConformanceTest]
         [Description("Read last row.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -66,6 +69,7 @@ namespace GXDLMSDirector
             set;
         }
 
+        [ConformanceTest]
         [Description("Read after last row using highest possible entry.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -75,6 +79,7 @@ namespace GXDLMSDirector
             set;
         }
 
+        [ConformanceTest]
         [Description("Read after last row.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -84,6 +89,7 @@ namespace GXDLMSDirector
             set;
         }
 
+        [ConformanceTest]
         [Description("Read only first column.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -99,43 +105,7 @@ namespace GXDLMSDirector
         /// <returns></returns>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            List<string> list = new List<string>();
-            PropertyDescriptorCollection props = TypeDescriptor.GetProperties(this);
-            foreach (PropertyDescriptor it in props)
-            {
-                if (it.GetValue(this).Equals(false))
-                {
-                    if (it.Name.StartsWith("ExcludeTest"))
-                    {
-                        list.Add(it.Name.Substring("ExcludeTest".Length));
-                    }
-                    else
-                    {
-                        list.Add(it.Name);
-                    }
-                }
-            }
-
-            if (props.Count == list.Count)
-            {
-                sb.Append("Running all tests.");
-            }
-            else if (list.Count == 0)
-            {
-                sb.Append("All tests are excluded.");
-            }
-            else
-            {
-                sb.Append("Running tests: ");
-                foreach (string it in list)
-                {
-                    sb.Append(it);
-                    sb.Append(", ");
-                }
-                sb.Length -= 2;
-            }
-            return sb.ToString();
+            return GXAppConformanceTests.ToString(this);
         }
     }
 }

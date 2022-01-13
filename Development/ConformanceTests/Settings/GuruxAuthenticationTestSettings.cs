@@ -31,6 +31,7 @@
 // Full text may be retrieved at http://www.gnu.org/licenses/gpl-2.0.txt
 //---------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
@@ -39,6 +40,7 @@ namespace GXDLMSDirector
 {
     public class GuruxAuthenticationTestSettings : IGXConformanceSettings
     {
+        [ConformanceTest]
         [Description("Try to connect using wrong password.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -58,6 +60,7 @@ namespace GXDLMSDirector
         }
 
 
+        [ConformanceTest]
         [Description("DLMS version number is read from the association object and it must be 8.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -68,6 +71,7 @@ namespace GXDLMSDirector
         }
 
 
+        [ConformanceTest]
         [Description("Client SAP is read from the association object and it must be equal to client address.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -77,6 +81,7 @@ namespace GXDLMSDirector
             set;
         }
 
+        [ConformanceTest]
         [Description("Server SAP is read from the association object and it must be equal to server address.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -92,44 +97,7 @@ namespace GXDLMSDirector
         /// <returns></returns>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            List<string> list = new List<string>();
-            PropertyDescriptorCollection props = TypeDescriptor.GetProperties(this);
-            foreach (PropertyDescriptor it in props)
-            {
-                object value = it.GetValue(this);
-                if (value != null && value.Equals(false))
-                {
-                    if (it.Name.StartsWith("ExcludeTest"))
-                    {
-                        list.Add(it.Name.Substring("ExcludeTest".Length));
-                    }
-                    else
-                    {
-                        list.Add(it.Name);
-                    }
-                }
-            }
-
-            if (props.Count == list.Count)
-            {
-                sb.Append("Running all tests.");
-            }
-            else if (list.Count == 0)
-            {
-                sb.Append("All tests are excluded.");
-            }
-            else
-            {
-                sb.Append("Running tests: ");
-                foreach (string it in list)
-                {
-                    sb.Append(it);
-                    sb.Append(", ");
-                }
-                sb.Length -= 2;
-            }
-            return sb.ToString();
+            return GXAppConformanceTests.ToString(this);
         }
     }
 }

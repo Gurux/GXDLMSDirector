@@ -68,6 +68,9 @@
             this.HexMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.MessagesTab = new System.Windows.Forms.TabPage();
+            this.MessageXmlTB = new System.Windows.Forms.RichTextBox();
+            this.splitter1 = new System.Windows.Forms.Splitter();
+            this.MessagePduTB = new System.Windows.Forms.RichTextBox();
             this.PduTab = new System.Windows.Forms.TabPage();
             this.XmlTB = new System.Windows.Forms.TextBox();
             this.splitter2 = new System.Windows.Forms.Splitter();
@@ -75,9 +78,6 @@
             this.DataTab = new System.Windows.Forms.TabPage();
             this.DataXml = new System.Windows.Forms.TextBox();
             this.DataPdu = new System.Windows.Forms.TextBox();
-            this.MessagePduTB = new System.Windows.Forms.RichTextBox();
-            this.splitter1 = new System.Windows.Forms.Splitter();
-            this.MessageXmlTB = new System.Windows.Forms.RichTextBox();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -320,45 +320,45 @@
             // PduOnlyMnu
             // 
             this.PduOnlyMnu.Name = "PduOnlyMnu";
-            this.PduOnlyMnu.Size = new System.Drawing.Size(180, 22);
+            this.PduOnlyMnu.Size = new System.Drawing.Size(174, 22);
             this.PduOnlyMnu.Text = "PDU Only";
             this.PduOnlyMnu.Click += new System.EventHandler(this.PduOnlyMnu_Click);
             // 
             // CompletePduMnu
             // 
             this.CompletePduMnu.Name = "CompletePduMnu";
-            this.CompletePduMnu.Size = new System.Drawing.Size(180, 22);
+            this.CompletePduMnu.Size = new System.Drawing.Size(174, 22);
             this.CompletePduMnu.Text = "Complate PDU";
             this.CompletePduMnu.Click += new System.EventHandler(this.ComplatePduMnu_Click);
             // 
             // StandardMnu
             // 
             this.StandardMnu.Name = "StandardMnu";
-            this.StandardMnu.Size = new System.Drawing.Size(180, 22);
+            this.StandardMnu.Size = new System.Drawing.Size(174, 22);
             this.StandardMnu.Text = "Standard";
             this.StandardMnu.Click += new System.EventHandler(this.StandardMnu_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(171, 6);
             // 
             // RemoveDuplicatesMnu
             // 
             this.RemoveDuplicatesMnu.Name = "RemoveDuplicatesMnu";
-            this.RemoveDuplicatesMnu.Size = new System.Drawing.Size(180, 22);
+            this.RemoveDuplicatesMnu.Size = new System.Drawing.Size(174, 22);
             this.RemoveDuplicatesMnu.Text = "Remove duplicates";
             this.RemoveDuplicatesMnu.Click += new System.EventHandler(this.RemoveDuplicatesMnu_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(171, 6);
             // 
             // HexMnu
             // 
             this.HexMnu.Name = "HexMnu";
-            this.HexMnu.Size = new System.Drawing.Size(180, 22);
+            this.HexMnu.Size = new System.Drawing.Size(174, 22);
             this.HexMnu.Text = "Hex";
             this.HexMnu.Click += new System.EventHandler(this.HexMnu_Click);
             // 
@@ -387,6 +387,32 @@
             this.MessagesTab.TabIndex = 0;
             this.MessagesTab.Text = "Messages";
             this.MessagesTab.UseVisualStyleBackColor = true;
+            // 
+            // MessageXmlTB
+            // 
+            this.MessageXmlTB.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.MessageXmlTB.Location = new System.Drawing.Point(263, 3);
+            this.MessageXmlTB.Name = "MessageXmlTB";
+            this.MessageXmlTB.Size = new System.Drawing.Size(710, 487);
+            this.MessageXmlTB.TabIndex = 6;
+            this.MessageXmlTB.Text = "";
+            // 
+            // splitter1
+            // 
+            this.splitter1.Location = new System.Drawing.Point(260, 3);
+            this.splitter1.Name = "splitter1";
+            this.splitter1.Size = new System.Drawing.Size(3, 487);
+            this.splitter1.TabIndex = 5;
+            this.splitter1.TabStop = false;
+            // 
+            // MessagePduTB
+            // 
+            this.MessagePduTB.Dock = System.Windows.Forms.DockStyle.Left;
+            this.MessagePduTB.Location = new System.Drawing.Point(3, 3);
+            this.MessagePduTB.Name = "MessagePduTB";
+            this.MessagePduTB.Size = new System.Drawing.Size(257, 487);
+            this.MessagePduTB.TabIndex = 1;
+            this.MessagePduTB.Text = resources.GetString("MessagePduTB.Text");
             // 
             // PduTab
             // 
@@ -464,36 +490,6 @@
             this.DataPdu.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.DataPdu.Size = new System.Drawing.Size(168, 487);
             this.DataPdu.TabIndex = 4;
-            // 
-            // MessagePduTB
-            // 
-            this.MessagePduTB.Dock = System.Windows.Forms.DockStyle.Left;
-            this.MessagePduTB.Location = new System.Drawing.Point(3, 3);
-            this.MessagePduTB.Name = "MessagePduTB";
-            this.MessagePduTB.Size = new System.Drawing.Size(257, 487);
-            this.MessagePduTB.TabIndex = 1;
-            this.MessagePduTB.Text = resources.GetString("MessagePduTB.Text");
-            // 
-            // splitter1
-            // 
-            this.splitter1.Location = new System.Drawing.Point(260, 3);
-            this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(3, 487);
-            this.splitter1.TabIndex = 5;
-            this.splitter1.TabStop = false;
-            // 
-            // MessageXmlTB
-            // 
-            this.MessageXmlTB.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MessageXmlTB.Location = new System.Drawing.Point(263, 3);
-            this.MessageXmlTB.Name = "MessageXmlTB";
-            this.MessageXmlTB.Size = new System.Drawing.Size(710, 487);
-            this.MessageXmlTB.TabIndex = 6;
-            this.MessageXmlTB.Text = "";
-            this.MessageXmlTB.HScroll += new System.EventHandler(this.MessageXmlTB_Scroll);
-            this.MessageXmlTB.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.MessageXmlTB_LinkClicked);
-            this.MessageXmlTB.VScroll += new System.EventHandler(this.MessageXmlTB_Scroll);
-            this.MessageXmlTB.SizeChanged += new System.EventHandler(this.MessageXmlTB_SizeChanged);
             // 
             // DLMSTranslatorForm
             // 

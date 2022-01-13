@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12756 $,
-//                  $Date: 2021-12-09 11:30:56 +0200 (to, 09 joulu 2021) $
+// Version:         $Revision: 12829 $,
+//                  $Date: 2022-01-13 16:33:11 +0200 (to, 13 tammi 2022) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -183,6 +183,9 @@ namespace GXDLMSDirector
         public MainForm()
         {
             InitializeComponent();
+#if DEBUG
+            ImportMeterToSimulatorMnu.Visible = true;
+#endif
             eventsTranslator.SystemTitle = GXCommon.HexToBytes(Properties.Settings.Default.NotifySystemTitle);
             eventsTranslator.BlockCipherKey = GXCommon.HexToBytes(Properties.Settings.Default.NotifyBlockCipherKey);
             eventsTranslator.AuthenticationKey = GXCommon.HexToBytes(Properties.Settings.Default.NotifyAuthenticationKey);
@@ -1291,7 +1294,7 @@ namespace GXDLMSDirector
                                 else
                                 {
                                     //Is action allowed.
-                                    if (ve.Index < 0 || ve.Target.GetMethodAccess(ve.Index) != MethodAccessMode.NoAccess)
+                                    if (ve.Index < 0 || ve.Client.CanInvoke(ve.Target, ve.Index))
                                     {
                                         try
                                         {
@@ -2007,7 +2010,7 @@ namespace GXDLMSDirector
             }
         }
 
-        #region XML positioning
+#region XML positioning
 
         /// <summary>
         /// Retrieves application data path from environment variables.
@@ -2274,7 +2277,7 @@ namespace GXDLMSDirector
             }
         }
 
-        #endregion
+#endregion
 
         void ReadDevices()
         {
@@ -3360,6 +3363,10 @@ namespace GXDLMSDirector
                             {
                                 obj.Description = it.Description;
                             }
+                            if (obj is GXDLMSAssociationLogicalName ln && ln.AuthenticationMechanismName.MechanismId != Authentication.None)
+                            {
+                                obj.Description += " " + ln.AuthenticationMechanismName.MechanismId;
+                            }
                             UpdateAttributes(obj, it);
                             dev.Objects.Add(obj);
                         }
@@ -3753,7 +3760,12 @@ namespace GXDLMSDirector
                     objects = node.Tag as GXDLMSObjectCollection;
                 }
                 objects.Add(it);
-                node = node.Nodes.Add(it.LogicalName + " " + it.Description);
+                string str = it.LogicalName + " " + it.Description;
+                if (it is GXDLMSAssociationLogicalName ln && ln.AuthenticationMechanismName.MechanismId != Authentication.None)
+                {
+                    str += " " + ln.AuthenticationMechanismName.MechanismId;
+                }
+                node = node.Nodes.Add(str);
             }
             else
             {
@@ -3960,7 +3972,7 @@ namespace GXDLMSDirector
                     GXDLMSViewArguments arg = new GXDLMSViewArguments() { Index = 3, Connected = connected };
                     if (InvokeRequired)
                     {
-                        Invoke(new ValueChangedEventHandler(OnValueChanged), arg);
+                        Invoke(new ValueChangedEventHandler(OnValueChanged), SelectedView, arg);
                     }
                     else
                     {
@@ -7301,6 +7313,57 @@ namespace GXDLMSDirector
             catch (Exception Ex)
             {
                 Error.ShowError(this, Ex);
+            }
+        }
+
+        /// <summary>
+        /// Import saved meter to the simulator.
+        /// </summary>
+        private void ImportMeterToSimulatorMnu_Click(object sender, EventArgs e)
+        {
+            string file = null;
+            try
+            {
+                GXDLMSDevice dev = GetSelectedDevice() as GXDLMSDevice;
+                if (dev != null)
+                {
+                    OpenFileDialog dlg = new OpenFileDialog();
+                    dlg.Multiselect = false;
+                    dlg.InitialDirectory = Directory.GetCurrentDirectory();
+                    dlg.FileName = dlg.FileName = dev.Name;
+                    dlg.Filter = Properties.Resources.ValuesFilterTxt;
+                    dlg.DefaultExt = ".xml";
+                    dlg.ValidateNames = true;
+                    if (dlg.ShowDialog(this) == DialogResult.OK)
+                    {
+                        file = dlg.FileName;
+                        if (File.Exists(file))
+                        {
+                            GXDLMSObjectCollection objects = new GXDLMSObjectCollection();
+                            GXDLMSObjectCollection.Load(file, objects);
+                            GXDLMSAssociationLogicalName target = dev.Objects.FindByLN(ObjectType.AssociationLogicalName, "0.0.40.0.0.255") as GXDLMSAssociationLogicalName;
+                            if (target == null)
+                            {
+                                throw new Exception("Can't find current association view.");
+                            }
+                            GXReplyData reply = new GXReplyData();
+                            foreach (GXDLMSObject it in objects)
+                            {
+                                reply.Clear();
+                                dev.Comm.ReadDataBlock(target.AddObject(dev.Comm.client, it), "", 1, reply);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                if (file != null)
+                {
+                    mruManager.Remove(file);
+                }
+                GXLogWriter.WriteLog(Ex.ToString());
+                GXDLMS.Common.Error.ShowError(this, Ex);
             }
         }
     }

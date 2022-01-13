@@ -153,20 +153,34 @@ namespace GXDLMSDirector
         {
             StringBuilder sb = new StringBuilder();
             List<string> list = new List<string>();
+            bool all = true;
             PropertyDescriptorCollection props = TypeDescriptor.GetProperties(this);
             foreach (PropertyDescriptor it in props)
             {
-                if (it.GetValue(this) is IGXConformanceSettings)
+                if (it.GetValue(this) is IGXConformanceSettings v)
                 {
-
+                    PropertyDescriptorCollection props2 = TypeDescriptor.GetProperties(v);
+                    foreach (PropertyDescriptor it2 in props2)
+                    {
+                        if (it2.Attributes[typeof(ConformanceTestAttribute)] != null)
+                        {
+                            if (it2.GetValue(v).Equals(false))
+                            {
+                                list.Add(it.Name);
+                            }
+                            else
+                            {
+                                all = false;
+                            }
+                        }
+                    }
                 }
                 else if (it.GetValue(this).Equals(false))
                 {
-                    list.Add(it.Name.Substring("ExcludeTest".Length));
+                    list.Add(it.Name);
                 }
             }
-
-            if (props.Count == list.Count)
+            if (all)
             {
                 sb.Append("Running all tests.");
             }

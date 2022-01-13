@@ -39,6 +39,7 @@ namespace GXDLMSDirector
 {
     public class GuruxClockTestSettings : IGXConformanceSettings
     {
+        [ConformanceTest]
         [Description("Set new time to the meter using PC's local time.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -47,6 +48,7 @@ namespace GXDLMSDirector
             get;
             set;
         }
+        [ConformanceTest]
         [Description("Set new time to the meter using EPOCH time.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -56,6 +58,7 @@ namespace GXDLMSDirector
             set;
         }
 
+        [ConformanceTest]
         [Description("Set new time to the meter without timezone.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -65,6 +68,7 @@ namespace GXDLMSDirector
             set;
         }
 
+        [ConformanceTest]
         [Description("Flip DST and check is time changed.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -74,6 +78,7 @@ namespace GXDLMSDirector
             set;
         }
 
+        [ConformanceTest]
         [Description("Check time and check is DST flag changed.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -83,6 +88,7 @@ namespace GXDLMSDirector
             set;
         }
 
+        [ConformanceTest]
         [Description("Change time zone and check that meter time is correct.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -98,43 +104,7 @@ namespace GXDLMSDirector
         /// <returns></returns>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            List<string> list = new List<string>();
-            PropertyDescriptorCollection props = TypeDescriptor.GetProperties(this);
-            foreach (PropertyDescriptor it in props)
-            {
-                if (it.GetValue(this).Equals(false))
-                {
-                    if (it.Name.StartsWith("ExcludeTest"))
-                    {
-                        list.Add(it.Name.Substring("ExcludeTest".Length));
-                    }
-                    else
-                    {
-                        list.Add(it.Name);
-                    }
-                }
-            }
-
-            if (props.Count == list.Count)
-            {
-                sb.Append("Running all tests.");
-            }
-            else if (list.Count == 0)
-            {
-                sb.Append("All tests are excluded.");
-            }
-            else
-            {
-                sb.Append("Running tests: ");
-                foreach (string it in list)
-                {
-                    sb.Append(it);
-                    sb.Append(", ");
-                }
-                sb.Length -= 2;
-            }
-            return sb.ToString();
+            return GXAppConformanceTests.ToString(this);
         }
     }
 }

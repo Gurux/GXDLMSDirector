@@ -81,7 +81,7 @@ namespace GXDLMSDirector
             {
                 InterfaceCb.SelectedIndex = Properties.Settings.Default.TranslatorInterface;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 InterfaceCb.SelectedIndex = 0;
             }
@@ -101,6 +101,7 @@ namespace GXDLMSDirector
             {
                 MessagePduTB.Text = Properties.Settings.Default.Message;
             }
+            string certificates = null, keys = null;
             try
             {
                 string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
@@ -108,50 +109,50 @@ namespace GXDLMSDirector
                 {
                     Directory.CreateDirectory(path);
                 }
-                string certificates = Path.Combine(path, "Certificates");
+                certificates = Path.Combine(path, "Certificates");
                 if (!Directory.Exists(certificates))
                 {
                     Directory.CreateDirectory(certificates);
                 }
-                string keys = Path.Combine(path, "Keys");
+                keys = Path.Combine(path, "Keys");
                 if (!Directory.Exists(keys))
                 {
                     Directory.CreateDirectory(keys);
                 }
-                try
-                {
-                    translator.SecuritySuite = (SecuritySuite)Properties.Settings.Default.SecuritySuite;
-                    translator.Security = (Security)Enum.Parse(typeof(Security), Properties.Settings.Default.Security);
-                    translator.SystemTitle = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.NotifySystemTitle);
-                    translator.ServerSystemTitle = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.ServerSystemTitle);
-                    translator.BlockCipherKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.NotifyBlockCipherKey);
-                    translator.AuthenticationKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.AuthenticationKey);
-                    translator.InvocationCounter = (UInt32)Properties.Settings.Default.InvocationCounter;
-                    translator.DedicatedKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.DedicatedKey);
-                }
-                catch (Exception)
-                {
-                    //Set default settings if settings are corrupted.
-                    translator.Security = Security.None;
-                    translator.SystemTitle = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.NotifySystemTitle);
-                    translator.ServerSystemTitle = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.ServerSystemTitle);
-                    translator.BlockCipherKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.NotifyBlockCipherKey);
-                    translator.AuthenticationKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.AuthenticationKey);
-                    translator.InvocationCounter = 0;
-                    translator.DedicatedKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.DedicatedKey);
-                }
-                Ciphering = new GXCipheringSettings(translator, keys, certificates,
-                            Properties.Settings.Default.ClientAgreementKey,
-                            Properties.Settings.Default.ClientSigningKey,
-                            Properties.Settings.Default.ServerAgreementKey,
-                            Properties.Settings.Default.ServerSigningKey);
-                Ciphering.Challenge = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.Challenge);
-                tabControl1.TabPages.Add(Ciphering.GetCiphetingTab());
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+            try
+            {
+                translator.SecuritySuite = (SecuritySuite)Properties.Settings.Default.SecuritySuite;
+                translator.Security = (Security)Enum.Parse(typeof(Security), Properties.Settings.Default.Security);
+                translator.SystemTitle = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.NotifySystemTitle);
+                translator.ServerSystemTitle = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.ServerSystemTitle);
+                translator.BlockCipherKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.NotifyBlockCipherKey);
+                translator.AuthenticationKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.AuthenticationKey);
+                translator.InvocationCounter = (UInt32)Properties.Settings.Default.InvocationCounter;
+                translator.DedicatedKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.DedicatedKey);
+            }
+            catch (Exception)
+            {
+                //Set default settings if settings are corrupted.
+                translator.Security = Security.None;
+                translator.SystemTitle = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.NotifySystemTitle);
+                translator.ServerSystemTitle = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.ServerSystemTitle);
+                translator.BlockCipherKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.NotifyBlockCipherKey);
+                translator.AuthenticationKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.AuthenticationKey);
+                translator.InvocationCounter = 0;
+                translator.DedicatedKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.DedicatedKey);
+            }
+            Ciphering = new GXCipheringSettings(translator, keys, certificates,
+                        Properties.Settings.Default.ClientAgreementKey,
+                        Properties.Settings.Default.ClientSigningKey,
+                        Properties.Settings.Default.ServerAgreementKey,
+                        Properties.Settings.Default.ServerSigningKey);
+            Ciphering.Challenge = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.Challenge);
+            tabControl1.TabPages.Add(Ciphering.GetCiphetingTab());
         }
 
         /// <summary>
@@ -294,7 +295,7 @@ namespace GXDLMSDirector
         {
             if (parent.InvokeRequired)
             {
-                return (bool) parent.Invoke(new UpdateSystemTitleEventHandler(UpdateSystemTitle), parent, title, data, original);
+                return (bool)parent.Invoke(new UpdateSystemTitleEventHandler(UpdateSystemTitle), parent, title, data, original);
                 //return parent.BeginInvoke(new Func<bool>(() => { return UpdateSystemTitle(parent, title, data, original); });
             }
             if (data != null)
@@ -373,7 +374,7 @@ namespace GXDLMSDirector
         {
             if (InvokeRequired)
             {
-                BeginInvoke(new AppendMessageEventHandler(OnAppendMessage), text, color);
+                BeginInvoke(new AppendMessageEventHandler(OnAppendMessage), text, color).AsyncWaitHandle.WaitOne();
             }
             else
             {
@@ -410,21 +411,6 @@ namespace GXDLMSDirector
                                 MessageXmlTB.SelectionColor = Color.Blue;
                                 MessageXmlTB.AppendText(text.Substring(commentEnd, 4));
                                 MessageXmlTB.SelectionColor = old;
-
-                                /*
-                                LinkLabel link = new LinkLabel();
-                                link.Tag = MessageXmlTB.TextLength;
-                                link.Text = text.Substring(commentEnd, 4);
-                                link.LinkClicked += Link_LinkClicked;
-                                LinkLabel.Link data = new LinkLabel.Link();
-                                data.LinkData = "https://www.gurux.fi/GuruxDLMSTranslator?manufacturer=" + link.Text.Trim();
-                                link.Links.Add(data);
-                                link.AutoSize = true;
-                                link.Location = MessageXmlTB.GetPositionFromCharIndex(MessageXmlTB.TextLength);
-                                MessageXmlTB.Controls.Add(link);
-                                MessageXmlTB.AppendText(link.Text + "   ");
-                                MessageXmlTB.SelectionStart = MessageXmlTB.TextLength;
-                                */
                                 //Flag ID is 3 chars.
                                 commentEnd += 4;
                                 lastIndex = commentEnd;
@@ -492,17 +478,18 @@ namespace GXDLMSDirector
             }
         }
 
-        delegate void UpdateProgressBarEventHandler(int value);
+        delegate void UpdateProgressBarEventHandler(int value, int count);
 
-        void UpdateProgress(int value)
+        void UpdateProgress(int value, int count)
         {
             if (InvokeRequired)
             {
-                BeginInvoke(new UpdateProgressBarEventHandler(UpdateProgress), value);
+                BeginInvoke(new UpdateProgressBarEventHandler(UpdateProgress), value, count);
             }
             else
             {
                 ProgressBar.Value = value;
+                StatusLbl.Text = "Searching... " + count + " frames found";
             }
         }
 
@@ -520,7 +507,7 @@ namespace GXDLMSDirector
                 {
                     if (count != 0)
                     {
-                        StatusLbl.Text = "Ready " + count + " frames found";
+                        StatusLbl.Text = "Searching... " + count + " frames found";
                     }
                     else
                     {
@@ -557,6 +544,7 @@ namespace GXDLMSDirector
         /// <param name="e"></param>
         private void TranslateBtn_Click(object sender, EventArgs e)
         {
+            MessageXmlTB.Controls.Clear();
             Follow follow = (Follow)FollowmessagesCb.SelectedItem;
             ShowMessages show = (ShowMessages)ShowCb.SelectedItem;
             MessageXmlTB.Text = null;
@@ -566,7 +554,7 @@ namespace GXDLMSDirector
             StatusLbl.Text = "Finding frames";
             GXByteBuffer bb = new GXByteBuffer();
             bb.Set(GXDLMSTranslator.HexToBytes(RemoveComments(string.Join(Environment.NewLine, MessagePduTB.Lines))));
-            System.Threading.Tasks.Task.Run(() =>
+            System.Threading.Tasks.Task.Run(async () =>
             {
                 if (translator.BlockCipherKey != null)
                 {
@@ -586,7 +574,7 @@ namespace GXDLMSDirector
                     translator.Clear();
                     translator.PduOnly = PduOnlyMnu.Checked;
                     GXByteBuffer pdu = new GXByteBuffer();
-                    UpdateProgress(0);
+                    UpdateProgress(0, 0);
                     UpdateMaxProgress(bb.Size, 0);
                     GXDLMSTranslatorMessage frame = new GXDLMSTranslatorMessage();
                     frame.Message = bb;
@@ -604,7 +592,7 @@ namespace GXDLMSDirector
                     while (translator.FindNextFrame(frame, pdu, clientAddress, serverAddress))
                     {
                         int start = bb.Position;
-                        UpdateProgress(start);
+                        UpdateProgress(start, count);
                         GXDLMSTranslatorMessage msg = new GXDLMSTranslatorMessage();
                         msg.Message = bb;
                         translator.MessageToXml(msg);
@@ -759,6 +747,8 @@ namespace GXDLMSDirector
                     }
                     OnAppendMessage(sb.ToString());
                     translator.Security = s;
+                    //Update UI.
+                    await System.Threading.Tasks.Task.Delay(1);
                 }
                 catch (Exception ex)
                 {
@@ -989,66 +979,6 @@ namespace GXDLMSDirector
             catch (Exception Ex)
             {
                 GXDLMS.Common.Error.ShowError(this, Ex);
-            }
-        }
-
-        private void Link_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            try
-            {
-                Process.Start(e.Link.LinkData.ToString());
-            }
-            catch (Exception Ex)
-            {
-                GXDLMS.Common.Error.ShowError(this, Ex);
-            }
-        }
-
-        private void MessageXmlTB_LinkClicked(object sender, LinkClickedEventArgs e)
-        {
-            try
-            {
-                Process.Start(e.LinkText);
-            }
-            catch (Exception Ex)
-            {
-                GXDLMS.Common.Error.ShowError(this, Ex);
-            }
-        }
-
-        /// <summary>
-        /// Update link location on scrolling.
-        /// </summary>
-        private void MessageXmlTB_Scroll(object sender, EventArgs e)
-        {
-            foreach(var it in MessageXmlTB.Controls)
-            {
-                if (it is LinkLabel l)
-                {
-                    int pos = (int)l.Tag;
-                    Point p = MessageXmlTB.GetPositionFromCharIndex(pos);
-                    l.Top = p.Y;
-                    l.Left = p.X;
-                }
-            }
-
-        }
-
-
-        /// <summary>
-        /// Update link location on scrolling.
-        /// </summary>
-        private void MessageXmlTB_SizeChanged(object sender, EventArgs e)
-        {
-            foreach (var it in MessageXmlTB.Controls)
-            {
-                if (it is LinkLabel l)
-                {
-                    int pos = (int)l.Tag;
-                    Point p = MessageXmlTB.GetPositionFromCharIndex(pos);
-                    l.Top = p.Y;
-                    l.Left = p.X;
-                }
             }
         }
     }

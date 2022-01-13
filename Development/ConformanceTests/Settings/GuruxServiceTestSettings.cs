@@ -39,6 +39,7 @@ namespace GXDLMSDirector
 {
     public class GuruxServiceTestSettings : IGXConformanceSettings
     {
+        [ConformanceTest]
         [Description("Check Incompatible (Empty) Conformance.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -59,6 +60,7 @@ namespace GXDLMSDirector
         }
         */
 
+        [ConformanceTest]
         [Description("Conformances read test is excluded.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -68,6 +70,7 @@ namespace GXDLMSDirector
             set;
         }
 
+        [ConformanceTest]
         [Description("Conformances write test is excluded.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -77,6 +80,7 @@ namespace GXDLMSDirector
             set;
         }
 
+        [ConformanceTest]
         [Description("Conformances Attribute0 supportedWith get test is excluded.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -86,6 +90,7 @@ namespace GXDLMSDirector
             set;
         }
 
+        [ConformanceTest]
         [Description("Conformances Block transfer with get or read test is excluded.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -95,6 +100,7 @@ namespace GXDLMSDirector
             set;
         }
 
+        [ConformanceTest]
         [Description("Conformances Block transfer with set or write test is excluded.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -104,6 +110,7 @@ namespace GXDLMSDirector
             set;
         }
 
+        [ConformanceTest]
         [Description("Conformances Block transfer with action test is excluded.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -113,6 +120,7 @@ namespace GXDLMSDirector
             set;
         }
 
+        [ConformanceTest]
         [Description("Conformances multiple references test is excluded.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -122,6 +130,7 @@ namespace GXDLMSDirector
             set;
         }
 
+        [ConformanceTest]
         [Description("Conformances parameterized access test is excluded.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -131,6 +140,7 @@ namespace GXDLMSDirector
             set;
         }
 
+        [ConformanceTest]
         [Description("Conformances Get test is excluded.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -140,6 +150,7 @@ namespace GXDLMSDirector
             set;
         }
 
+        [ConformanceTest]
         [Description("Conformances Set test is excluded.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -149,6 +160,7 @@ namespace GXDLMSDirector
             set;
         }
 
+        [ConformanceTest]
         [Description("Conformances selective access test is excluded.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -158,6 +170,7 @@ namespace GXDLMSDirector
             set;
         }
 
+        [ConformanceTest]
         [Description("Conformances action test is excluded.")]
         [DefaultValue(false)]
         [Category("Accessibility")]
@@ -173,43 +186,7 @@ namespace GXDLMSDirector
         /// <returns></returns>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            List<string> list = new List<string>();
-            PropertyDescriptorCollection props = TypeDescriptor.GetProperties(this);
-            foreach (PropertyDescriptor it in props)
-            {
-                if (it.GetValue(this).Equals(false))
-                {
-                    if (it.Name.StartsWith("ExcludeTest"))
-                    {
-                        list.Add(it.Name.Substring("ExcludeTest".Length));
-                    }
-                    else
-                    {
-                        list.Add(it.Name);
-                    }
-                }
-            }
-
-            if (props.Count == list.Count)
-            {
-                sb.Append("Running all tests.");
-            }
-            else if (list.Count == 0)
-            {
-                sb.Append("All tests are excluded.");
-            }
-            else
-            {
-                sb.Append("Running tests: ");
-                foreach (string it in list)
-                {
-                    sb.Append(it);
-                    sb.Append(", ");
-                }
-                sb.Length -= 2;
-            }
-            return sb.ToString();
+            return GXAppConformanceTests.ToString(this);
         }
     }
 }

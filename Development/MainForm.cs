@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12829 $,
-//                  $Date: 2022-01-13 16:33:11 +0200 (to, 13 tammi 2022) $
+// Version:         $Revision: 12889 $,
+//                  $Date: 2022-02-03 15:41:49 +0200 (to, 03 helmi 2022) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -3394,6 +3394,23 @@ namespace GXDLMSDirector
         /// <param name="path"></param>
         void LoadFile(string path)
         {
+            if (File.Exists(path) && Path.GetExtension(path) == ".gxm")
+            {
+                //If macro file.
+                try
+                {
+                    if (!MacroEditor.Visible)
+                    {
+                        MacroEditor.Show(this);
+                    }
+                    MacroEditor.LoadFile(false, path);
+                    return;
+                }
+                catch (Exception Ex)
+                {
+                    Error.ShowError(this, Ex);
+                }
+            }
             int version = 1;
             if (activeDC != null)
             {
@@ -4375,9 +4392,9 @@ namespace GXDLMSDirector
                         }
                         foreach (string it in files)
                         {
-                            if (!File.Exists(it))
+                            if (!File.Exists(it) && !Directory.Exists(it))
                             {
-                                throw new Exception("File don't exists. " + it);
+                                throw new Exception("File or directory doesn't exists. " + it);
                             }
                         }
                         GXConformanceSettings settings;
@@ -4678,7 +4695,7 @@ namespace GXDLMSDirector
             settings = null;
             try
             {
-                List<GXCmdParameter> parameters = GXCommon.GetParameters(args, "x:o:s:hc:t");
+                List<GXCmdParameter> parameters = GXCommon.GetParameters(args, "m:x:o:s:hc:t");
                 foreach (GXCmdParameter it in parameters)
                 {
                     switch (it.Tag)
@@ -4751,6 +4768,7 @@ namespace GXDLMSDirector
             sb.AppendLine("Command line parameter for GXDLMSDirector to execute Conformance Tests.");
             sb.AppendLine("%userprofile%\\Desktop\\GXDLMSDirector.appref-ms \"C:\\DeviceFile.gxc\"");
             sb.AppendLine(" -t\t Run Conformance tests. Conformance tests are not run with external tests.");
+            sb.AppendLine(" -m\t Macto test file or directory.");
             sb.AppendLine(" -x\t External test file or directory.");
             sb.AppendLine(" -o\t Output test directory.");
             sb.AppendLine(" -s\t External Settings file. If external test file is given, this is ignored.");

@@ -69,6 +69,11 @@ namespace GXDLMSDirector.Macro
         /// Action response.
         /// </summary>
         [XmlEnum("5")]
-        Action
+        Action,
+        /// <summary>
+        /// Delay.
+        /// </summary>
+        [XmlEnum("6")]
+        Delay
     }
 }

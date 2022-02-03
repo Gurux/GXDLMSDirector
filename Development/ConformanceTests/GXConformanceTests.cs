@@ -40,6 +40,7 @@ using Gurux.DLMS.Objects;
 using Gurux.DLMS.Objects.Enums;
 using Gurux.DLMS.UI;
 using GXDLMS.Common;
+using GXDLMSDirector.Macro;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -98,7 +99,10 @@ namespace GXDLMSDirector
             {
                 return new string[] { settings.ExternalTests };
             }
-            return Directory.GetFiles(settings.ExternalTests, "*.xml");
+            List<string> files = new List<string>();
+            files.AddRange(Directory.GetFiles(settings.ExternalTests, "*.xml"));
+            files.AddRange(Directory.GetFiles(settings.ExternalTests, "*.gxm"));
+            return files.ToArray();
         }
 
         /// <summary>
@@ -133,7 +137,19 @@ namespace GXDLMSDirector
             {
                 try
                 {
-                    client.Load(it);
+                    if (it.EndsWith("gxm"))
+                    {
+                        using (XmlReader reader = XmlReader.Create(it))
+                        {
+                            XmlSerializer x = new XmlSerializer(typeof(GXMacro[]));
+                            GXMacro[] macros = (GXMacro[])x.Deserialize(reader);
+                            reader.Close();
+                        }
+                    }
+                    else
+                    {
+                        client.Load(it);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -179,6 +195,235 @@ namespace GXDLMSDirector
             byte[] buff = GXCommon.HexToBytes(ln);
             return (buff[0] & 0xFF) + "." + (buff[1] & 0xFF) + "." + (buff[2] & 0xFF) + "." +
                    (buff[3] & 0xFF) + "." + (buff[4] & 0xFF) + "." + (buff[5] & 0xFF);
+        }
+
+        private static void Execute(
+            GXDLMSConverter converter,
+            GXConformanceTest test,
+            GXMacro[] macros,
+            GXOutput output,
+            GXConformanceSettings settings)
+        {
+            GXDLMSObject obj;
+            foreach (GXMacro macro in macros)
+            {
+                //test.OnProgress(test, "Testing " + m.Name, ++i, cnt);
+                //                lastExternalException = null;
+                List<KeyValuePair<ObjectType, string>> succeeded = new List<KeyValuePair<ObjectType, string>>();
+                if (settings.Delay.TotalSeconds != 0)
+                {
+                    Thread.Sleep((int)settings.Delay.TotalMilliseconds);
+                }
+                switch (macro.Type)
+                {
+                    case UserActionType.None:
+                        throw new Exception("Invalid macro type.");
+                    case UserActionType.Connect:
+                        break;
+                    case UserActionType.Disconnecting:
+                        break;
+                    case UserActionType.Get:
+                    case UserActionType.Set:
+                    case UserActionType.Action:
+                        obj = GXDLMSClient.CreateObject((ObjectType)macro.ObjectType, macro.ObjectVersion);
+                        if (obj != null)
+                        {
+                            GXReplyData reply = new GXReplyData();
+                            obj.LogicalName = macro.LogicalName;
+                            obj.SetAccess(macro.Index, AccessMode.ReadWrite);
+                            obj.SetMethodAccess(macro.Index, MethodAccessMode.Access);
+                            if (obj is GXDLMSProfileGeneric && macro.Index == 2 && macro.External != null)
+                            {
+                                //Update capture objects.
+                                test.Device.Comm.client.UpdateValue(obj, 3, GXDLMSTranslator.XmlToValue(macro.External));
+                            }
+                            if (macro.Type == UserActionType.Get)
+                            {
+                                test.Device.Comm.ReadDataBlock(test.Device.Comm.Read(obj, macro.Index, macro.Parameters), null, 1, reply);
+                                object value = reply.Value;
+                                test.Device.Comm.client.UpdateValue(obj, macro.Index, value);
+                                macro.DataType = (int)obj.GetDataType(macro.Index);
+                                macro.UIDataType = (int)obj.GetUIDataType(macro.Index);
+                                string expected = macro.Data;
+                                macro.Data = GXDLMSTranslator.ValueToXml(value);
+                                if (macro.Data != null)
+                                {
+                                    macro.Data = macro.Data.Replace("\r\n", "\n");
+                                }
+                                string str = null;
+                                if (macro.Data != null)
+                                {
+                                    str = macro.Data.Replace("<", "&lt;").Replace(">", "&gt;").Replace("\n", "<br/>");
+                                }
+                                if (macro.Verify)
+                                {
+                                    if (expected != null)
+                                    {
+                                        expected = expected.Replace("<", "&lt;").Replace(">", "&gt;").Replace("\n", "<br/>");
+                                    }
+                                    if (expected != str)
+                                    {
+                                        AddError(test, null, output.Errors, " <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + (ObjectType)macro.ObjectType + ">" + (ObjectType)macro.ObjectType + "</a> " + macro.LogicalName + " Get " + macro.Index + " is <div class=\"tooltip\">invalid.");
+                                        AddError(test, null, output.Errors, "<span class=\"tooltiptext\">");
+                                        AddError(test, null, output.Errors, "Expected:</b><br/>");
+                                        AddError(test, null, output.Errors, expected);
+                                        AddError(test, null, output.Errors, "<br/><b>Actual:</b><br/>");
+                                        AddError(test, null, output.Errors, str);
+                                        AddError(test, null, output.Errors, "</span></div>");
+                                    }
+                                    else
+                                    {
+                                        succeeded.Add(new KeyValuePair<ObjectType, string>((ObjectType)macro.ObjectType, macro.Name + "<br/>Equals:<br/>" + expected));
+                                    }
+                                }
+                                else
+                                {
+                                    succeeded.Add(new KeyValuePair<ObjectType, string>((ObjectType)macro.ObjectType, macro.Name + "<br/>Actual:<br/>" + str));
+                                }
+                            }
+                            else if (macro.Type == UserActionType.Set)
+                            {
+                                obj.SetDataType(macro.Index, (DataType)macro.DataType);
+                                obj.SetUIDataType(macro.Index, (DataType)macro.UIDataType);
+                                ValueEventArgs e = new ValueEventArgs(obj, macro.Index, 0, null);
+                                e.Value = GXDLMSTranslator.XmlToValue(macro.Data);
+                                (obj as IGXDLMSBase).SetValue(test.Device.Comm.client.Settings, e);
+                                try
+                                {
+                                    test.Device.Comm.Write(obj, macro.Index);
+                                    if (!string.IsNullOrEmpty(macro.Exception))
+                                    {
+                                        //If exception is expected.
+                                        AddError(test, null, output.Errors, " <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + obj.ObjectType + ">" + obj.ObjectType + "</a> " + obj.LogicalName + " " + " Set Attribute " + " " + macro.Index + " <div class=\"tooltip\">failed.");
+                                        AddError(test, null, output.Errors, "<span class=\"tooltiptext\">");
+                                        AddError(test, null, output.Errors, "Expected exception:</b><br/>");
+                                        AddError(test, null, output.Errors, macro.Exception.Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
+                                        AddError(test, null, output.Errors, "<br/><b>Actual:</b><br/>");
+                                        AddError(test, null, output.Errors, "Set succeeded.");
+                                        AddError(test, null, output.Errors, "</span></div>");
+                                    }
+                                    else
+                                    {
+                                        succeeded.Add(new KeyValuePair<ObjectType, string>((ObjectType)macro.ObjectType, macro.Name + "Set succceded."));
+                                    }
+                                }
+                                catch (GXDLMSException ex)
+                                {
+                                    if (string.IsNullOrEmpty(macro.Exception))
+                                    {
+                                        //If exception is not expected.
+                                        if (ex.ErrorCode != 0)
+                                        {
+                                            ErrorCode e2 = (ErrorCode)ex.ErrorCode;
+                                            AddError(test, null, output.Errors, "<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + obj.ObjectType + ">" + obj.ObjectType + "</a> " + obj.LogicalName + " Set Attribute " + macro.Index + " failed: <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.ErrorCodes?" + e2 + ">" + e2 + "</a>");
+                                            test.OnTrace(test, e2 + "\r\n");
+                                        }
+                                        else
+                                        {
+                                            AddError(test, null, output.Errors, "<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + obj.ObjectType + ">" + obj.ObjectType + "</a> " + obj.LogicalName + " Set Attribute " + macro.Index + " <div class=\"tooltip\">failed:" + ex.Message);
+                                            AddError(test, null, output.Errors, "<span class=\"tooltiptext\">");
+                                            AddError(test, null, output.Errors, ex.ToString());
+                                            AddError(test, null, output.Errors, "</span></div>");
+                                            test.OnTrace(test, ex.Message + "\r\n");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        succeeded.Add(new KeyValuePair<ObjectType, string>((ObjectType)macro.ObjectType, macro.Name + " Set succceded."));
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    if (string.IsNullOrEmpty(macro.Exception))
+                                    {
+                                        AddError(test, null, output.Errors, "<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + obj.ObjectType + ">" + obj.ObjectType + "</a> " + obj.LogicalName + " Attribute " + macro.Index + " <div class=\"tooltip\">failed:" + ex.Message);
+                                        AddError(test, null, output.Errors, "<span class=\"tooltiptext\">");
+                                        AddError(test, null, output.Errors, ex.ToString());
+                                        AddError(test, null, output.Errors, "</span></div>");
+                                        test.OnTrace(test, ex.Message + "\r\n");
+                                    }
+                                    else
+                                    {
+                                        succeeded.Add(new KeyValuePair<ObjectType, string>((ObjectType)macro.ObjectType, macro.Name + " Set succceded."));
+                                    }
+                                }
+                            }
+                            else if (macro.Type == UserActionType.Action)
+                            {
+                                try
+                                {
+                                    GXReplyData reply2 = new GXReplyData();
+                                    test.Device.Comm.MethodRequest(obj, macro.Index, GXDLMSTranslator.XmlToValue(macro.Data), "", reply2);
+                                    if (!string.IsNullOrEmpty(macro.Exception))
+                                    {
+                                        //If exception is expected.
+                                        AddError(test, null, output.Errors, " <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + obj.ObjectType + ">" + obj.ObjectType + "</a> " + obj.LogicalName + " " + " invoke Attribute " + " " + macro.Index + " <div class=\"tooltip\">failed.");
+                                        AddError(test, null, output.Errors, "<span class=\"tooltiptext\">");
+                                        AddError(test, null, output.Errors, "Expected exception:</b><br/>");
+                                        AddError(test, null, output.Errors, macro.Exception.Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r\n", "<br/>"));
+                                        AddError(test, null, output.Errors, "<br/><b>Actual:</b><br/>");
+                                        AddError(test, null, output.Errors, "Invoke succeeded.");
+                                        AddError(test, null, output.Errors, "</span></div>");
+                                    }
+                                    else
+                                    {
+                                        succeeded.Add(new KeyValuePair<ObjectType, string>((ObjectType)macro.ObjectType, macro.Name + " Invoke succceded."));
+                                    }
+                                }
+                                catch (GXDLMSException ex)
+                                {
+                                    if (string.IsNullOrEmpty(macro.Exception))
+                                    {
+                                        //If exception is not expected.
+                                        if (ex.ErrorCode != 0)
+                                        {
+                                            ErrorCode e2 = (ErrorCode)ex.ErrorCode;
+                                            AddError(test, null, output.Errors, "<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + obj.ObjectType + ">" + obj.ObjectType + "</a> " + obj.LogicalName + " invoke Attribute " + macro.Index + " failed: <a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.ErrorCodes?" + e2 + ">" + e2 + "</a>");
+                                            test.OnTrace(test, e2 + "\r\n");
+                                        }
+                                        else
+                                        {
+                                            AddError(test, null, output.Errors, "<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + obj.ObjectType + ">" + obj.ObjectType + "</a> " + obj.LogicalName + " invoke Attribute " + macro.Index + " <div class=\"tooltip\">failed:" + ex.Message);
+                                            AddError(test, null, output.Errors, "<span class=\"tooltiptext\">");
+                                            AddError(test, null, output.Errors, ex.ToString());
+                                            AddError(test, null, output.Errors, "</span></div>");
+                                            test.OnTrace(test, ex.Message + "\r\n");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        succeeded.Add(new KeyValuePair<ObjectType, string>((ObjectType)macro.ObjectType, macro.Name + " Invoke succceded."));
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    if (string.IsNullOrEmpty(macro.Exception))
+                                    {
+                                        AddError(test, null, output.Errors, "<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + obj.ObjectType + ">" + obj.ObjectType + "</a> " + obj.LogicalName + " Attribute " + macro.Index + " <div class=\"tooltip\">failed:" + ex.Message);
+                                        AddError(test, null, output.Errors, "<span class=\"tooltiptext\">");
+                                        AddError(test, null, output.Errors, ex.ToString());
+                                        AddError(test, null, output.Errors, "</span></div>");
+                                        test.OnTrace(test, ex.Message + "\r\n");
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                }
+                if (succeeded.Count != 0)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("<div class=\"tooltip\">" + macro.LogicalName);
+                    sb.Append("<span class=\"tooltiptext\">");
+                    foreach (var it in succeeded)
+                    {
+                        sb.Append(it.Value + "<br/>");
+                    }
+                    sb.Append("</span></div>");
+                    sb.Append("&nbsp;" + converter.GetDescription(macro.LogicalName, (ObjectType)macro.ObjectType)[0] + "&nbsp;" + "<a target=\"_blank\" href=https://www.gurux.fi/Gurux.DLMS.Objects.GXDLMS" + (ObjectType)macro.ObjectType + ">" + (ObjectType)macro.ObjectType + "</a>" + "&nbsp;" + " Index:" + macro.Index + ".");
+                    AddInfo(test, null, output.Info, sb.ToString());
+                }
+            }
         }
 
         private static void Execute(
@@ -890,7 +1135,7 @@ namespace GXDLMSDirector
                     }
                     //Read structures of Cosem objects.
                     List<KeyValuePair<GXDLMSObject, List<GXDLMSXmlPdu>>> cosemTests = new List<KeyValuePair<GXDLMSObject, List<GXDLMSXmlPdu>>>();
-                    List<KeyValuePair<string, List<GXDLMSXmlPdu>>> externalTests = new List<KeyValuePair<string, List<GXDLMSXmlPdu>>>();
+                    List<object> externalTests = new List<object>();
                     GXDLMSTranslator translator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
                     lock (ConformanceLock)
                     {
@@ -936,10 +1181,22 @@ namespace GXDLMSDirector
                             {
                                 try
                                 {
-                                    using (StreamReader fs = File.OpenText(it))
+                                    if (it.EndsWith("gxm"))
                                     {
-                                        externalTests.Add(new KeyValuePair<string, List<GXDLMSXmlPdu>>(it, client.Load(fs, ls)));
-                                        fs.Close();
+                                        using (XmlReader reader = XmlReader.Create(it))
+                                        {
+                                            XmlSerializer x = new XmlSerializer(typeof(GXMacro[]));
+                                            externalTests.Add((GXMacro[])x.Deserialize(reader));
+                                            reader.Close();
+                                        }
+                                    }
+                                    else
+                                    {
+                                        using (StreamReader fs = File.OpenText(it))
+                                        {
+                                            externalTests.Add(new KeyValuePair<string, List<GXDLMSXmlPdu>>(it, client.Load(fs, ls)));
+                                            fs.Close();
+                                        }
                                     }
                                     File.Copy(it, Path.Combine(dir, Path.GetFileName(it)));
                                 }
@@ -981,7 +1238,7 @@ namespace GXDLMSDirector
                         }
                         i = 0;
                         cnt = externalTests.Count;
-                        foreach (KeyValuePair<string, List<GXDLMSXmlPdu>> it in externalTests)
+                        foreach (object it in externalTests)
                         {
                             if (!Continue)
                             {
@@ -989,8 +1246,15 @@ namespace GXDLMSDirector
                             }
                             try
                             {
-                                test.OnProgress(test, "Testing " + it.Key, ++i, cnt);
-                                Execute(converter, test, it.Key, it.Value, output, settings, true);
+                                if (it is GXMacro[] macros)
+                                {
+                                    Execute(converter, test, macros, output, settings);
+                                }
+                                else if (it is KeyValuePair<string, List<GXDLMSXmlPdu>> kv)
+                                {
+                                    test.OnProgress(test, "Testing " + kv.Key, ++i, cnt);
+                                    Execute(converter, test, kv.Key, kv.Value, output, settings, true);
+                                }
                             }
                             catch (Exception ex)
                             {

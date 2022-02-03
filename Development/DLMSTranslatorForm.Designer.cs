@@ -50,6 +50,7 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.FileMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.TranslateMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.CancelTranslateBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.PduToXmlMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.XmlToPduMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.ConvertMnu = new System.Windows.Forms.ToolStripMenuItem();
@@ -59,6 +60,10 @@
             this.FindMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.FindNextMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.ViewMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.ShowMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.ViewFrameMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.XmlMnu = new System.Windows.Forms.ToolStripMenuItem();
+            this.FrameNumberMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.PduOnlyMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.CompletePduMnu = new System.Windows.Forms.ToolStripMenuItem();
             this.StandardMnu = new System.Windows.Forms.ToolStripMenuItem();
@@ -229,6 +234,7 @@
             // 
             this.FileMnu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.TranslateMnu,
+            this.CancelTranslateBtn,
             this.PduToXmlMnu,
             this.XmlToPduMnu,
             this.ConvertMnu,
@@ -244,6 +250,13 @@
             this.TranslateMnu.Size = new System.Drawing.Size(138, 22);
             this.TranslateMnu.Text = "&Translate";
             this.TranslateMnu.Click += new System.EventHandler(this.TranslateBtn_Click);
+            // 
+            // CancelTranslateBtn
+            // 
+            this.CancelTranslateBtn.Name = "CancelTranslateBtn";
+            this.CancelTranslateBtn.Size = new System.Drawing.Size(138, 22);
+            this.CancelTranslateBtn.Text = "Cancel";
+            this.CancelTranslateBtn.Click += new System.EventHandler(this.CancelTranslateBtn_Click);
             // 
             // PduToXmlMnu
             // 
@@ -306,6 +319,7 @@
             // ViewMnu
             // 
             this.ViewMnu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ShowMnu,
             this.PduOnlyMnu,
             this.CompletePduMnu,
             this.StandardMnu,
@@ -316,6 +330,41 @@
             this.ViewMnu.Name = "ViewMnu";
             this.ViewMnu.Size = new System.Drawing.Size(44, 20);
             this.ViewMnu.Text = "&View";
+            // 
+            // ShowMnu
+            // 
+            this.ShowMnu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ViewFrameMnu,
+            this.XmlMnu,
+            this.FrameNumberMnu});
+            this.ShowMnu.Name = "ShowMnu";
+            this.ShowMnu.Size = new System.Drawing.Size(174, 22);
+            this.ShowMnu.Text = "Show";
+            // 
+            // ViewFrameMnu
+            // 
+            this.ViewFrameMnu.Checked = true;
+            this.ViewFrameMnu.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ViewFrameMnu.Name = "ViewFrameMnu";
+            this.ViewFrameMnu.Size = new System.Drawing.Size(154, 22);
+            this.ViewFrameMnu.Text = "Frame";
+            this.ViewFrameMnu.Click += new System.EventHandler(this.ViewFrameMnu_Click);
+            // 
+            // XmlMnu
+            // 
+            this.XmlMnu.Checked = true;
+            this.XmlMnu.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.XmlMnu.Name = "XmlMnu";
+            this.XmlMnu.Size = new System.Drawing.Size(154, 22);
+            this.XmlMnu.Text = "Xml";
+            this.XmlMnu.Click += new System.EventHandler(this.XmlMnu_Click);
+            // 
+            // FrameNumberMnu
+            // 
+            this.FrameNumberMnu.Name = "FrameNumberMnu";
+            this.FrameNumberMnu.Size = new System.Drawing.Size(154, 22);
+            this.FrameNumberMnu.Text = "Frame Number";
+            this.FrameNumberMnu.Click += new System.EventHandler(this.FrameNumberMnu_Click);
             // 
             // PduOnlyMnu
             // 
@@ -393,6 +442,7 @@
             this.MessageXmlTB.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MessageXmlTB.Location = new System.Drawing.Point(263, 3);
             this.MessageXmlTB.Name = "MessageXmlTB";
+            this.MessageXmlTB.ReadOnly = true;
             this.MessageXmlTB.Size = new System.Drawing.Size(710, 487);
             this.MessageXmlTB.TabIndex = 6;
             this.MessageXmlTB.Text = "";
@@ -572,5 +622,10 @@
         private System.Windows.Forms.RichTextBox MessageXmlTB;
         private System.Windows.Forms.Splitter splitter1;
         private System.Windows.Forms.RichTextBox MessagePduTB;
+        private System.Windows.Forms.ToolStripMenuItem ShowMnu;
+        private System.Windows.Forms.ToolStripMenuItem ViewFrameMnu;
+        private System.Windows.Forms.ToolStripMenuItem XmlMnu;
+        private System.Windows.Forms.ToolStripMenuItem FrameNumberMnu;
+        private System.Windows.Forms.ToolStripMenuItem CancelTranslateBtn;
     }
 }

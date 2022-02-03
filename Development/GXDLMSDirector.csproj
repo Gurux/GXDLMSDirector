@@ -138,11 +138,11 @@
     <Reference Include="Gurux.Common, Version=8.1.2109.2401, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Common.8.1.2109.2401\lib\net46\Gurux.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=9.0.2201.1401, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.9.0.2201.1401\lib\net46\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=9.0.2202.301, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.9.0.2202.301\lib\net46\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=9.0.2201.1401, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.9.0.2201.1401\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=9.0.2202.301, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.9.0.2202.301\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.MQTT, Version=8.1.2109.2401, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.MQTT.8.1.2109.2401\lib\net46\Gurux.MQTT.dll</HintPath>
@@ -213,6 +213,18 @@
     </Compile>
     <Compile Include="GXHdlcAddressesResolverDlg.Designer.cs">
       <DependentUpon>GXHdlcAddressesResolverDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Macro\GXMacroEditDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Macro\GXMacroEditDlg.Designer.cs">
+      <DependentUpon>GXMacroEditDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Macro\GXMacroDelayDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Macro\GXMacroDelayDlg.Designer.cs">
+      <DependentUpon>GXMacroDelayDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Macro\GXMacroCountDlg.cs">
       <SubType>Form</SubType>
@@ -349,6 +361,12 @@
     <EmbeddedResource Include="GXHdlcAddressesResolverDlg.resx">
       <DependentUpon>GXHdlcAddressesResolverDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Macro\GXMacroEditDlg.resx">
+      <DependentUpon>GXMacroEditDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Macro\GXMacroDelayDlg.resx">
+      <DependentUpon>GXMacroDelayDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Macro\GXMacroCountDlg.resx">
       <DependentUpon>GXMacroCountDlg.cs</DependentUpon>
@@ -509,6 +527,7 @@
     <None Include="Resources\cct.png" />
     <None Include="Resources\record.bmp" />
     <None Include="Resources\help.bmp" />
+    <Content Include="GXMacro.ico" />
     <Content Include="Resources\warning.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -534,6 +553,12 @@
       <Description>GXDLMSDirector file</Description>
       <Progid>GXDLMSDirector</Progid>
       <DefaultIcon>GXDLMSDirector.ico</DefaultIcon>
+    </FileAssociation>
+    <FileAssociation Include=".gxm">
+      <Visible>False</Visible>
+      <Description>GXDLMSDirector macro file</Description>
+      <Progid>GXDLMSDirectorMacro</Progid>
+      <DefaultIcon>GXMacro.ico</DefaultIcon>
     </FileAssociation>
   </ItemGroup>
   <ItemGroup>

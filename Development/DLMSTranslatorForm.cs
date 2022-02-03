@@ -13,6 +13,7 @@ using System.Drawing;
 using System.IO;
 using System.Numerics;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace GXDLMSDirector
@@ -86,6 +87,9 @@ namespace GXDLMSDirector
                 InterfaceCb.SelectedIndex = 0;
             }
             ShowCb.SelectedIndex = Properties.Settings.Default.TranslatorShow;
+            ViewFrameMnu.Checked = Properties.Settings.Default.TranslatorFrame;
+            XmlMnu.Checked = Properties.Settings.Default.TranslatorXml;
+            FrameNumberMnu.Checked = Properties.Settings.Default.FrameNumber;
             FollowmessagesCb.SelectedIndex = Properties.Settings.Default.TranslatorFollow;
             translator.OnKeys += Translator_OnKeys;
             translator.Comments = true;
@@ -296,7 +300,6 @@ namespace GXDLMSDirector
             if (parent.InvokeRequired)
             {
                 return (bool)parent.Invoke(new UpdateSystemTitleEventHandler(UpdateSystemTitle), parent, title, data, original);
-                //return parent.BeginInvoke(new Func<bool>(() => { return UpdateSystemTitle(parent, title, data, original); });
             }
             if (data != null)
             {
@@ -326,7 +329,7 @@ namespace GXDLMSDirector
             tags.Add("-->");
             tags.Add("<ExceptionResponse>");
             tags.Add("Manufacturer Code:");
-            tags.Add("<ConformanceBit");
+            tags.Add("<ConformanceBit Name=\"");
             foreach (string it in tags)
             {
                 pos = text.IndexOf(it, startIndex);
@@ -347,17 +350,21 @@ namespace GXDLMSDirector
             OnAppendMessage(text, Color.White);
         }
 
-        void UpdateConformanceBits(string text, ref int startIndex, ref int lastIndex)
+        void UpdateConformanceBits(string text, bool insideofComment, ref int startIndex, ref int lastIndex)
         {
             string tag = "\" />" + Environment.NewLine;
             int end = text.IndexOf(tag, startIndex);
             if (end != -1)
             {
+                Color old = MessageXmlTB.SelectionColor;
                 startIndex += "<ConformanceBit Name=\"".Length;
+                if (insideofComment)
+                {
+                    MessageXmlTB.SelectionColor = Color.Green;
+                }
                 MessageXmlTB.AppendText(text.Substring(lastIndex, startIndex - lastIndex));
                 MessageXmlTB.SelectionStart = MessageXmlTB.TextLength;
                 MessageXmlTB.SelectionLength = 0;
-                Color old = MessageXmlTB.SelectionColor;
                 MessageXmlTB.SelectionColor = Color.Blue;
                 MessageXmlTB.AppendText(text.Substring(startIndex, end - startIndex));
                 MessageXmlTB.SelectionColor = old;
@@ -368,6 +375,30 @@ namespace GXDLMSDirector
                 lastIndex = end;
                 startIndex += tag.Length;
             }
+        }
+
+        void PreComment(string text, string tag, int commentEnd, ref int startIndex, ref int lastIndex)
+        {
+            MessageXmlTB.AppendText(text.Substring(lastIndex, startIndex - lastIndex));
+            MessageXmlTB.SelectionStart = MessageXmlTB.TextLength;
+            MessageXmlTB.SelectionLength = 0;
+            Color old = MessageXmlTB.SelectionColor;
+            MessageXmlTB.SelectionColor = Color.Green;
+            MessageXmlTB.AppendText(text.Substring(startIndex, commentEnd - startIndex));
+            MessageXmlTB.SelectionColor = old;
+            lastIndex = commentEnd;
+            startIndex = commentEnd;
+            startIndex -= tag.Length;
+        }
+
+        void PostComment(string text, string tag, ref int startIndex, ref int lastIndex)
+        {
+            startIndex += tag.Length;
+            Color old = MessageXmlTB.SelectionColor;
+            MessageXmlTB.SelectionColor = Color.Green;
+            MessageXmlTB.AppendText(text.Substring(lastIndex, startIndex - lastIndex));
+            MessageXmlTB.SelectionColor = old;
+            lastIndex = startIndex;
         }
 
         void OnAppendMessage(string text, Color color)
@@ -381,33 +412,28 @@ namespace GXDLMSDirector
                 int lastIndex = 0;
                 int startIndex = 0;
                 string tag;
+                bool insideofComment = false;
                 while ((startIndex = FindNextTag(text, startIndex, out tag)) != -1)
                 {
                     if (tag == "<!--")
                     {
+                        insideofComment = true;
                         int commentEnd = FindNextTag(text, startIndex + tag.Length, out tag);
                         if (commentEnd != -1)
                         {
                             commentEnd += tag.Length;
-                            if (tag == "<ConformanceBit")
+                            if (tag == "<ConformanceBit Name=\"")
                             {
-                                UpdateConformanceBits(text, ref startIndex, ref lastIndex);
+                                //Update comment.
+                                PreComment(text, tag, commentEnd, ref startIndex, ref lastIndex);
+                                UpdateConformanceBits(text, true, ref startIndex, ref lastIndex);
                             }
                             else if (tag == "Manufacturer Code:")
                             {
-                                MessageXmlTB.SelectionStart = MessageXmlTB.TextLength;
-                                MessageXmlTB.SelectionLength = 0;
-                                Color old = MessageXmlTB.SelectionColor;
-                                MessageXmlTB.SelectionColor = Color.Green;
-                                MessageXmlTB.AppendText(text.Substring(lastIndex, startIndex - lastIndex));
-                                //Add tag.
-                                MessageXmlTB.SelectionStart = MessageXmlTB.TextLength;
-                                MessageXmlTB.SelectionLength = 0;
-                                MessageXmlTB.SelectionColor = Color.Green;
-                                MessageXmlTB.AppendText(text.Substring(commentEnd - tag.Length, tag.Length));
-                                MessageXmlTB.SelectionStart = MessageXmlTB.TextLength;
-                                MessageXmlTB.SelectionLength = 0;
+                                //Update comment.
+                                PreComment(text, tag, commentEnd, ref startIndex, ref lastIndex);
                                 //Add link.
+                                Color old = MessageXmlTB.SelectionColor;
                                 MessageXmlTB.SelectionColor = Color.Blue;
                                 MessageXmlTB.AppendText(text.Substring(commentEnd, 4));
                                 MessageXmlTB.SelectionColor = old;
@@ -418,6 +444,7 @@ namespace GXDLMSDirector
                             }
                             else
                             {
+                                insideofComment = false;
                                 MessageXmlTB.AppendText(text.Substring(lastIndex, startIndex - lastIndex));
                                 MessageXmlTB.SelectionStart = MessageXmlTB.TextLength;
                                 MessageXmlTB.SelectionLength = 0;
@@ -429,15 +456,15 @@ namespace GXDLMSDirector
                                 startIndex = commentEnd;
                             }
                         }
+                        else
+                        {
+                            break;
+                        }
                     }
                     else if (tag == "-->")
                     {
-                        startIndex += tag.Length;
-                        Color old = MessageXmlTB.SelectionColor;
-                        MessageXmlTB.SelectionColor = Color.Green;
-                        MessageXmlTB.AppendText(text.Substring(lastIndex, startIndex - lastIndex));
-                        MessageXmlTB.SelectionColor = old;
-                        lastIndex = startIndex;
+                        insideofComment = false;
+                        PostComment(text, tag, ref startIndex, ref lastIndex);
                     }
                     else if (tag == "<ExceptionResponse>")
                     {
@@ -457,9 +484,9 @@ namespace GXDLMSDirector
                             startIndex += tag.Length;
                         }
                     }
-                    else if (tag == "<ConformanceBit")
+                    else if (tag == "<ConformanceBit Name=\"")
                     {
-                        UpdateConformanceBits(text, ref startIndex, ref lastIndex);
+                        UpdateConformanceBits(text, insideofComment, ref startIndex, ref lastIndex);
                     }
                 }
                 if (color != Color.White)
@@ -523,19 +550,7 @@ namespace GXDLMSDirector
             }
         }
 
-        delegate void UpdateInterfaceEventHandler(object value);
-
-        void UpdateInterface(object type)
-        {
-            if (InvokeRequired)
-            {
-                BeginInvoke(new UpdateInterfaceEventHandler(UpdateInterface), type);
-            }
-            else
-            {
-                InterfaceCb.SelectedItem = type;
-            }
-        }
+        ManualResetEvent CancelTranslate = new ManualResetEvent(false);
 
         /// <summary>
         /// Convert message to XML.
@@ -544,7 +559,14 @@ namespace GXDLMSDirector
         /// <param name="e"></param>
         private void TranslateBtn_Click(object sender, EventArgs e)
         {
-            MessageXmlTB.Controls.Clear();
+            if (MessagePduTB.ReadOnly)
+            {
+                StatusLbl.Text = "Cancelling translate.";
+                CancelTranslate.Set();
+                return;
+            }
+            TranslateBtn.Checked = true;
+            MessagePduTB.ReadOnly = true;
             Follow follow = (Follow)FollowmessagesCb.SelectedItem;
             ShowMessages show = (ShowMessages)ShowCb.SelectedItem;
             MessageXmlTB.Text = null;
@@ -581,7 +603,10 @@ namespace GXDLMSDirector
                     if (selectedInterface is string)
                     {
                         frame.InterfaceType = GXDLMSTranslator.GetDlmsFraming(bb);
-                        UpdateInterface(frame.InterfaceType);
+                        BeginInvoke((Action)(() =>
+                        {
+                            InterfaceCb.SelectedItem = frame.InterfaceType;
+                        }));
                     }
                     else
                     {
@@ -591,6 +616,18 @@ namespace GXDLMSDirector
                     int clientAddress = 0, serverAddress = 0;
                     while (translator.FindNextFrame(frame, pdu, clientAddress, serverAddress))
                     {
+                        //Translate is cancelled.
+                        if (CancelTranslate.WaitOne(1))
+                        {
+                            UpdateMaxProgress(0, 0);
+                            BeginInvoke((Action)(() =>
+                            {
+                                MessagePduTB.ReadOnly = false;
+                                TranslateBtn.Checked = false;
+                            }));
+                            CancelTranslate.Reset();
+                            return;
+                        }
                         int start = bb.Position;
                         UpdateProgress(start, count);
                         GXDLMSTranslatorMessage msg = new GXDLMSTranslatorMessage();
@@ -624,7 +661,10 @@ namespace GXDLMSDirector
                                     msg.SystemTitle, translator.SystemTitle))
                                 {
                                     translator.SystemTitle = msg.SystemTitle;
-                                    Ciphering.SystemTitle = msg.SystemTitle;
+                                    BeginInvoke((Action)(() =>
+                                    {
+                                        Ciphering.SystemTitle = msg.SystemTitle;
+                                    }));
                                 }
                             }
                             if (msg.DedicatedKey != null && msg.DedicatedKey.Length == 16)
@@ -633,7 +673,10 @@ namespace GXDLMSDirector
                                     msg.DedicatedKey, translator.DedicatedKey))
                                 {
                                     translator.DedicatedKey = msg.DedicatedKey;
-                                    Ciphering.DedicatedKey = msg.DedicatedKey;
+                                    BeginInvoke((Action)(() =>
+                                    {
+                                        Ciphering.DedicatedKey = msg.DedicatedKey;
+                                    }));
                                 }
                             }
                         }
@@ -643,7 +686,10 @@ namespace GXDLMSDirector
                                 msg.SystemTitle, translator.ServerSystemTitle))
                             {
                                 translator.ServerSystemTitle = msg.SystemTitle;
-                                Ciphering.ServerSystemTitle = msg.SystemTitle;
+                                BeginInvoke((Action)(() =>
+                                {
+                                    Ciphering.ServerSystemTitle = msg.SystemTitle;
+                                }));
                             }
                         }
                         if (show != ShowMessages.All)
@@ -730,8 +776,18 @@ namespace GXDLMSDirector
                                     break;
                             }
                         }
-                        sb.AppendLine(count + ": " + bb.ToHex(true, start, bb.Position - start));
-                        sb.Append(msg.Xml);
+                        if (Properties.Settings.Default.TranslatorFrame)
+                        {
+                            if (Properties.Settings.Default.FrameNumber)
+                            {
+                                sb.Append(count + ": ");
+                            }
+                            sb.AppendLine(bb.ToHex(true, start, bb.Position - start));
+                        }
+                        if (Properties.Settings.Default.TranslatorXml)
+                        {
+                            sb.Append(msg.Xml);
+                        }
                         if (msg.Exception != null)
                         {
                             ++count;
@@ -760,6 +816,11 @@ namespace GXDLMSDirector
                 }
                 //Count starts from 1.
                 UpdateMaxProgress(0, count - 1);
+                BeginInvoke((Action)(() =>
+                {
+                    MessagePduTB.ReadOnly = false;
+                    TranslateBtn.Checked = false;
+                }));
             });
         }
 
@@ -768,7 +829,7 @@ namespace GXDLMSDirector
         /// </summary>
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            InterfaceCb.Enabled = ShowCb.Enabled = FollowmessagesCb.Enabled = CompletePduMnu.Visible = PduOnlyMnu.Visible = TranslateMnu.Visible = tabControl1.SelectedTab == MessagesTab;
+            CancelTranslateBtn.Visible = InterfaceCb.Enabled = ShowCb.Enabled = FollowmessagesCb.Enabled = CompletePduMnu.Visible = PduOnlyMnu.Visible = TranslateMnu.Visible = tabControl1.SelectedTab == MessagesTab;
             PduToXmlMnu.Visible = XmlToPduMnu.Visible = tabControl1.SelectedTab == PduTab;
             ConvertMnu.Visible = tabControl1.SelectedTab == DataTab;
             TranslateBtn.Enabled = tabControl1.SelectedTab == MessagesTab || tabControl1.SelectedTab == PduTab || tabControl1.SelectedTab == DataTab;
@@ -807,6 +868,7 @@ namespace GXDLMSDirector
             Properties.Settings.Default.TranslatorInterface = InterfaceCb.SelectedIndex;
             Properties.Settings.Default.TranslatorShow = ShowCb.SelectedIndex;
             Properties.Settings.Default.TranslatorFollow = FollowmessagesCb.SelectedIndex;
+
             Properties.Settings.Default.Data = DataPdu.Text;
             string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
             if (!Directory.Exists(path))
@@ -980,6 +1042,36 @@ namespace GXDLMSDirector
             {
                 GXDLMS.Common.Error.ShowError(this, Ex);
             }
+        }
+
+        /// <summary>
+        /// Is frame shown on output.
+        /// </summary>
+        private void ViewFrameMnu_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.TranslatorFrame = ViewFrameMnu.Checked = !ViewFrameMnu.Checked;
+        }
+
+        /// <summary>
+        /// Is XML shown on output.
+        /// </summary>
+        private void XmlMnu_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.TranslatorXml = XmlMnu.Checked = !XmlMnu.Checked;
+        }
+
+        private void FrameNumberMnu_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.FrameNumber = FrameNumberMnu.Checked = !FrameNumberMnu.Checked;
+        }
+
+        /// <summary>
+        /// Cancel translate.
+        /// </summary>
+        private void CancelTranslateBtn_Click(object sender, EventArgs e)
+        {
+            StatusLbl.Text = "Cancelling translate.";
+            CancelTranslate.Set();
         }
     }
 }

@@ -138,17 +138,17 @@
     <Reference Include="Gurux.Common, Version=8.1.2109.2401, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Common.8.1.2109.2401\lib\net46\Gurux.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=9.0.2201.1401, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.9.0.2201.1401\lib\net46\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=9.0.2202.301, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.9.0.2202.301\lib\net46\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.AMI.Messages, Version=8.1.2201.1401, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.AMI.Messages.8.1.2201.1401\lib\net46\Gurux.DLMS.AMI.Messages.dll</HintPath>
+    <Reference Include="Gurux.DLMS.AMI.Messages, Version=8.1.2202.301, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.AMI.Messages.8.1.2202.301\lib\net46\Gurux.DLMS.AMI.Messages.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.AMI.UI, Version=8.1.2201.1401, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.AMI.UI.8.1.2201.1401\lib\net46\Gurux.DLMS.AMI.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.AMI.UI, Version=8.1.2202.301, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.AMI.UI.8.1.2202.301\lib\net46\Gurux.DLMS.AMI.UI.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=9.0.2201.1401, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.9.0.2201.1401\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=9.0.2202.301, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.9.0.2202.301\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.MQTT, Version=8.1.2109.2401, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.MQTT.8.1.2109.2401\lib\net46\Gurux.MQTT.dll</HintPath>
@@ -363,6 +363,18 @@
     <Compile Include="Macro\GXMacroCountDlg.Designer.cs">
       <DependentUpon>GXMacroCountDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="Macro\GXMacroDelayDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Macro\GXMacroDelayDlg.Designer.cs">
+      <DependentUpon>GXMacroDelayDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Macro\GXMacroEditDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Macro\GXMacroEditDlg.Designer.cs">
+      <DependentUpon>GXMacroEditDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="Macro\GXMacroEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -462,6 +474,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Macro\GXMacroCountDlg.resx">
       <DependentUpon>GXMacroCountDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Macro\GXMacroDelayDlg.resx">
+      <DependentUpon>GXMacroDelayDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Macro\GXMacroEditDlg.resx">
+      <DependentUpon>GXMacroEditDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Macro\GXMacroEditor.resx">
       <DependentUpon>GXMacroEditor.cs</DependentUpon>
@@ -594,6 +612,7 @@
     <Content Include="GXDLMSDirector.ico" />
     <None Include="Resources\NotifyMnu.bmp" />
     <None Include="Resources\cct.png" />
+    <Content Include="GXMacro.ico" />
     <Content Include="Resources\warning.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -619,6 +638,14 @@
       <Description>GXDLMSDirector file</Description>
       <Progid>GXDLMSDirector</Progid>
       <DefaultIcon>GXDLMSDirector.ico</DefaultIcon>
+    </FileAssociation>
+  </ItemGroup>
+  <ItemGroup>
+    <FileAssociation Include=".gxm">
+      <Visible>False</Visible>
+      <Description>GXDLMSDirector macro file</Description>
+      <Progid>GXDLMSDirectorMacro</Progid>
+      <DefaultIcon>GXMacro.ico</DefaultIcon>
     </FileAssociation>
   </ItemGroup>
   <ItemGroup>

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12756 $,
-//                  $Date: 2021-12-09 11:30:56 +0200 (to, 09 joulu 2021) $
+// Version:         $Revision: 12879 $,
+//                  $Date: 2022-01-28 11:18:18 +0200 (pe, 28 tammi 2022) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -127,7 +127,6 @@ namespace GXDLMSDirector
                     sb.Append(" -n " + PhysicalAddress);
                 }
             }
-
             if (Authentication != Authentication.None)
             {
                 sb.Append(" -a " + Authentication);
@@ -190,6 +189,21 @@ namespace GXDLMSDirector
             if (Standard != Standard.DLMS)
             {
                 sb.Append(" -d " + Standard);
+            }
+            if (InterfaceType == InterfaceType.HDLC || InterfaceType == InterfaceType.HdlcWithModeE)
+            {
+                if (GbtWindowSize != 1)
+                {
+                    sb.Append(" -W " + GbtWindowSize);
+                }
+                if (WindowSizeRX != 128)
+                {
+                    sb.Append(" -w " + WindowSizeRX);
+                }
+                if (MaxInfoTX != 1)
+                {
+                    sb.Append(" -f " + MaxInfoRX);
+                }
             }
             sb.Append(" -t Verbose");
             return sb.ToString();

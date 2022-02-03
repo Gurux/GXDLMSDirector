@@ -33,6 +33,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Text;
 using System.Xml.Serialization;
 
 namespace GXDLMSDirector.Macro
@@ -130,6 +131,15 @@ namespace GXDLMSDirector.Macro
             get;
             set;
         }
+
+        /// <summary>
+        /// Optional macro description.
+        /// </summary>
+        public string Description
+        {
+            get;
+            set;
+        }        
 
         /// <summary>
         /// Device name.
@@ -274,6 +284,21 @@ namespace GXDLMSDirector.Macro
         {
             get;
             set;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            if (Running)
+            {
+                sb.Append("Running ");
+            }
+            sb.Append(Type);
+            sb.Append(" ");
+            sb.Append(ObjectType);
+            sb.Append(" ");
+            sb.Append(LogicalName);
+            return sb.ToString();
         }
     }
 }

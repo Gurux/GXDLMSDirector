@@ -1018,5 +1018,41 @@ namespace GXDLMSDirector.Properties {
                 this["TranslatorHex"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool TranslatorFrame {
+            get {
+                return ((bool)(this["TranslatorFrame"]));
+            }
+            set {
+                this["TranslatorFrame"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool TranslatorXml {
+            get {
+                return ((bool)(this["TranslatorXml"]));
+            }
+            set {
+                this["TranslatorXml"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool FrameNumber {
+            get {
+                return ((bool)(this["FrameNumber"]));
+            }
+            set {
+                this["FrameNumber"] = value;
+            }
+        }
     }
 }

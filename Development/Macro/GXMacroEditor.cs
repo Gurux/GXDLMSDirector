@@ -423,6 +423,7 @@ namespace GXDLMSDirector
             if (MacrosView.SelectedIndices.Count == 1)
             {
                 GXMacro macro = GetMacros()[MacrosView.SelectedIndices[0]];
+                MacroDescription.Text = macro.Description;
                 if (macro.Type == UserActionType.Get || macro.Type == UserActionType.Set)
                 {
                     if (!tabControl1.TabPages.Contains(VisualizedTab))
@@ -554,7 +555,7 @@ namespace GXDLMSDirector
                                         SelectedView = GXDlmsUi.GetView(Views, obj, Target.Comm.client.Standard);
                                     }
                                     SelectedView.Target = obj;
-                                    GXDlmsUi.ObjectChanged(SelectedView, Target.Comm.client, obj, false);
+                                    GXDlmsUi.ObjectChanged(SelectedView, Target != null ? Target.Comm.client : null, obj, false);
                                     SelectedView.OnDirtyChange(macro.Index, true);
                                     ObjectPanelFrame.Controls.Add(((Form)SelectedView));
                                     ((Form)SelectedView).Show();
@@ -562,7 +563,7 @@ namespace GXDLMSDirector
                                 else
                                 {
                                     SelectedView.Target = obj;
-                                    GXDlmsUi.ObjectChanged(SelectedView, Target.Comm.client, obj, false);
+                                    GXDlmsUi.ObjectChanged(SelectedView, Target != null ? Target.Comm.client : null, obj, false);
                                     SelectedView.OnDirtyChange(macro.Index, true);
                                 }
                             }
@@ -576,6 +577,7 @@ namespace GXDLMSDirector
             }
             else
             {
+                MacroDescription.Text = "";
                 OriginalDataTb.Text = "";
                 if (GetMacros().Count == 0 && tabControl1.TabPages.Contains(VisualizedTab))
                 {
@@ -811,7 +813,7 @@ namespace GXDLMSDirector
         /// Load macro from the file.
         /// </summary>
         /// <param name="import">Is macro imported(append).</param>
-        private void LoadFile(bool import, string path)
+        public void LoadFile(bool import, string path)
         {
             dirty = import;
             SelectedView = null;
@@ -1035,6 +1037,8 @@ namespace GXDLMSDirector
                 ListViewItem dIt = MacrosView.GetItemAt(pt.X, pt.Y);
                 if (dIt != null)
                 {
+                    List<int> updated = new List<int>();
+                    updated.Add(dIt.Index);
                     int index = dIt.Index;
                     foreach (int pos in MacrosView.SelectedIndices)
                     {
@@ -1043,10 +1047,14 @@ namespace GXDLMSDirector
                             GXMacro old = GetMacros()[pos];
                             Macros2.Remove(old);
                             Macros2.Insert(index, old);
+                            updated.Add(pos);
                             ++index;
                         }
                     }
-                    MacrosView.RedrawItems(dIt.Index, index, false);
+                    foreach (int it in updated)
+                    {
+                        MacrosView.RedrawItems(it, it, false);
+                    }
                     dirty = true;
                     UpdateTitle();
                 }
@@ -1450,6 +1458,89 @@ namespace GXDLMSDirector
             }
             RunIndex = 1;
             RunCount = 1;
+        }
+
+        private void InsertDelayMnu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int index;
+                if (MacrosView.SelectedIndices.Count == 0)
+                {
+                    index = Macros2.Count;
+                }
+                else
+                {
+                    index = MacrosView.SelectedIndices[0];
+                }
+                GXMacro delay = new GXMacro();
+                delay.Type = UserActionType.Delay;
+                GXMacroDelayDlg dlg = new GXMacroDelayDlg(delay);
+                if (dlg.ShowDialog(this) == DialogResult.OK)
+                {
+                    Macros2.Insert(index, delay);
+                    MacrosView.VirtualListSize = GetMacros().Count;
+                    MacrosView.RedrawItems(index, index, false);
+                    dirty = true;
+                    UpdateTitle();
+                }
+            }
+            catch (Exception Ex)
+            {
+                GXDLMS.Common.Error.ShowError(this, Ex);
+            }
+        }
+
+        private void ShowProperties()
+        {
+            int index = MacrosView.SelectedIndices[0];
+            GXMacro macro = GetMacros()[index];
+            Form dlg;
+            if (macro.Type == UserActionType.Delay)
+            {
+                dlg = new GXMacroDelayDlg(macro);
+            }
+            else
+            {
+                dlg = new GXMacroEditDlg(macro);
+            }
+            if (dlg.ShowDialog(this) == DialogResult.OK)
+            {
+                MacroDescription.Text = macro.Description;
+                MacrosView.RedrawItems(index, index, false);
+                dirty = true;
+                UpdateTitle();
+            }
+        }
+
+        private void PropertiesMnu_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (MacrosView.SelectedIndices.Count == 1)
+                {
+                    ShowProperties();
+                }
+            }
+            catch (Exception Ex)
+            {
+                GXDLMS.Common.Error.ShowError(this, Ex);
+            }
+        }
+
+        private void MacrosView_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                if (MacrosView.SelectedIndices.Count == 1)
+                {
+                    ShowProperties();
+                }
+            }
+            catch (Exception Ex)
+            {
+                GXDLMS.Common.Error.ShowError(this, Ex);
+            }
         }
     }
 }

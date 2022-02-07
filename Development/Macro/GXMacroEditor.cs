@@ -41,6 +41,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
@@ -737,6 +738,9 @@ namespace GXDLMSDirector
                                     break;
                                 case UserActionType.Action:
                                     m_OnAction(macro);
+                                    break;
+                                case UserActionType.Delay:
+                                    Thread.Sleep(int.Parse(macro.Value));
                                     break;
                                 default:
                                     break;

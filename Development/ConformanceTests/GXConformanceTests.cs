@@ -207,8 +207,6 @@ namespace GXDLMSDirector
             GXDLMSObject obj;
             foreach (GXMacro macro in macros)
             {
-                //test.OnProgress(test, "Testing " + m.Name, ++i, cnt);
-                //                lastExternalException = null;
                 List<KeyValuePair<ObjectType, string>> succeeded = new List<KeyValuePair<ObjectType, string>>();
                 if (settings.Delay.TotalSeconds != 0)
                 {
@@ -218,6 +216,9 @@ namespace GXDLMSDirector
                 {
                     case UserActionType.None:
                         throw new Exception("Invalid macro type.");
+                    case UserActionType.Delay:
+                        Thread.Sleep(int.Parse(macro.Value));
+                        break;
                     case UserActionType.Connect:
                         break;
                     case UserActionType.Disconnecting:

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12762 $,
-//                  $Date: 2021-12-09 17:36:24 +0200 (to, 09 joulu 2021) $
+// Version:         $Revision: 12929 $,
+//                  $Date: 2022-04-20 10:44:23 +0300 (ke, 20 huhti 2022) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1307,6 +1307,8 @@ namespace GXDLMSDirector
                             client.Ciphering.InvocationCounter = parent.InvocationCounter = 1 + Convert.ToUInt32(d.Value);
                             reply.Clear();
                             ReadDataBlock(DisconnectRequest(), "Disconnect request", reply);
+                            //Initialize IEC again for optical port connection.
+                            InitializeIEC();
                         }
                         catch (Exception Ex)
                         {

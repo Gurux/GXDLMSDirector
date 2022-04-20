@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12756 $,
-//                  $Date: 2021-12-09 11:30:56 +0200 (to, 09 joulu 2021) $
+// Version:         $Revision: 12929 $,
+//                  $Date: 2022-04-20 10:44:23 +0300 (ke, 20 huhti 2022) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -90,17 +90,7 @@ namespace GXDLMSDirector
                     GXExternalMediaForm.DownLoadMedia(it);
                 }
             }
-        }
-
-        /// <summary>
-        /// Download media updates.
-        /// </summary>
-        static void DownloadMediaUpdates(object sender, GXAsyncWork work, object[] parameters)
-        {
-            IGXUpdater updater = (IGXUpdater)parameters[0];
-            Assembly asm = (Assembly)parameters[1];
-            GXExternalMediaForm.CheckUpdates(updater, asm);
-        }
+        }       
 
         /// <summary>
         /// Show occurred errors.

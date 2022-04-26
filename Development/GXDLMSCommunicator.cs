@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12929 $,
-//                  $Date: 2022-04-20 10:44:23 +0300 (ke, 20 huhti 2022) $
+// Version:         $Revision: 12930 $,
+//                  $Date: 2022-04-26 09:04:26 +0300 (ti, 26 huhti 2022) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1306,9 +1306,17 @@ namespace GXDLMSDirector
                             client.UpdateValue(d, 2, reply.Value);
                             client.Ciphering.InvocationCounter = parent.InvocationCounter = 1 + Convert.ToUInt32(d.Value);
                             reply.Clear();
-                            ReadDataBlock(DisconnectRequest(), "Disconnect request", reply);
-                            //Initialize IEC again for optical port connection.
-                            InitializeIEC();
+                            if (parent.InterfaceType == InterfaceType.HdlcWithModeE)
+                            {
+                                Disconnect();
+                                //Initialize IEC again for optical port connection.
+                                media.Settings = parent.MediaSettings;
+                                InitializeIEC();
+                            }
+                            else
+                            {
+                                ReadDataBlock(DisconnectRequest(), "Disconnect request", reply);
+                            }
                         }
                         catch (Exception Ex)
                         {

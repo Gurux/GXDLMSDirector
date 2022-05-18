@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12930 $,
-//                  $Date: 2022-04-26 09:04:26 +0300 (ti, 26 huhti 2022) $
+// Version:         $Revision: 12955 $,
+//                  $Date: 2022-05-12 08:29:01 +0300 (to, 12 touko 2022) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -915,6 +915,7 @@ namespace GXDLMSDirector
             client.Standard = this.parent.Standard;
             client.Authentication = this.parent.Authentication;
             client.InterfaceType = InterfaceType.HDLC;
+            client.UseProtectedRelease = parent.UseProtectedRelease;
             if (!string.IsNullOrEmpty(this.parent.Password))
             {
                 client.Password = CryptHelper.Decrypt(this.parent.Password, Password.Key);

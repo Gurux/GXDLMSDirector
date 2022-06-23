@@ -632,6 +632,7 @@ namespace GXDLMSDirector
                         UpdateProgress(start, count);
                         GXDLMSTranslatorMessage msg = new GXDLMSTranslatorMessage();
                         msg.Message = bb;
+                        msg.InterfaceType = frame.InterfaceType;
                         translator.MessageToXml(msg);
                         if (follow != Follow.None)
                         {

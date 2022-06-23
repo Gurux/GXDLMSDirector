@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12879 $,
-//                  $Date: 2022-01-28 11:18:18 +0200 (pe, 28 tammi 2022) $
+// Version:         $Revision: 13069 $,
+//                  $Date: 2022-06-23 10:25:06 +0300 (to, 23 kesä 2022) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -100,7 +100,7 @@ namespace GXDLMSDirector
             }
             if (InterfaceType != InterfaceType.HDLC)
             {
-                sb.Append(" -i" + InterfaceType.ToString());
+                sb.Append(" -i " + InterfaceType.ToString());
             }
             if (ClientAddress != 16)
             {

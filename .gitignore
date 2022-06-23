@@ -232,3 +232,4 @@ Development/.vs/GXDLMSDirector46/config/applicationhost.config
 Development/DvlErrLog.txt
 *.db-shm
 *.db-wal
+*.vsidx

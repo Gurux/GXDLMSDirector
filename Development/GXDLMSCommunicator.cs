@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12955 $,
-//                  $Date: 2022-05-12 08:29:01 +0300 (to, 12 touko 2022) $
+// Version:         $Revision: 13128 $,
+//                  $Date: 2022-08-12 11:30:48 +0300 (pe, 12 elo 2022) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -331,8 +331,7 @@ namespace GXDLMSDirector
                         reply.Clear();
                         if ((client.InterfaceType == InterfaceType.HDLC ||
                             client.InterfaceType == InterfaceType.HdlcWithModeE ||
-                            client.InterfaceType == InterfaceType.PlcHdlc)
-                            && !parent.PreEstablished)
+                            client.InterfaceType == InterfaceType.PlcHdlc))
                         {
                             ReadDataBlock(DisconnectRequest(true), "Disconnect request", reply);
                         }

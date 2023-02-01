@@ -139,7 +139,7 @@
       <HintPath>packages\Gurux.Common.8.1.2109.2401\lib\net46\Gurux.Common.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.DLMS, Version=9.0.2302.102, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.9.0.2302.102\lib\net48\Gurux.DLMS.dll</HintPath>
+      <HintPath>packages\Gurux.DLMS.9.0.2302.102\lib\net46\Gurux.DLMS.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.DLMS.AMI.Messages, Version=8.1.2302.102, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.DLMS.AMI.Messages.8.1.2302.102\lib\net462\Gurux.DLMS.AMI.Messages.dll</HintPath>

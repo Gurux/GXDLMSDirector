@@ -240,7 +240,7 @@ namespace GXDLMSDirector
         {
             try
             {
-                string str = "https://www.gurux.fi/index.php?q=GXDLMSHdlcAddressResolverHelp";
+                string str = "https://www.gurux.fi/GXDLMSHdlcAddressResolverHelp";
                 // Show online help.
                 Process.Start(str);
                 // Set flag to show that the Help event as been handled

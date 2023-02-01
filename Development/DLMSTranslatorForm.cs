@@ -957,7 +957,7 @@ namespace GXDLMSDirector
         {
             try
             {
-                Process.Start("https://www.gurux.fi/index.php?q=GXDLMSTranslatorHelp");
+                Process.Start("https://www.gurux.fi/GXDLMSTranslatorHelp");
             }
             catch (Exception Ex)
             {

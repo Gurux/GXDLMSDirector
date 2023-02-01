@@ -460,7 +460,7 @@ namespace GXDLMSDirector
         {
             try
             {
-                Process.Start("https://www.gurux.fi/index.php?q=GXDLMSDirectorHelp");
+                Process.Start("https://www.gurux.fi/GXDLMSDirector");
             }
             catch (Exception Ex)
             {

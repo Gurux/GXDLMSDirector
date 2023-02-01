@@ -128,7 +128,7 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.StatusLbl = new System.Windows.Forms.ToolStripStatusLabel();
             this.MacroPanel = new System.Windows.Forms.Panel();
-            this.mikko = new System.Windows.Forms.Splitter();
+            this.DescriptionSplitter = new System.Windows.Forms.Splitter();
             this.MacroDescription = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -969,7 +969,7 @@
             // MacroPanel
             // 
             this.MacroPanel.Controls.Add(this.MacrosView);
-            this.MacroPanel.Controls.Add(this.mikko);
+            this.MacroPanel.Controls.Add(this.DescriptionSplitter);
             this.MacroPanel.Controls.Add(this.MacroDescription);
             this.MacroPanel.Dock = System.Windows.Forms.DockStyle.Left;
             this.MacroPanel.Location = new System.Drawing.Point(0, 49);
@@ -977,14 +977,14 @@
             this.MacroPanel.Size = new System.Drawing.Size(200, 536);
             this.MacroPanel.TabIndex = 14;
             // 
-            // mikko
+            // DescriptionSplitter
             // 
-            this.mikko.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.mikko.Location = new System.Drawing.Point(0, 482);
-            this.mikko.Name = "mikko";
-            this.mikko.Size = new System.Drawing.Size(200, 3);
-            this.mikko.TabIndex = 12;
-            this.mikko.TabStop = false;
+            this.DescriptionSplitter.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.DescriptionSplitter.Location = new System.Drawing.Point(0, 482);
+            this.DescriptionSplitter.Name = "DescriptionSplitter";
+            this.DescriptionSplitter.Size = new System.Drawing.Size(200, 3);
+            this.DescriptionSplitter.TabIndex = 12;
+            this.DescriptionSplitter.TabStop = false;
             // 
             // MacroDescription
             // 
@@ -1107,7 +1107,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.Panel MacroPanel;
         private System.Windows.Forms.TextBox MacroDescription;
-        private System.Windows.Forms.Splitter mikko;
+        private System.Windows.Forms.Splitter DescriptionSplitter;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem12;
         private System.Windows.Forms.ToolStripMenuItem PropertiesMnu;
         private System.Windows.Forms.ContextMenuStrip ActionMenu;

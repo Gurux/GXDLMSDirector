@@ -1246,7 +1246,7 @@ namespace GXDLMSDirector
         {
             try
             {
-                Process.Start("https://www.gurux.fi/index.php?q=MacroEditor");
+                Process.Start("https://www.gurux.fi/MacroEditor");
             }
             catch (Exception Ex)
             {

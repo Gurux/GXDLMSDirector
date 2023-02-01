@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12756 $,
-//                  $Date: 2021-12-09 11:30:56 +0200 (to, 09 joulu 2021) $
+// Version:         $Revision: 13519 $,
+//                  $Date: 2023-02-01 13:46:53 +0200 (ke, 01 helmi 2023) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1512,7 +1512,7 @@ namespace GXDLMSDirector
         {
             try
             {
-                System.Diagnostics.Process.Start("https://www.gurux.fi/index.php?q=GXDLMSDirectorExample");
+                System.Diagnostics.Process.Start("https://www.gurux.fi/GXDLMSDirectorExample");
             }
             catch (Exception Ex)
             {

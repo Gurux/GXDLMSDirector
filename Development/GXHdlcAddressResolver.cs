@@ -684,7 +684,7 @@ namespace GXDLMSDirector
         {
             try
             {
-                Process.Start("https://www.gurux.fi/index.php?q=GXDLMSHdlcAddressResolverHelp");
+                Process.Start("https://www.gurux.fi/GXDLMSHdlcAddressResolverHelp");
             }
             catch (Exception Ex)
             {

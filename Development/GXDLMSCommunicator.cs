@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 13128 $,
-//                  $Date: 2022-08-12 11:30:48 +0300 (pe, 12 elo 2022) $
+// Version:         $Revision: 13482 $,
+//                  $Date: 2023-01-03 13:25:43 +0200 (ti, 03 tammi 2023) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1375,8 +1375,15 @@ namespace GXDLMSDirector
                     catch (Exception Ex)
                     {
                         reply.Clear();
-                        ReadDLMSPacket(DisconnectRequest(), 1, reply);
-                        throw Ex;
+                        try
+                        {
+                            ReadDLMSPacket(DisconnectRequest(), 1, reply);
+                        }
+                        catch (Exception)
+                        {
+                            //It's OK if disconnect fails.
+                        }
+                        throw;
                     }
                     //If authentication is required.
                     if (client.Authentication > Authentication.Low)

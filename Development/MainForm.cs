@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12889 $,
-//                  $Date: 2022-02-03 15:41:49 +0200 (to, 03 helmi 2022) $
+// Version:         $Revision: 13519 $,
+//                  $Date: 2023-02-01 13:46:53 +0200 (ke, 01 helmi 2023) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -3534,7 +3534,7 @@ namespace GXDLMSDirector
                 GXDLMSObject it = dev.Objects.FindByLN(ObjectType.AssociationLogicalName, "0.0.40.0.0.255");
                 if (it is GXDLMSAssociationLogicalName)
                 {
-                    (it as GXDLMSAssociationLogicalName).ObjectList.AddRange(dev.Objects);
+  //MIKKO                  (it as GXDLMSAssociationLogicalName).ObjectList.AddRange(dev.Objects);
                 }
             }
             GroupItems(GroupsMnu.Checked, null);
@@ -4098,7 +4098,7 @@ namespace GXDLMSDirector
         {
             try
             {
-                Process.Start("https://www.gurux.fi/index.php?q=GXDLMSDirectorHelp");
+                Process.Start("https://www.gurux.fi/GXDLMSDirector");
             }
             catch (Exception Ex)
             {
@@ -5951,7 +5951,7 @@ namespace GXDLMSDirector
                 // Get the control where the user clicked
                 Point lpe = menuStrip1.PointToClient(hevent.MousePos);
                 Control ctl = this.GetChildAtPoint(this.PointToClient(hevent.MousePos));
-                string str = "https://www.gurux.fi/index.php?q=GXDLMSDirectorHelp";
+                string str = "https://www.gurux.fi/GXDLMSDirector";
                 if (ctl == toolStrip1 || ctl == menuStrip1)
                 {
                     str = "https://www.gurux.fi/GXDLMSDirector.Menu";
@@ -5959,18 +5959,18 @@ namespace GXDLMSDirector
                 else if (ctl == tabControl2 && tabControl2.SelectedTab == tabPage1 && SelectedView != null)
                 {
                     GXDLMSViewAttribute[] att = (GXDLMSViewAttribute[])SelectedView.GetType().GetCustomAttributes(typeof(GXDLMSViewAttribute), true);
-                    str = "https://www.gurux.fi/index.php?q=" + att[0].DLMSType.ToString();
+                    str = "https://www.gurux.fi/" + att[0].DLMSType.ToString();
                 }
                 else if (ctl == ObjectValueView && ObjectValueView.Items.Count != 0)
                 {
-                    str = "https://www.gurux.fi/index.php?q=" + ObjectValueView.Items[0].Tag.GetType();
+                    str = "https://www.gurux.fi/" + ObjectValueView.Items[0].Tag.GetType();
                 }
                 else if (ctl == panel1)
                 {
                     ctl = panel1.GetChildAtPoint(panel1.PointToClient(hevent.MousePos));
                     if (ctl == ConformanceTests)
                     {
-                        str = "https://www.gurux.fi/index.php?q=GXDLMSDirector.ConformanceTest";
+                        str = "https://www.gurux.fi/GXDLMSDirector.ConformanceTest";
                     }
                 }
                 else
@@ -7255,7 +7255,7 @@ namespace GXDLMSDirector
             try
             {
                 GXDLMSViewAttribute[] att = (GXDLMSViewAttribute[])SelectedView.GetType().GetCustomAttributes(typeof(GXDLMSViewAttribute), true);
-                string str = "https://www.gurux.fi/index.php?q=" + att[0].DLMSType.ToString();
+                string str = "https://www.gurux.fi/" + att[0].DLMSType.ToString();
                 // Show online help.
                 Process.Start(str);
             }

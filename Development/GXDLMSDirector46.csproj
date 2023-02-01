@@ -138,17 +138,17 @@
     <Reference Include="Gurux.Common, Version=8.1.2109.2401, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Common.8.1.2109.2401\lib\net46\Gurux.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=9.0.2302.101, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.9.0.2302.101\lib\net472\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=9.0.2302.102, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.9.0.2302.102\lib\net48\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.AMI.Messages, Version=8.1.2302.101, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.AMI.Messages.8.1.2302.101\lib\net462\Gurux.DLMS.AMI.Messages.dll</HintPath>
+    <Reference Include="Gurux.DLMS.AMI.Messages, Version=8.1.2302.102, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.AMI.Messages.8.1.2302.102\lib\net462\Gurux.DLMS.AMI.Messages.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.AMI.UI, Version=8.1.2302.101, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.AMI.UI.8.1.2302.101\lib\net462\Gurux.DLMS.AMI.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.AMI.UI, Version=8.1.2302.102, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.AMI.UI.8.1.2302.102\lib\net462\Gurux.DLMS.AMI.UI.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=9.0.2302.101, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.9.0.2302.101\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=9.0.2302.102, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.9.0.2302.102\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.MQTT, Version=8.1.2109.2401, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.MQTT.8.1.2109.2401\lib\net46\Gurux.MQTT.dll</HintPath>

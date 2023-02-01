@@ -197,7 +197,7 @@
     <value>Pem files (*.pem)|*.pem|Security files (*.cer)|*.cer|All files (*.*)|*.*</value>
   </data>
   <data name="CopyrightTxt" xml:space="preserve">
-    <value>Copyright© 1998-2021 Gurux Ltd.
+    <value>Copyright© 1998-2023 Gurux Ltd.
 All rights reserved.</value>
   </data>
   <data name="BlockCipherKeyTxt" xml:space="preserve">

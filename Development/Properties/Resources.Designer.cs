@@ -145,7 +145,7 @@ namespace GXDLMSDirector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Copyright© 1998-2021 Gurux Ltd.
+        ///   Looks up a localized string similar to Copyright© 1998-2023 Gurux Ltd.
         ///All rights reserved..
         /// </summary>
         internal static string CopyrightTxt {

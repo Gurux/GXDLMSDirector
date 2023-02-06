@@ -141,12 +141,6 @@
     <Reference Include="Gurux.DLMS, Version=9.0.2302.201, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.DLMS.9.0.2302.201\lib\net46\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.AMI.Messages, Version=8.1.2302.601, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.AMI.Messages.8.1.2302.601\lib\net462\Gurux.DLMS.AMI.Messages.dll</HintPath>
-    </Reference>
-    <Reference Include="Gurux.DLMS.AMI.UI, Version=8.1.2302.601, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.AMI.UI.8.1.2302.601\lib\net462\Gurux.DLMS.AMI.UI.dll</HintPath>
-    </Reference>
     <Reference Include="Gurux.DLMS.UI, Version=9.0.2302.601, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.DLMS.UI.9.0.2302.601\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>

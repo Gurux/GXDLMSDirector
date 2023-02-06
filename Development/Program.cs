@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 12929 $,
-//                  $Date: 2022-04-20 10:44:23 +0300 (ke, 20 huhti 2022) $
+// Version:         $Revision: 13534 $,
+//                  $Date: 2023-02-06 11:47:17 +0200 (ma, 06 helmi 2023) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -140,8 +140,6 @@ namespace GXDLMSDirector
                     try
                     {
                         new Gurux.MQTT.GXMqtt();
-                        //Make AMI visible.
-                        new Gurux.DLMS.AMI.UI.GXDlmsAmi();
 
                     }
                     catch (Exception ex)

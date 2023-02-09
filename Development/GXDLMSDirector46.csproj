@@ -135,8 +135,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Gurux.Common, Version=8.1.2109.2401, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Common.8.1.2109.2401\lib\net46\Gurux.Common.dll</HintPath>
+    <Reference Include="Gurux.Common, Version=8.4.2302.901, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Common.8.4.2302.901\lib\net462\Gurux.Common.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.DLMS, Version=9.0.2302.201, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.DLMS.9.0.2302.201\lib\net48\Gurux.DLMS.dll</HintPath>
@@ -144,27 +144,24 @@
     <Reference Include="Gurux.DLMS.UI, Version=9.0.2302.602, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.DLMS.UI.9.0.2302.602\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.MQTT, Version=8.1.2109.2401, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.MQTT.8.1.2109.2401\lib\net46\Gurux.MQTT.dll</HintPath>
+    <Reference Include="Gurux.MQTT, Version=8.1.2302.902, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.MQTT.8.1.2302.902\lib\net462\Gurux.MQTT.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.Net, Version=8.1.2109.2401, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Net.8.1.2109.2401\lib\net46\Gurux.Net.dll</HintPath>
+    <Reference Include="Gurux.Net, Version=8.4.2302.904, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Net.8.4.2302.904\lib\net462\Gurux.Net.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.Serial, Version=8.1.2109.2401, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Serial.8.1.2109.2401\lib\net46\Gurux.Serial.dll</HintPath>
+    <Reference Include="Gurux.Serial, Version=8.4.2302.902, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Serial.8.4.2302.902\lib\net462\Gurux.Serial.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.Service, Version=1.1.2109.3001, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Service.1.1.2109.3001\lib\net46\Gurux.Service.dll</HintPath>
-    </Reference>
-    <Reference Include="Gurux.Terminal, Version=8.1.2109.2401, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.Terminal.8.1.2109.2401\lib\net46\Gurux.Terminal.dll</HintPath>
+    <Reference Include="Gurux.Terminal, Version=8.4.2302.902, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.Terminal.8.4.2302.902\lib\net462\Gurux.Terminal.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Win32.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
     </Reference>
-    <Reference Include="MQTTnet, Version=3.0.16.0, Culture=neutral, PublicKeyToken=b69712f52770c0a7, processorArchitecture=MSIL">
-      <HintPath>packages\MQTTnet.3.0.16\lib\net452\MQTTnet.dll</HintPath>
+    <Reference Include="MQTTnet, Version=4.1.4.563, Culture=neutral, PublicKeyToken=fdb7629f2e364a63, processorArchitecture=MSIL">
+      <HintPath>packages\MQTTnet.4.1.4.563\lib\net461\MQTTnet.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -217,9 +214,6 @@
     <Reference Include="System.Net.Http, Version=4.1.1.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\System.Net.Http.4.3.4\lib\net46\System.Net.Http.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.AspNet.WebApi.Client.5.2.7\lib\net45\System.Net.Http.Formatting.dll</HintPath>
-    </Reference>
     <Reference Include="System.Net.Security, Version=4.0.1.2, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\System.Net.Security.4.3.2\lib\net46\System.Net.Security.dll</HintPath>
     </Reference>
@@ -235,6 +229,9 @@
     <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Resources.Extensions, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Resources.Extensions.7.0.0\lib\net462\System.Resources.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>

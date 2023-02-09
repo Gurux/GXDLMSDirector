@@ -701,6 +701,15 @@ namespace GXDLMSDirector
             {
                 GXHdlcAddressesResolverDlg dlg = new GXHdlcAddressesResolverDlg(media);
                 dlg.ShowDialog(this);
+                if (media is GXSerial)
+                {
+                    Settings.Default.HdlcAddressSerialSettings = media.Settings;
+                }
+                else if (media is GXNet net)
+                {
+                    Settings.Default.HdlcAddressNetworkSettings = media.Settings;
+                }
+                UpdateStatus("Ready.");
             }
             catch (Exception Ex)
             {

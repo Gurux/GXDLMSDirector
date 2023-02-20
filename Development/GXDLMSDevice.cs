@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 13069 $,
-//                  $Date: 2022-06-23 10:25:06 +0300 (to, 23 kesä 2022) $
+// Version:         $Revision: 13578 $,
+//                  $Date: 2023-02-20 14:05:21 +0200 (ma, 20 helmi 2023) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -47,6 +47,7 @@ using System.Text;
 using Gurux.Net;
 using Gurux.Serial;
 using Gurux.DLMS.Objects.Enums;
+using Gurux.DLMS.Extension;
 
 namespace GXDLMSDirector
 {
@@ -374,7 +375,7 @@ namespace GXDLMSDirector
         /// <summary>
         /// Constructor.
         /// </summary>
-        public GXDLMSDevice(Gurux.Common.IGXMedia media) : base()
+        public GXDLMSDevice(IGXMedia media) : base()
         {
             communicator = new GXDLMSCommunicator(this, media);
             Objects = communicator.client.Objects;

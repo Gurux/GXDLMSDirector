@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 13534 $,
-//                  $Date: 2023-02-06 11:47:17 +0200 (ma, 06 helmi 2023) $
+// Version:         $Revision: 13578 $,
+//                  $Date: 2023-02-20 14:05:21 +0200 (ma, 20 helmi 2023) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -40,11 +40,7 @@ using Gurux.Common;
 using System.Deployment.Application;
 using Microsoft.Win32;
 using System.Diagnostics;
-using Gurux.DLMS;
-using Gurux.DLMS.Ecdsa;
-using System.Numerics;
-using Gurux.DLMS.Secure;
-using Gurux.DLMS.ASN;
+using Gurux.DLMS.Extension;
 
 namespace GXDLMSDirector
 {
@@ -90,7 +86,32 @@ namespace GXDLMSDirector
                     GXExternalMediaForm.DownLoadMedia(it);
                 }
             }
-        }       
+        }
+
+        /// <summary>
+        /// Load external Hardware Security Module extension.
+        /// </summary>
+        static void LoadExtension()
+        {
+            string initDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
+            string extension = Path.Combine(initDir, "Extension");
+            foreach (string path in Directory.GetFiles(extension, "*.dll"))
+            {
+                if (File.Exists(path))
+                {
+                    Assembly asm = Assembly.LoadFile(path);
+                    foreach (Type type in asm.GetTypes())
+                    {
+                        if (!type.IsAbstract && type.IsClass && typeof(IGXDLMSExtension).IsAssignableFrom(type))
+                        {
+                            GXDLMSCommunicator.Extension = Activator.CreateInstance(type) as IGXDLMSExtension;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
 
         /// <summary>
         /// Show occurred errors.
@@ -222,6 +243,14 @@ namespace GXDLMSDirector
                     catch (Exception)
                     {
                     }
+                    try
+                    {
+                        LoadExtension();
+                    }
+                    catch (Exception Ex)
+                    {
+                        GXDLMS.Common.Error.ShowError(null, Ex);
+                    }
                     MainForm.InitMain();
                 }
                 catch (Exception Ex)
@@ -232,7 +261,7 @@ namespace GXDLMSDirector
             }
             else
             {
-                foreach(Process p in Process.GetProcessesByName("GXDLMSDirector"))
+                foreach (Process p in Process.GetProcessesByName("GXDLMSDirector"))
                 {
                     Gurux.Win32.SetForegroundWindow(p.MainWindowHandle);
                 }

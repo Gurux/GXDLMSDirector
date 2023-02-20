@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 13482 $,
-//                  $Date: 2023-01-03 13:25:43 +0200 (ti, 03 tammi 2023) $
+// Version:         $Revision: 13578 $,
+//                  $Date: 2023-02-20 14:05:21 +0200 (ma, 20 helmi 2023) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -50,6 +50,7 @@ using System.Xml;
 using Gurux.DLMS.ASN;
 using Gurux.DLMS.Ecdsa;
 using System.IO;
+using Gurux.DLMS.Extension;
 
 namespace GXDLMSDirector
 {
@@ -83,14 +84,24 @@ namespace GXDLMSDirector
         public Control parentForm;
         public IGXMedia media = null;
         internal GXDLMSSecureClient client;
+        internal static IGXDLMSExtension Extension;
 
-        public GXDLMSCommunicator(GXDLMSDevice parent, Gurux.Common.IGXMedia media)
+        public GXDLMSCommunicator(GXDLMSDevice parent, IGXMedia media)
         {
             this.parent = parent;
             this.media = media;
             client = new GXDLMSSecureClient();
             //Get ECDSA keys when needed.
             client.OnKeys += Client_OnKeys;
+            if (Extension != null )
+            {
+                client.OnCrypto += Client_OnCrypto;
+            }
+        }
+
+        private void Client_OnCrypto(object sender, GXCryptoKeyParameter args)
+        {
+            Extension.Crypt(sender, args);
         }
 
         /// <summary>

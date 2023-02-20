@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 13519 $,
-//                  $Date: 2023-02-01 13:46:53 +0200 (ke, 01 helmi 2023) $
+// Version:         $Revision: 13578 $,
+//                  $Date: 2023-02-20 14:05:21 +0200 (ma, 20 helmi 2023) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -49,9 +49,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Xml;
 using Gurux.DLMS.ASN;
-using Gurux.DLMS.UI;
 using Gurux.DLMS.UI.Ecdsa;
-using Gurux.DLMS.Objects.Enums;
 
 namespace GXDLMSDirector
 {

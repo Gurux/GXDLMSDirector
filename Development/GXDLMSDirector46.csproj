@@ -138,11 +138,11 @@
     <Reference Include="Gurux.Common, Version=8.4.2302.901, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.Common.8.4.2302.901\lib\net462\Gurux.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS, Version=9.0.2302.2001, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.9.0.2302.2001\lib\net48\Gurux.DLMS.dll</HintPath>
+    <Reference Include="Gurux.DLMS, Version=9.0.2303.2001, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.9.0.2303.2001\lib\net48\Gurux.DLMS.dll</HintPath>
     </Reference>
-    <Reference Include="Gurux.DLMS.UI, Version=9.0.2302.2001, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Gurux.DLMS.UI.9.0.2302.2001\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
+    <Reference Include="Gurux.DLMS.UI, Version=9.0.2303.2001, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Gurux.DLMS.UI.9.0.2303.2001\lib\portable-win+net40\Gurux.DLMS.UI.dll</HintPath>
     </Reference>
     <Reference Include="Gurux.MQTT, Version=8.1.2302.902, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Gurux.MQTT.8.1.2302.902\lib\net462\Gurux.MQTT.dll</HintPath>
@@ -164,7 +164,7 @@
       <HintPath>packages\MQTTnet.4.1.4.563\lib\net461\MQTTnet.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.AppContext, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -186,8 +186,8 @@
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Design" />
-    <Reference Include="System.Diagnostics.DiagnosticSource, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>packages\System.Diagnostics.DiagnosticSource.7.0.0\lib\net462\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=7.0.0.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Diagnostics.DiagnosticSource.7.0.2\lib\net462\System.Diagnostics.DiagnosticSource.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />

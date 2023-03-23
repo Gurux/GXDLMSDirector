@@ -961,7 +961,7 @@ namespace GXDLMSDirector
                     dev.Comm.LogFile = Path.Combine(test.Results, "Trace.txt");
                     GXDLMSClient cl = dev.Comm.client;
                     converter = new GXDLMSConverter(dev.Standard);
-                    dev.Comm.client = new GXDLMSXmlClient(TranslatorOutputType.SimpleXml, true);
+                    dev.Comm.client = new GXDLMSXmlClient(TranslatorOutputType.SimpleXml, false);
                     dev.Comm.client.Ciphering.TestMode = true;
                     cl.CopyTo(dev.Comm.client);
                     test.Device = dev;
@@ -2349,11 +2349,11 @@ namespace GXDLMSDirector
             }
             if (ln.ClientSAP != dev.ClientAddress)
             {
-                output.Errors.Insert(0, string.Format("Invalid Client SAP. Actual:{0} expected: {1} " + ln.ClientSAP, dev.ClientAddress));
+                output.Errors.Insert(0, string.Format("Invalid Client SAP. Actual:{0} expected: {1} ", ln.ClientSAP, dev.ClientAddress));
             }
             if (ln.ServerSAP != dev.Comm.client.ServerAddress)
             {
-                output.Errors.Insert(0, string.Format("Invalid Server SAP. Actual:{0} expected: {1} " + ln.ServerSAP, dev.Comm.client.ServerAddress));
+                output.Errors.Insert(0, string.Format("Invalid Server SAP. Actual:{0} expected: {1} ", ln.ServerSAP, dev.Comm.client.ServerAddress));
             }
         }
 

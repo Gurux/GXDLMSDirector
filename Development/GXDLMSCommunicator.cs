@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 13578 $,
-//                  $Date: 2023-02-20 14:05:21 +0200 (ma, 20 helmi 2023) $
+// Version:         $Revision: 13638 $,
+//                  $Date: 2023-03-23 11:03:34 +0200 (to, 23 maalis 2023) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -51,6 +51,7 @@ using Gurux.DLMS.ASN;
 using Gurux.DLMS.Ecdsa;
 using System.IO;
 using Gurux.DLMS.Extension;
+using System.Linq;
 
 namespace GXDLMSDirector
 {
@@ -166,9 +167,18 @@ namespace GXDLMSDirector
             {
                 //Find public key.
                 path = GetPath(args.SecuritySuite, args.CertificateType, certificates, null);
-                if (!string.IsNullOrEmpty(path) && File.Exists(path))
+                if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
                 {
-                    args.PublicKey = GXx509Certificate.Search(path, args.SystemTitle).PublicKey;
+                    GXx509Certificate[] certs = GXx509Certificate.Search(path, CertificateType.DigitalSignature, args.SystemTitle);
+                    if (certs.Length == 0)
+                    {
+                        throw new Exception("Failed to find meter certificate.");
+                    }
+                    if (certs.Length != 1)
+                    {
+                        throw new Exception("Meter have multiple certificates.");
+                    }
+                    args.PublicKey = certs[0].PublicKey;
                 }
             }
         }

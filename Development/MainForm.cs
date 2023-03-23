@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 13519 $,
-//                  $Date: 2023-02-01 13:46:53 +0200 (ke, 01 helmi 2023) $
+// Version:         $Revision: 13628 $,
+//                  $Date: 2023-03-22 13:45:07 +0200 (ke, 22 maalis 2023) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -3534,7 +3534,7 @@ namespace GXDLMSDirector
                 GXDLMSObject it = dev.Objects.FindByLN(ObjectType.AssociationLogicalName, "0.0.40.0.0.255");
                 if (it is GXDLMSAssociationLogicalName)
                 {
-  //MIKKO                  (it as GXDLMSAssociationLogicalName).ObjectList.AddRange(dev.Objects);
+                    (it as GXDLMSAssociationLogicalName).ObjectList.AddRange(dev.Objects);
                 }
             }
             GroupItems(GroupsMnu.Checked, null);

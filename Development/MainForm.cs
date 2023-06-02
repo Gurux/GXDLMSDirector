@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 13628 $,
-//                  $Date: 2023-03-22 13:45:07 +0200 (ke, 22 maalis 2023) $
+// Version:         $Revision: 13895 $,
+//                  $Date: 2023-06-02 14:14:29 +0300 (pe, 02 kesä 2023) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -58,6 +58,7 @@ using System.Deployment.Application;
 using Gurux.DLMS.Objects.Enums;
 using GXDLMSDirector.Macro;
 using Gurux.DLMS.UI.Ecdsa;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace GXDLMSDirector
 {
@@ -2010,7 +2011,7 @@ namespace GXDLMSDirector
             }
         }
 
-#region XML positioning
+        #region XML positioning
 
         /// <summary>
         /// Retrieves application data path from environment variables.
@@ -2277,7 +2278,7 @@ namespace GXDLMSDirector
             }
         }
 
-#endregion
+        #endregion
 
         void ReadDevices()
         {
@@ -3709,9 +3710,9 @@ namespace GXDLMSDirector
                             (it as GXDLMSAssociationLogicalName).ObjectList.AddRange(dev.Objects);
                         }
                     }
-                    //Read inactivity timeout.
                     if (d != null)
                     {
+                        //Read inactivity timeout.
                         dev.InactivityTimeout = 120 - 10;
                         foreach (GXDLMSHdlcSetup it in dev.Objects.GetObjects(ObjectType.IecHdlcSetup))
                         {
@@ -3724,7 +3725,18 @@ namespace GXDLMSDirector
                                 }
                             }
                         }
+                        //Read clock and update date time skips for the device.
+                        foreach (GXDLMSClock it in dev.Objects.GetObjects(ObjectType.Clock))
+                        {
+                            if (it.CanRead(2))
+                            {
+                                d.Comm.ReadValue(it, 2);
+                                dev.DateTimeSkips = it.Time.Skip & (DateTimeSkips.Deviation |
+                                    DateTimeSkips.Status | DateTimeSkips.Status);
+                            }
+                        }
                     }
+
                     this.OnProgress(dev, "Reading scalers and units.", cnt, cnt);
                     GroupItems(GroupsMnu.Checked, dev);
                 }

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 13578 $,
-//                  $Date: 2023-02-20 14:05:21 +0200 (ma, 20 helmi 2023) $
+// Version:         $Revision: 13771 $,
+//                  $Date: 2023-05-15 15:48:52 +0300 (ma, 15 touko 2023) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -95,23 +95,25 @@ namespace GXDLMSDirector
         {
             string initDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GXDLMSDirector");
             string extension = Path.Combine(initDir, "Extension");
-            foreach (string path in Directory.GetFiles(extension, "*.dll"))
+            if (Directory.Exists(extension))
             {
-                if (File.Exists(path))
+                foreach (string path in Directory.GetFiles(extension, "*.dll"))
                 {
-                    Assembly asm = Assembly.LoadFile(path);
-                    foreach (Type type in asm.GetTypes())
+                    if (File.Exists(path))
                     {
-                        if (!type.IsAbstract && type.IsClass && typeof(IGXDLMSExtension).IsAssignableFrom(type))
+                        Assembly asm = Assembly.LoadFile(path);
+                        foreach (Type type in asm.GetTypes())
                         {
-                            GXDLMSCommunicator.Extension = Activator.CreateInstance(type) as IGXDLMSExtension;
-                            break;
+                            if (!type.IsAbstract && type.IsClass && typeof(IGXDLMSExtension).IsAssignableFrom(type))
+                            {
+                                GXDLMSCommunicator.Extension = Activator.CreateInstance(type) as IGXDLMSExtension;
+                                break;
+                            }
                         }
                     }
                 }
             }
         }
-
 
         /// <summary>
         /// Show occurred errors.

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 13638 $,
-//                  $Date: 2023-03-23 11:03:34 +0200 (to, 23 maalis 2023) $
+// Version:         $Revision: 13833 $,
+//                  $Date: 2023-05-29 10:24:15 +0300 (ma, 29 touko 2023) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -94,7 +94,7 @@ namespace GXDLMSDirector
             client = new GXDLMSSecureClient();
             //Get ECDSA keys when needed.
             client.OnKeys += Client_OnKeys;
-            if (Extension != null )
+            if (Extension != null)
             {
                 client.OnCrypto += Client_OnCrypto;
             }
@@ -699,7 +699,7 @@ namespace GXDLMSDirector
                 Thread.Sleep(1000);
             }
             //Query device information.
-            if (serial != null && parent.InterfaceType == InterfaceType.HdlcWithModeE)
+            if (parent.InterfaceType == InterfaceType.HdlcWithModeE)
             {
                 string data = "/?!\r\n";
                 if (manufacturer != null && !string.IsNullOrEmpty(manufacturer.IecAddress))
@@ -847,12 +847,15 @@ namespace GXDLMSDirector
                     {
                         GXLogWriter.WriteLog("Received: " + p.Reply);
                     }
-                    media.Close();
-                    serial.BaudRate = BaudRate;
-                    serial.DataBits = 8;
-                    serial.Parity = Parity.None;
-                    serial.StopBits = StopBits.One;
-                    media.Open();
+                    if (serial != null)
+                    {
+                        media.Close();
+                        serial.BaudRate = BaudRate;
+                        serial.DataBits = 8;
+                        serial.Parity = Parity.None;
+                        serial.StopBits = StopBits.One;
+                        media.Open();
+                    }
                     //Some meters need this sleep. Do not remove.
                     Thread.Sleep(1000);
                 }
@@ -1233,6 +1236,7 @@ namespace GXDLMSDirector
             }
             client.ChallengeSize = parent.ChallengeSize;
             client.OverwriteAttributeAccessRights = parent.OverwriteAttributeAccessRights;
+            client.IncreaseInvocationCounterForGMacAuthentication = parent.IncreaseInvocationCounterForGMacAuthentication;
         }
 
         public void InitializeConnection(bool force)

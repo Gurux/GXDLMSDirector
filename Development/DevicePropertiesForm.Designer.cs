@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12791 $,
-//                  $Date: 2021-12-16 15:48:53 +0200 (to, 16 joulu 2021) $
+// Version:         $Revision: 13833 $,
+//                  $Date: 2023-05-29 10:24:15 +0300 (ma, 29 touko 2023) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -222,6 +222,7 @@ namespace GXDLMSDirector
             this.helpProvider1 = new System.Windows.Forms.HelpProvider();
             this.conformanceHelpProvider = new System.Windows.Forms.HelpProvider();
             this.ShowAsHex = new System.Windows.Forms.CheckBox();
+            this.IncreaseInvocationCounterForGMacAuthenticationCB = new System.Windows.Forms.CheckBox();
             this.SupportedServicesTab.SuspendLayout();
             this.SNSettings.SuspendLayout();
             this.LNSettings.SuspendLayout();
@@ -1439,6 +1440,7 @@ namespace GXDLMSDirector
             // 
             // AdvancedTab
             // 
+            this.AdvancedTab.Controls.Add(this.IncreaseInvocationCounterForGMacAuthenticationCB);
             this.AdvancedTab.Controls.Add(this.OverwriteAttributeAccessRightsCb);
             this.AdvancedTab.Controls.Add(this.GBTWindowSizeTb);
             this.AdvancedTab.Controls.Add(this.GBTWindowSizeLbl);
@@ -1478,7 +1480,7 @@ namespace GXDLMSDirector
             // 
             this.OverwriteAttributeAccessRightsCb.AutoSize = true;
             this.helpProvider1.SetHelpString(this.OverwriteAttributeAccessRightsCb, "Is protected release used.");
-            this.OverwriteAttributeAccessRightsCb.Location = new System.Drawing.Point(14, 354);
+            this.OverwriteAttributeAccessRightsCb.Location = new System.Drawing.Point(14, 347);
             this.OverwriteAttributeAccessRightsCb.Name = "OverwriteAttributeAccessRightsCb";
             this.helpProvider1.SetShowHelp(this.OverwriteAttributeAccessRightsCb, true);
             this.OverwriteAttributeAccessRightsCb.Size = new System.Drawing.Size(177, 17);
@@ -1509,7 +1511,7 @@ namespace GXDLMSDirector
             // 
             this.SignInitiateRequestResponseCb.AutoSize = true;
             this.helpProvider1.SetHelpString(this.SignInitiateRequestResponseCb, "Is protected release used.");
-            this.SignInitiateRequestResponseCb.Location = new System.Drawing.Point(14, 331);
+            this.SignInitiateRequestResponseCb.Location = new System.Drawing.Point(14, 324);
             this.SignInitiateRequestResponseCb.Name = "SignInitiateRequestResponseCb";
             this.helpProvider1.SetShowHelp(this.SignInitiateRequestResponseCb, true);
             this.SignInitiateRequestResponseCb.Size = new System.Drawing.Size(186, 17);
@@ -1522,7 +1524,7 @@ namespace GXDLMSDirector
             this.IncludePublicKeyCb.AutoSize = true;
             this.helpProvider1.SetHelpNavigator(this.IncludePublicKeyCb, System.Windows.Forms.HelpNavigator.Topic);
             this.helpProvider1.SetHelpString(this.IncludePublicKeyCb, "SendPublicKeyCertificateInInitialize");
-            this.IncludePublicKeyCb.Location = new System.Drawing.Point(14, 308);
+            this.IncludePublicKeyCb.Location = new System.Drawing.Point(14, 301);
             this.IncludePublicKeyCb.Name = "IncludePublicKeyCb";
             this.helpProvider1.SetShowHelp(this.IncludePublicKeyCb, true);
             this.IncludePublicKeyCb.Size = new System.Drawing.Size(203, 17);
@@ -2165,6 +2167,19 @@ namespace GXDLMSDirector
             this.ShowAsHex.UseVisualStyleBackColor = true;
             this.ShowAsHex.CheckedChanged += new System.EventHandler(this.ShowAsHex_CheckedChanged);
             // 
+            // IncreaseInvocationCounterForGMacAuthenticationCB
+            // 
+            this.IncreaseInvocationCounterForGMacAuthenticationCB.AutoSize = true;
+            this.helpProvider1.SetHelpString(this.IncreaseInvocationCounterForGMacAuthenticationCB, "Some meters expect that Invocation Counter is increased for GMAC Authentication w" +
+        "hen connection is established.");
+            this.IncreaseInvocationCounterForGMacAuthenticationCB.Location = new System.Drawing.Point(14, 365);
+            this.IncreaseInvocationCounterForGMacAuthenticationCB.Name = "IncreaseInvocationCounterForGMacAuthenticationCB";
+            this.helpProvider1.SetShowHelp(this.IncreaseInvocationCounterForGMacAuthenticationCB, true);
+            this.IncreaseInvocationCounterForGMacAuthenticationCB.Size = new System.Drawing.Size(281, 17);
+            this.IncreaseInvocationCounterForGMacAuthenticationCB.TabIndex = 69;
+            this.IncreaseInvocationCounterForGMacAuthenticationCB.Text = "Increase invocation counter for GMAC Authentication ";
+            this.IncreaseInvocationCounterForGMacAuthenticationCB.UseVisualStyleBackColor = true;
+            // 
             // DevicePropertiesForm
             // 
             this.AcceptButton = this.OKBtn;
@@ -2389,5 +2404,6 @@ namespace GXDLMSDirector
         private System.Windows.Forms.TextBox GBTWindowSizeTb;
         private System.Windows.Forms.Label GBTWindowSizeLbl;
         private System.Windows.Forms.CheckBox OverwriteAttributeAccessRightsCb;
+        private System.Windows.Forms.CheckBox IncreaseInvocationCounterForGMacAuthenticationCB;
     }
 }

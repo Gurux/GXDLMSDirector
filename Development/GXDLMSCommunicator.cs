@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 13833 $,
-//                  $Date: 2023-05-29 10:24:15 +0300 (ma, 29 touko 2023) $
+// Version:         $Revision: 14016 $,
+//                  $Date: 2023-07-19 08:55:09 +0300 (ke, 19 heinä 2023) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -940,7 +940,7 @@ namespace GXDLMSDirector
             client.InterfaceType = InterfaceType.HDLC;
             client.UseProtectedRelease = parent.UseProtectedRelease;
             if (!string.IsNullOrEmpty(this.parent.Password))
-            {
+            {                
                 client.Password = CryptHelper.Decrypt(this.parent.Password, Password.Key);
             }
             else if (this.parent.HexPassword != null)
@@ -1703,7 +1703,7 @@ namespace GXDLMSDirector
                 }
                 else
                 {
-                    throw new Exception("GetObjects failed. " + Ex.Message);
+                   throw new Exception("GetObjects failed. " + Ex.Message);
                 }
             }
             objs = client.ParseObjects(reply.Data, true);

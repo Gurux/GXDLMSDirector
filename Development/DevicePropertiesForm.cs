@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 13833 $,
-//                  $Date: 2023-05-29 10:24:15 +0300 (ma, 29 touko 2023) $
+// Version:         $Revision: 14039 $,
+//                  $Date: 2023-08-16 14:29:57 +0300 (ke, 16 elo 2023) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -388,8 +388,9 @@ namespace GXDLMSDirector
             ciphering.ServerAgreementKey = device.ServerAgreementKey;
             ciphering.UpdateKeys();
             ciphering.PreEstablishedApplicationAssociations = device.PreEstablished;
-            this.VerboseModeCB.Checked = device.Verbose;
-            this.NameTB.Text = device.Name;
+            ciphering.IgnoreSNRMWithPreEstablished = device.IgnoreSNRMWithPreEstablished;
+            VerboseModeCB.Checked = device.Verbose;
+            NameTB.Text = device.Name;
             if ((Device is GXDLMSDevice))
             {
                 SelectedMedia = (Device as GXDLMSDevice).Media;
@@ -1003,6 +1004,7 @@ namespace GXDLMSDirector
             device.ServerSigningKey = ciphering.ServerSigningKey;
             device.ServerAgreementKey = ciphering.ServerAgreementKey;
             device.PreEstablished = ciphering.PreEstablishedApplicationAssociations;
+            device.IgnoreSNRMWithPreEstablished = ciphering.IgnoreSNRMWithPreEstablished;
             device.UseProtectedRelease = UseProtectedReleaseCb.Checked;
             device.SecurityChangeCheck = SecurityChangeCheckCb.Checked;
 

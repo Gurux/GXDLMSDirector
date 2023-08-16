@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 14016 $,
-//                  $Date: 2023-07-19 08:55:09 +0300 (ke, 19 heinä 2023) $
+// Version:         $Revision: 14039 $,
+//                  $Date: 2023-08-16 14:29:57 +0300 (ke, 16 elo 2023) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -940,7 +940,7 @@ namespace GXDLMSDirector
             client.InterfaceType = InterfaceType.HDLC;
             client.UseProtectedRelease = parent.UseProtectedRelease;
             if (!string.IsNullOrEmpty(this.parent.Password))
-            {                
+            {
                 client.Password = CryptHelper.Decrypt(this.parent.Password, Password.Key);
             }
             else if (this.parent.HexPassword != null)
@@ -1359,30 +1359,33 @@ namespace GXDLMSDirector
                         client.Ciphering.Signing = signing;
                     }
                 }
-                data = SNRMRequest();
-                if (data != null)
+                if (!parent.IgnoreSNRMWithPreEstablished)
                 {
-                    try
+                    data = SNRMRequest();
+                    if (data != null)
                     {
-                        reply.Clear();
-                        ReadDataBlock(data, "Send SNRM request.", 1, parent.ResendCount, reply);
+                        try
+                        {
+                            reply.Clear();
+                            ReadDataBlock(data, "Send SNRM request.", 1, parent.ResendCount, reply);
+                        }
+                        catch (TimeoutException)
+                        {
+                            reply.Clear();
+                            ReadDataBlock(DisconnectRequest(true), "Send Disconnect request.", 1, parent.ResendCount, reply);
+                            reply.Clear();
+                            ReadDataBlock(data, "Send SNRM request.", reply);
+                        }
+                        catch (Exception e)
+                        {
+                            reply.Clear();
+                            ReadDataBlock(DisconnectRequest(), "Send Disconnect request.", reply);
+                            throw e;
+                        }
+                        GXLogWriter.WriteLog("Parsing UA reply succeeded.");
+                        //Has server accepted client.
+                        ParseUAResponse(reply.Data);
                     }
-                    catch (TimeoutException)
-                    {
-                        reply.Clear();
-                        ReadDataBlock(DisconnectRequest(true), "Send Disconnect request.", 1, parent.ResendCount, reply);
-                        reply.Clear();
-                        ReadDataBlock(data, "Send SNRM request.", reply);
-                    }
-                    catch (Exception e)
-                    {
-                        reply.Clear();
-                        ReadDataBlock(DisconnectRequest(), "Send Disconnect request.", reply);
-                        throw e;
-                    }
-                    GXLogWriter.WriteLog("Parsing UA reply succeeded.");
-                    //Has server accepted client.
-                    ParseUAResponse(reply.Data);
                 }
                 if (!parent.PreEstablished)
                 {
@@ -1703,7 +1706,7 @@ namespace GXDLMSDirector
                 }
                 else
                 {
-                   throw new Exception("GetObjects failed. " + Ex.Message);
+                    throw new Exception("GetObjects failed. " + Ex.Message);
                 }
             }
             objs = client.ParseObjects(reply.Data, true);

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 14039 $,
-//                  $Date: 2023-08-16 14:29:57 +0300 (ke, 16 elo 2023) $
+// Version:         $Revision: 14290 $,
+//                  $Date: 2023-10-30 15:16:15 +0200 (ma, 30 loka 2023) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -334,7 +334,8 @@ namespace GXDLMSDirector
                         //Release is call only for secured connections.
                         //All meters are not supporting Release and it's causing problems.
                         if (client.InterfaceType == InterfaceType.WRAPPER ||
-                            (client.Ciphering.Security != (byte)Security.None && !parent.PreEstablished))
+                            (client.Ciphering.Security != (byte)Security.None && 
+                            !parent.PreEstablished))
                         {
                             byte[] data = ReleaseRequest();
                             if (data != null)
@@ -1333,7 +1334,7 @@ namespace GXDLMSDirector
                             reply.Clear();
                             if (parent.InterfaceType == InterfaceType.HdlcWithModeE)
                             {
-                                Disconnect();
+                                Disconnect(); 
                                 //Initialize IEC again for optical port connection.
                                 media.Settings = parent.MediaSettings;
                                 InitializeIEC();

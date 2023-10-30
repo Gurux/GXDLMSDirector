@@ -3007,7 +3007,8 @@ namespace GXDLMSDirector
                                     test.OnProgress(test, "Transfering image on progress. Waiting...", 1, 1);
                                     Thread.Sleep((int)settings.ImageVerifyWaitTime.TotalMilliseconds);
                                 }
-                            } while (img.ImageTransferStatus != ImageTransferStatus.TransferInitiated);
+                            }
+                            while (img.ImageTransferStatus != ImageTransferStatus.TransferInitiated);
                             try
                             {
                                 dev.Comm.ReadDataBlock(img.ImageVerify(dev.Comm.client), "", 1, reply);

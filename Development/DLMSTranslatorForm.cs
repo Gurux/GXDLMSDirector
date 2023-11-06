@@ -143,6 +143,7 @@ namespace GXDLMSDirector
             {
                 //Set default settings if settings are corrupted.
                 translator.Security = Security.None;
+                translator.SecuritySuite = SecuritySuite.Suite0;
                 translator.SystemTitle = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.NotifySystemTitle);
                 translator.ServerSystemTitle = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.ServerSystemTitle);
                 translator.BlockCipherKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.NotifyBlockCipherKey);

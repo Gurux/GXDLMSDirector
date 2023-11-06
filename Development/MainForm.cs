@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 13895 $,
-//                  $Date: 2023-06-02 14:14:29 +0300 (pe, 02 kesä 2023) $
+// Version:         $Revision: 14312 $,
+//                  $Date: 2023-11-06 10:44:04 +0200 (ma, 06 marras 2023) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -5605,6 +5605,7 @@ namespace GXDLMSDirector
                     if (newDev != null)
                     {
                         traceTranslator.Security = newDev.Security;
+                        traceTranslator.SecuritySuite = newDev.SecuritySuite;
                         traceTranslator.SystemTitle = GXCommon.HexToBytes(newDev.SystemTitle);
                         traceTranslator.BlockCipherKey = GXCommon.HexToBytes(newDev.BlockCipherKey);
                         traceTranslator.AuthenticationKey = GXCommon.HexToBytes(newDev.AuthenticationKey);

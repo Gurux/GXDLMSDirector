@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 14039 $,
-//                  $Date: 2023-08-16 14:29:57 +0300 (ke, 16 elo 2023) $
+// Version:         $Revision: 14312 $,
+//                  $Date: 2023-11-06 10:44:04 +0200 (ma, 06 marras 2023) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1016,17 +1016,17 @@ namespace GXDLMSDirector
                 {
                     throw new ArgumentException("Invalid system title. System title must be 8 bytes long.");
                 }
-                if (!string.IsNullOrEmpty(device.AuthenticationKey) && device.AuthenticationKey.Length != 32)
+                if (!string.IsNullOrEmpty(device.AuthenticationKey) && device.AuthenticationKey.Length != 32 && device.AuthenticationKey.Length != 64)
                 {
-                    throw new ArgumentException("Invalid authentication key. Authentication key must be 16 bytes long.");
+                    throw new ArgumentException("Invalid authentication key. Authentication key must be 16 or 32 bytes long.");
                 }
-                if (!string.IsNullOrEmpty(device.BlockCipherKey) && device.BlockCipherKey.Length != 32)
+                if (!string.IsNullOrEmpty(device.BlockCipherKey) && device.BlockCipherKey.Length != 32 && device.BlockCipherKey.Length != 64)
                 {
-                    throw new ArgumentException("Invalid block cipher key. Block cipher key must be 16 bytes long.");
+                    throw new ArgumentException("Invalid block cipher key. Block cipher key must be 16 or 32 bytes long.");
                 }
-                if (!string.IsNullOrEmpty(device.DedicatedKey) && device.DedicatedKey.Length != 32)
+                if (!string.IsNullOrEmpty(device.DedicatedKey) && device.DedicatedKey.Length != 32 && device.DedicatedKey.Length != 64)
                 {
-                    throw new ArgumentException("Invalid dedicated key. Dedicated key must be 16 bytes long.");
+                    throw new ArgumentException("Invalid dedicated key. Dedicated key must be 16 or 32 bytes long.");
                 }
                 if (!string.IsNullOrEmpty(device.ServerSystemTitle) && device.ServerSystemTitle.Length != 16)
                 {

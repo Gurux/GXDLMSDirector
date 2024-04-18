@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 14312 $,
-//                  $Date: 2023-11-06 10:44:04 +0200 (ma, 06 marras 2023) $
+// Version:         $Revision: 14641 $,
+//                  $Date: 2024-04-05 14:32:50 +0300 (Fri, 05 Apr 2024) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -187,9 +187,20 @@ namespace GXDLMSDirector
 #if DEBUG
             ImportMeterToSimulatorMnu.Visible = true;
 #endif
-            eventsTranslator.SystemTitle = GXCommon.HexToBytes(Properties.Settings.Default.NotifySystemTitle);
-            eventsTranslator.BlockCipherKey = GXCommon.HexToBytes(Properties.Settings.Default.NotifyBlockCipherKey);
-            eventsTranslator.AuthenticationKey = GXCommon.HexToBytes(Properties.Settings.Default.NotifyAuthenticationKey);
+            try
+            {
+                eventsTranslator.SecuritySuite = (SecuritySuite)Properties.Settings.Default.SecuritySuite;
+                eventsTranslator.SystemTitle = GXCommon.HexToBytes(Properties.Settings.Default.NotifySystemTitle);
+                if (eventsTranslator.SecuritySuite != SecuritySuite.Suite2)
+                {
+                    eventsTranslator.BlockCipherKey = GXCommon.HexToBytes(Properties.Settings.Default.NotifyBlockCipherKey);
+                    eventsTranslator.AuthenticationKey = GXCommon.HexToBytes(Properties.Settings.Default.NotifyAuthenticationKey);
+                }
+            }
+            catch(Exception)
+            {
+                //Skip security suite settings if this fails.
+            }
             CancelBtn.Enabled = false;
             traceTranslator = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
 

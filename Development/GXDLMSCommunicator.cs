@@ -5,7 +5,7 @@
 //
 //
 // Version:         $Revision: 14325 $,
-//                  $Date: 2023-11-10 15:19:04 +0200 (pe, 10 marras 2023) $
+//                  $Date: 2023-11-10 15:19:04 +0200 (Fri, 10 Nov 2023) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd

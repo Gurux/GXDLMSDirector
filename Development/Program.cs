@@ -5,7 +5,7 @@
 //
 //
 // Version:         $Revision: 13771 $,
-//                  $Date: 2023-05-15 15:48:52 +0300 (ma, 15 touko 2023) $
+//                  $Date: 2023-05-15 15:48:52 +0300 (Mon, 15 May 2023) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd

@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 14325 $,
-//                  $Date: 2023-11-10 15:19:04 +0200 (Fri, 10 Nov 2023) $
+// Version:         $Revision: 14699 $,
+//                  $Date: 2024-05-28 13:57:11 +0300 (Tue, 28 May 2024) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -334,7 +334,7 @@ namespace GXDLMSDirector
                         //Release is call only for secured connections.
                         //All meters are not supporting Release and it's causing problems.
                         if (client.InterfaceType == InterfaceType.WRAPPER ||
-                            (client.Ciphering.Security != (byte)Security.None && 
+                            (client.Ciphering.Security != (byte)Security.None &&
                             !parent.PreEstablished))
                         {
                             byte[] data = ReleaseRequest();
@@ -1290,12 +1290,14 @@ namespace GXDLMSDirector
                     Security security = client.Ciphering.Security;
                     byte[] challenge = client.CtoSChallenge;
                     Signing signing = client.Ciphering.Signing;
+                    byte[] serverSystemTitle = client.ServerSystemTitle;
                     try
                     {
                         client.ClientAddress = 16;
                         client.Authentication = Authentication.None;
                         client.Ciphering.Security = Security.None;
                         client.Ciphering.Signing = Signing.None;
+                        client.ServerSystemTitle = null;
                         data = SNRMRequest();
                         if (data != null)
                         {
@@ -1316,9 +1318,9 @@ namespace GXDLMSDirector
                                 ReadDataBlock(DisconnectRequest(), "Send Disconnect request.", 1, 1, reply);
                                 throw e;
                             }
-                            GXLogWriter.WriteLog("Parsing UA reply succeeded.");
                             //Has server accepted client.
                             ParseUAResponse(reply.Data);
+                            GXLogWriter.WriteLog("Parsing UA reply succeeded.");
                         }
                         ReadDataBlock(AARQRequest(), "Send AARQ request.", reply);
                         try
@@ -1334,7 +1336,7 @@ namespace GXDLMSDirector
                             reply.Clear();
                             if (parent.InterfaceType == InterfaceType.HdlcWithModeE)
                             {
-                                Disconnect(); 
+                                Disconnect();
                                 //Initialize IEC again for optical port connection.
                                 media.Settings = parent.MediaSettings;
                                 InitializeIEC();
@@ -1358,6 +1360,7 @@ namespace GXDLMSDirector
                         client.Ciphering.Security = security;
                         client.CtoSChallenge = challenge;
                         client.Ciphering.Signing = signing;
+                        client.ServerSystemTitle = serverSystemTitle;
                     }
                 }
                 if (!parent.IgnoreSNRMWithPreEstablished)

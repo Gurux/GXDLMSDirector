@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 14641 $,
-//                  $Date: 2024-04-05 14:32:50 +0300 (Fri, 05 Apr 2024) $
+// Version:         $Revision: 14858 $,
+//                  $Date: 2024-09-17 16:11:12 +0300 (Tue, 17 Sep 2024) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -568,6 +568,14 @@ namespace GXDLMSDirector
                     DeviceGb.Text = dev.Name;
                     ClientAddressValueLbl.Text = dev.ClientAddress.ToString();
                     LogicalAddressValueLbl.Text = dev.LogicalAddress.ToString();
+                    if (dev.Broadcast)
+                    {
+                        PhysicalAddressLbl.Text = "Broadcast address";
+                    }
+                    else
+                    {
+                        PhysicalAddressLbl.Text = "Physical address";
+                    }
                     PhysicalAddressValueLbl.Text = dev.PhysicalAddress.ToString();
                     if (d != null)
                     {
@@ -3741,9 +3749,15 @@ namespace GXDLMSDirector
                         {
                             if (it.CanRead(2))
                             {
-                                d.Comm.ReadValue(it, 2);
-                                dev.DateTimeSkips = it.Time.Skip & (DateTimeSkips.Deviation |
-                                    DateTimeSkips.Status | DateTimeSkips.Status);
+                                try
+                                {
+                                    d.Comm.ReadValue(it, 2);
+                                    dev.DateTimeSkips = it.Time.Skip & (DateTimeSkips.Deviation |
+                                        DateTimeSkips.Status | DateTimeSkips.Status);
+                                }catch(Exception)
+                                {
+                                    //It's OK if this fails.
+                                }
                             }
                         }
                     }
@@ -5650,10 +5664,11 @@ namespace GXDLMSDirector
                             SigningTb.Text = newDev.Signing.ToString();
                             AuthenticationKeyTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.AuthenticationKey));
                             BlockCipherKeyTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.BlockCipherKey));
+                            BroadcastKeyTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.BroadcastKey));
                         }
                         else
                         {
-                            SigningTb.Text = SuiteTb.Text = AuthenticationKeyTb.Text = BlockCipherKeyTb.Text = SecurityTb.Text = ClientSystemTitleTb.Text = ServerSystemTitleTb.Text = "";
+                            SigningTb.Text = SuiteTb.Text = BroadcastKeyTb.Text = AuthenticationKeyTb.Text = BlockCipherKeyTb.Text = SecurityTb.Text = ClientSystemTitleTb.Text = ServerSystemTitleTb.Text = "";
                         }
                         NetworkIDTb.Text = newDev.NetworkId.ToString();
                         PhysicalDeviceAddressTb.Text = GXCommon.ToHex(GXCommon.HexToBytes(newDev.PhysicalDeviceAddress));

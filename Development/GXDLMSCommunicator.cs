@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 14699 $,
-//                  $Date: 2024-05-28 13:57:11 +0300 (Tue, 28 May 2024) $
+// Version:         $Revision: 14858 $,
+//                  $Date: 2024-09-17 16:11:12 +0300 (Tue, 17 Sep 2024) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -86,6 +86,11 @@ namespace GXDLMSDirector
         public IGXMedia media = null;
         internal GXDLMSSecureClient client;
         internal static IGXDLMSExtension Extension;
+        //Frame send time.
+        DateTime FrameSendTime = DateTime.MinValue;
+        //Object transaction time.
+        DateTime ObjectTransactionTime = DateTime.MinValue;
+
 
         public GXDLMSCommunicator(GXDLMSDevice parent, IGXMedia media)
         {
@@ -231,6 +236,16 @@ namespace GXDLMSDirector
 
         public byte[][] Read(GXDLMSObject it, int attributeOrdinal, string parameters)
         {
+            //Some meters expect a small delay between COSEM object reads.
+            if (parent.ObjectDelay > 0)
+            {
+                double delay = (DateTime.Now - ObjectTransactionTime).TotalMilliseconds;
+                if (delay < parent.ObjectDelay)
+                {
+                    Thread.Sleep(parent.ObjectDelay - (int)delay);
+                }
+                ObjectTransactionTime = DateTime.Now;
+            }
             if (it is GXDLMSProfileGeneric && attributeOrdinal == 2 && parameters != null)
             {
                 GXStructure p = (GXStructure)GXDLMSTranslator.XmlToValue(parameters);
@@ -263,6 +278,7 @@ namespace GXDLMSDirector
             {
                 tmp = client.Method(target, methodIndex, data, GXDLMSConverter.GetDLMSDataType(data));
             }
+            reply.Broadcast = client.Broacast;
             int pos = 0;
             string str = string.Format("Method object {0}, interface {1}", target.LogicalName, target.ObjectType);
             foreach (byte[] it in tmp)
@@ -392,6 +408,15 @@ namespace GXDLMSDirector
             {
                 return;
             }
+            if (parent.FrameDelay > 0)
+            {
+                double delay = (DateTime.Now - FrameSendTime).TotalMilliseconds;
+                if (delay < parent.FrameDelay)
+                {
+                    Thread.Sleep(parent.FrameDelay - (int) delay);
+                }
+                FrameSendTime = DateTime.Now;
+            }
             GXReplyData notify = new GXReplyData();
             reply.Error = 0;
             object eop = (byte)0x7E;
@@ -430,6 +455,10 @@ namespace GXDLMSDirector
                     if (!media.IsOpen)
                     {
                         throw new InvalidOperationException("Media is closed.");
+                    }
+                    if (reply.Broadcast)
+                    {
+                        return;
                     }
                     succeeded = media.Receive(p);
                     if (!succeeded)
@@ -985,6 +1014,7 @@ namespace GXDLMSDirector
                 client.InterfaceType = InterfaceType.HDLC;
             }
 
+            client.Broacast = parent.Broadcast;
             client.ClientAddress = parent.ClientAddress;
             if (parent.HDLCAddressing == HDLCAddressType.SerialNumber && manufacturer != null)
             {
@@ -1055,6 +1085,7 @@ namespace GXDLMSDirector
                 client.Ciphering.SystemTitle = GXCommon.HexToBytes(parent.SystemTitle);
                 client.Ciphering.BlockCipherKey = GXCommon.HexToBytes(parent.BlockCipherKey);
                 client.Ciphering.AuthenticationKey = GXCommon.HexToBytes(parent.AuthenticationKey);
+                client.Ciphering.BroadcastBlockCipherKey = GXCommon.HexToBytes(parent.BroadcastKey);
                 client.Ciphering.InvocationCounter = parent.InvocationCounter;
             }
             else
@@ -1062,6 +1093,7 @@ namespace GXDLMSDirector
                 client.Ciphering.SystemTitle = null;
                 client.Ciphering.BlockCipherKey = null;
                 client.Ciphering.AuthenticationKey = null;
+                client.Ciphering.BroadcastBlockCipherKey = null;
                 client.Ciphering.InvocationCounter = 0;
             }
 

@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 14312 $,
-//                  $Date: 2023-11-06 10:44:04 +0200 (ma, 06 marras 2023) $
+// Version:         $Revision: 14858 $,
+//                  $Date: 2024-09-17 16:11:12 +0300 (Tue, 17 Sep 2024) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -368,7 +368,16 @@ namespace GXDLMSDirector
                 ciphering.AuthenticationKeyAscii = false;
                 ciphering.AuthenticationKey = device.AuthenticationKey;
             }
-
+            if (!string.IsNullOrEmpty(device.BroadcastKey) && IsAscii(GXCommon.HexToBytes(device.BroadcastKey)))
+            {
+                ciphering.BroadcastKeyAscii = true;
+                ciphering.BroadcastKey = ASCIIEncoding.ASCII.GetString(GXCommon.HexToBytes(device.BroadcastKey));
+            }
+            else
+            {
+                ciphering.BroadcastKeyAscii = false;
+                ciphering.BroadcastKey = device.BroadcastKey;
+            }
             if (!string.IsNullOrEmpty(device.DedicatedKey) && IsAscii(GXCommon.HexToBytes(device.DedicatedKey)))
             {
                 ciphering.DedicatedKeyAscii = true;
@@ -400,6 +409,7 @@ namespace GXDLMSDirector
                 }
             }
             UseRemoteSerialCB.Checked = device.UseRemoteSerial;
+            BroadcastCb.Checked = device.Broadcast;
             PhysicalServerAddressTB.Value = Convert.ToDecimal(device.PhysicalAddress);
             LogicalServerAddressTB.Value = Convert.ToDecimal(device.LogicalAddress);
             this.ClientAddTB.Value = Convert.ToDecimal(Convert.ToUInt32(device.ClientAddress));
@@ -438,6 +448,8 @@ namespace GXDLMSDirector
             WindowSizeTXTb.Text = device.WindowSizeTX.ToString();
             WindowSizeRXTb.Text = device.WindowSizeRX.ToString();
             InactivityTimeoutTb.Text = device.InactivityTimeout.ToString();
+            FrameDelayTb.Text = device.FrameDelay.ToString();
+            ObjectDelayTb.Text = device.ObjectDelay.ToString();
             MaxPduTb.Text = device.PduSize.ToString();
             GBTWindowSizeTb.Text = device.GbtWindowSize.ToString();
             if (device.UserId != -1)
@@ -817,6 +829,22 @@ namespace GXDLMSDirector
             {
                 device.InactivityTimeout = int.Parse(InactivityTimeoutTb.Text);
             }
+            if (FrameDelayTb.Text == "")
+            {
+                device.FrameDelay = 0;
+            }
+            else
+            {
+                device.FrameDelay = int.Parse(FrameDelayTb.Text);
+            }
+            if (ObjectDelayTb.Text == "")
+            {
+                device.ObjectDelay = 0;
+            }
+            else
+            {
+                device.ObjectDelay = int.Parse(ObjectDelayTb.Text);
+            }
             if (MACSourceAddressTb.Text == "")
             {
                 device.MACSourceAddress = 0xC00;
@@ -979,6 +1007,7 @@ namespace GXDLMSDirector
             GXAuthentication authentication = (GXAuthentication)AuthenticationCB.SelectedItem;
             device.HDLCAddressing = ((GXServerAddress)ServerAddressTypeCB.SelectedItem).HDLCAddress;
             device.ClientAddress = Convert.ToInt32(ClientAddTB.Value);
+            device.Broadcast = BroadcastCb.Checked;
             if (device.HDLCAddressing == HDLCAddressType.SerialNumber)
             {
                 device.PhysicalAddress = (int)PhysicalServerAddressTB.Value;
@@ -995,6 +1024,7 @@ namespace GXDLMSDirector
             device.SystemTitle = ciphering.SystemTitle;
             device.BlockCipherKey = ciphering.BlockCipherKey;
             device.AuthenticationKey = ciphering.AuthenticationKey;
+            device.BroadcastKey = ciphering.BroadcastKey;
             device.ServerSystemTitle = ciphering.ServerSystemTitle;
             device.DedicatedKey = ciphering.DedicatedKey;
             device.ClientSigningKey = ciphering.ClientSigningKey;

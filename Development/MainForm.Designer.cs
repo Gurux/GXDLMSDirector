@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 12829 $,
-//                  $Date: 2022-01-13 16:33:11 +0200 (to, 13 tammi 2022) $
+// Version:         $Revision: 14858 $,
+//                  $Date: 2024-09-17 16:11:12 +0300 (Tue, 17 Sep 2024) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -343,6 +343,8 @@ namespace GXDLMSDirector
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.DeviceListView = new System.Windows.Forms.TabControl();
             this.DevicesTab = new System.Windows.Forms.TabPage();
+            this.BroadcastKeyTb = new System.Windows.Forms.TextBox();
+            this.BroadcastKeyLbl = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -2429,6 +2431,8 @@ namespace GXDLMSDirector
             this.Ciphering.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.Ciphering.Controls.Add(this.BroadcastKeyTb);
+            this.Ciphering.Controls.Add(this.BroadcastKeyLbl);
             this.Ciphering.Controls.Add(this.SigningTb);
             this.Ciphering.Controls.Add(this.SchemeLbl);
             this.Ciphering.Controls.Add(this.SuiteTb);
@@ -2564,7 +2568,7 @@ namespace GXDLMSDirector
             // 
             // DedicatedKeyTb
             // 
-            this.DedicatedKeyTb.Location = new System.Drawing.Point(114, 98);
+            this.DedicatedKeyTb.Location = new System.Drawing.Point(392, 98);
             this.DedicatedKeyTb.Name = "DedicatedKeyTb";
             this.DedicatedKeyTb.ReadOnly = true;
             this.DedicatedKeyTb.Size = new System.Drawing.Size(164, 20);
@@ -2573,7 +2577,7 @@ namespace GXDLMSDirector
             // DedicatedKeyLbl
             // 
             this.DedicatedKeyLbl.AutoSize = true;
-            this.DedicatedKeyLbl.Location = new System.Drawing.Point(10, 99);
+            this.DedicatedKeyLbl.Location = new System.Drawing.Point(288, 99);
             this.DedicatedKeyLbl.Name = "DedicatedKeyLbl";
             this.DedicatedKeyLbl.Size = new System.Drawing.Size(80, 13);
             this.DedicatedKeyLbl.TabIndex = 74;
@@ -2806,6 +2810,23 @@ namespace GXDLMSDirector
             this.DevicesTab.TabIndex = 0;
             this.DevicesTab.Text = "Devices";
             this.DevicesTab.UseVisualStyleBackColor = true;
+            // 
+            // BroadcastKeyTb
+            // 
+            this.BroadcastKeyTb.Location = new System.Drawing.Point(114, 99);
+            this.BroadcastKeyTb.Name = "BroadcastKeyTb";
+            this.BroadcastKeyTb.ReadOnly = true;
+            this.BroadcastKeyTb.Size = new System.Drawing.Size(164, 20);
+            this.BroadcastKeyTb.TabIndex = 81;
+            // 
+            // BroadcastKeyLbl
+            // 
+            this.BroadcastKeyLbl.AutoSize = true;
+            this.BroadcastKeyLbl.Location = new System.Drawing.Point(10, 100);
+            this.BroadcastKeyLbl.Name = "BroadcastKeyLbl";
+            this.BroadcastKeyLbl.Size = new System.Drawing.Size(79, 13);
+            this.BroadcastKeyLbl.TabIndex = 80;
+            this.BroadcastKeyLbl.Text = "Broadcast Key:";
             // 
             // MainForm
             // 
@@ -3158,6 +3179,8 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label SigningTb;
         private System.Windows.Forms.Label SchemeLbl;
         private System.Windows.Forms.ToolStripMenuItem ImportMeterToSimulatorMnu;
+        private System.Windows.Forms.TextBox BroadcastKeyTb;
+        private System.Windows.Forms.Label BroadcastKeyLbl;
     }
 }
 

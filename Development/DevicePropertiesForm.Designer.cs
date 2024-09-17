@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 13833 $,
-//                  $Date: 2023-05-29 10:24:15 +0300 (ma, 29 touko 2023) $
+// Version:         $Revision: 14858 $,
+//                  $Date: 2024-09-17 16:11:12 +0300 (Tue, 17 Sep 2024) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -108,6 +108,7 @@ namespace GXDLMSDirector
             this.InvocationCounterLbl = new System.Windows.Forms.Label();
             this.InvocationCounterTB = new System.Windows.Forms.TextBox();
             this.DeviceSettingsTab = new System.Windows.Forms.TabPage();
+            this.BroadcastCb = new System.Windows.Forms.CheckBox();
             this.InterfaceCb = new System.Windows.Forms.ComboBox();
             this.InterfaceLbl = new System.Windows.Forms.Label();
             this.WaitTimeTB = new System.Windows.Forms.DateTimePicker();
@@ -159,6 +160,7 @@ namespace GXDLMSDirector
             this.SigningKeyCb = new System.Windows.Forms.ComboBox();
             this.DeviceTab = new System.Windows.Forms.TabControl();
             this.AdvancedTab = new System.Windows.Forms.TabPage();
+            this.IncreaseInvocationCounterForGMacAuthenticationCB = new System.Windows.Forms.CheckBox();
             this.OverwriteAttributeAccessRightsCb = new System.Windows.Forms.CheckBox();
             this.GBTWindowSizeTb = new System.Windows.Forms.TextBox();
             this.GBTWindowSizeLbl = new System.Windows.Forms.Label();
@@ -206,6 +208,10 @@ namespace GXDLMSDirector
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.PduWaitTimeTb = new System.Windows.Forms.TextBox();
             this.PduWaitTimelbl = new System.Windows.Forms.Label();
+            this.DelaysTab = new System.Windows.Forms.TabPage();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.ObjectDelayLbl = new System.Windows.Forms.Label();
+            this.FrameDelayLbl = new System.Windows.Forms.Label();
             this.GatewayTab = new System.Windows.Forms.TabPage();
             this.UseGatewayCb = new System.Windows.Forms.CheckBox();
             this.PhysicalDeviceAddressAsciiCb = new System.Windows.Forms.CheckBox();
@@ -222,7 +228,8 @@ namespace GXDLMSDirector
             this.helpProvider1 = new System.Windows.Forms.HelpProvider();
             this.conformanceHelpProvider = new System.Windows.Forms.HelpProvider();
             this.ShowAsHex = new System.Windows.Forms.CheckBox();
-            this.IncreaseInvocationCounterForGMacAuthenticationCB = new System.Windows.Forms.CheckBox();
+            this.FrameDelayTb = new System.Windows.Forms.TextBox();
+            this.ObjectDelayTb = new System.Windows.Forms.TextBox();
             this.SupportedServicesTab.SuspendLayout();
             this.SNSettings.SuspendLayout();
             this.LNSettings.SuspendLayout();
@@ -246,6 +253,8 @@ namespace GXDLMSDirector
             ((System.ComponentModel.ISupportInitialize)(this.MACSourceAddressTb)).BeginInit();
             this.PduFrame.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.DelaysTab.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.GatewayTab.SuspendLayout();
             this.XmlTab.SuspendLayout();
             this.SuspendLayout();
@@ -810,6 +819,7 @@ namespace GXDLMSDirector
             // 
             // DeviceSettingsTab
             // 
+            this.DeviceSettingsTab.Controls.Add(this.BroadcastCb);
             this.DeviceSettingsTab.Controls.Add(this.InterfaceCb);
             this.DeviceSettingsTab.Controls.Add(this.InterfaceLbl);
             this.DeviceSettingsTab.Controls.Add(this.WaitTimeTB);
@@ -852,6 +862,19 @@ namespace GXDLMSDirector
             this.DeviceSettingsTab.TabIndex = 0;
             this.DeviceSettingsTab.Text = "Device Settings";
             this.DeviceSettingsTab.UseVisualStyleBackColor = true;
+            // 
+            // BroadcastCb
+            // 
+            this.BroadcastCb.AutoSize = true;
+            this.helpProvider1.SetHelpKeyword(this.BroadcastCb, "VerboseMode");
+            this.helpProvider1.SetHelpNavigator(this.BroadcastCb, System.Windows.Forms.HelpNavigator.Topic);
+            this.BroadcastCb.Location = new System.Drawing.Point(349, 172);
+            this.BroadcastCb.Name = "BroadcastCb";
+            this.helpProvider1.SetShowHelp(this.BroadcastCb, true);
+            this.BroadcastCb.Size = new System.Drawing.Size(74, 17);
+            this.BroadcastCb.TabIndex = 65;
+            this.BroadcastCb.Text = "Broadcast";
+            this.BroadcastCb.UseVisualStyleBackColor = true;
             // 
             // InterfaceCb
             // 
@@ -1426,6 +1449,7 @@ namespace GXDLMSDirector
             this.DeviceTab.Controls.Add(this.PduFrame);
             this.DeviceTab.Controls.Add(this.SupportedServicesTab);
             this.DeviceTab.Controls.Add(this.CipheringTab);
+            this.DeviceTab.Controls.Add(this.DelaysTab);
             this.DeviceTab.Controls.Add(this.GatewayTab);
             this.DeviceTab.Controls.Add(this.XmlTab);
             this.helpProvider1.SetHelpKeyword(this.DeviceTab, "DeviceProperties");
@@ -1475,6 +1499,19 @@ namespace GXDLMSDirector
             this.AdvancedTab.TabIndex = 3;
             this.AdvancedTab.Text = "Advanced";
             this.AdvancedTab.UseVisualStyleBackColor = true;
+            // 
+            // IncreaseInvocationCounterForGMacAuthenticationCB
+            // 
+            this.IncreaseInvocationCounterForGMacAuthenticationCB.AutoSize = true;
+            this.helpProvider1.SetHelpString(this.IncreaseInvocationCounterForGMacAuthenticationCB, "Some meters expect that Invocation Counter is increased for GMAC Authentication w" +
+        "hen connection is established.");
+            this.IncreaseInvocationCounterForGMacAuthenticationCB.Location = new System.Drawing.Point(14, 365);
+            this.IncreaseInvocationCounterForGMacAuthenticationCB.Name = "IncreaseInvocationCounterForGMacAuthenticationCB";
+            this.helpProvider1.SetShowHelp(this.IncreaseInvocationCounterForGMacAuthenticationCB, true);
+            this.IncreaseInvocationCounterForGMacAuthenticationCB.Size = new System.Drawing.Size(281, 17);
+            this.IncreaseInvocationCounterForGMacAuthenticationCB.TabIndex = 69;
+            this.IncreaseInvocationCounterForGMacAuthenticationCB.Text = "Increase invocation counter for GMAC Authentication ";
+            this.IncreaseInvocationCounterForGMacAuthenticationCB.UseVisualStyleBackColor = true;
             // 
             // OverwriteAttributeAccessRightsCb
             // 
@@ -2011,6 +2048,50 @@ namespace GXDLMSDirector
             this.PduWaitTimelbl.TabIndex = 38;
             this.PduWaitTimelbl.Text = "Wait time";
             // 
+            // DelaysTab
+            // 
+            this.DelaysTab.Controls.Add(this.groupBox3);
+            this.DelaysTab.Location = new System.Drawing.Point(4, 22);
+            this.DelaysTab.Name = "DelaysTab";
+            this.DelaysTab.Size = new System.Drawing.Size(511, 388);
+            this.DelaysTab.TabIndex = 11;
+            this.DelaysTab.Text = "Delays";
+            this.DelaysTab.UseVisualStyleBackColor = true;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.ObjectDelayTb);
+            this.groupBox3.Controls.Add(this.FrameDelayTb);
+            this.groupBox3.Controls.Add(this.ObjectDelayLbl);
+            this.groupBox3.Controls.Add(this.FrameDelayLbl);
+            this.helpProvider1.SetHelpKeyword(this.groupBox3, "advanced");
+            this.helpProvider1.SetHelpNavigator(this.groupBox3, System.Windows.Forms.HelpNavigator.Topic);
+            this.groupBox3.Location = new System.Drawing.Point(8, 3);
+            this.groupBox3.Name = "groupBox3";
+            this.helpProvider1.SetShowHelp(this.groupBox3, true);
+            this.groupBox3.Size = new System.Drawing.Size(375, 149);
+            this.groupBox3.TabIndex = 2;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Delays";
+            // 
+            // ObjectDelayLbl
+            // 
+            this.ObjectDelayLbl.AutoSize = true;
+            this.ObjectDelayLbl.Location = new System.Drawing.Point(10, 49);
+            this.ObjectDelayLbl.Name = "ObjectDelayLbl";
+            this.ObjectDelayLbl.Size = new System.Drawing.Size(91, 13);
+            this.ObjectDelayLbl.TabIndex = 40;
+            this.ObjectDelayLbl.Text = "Object delay (ms):";
+            // 
+            // FrameDelayLbl
+            // 
+            this.FrameDelayLbl.AutoSize = true;
+            this.FrameDelayLbl.Location = new System.Drawing.Point(10, 23);
+            this.FrameDelayLbl.Name = "FrameDelayLbl";
+            this.FrameDelayLbl.Size = new System.Drawing.Size(89, 13);
+            this.FrameDelayLbl.TabIndex = 38;
+            this.FrameDelayLbl.Text = "Frame delay (ms):";
+            // 
             // GatewayTab
             // 
             this.GatewayTab.Controls.Add(this.UseGatewayCb);
@@ -2167,18 +2248,25 @@ namespace GXDLMSDirector
             this.ShowAsHex.UseVisualStyleBackColor = true;
             this.ShowAsHex.CheckedChanged += new System.EventHandler(this.ShowAsHex_CheckedChanged);
             // 
-            // IncreaseInvocationCounterForGMacAuthenticationCB
+            // FrameDelayTb
             // 
-            this.IncreaseInvocationCounterForGMacAuthenticationCB.AutoSize = true;
-            this.helpProvider1.SetHelpString(this.IncreaseInvocationCounterForGMacAuthenticationCB, "Some meters expect that Invocation Counter is increased for GMAC Authentication w" +
-        "hen connection is established.");
-            this.IncreaseInvocationCounterForGMacAuthenticationCB.Location = new System.Drawing.Point(14, 365);
-            this.IncreaseInvocationCounterForGMacAuthenticationCB.Name = "IncreaseInvocationCounterForGMacAuthenticationCB";
-            this.helpProvider1.SetShowHelp(this.IncreaseInvocationCounterForGMacAuthenticationCB, true);
-            this.IncreaseInvocationCounterForGMacAuthenticationCB.Size = new System.Drawing.Size(281, 17);
-            this.IncreaseInvocationCounterForGMacAuthenticationCB.TabIndex = 69;
-            this.IncreaseInvocationCounterForGMacAuthenticationCB.Text = "Increase invocation counter for GMAC Authentication ";
-            this.IncreaseInvocationCounterForGMacAuthenticationCB.UseVisualStyleBackColor = true;
+            this.helpProvider1.SetHelpKeyword(this.FrameDelayTb, "MaxInfoTX");
+            this.helpProvider1.SetHelpNavigator(this.FrameDelayTb, System.Windows.Forms.HelpNavigator.Topic);
+            this.FrameDelayTb.Location = new System.Drawing.Point(108, 21);
+            this.FrameDelayTb.Name = "FrameDelayTb";
+            this.helpProvider1.SetShowHelp(this.FrameDelayTb, true);
+            this.FrameDelayTb.Size = new System.Drawing.Size(93, 20);
+            this.FrameDelayTb.TabIndex = 43;
+            // 
+            // ObjectDelayTb
+            // 
+            this.helpProvider1.SetHelpKeyword(this.ObjectDelayTb, "MaxInfoTX");
+            this.helpProvider1.SetHelpNavigator(this.ObjectDelayTb, System.Windows.Forms.HelpNavigator.Topic);
+            this.ObjectDelayTb.Location = new System.Drawing.Point(108, 48);
+            this.ObjectDelayTb.Name = "ObjectDelayTb";
+            this.helpProvider1.SetShowHelp(this.ObjectDelayTb, true);
+            this.ObjectDelayTb.Size = new System.Drawing.Size(93, 20);
+            this.ObjectDelayTb.TabIndex = 44;
             // 
             // DevicePropertiesForm
             // 
@@ -2235,6 +2323,9 @@ namespace GXDLMSDirector
             this.PduFrame.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.DelaysTab.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.GatewayTab.ResumeLayout(false);
             this.GatewayTab.PerformLayout();
             this.XmlTab.ResumeLayout(false);
@@ -2405,5 +2496,12 @@ namespace GXDLMSDirector
         private System.Windows.Forms.Label GBTWindowSizeLbl;
         private System.Windows.Forms.CheckBox OverwriteAttributeAccessRightsCb;
         private System.Windows.Forms.CheckBox IncreaseInvocationCounterForGMacAuthenticationCB;
+        private System.Windows.Forms.CheckBox BroadcastCb;
+        private System.Windows.Forms.TabPage DelaysTab;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Label FrameDelayLbl;
+        private System.Windows.Forms.Label ObjectDelayLbl;
+        private System.Windows.Forms.TextBox ObjectDelayTb;
+        private System.Windows.Forms.TextBox FrameDelayTb;
     }
 }

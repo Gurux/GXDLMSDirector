@@ -145,11 +145,20 @@ namespace GXDLMSDirector
                 translator.Security = Security.None;
                 translator.SecuritySuite = SecuritySuite.Suite0;
                 translator.SystemTitle = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.NotifySystemTitle);
-                translator.ServerSystemTitle = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.ServerSystemTitle);
-                translator.BlockCipherKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.NotifyBlockCipherKey);
-                translator.AuthenticationKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.AuthenticationKey);
+                try
+                {
+                    translator.ServerSystemTitle = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.ServerSystemTitle);
+                    translator.BlockCipherKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.NotifyBlockCipherKey);
+                    translator.AuthenticationKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.AuthenticationKey);
+                    translator.DedicatedKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.DedicatedKey);
+                }
+                catch (Exception)
+                {
+                    translator.BlockCipherKey = null;
+                    translator.AuthenticationKey = null;
+                    translator.DedicatedKey = null;
+                }
                 translator.InvocationCounter = 0;
-                translator.DedicatedKey = GXDLMSTranslator.HexToBytes(Properties.Settings.Default.DedicatedKey);
             }
             Ciphering = new GXCipheringSettings(translator, keys, certificates,
                         Properties.Settings.Default.ClientAgreementKey,

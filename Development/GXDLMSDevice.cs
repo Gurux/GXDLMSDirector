@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 13578 $,
-//                  $Date: 2023-02-20 14:05:21 +0200 (ma, 20 helmi 2023) $
+// Version:         $Revision: 14889 $,
+//                  $Date: 2024-09-25 14:55:55 +0300 (Wed, 25 Sep 2024) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -109,7 +109,7 @@ namespace GXDLMSDirector
             }
             if (HDLCAddressing == HDLCAddressType.Default)
             {
-                if (PhysicalAddress != 1 && LogicalAddress != 0)
+                if (PhysicalAddress != 1 || LogicalAddress != 0)
                 {
                     if (InterfaceType == InterfaceType.HDLC || InterfaceType == InterfaceType.HdlcWithModeE || InterfaceType == InterfaceType.PlcHdlc)
                     {

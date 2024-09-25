@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 14858 $,
-//                  $Date: 2024-09-17 16:11:12 +0300 (Tue, 17 Sep 2024) $
+// Version:         $Revision: 14889 $,
+//                  $Date: 2024-09-25 14:55:55 +0300 (Wed, 25 Sep 2024) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -2053,6 +2053,13 @@ namespace GXDLMSDirector
         /// </summary>
         public void ReadList(List<KeyValuePair<GXDLMSObject, int>> list)
         {
+            if (OnBeforeRead != null)
+            {
+                foreach (var it in list)
+                {
+                    OnBeforeRead(client, it.Key, it.Value, null, null, null);
+                }
+            }
             byte[][] data = client.ReadList(list);
             GXReplyData reply = new GXReplyData();
             List<object> values = new List<object>();
@@ -2071,6 +2078,15 @@ namespace GXDLMSDirector
                 throw new Exception("Invalid reply. Read items count do not match.");
             }
             client.UpdateValues(list, values);
+            if (OnAfterRead != null)
+            {
+                int pos = 0;
+                foreach(var it in list)
+                {
+                    OnAfterRead(client, it.Key, it.Value, values[pos], null, null);
+                    ++pos;
+                }
+            }
         }
 
         public object ReadValue(GXDLMSObject it, int attributeOrdinal)

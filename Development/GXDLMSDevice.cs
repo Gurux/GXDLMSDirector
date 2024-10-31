@@ -4,8 +4,8 @@
 //
 //
 //
-// Version:         $Revision: 14889 $,
-//                  $Date: 2024-09-25 14:55:55 +0300 (Wed, 25 Sep 2024) $
+// Version:         $Revision: 14931 $,
+//                  $Date: 2024-10-31 09:29:15 +0200 (Thu, 31 Oct 2024) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -902,7 +902,10 @@ namespace GXDLMSDirector
                             //Read Period
                             try
                             {
-                                Comm.ReadValue(it, 8);
+                                if (Comm.client.CanRead(it, 8))
+                                {
+                                    Comm.ReadValue(it, 8);
+                                }
                             }
                             catch (Exception ex)
                             {
@@ -917,7 +920,10 @@ namespace GXDLMSDirector
                             //Read number of periods
                             try
                             {
-                                Comm.ReadValue(it, 9);
+                                if (Comm.client.CanRead(it, 9))
+                                {
+                                    Comm.ReadValue(it, 9);
+                                }
                             }
                             catch (Exception ex)
                             {

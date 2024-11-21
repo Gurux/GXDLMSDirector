@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 14858 $,
-//                  $Date: 2024-09-17 16:11:12 +0300 (Tue, 17 Sep 2024) $
+// Version:         $Revision: 15005 $,
+//                  $Date: 2024-11-21 15:13:08 +0200 (Thu, 21 Nov 2024) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -197,7 +197,7 @@ namespace GXDLMSDirector
                     eventsTranslator.AuthenticationKey = GXCommon.HexToBytes(Properties.Settings.Default.NotifyAuthenticationKey);
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 //Skip security suite settings if this fails.
             }
@@ -3731,16 +3731,29 @@ namespace GXDLMSDirector
                     }
                     if (d != null)
                     {
-                        //Read inactivity timeout.
-                        dev.InactivityTimeout = 120 - 10;
-                        foreach (GXDLMSHdlcSetup it in dev.Objects.GetObjects(ObjectType.IecHdlcSetup))
+                        //Read inactivity timeout and update it.
+                        if (dev.InactivityTimeout == 110)
                         {
-                            if (it.CanRead(8))
+                            var objs = dev.Objects.GetObjects(ObjectType.IecHdlcSetup);
+                            if (objs.Count == 1)
                             {
-                                d.Comm.ReadValue(it, 8);
-                                if (dev.InactivityTimeout > it.InactivityTimeout && it.InactivityTimeout > 10)
+                                foreach (GXDLMSHdlcSetup it in objs)
                                 {
-                                    dev.InactivityTimeout = it.InactivityTimeout - 10;
+                                    if (it.CanRead(8))
+                                    {
+                                        try
+                                        {
+                                            d.Comm.ReadValue(it, 8);
+                                            if (dev.InactivityTimeout > it.InactivityTimeout && it.InactivityTimeout > 10)
+                                            {
+                                                dev.InactivityTimeout = it.InactivityTimeout - 10;
+                                            }
+                                        }
+                                        catch (Exception)
+                                        {
+                                            //It's OK if this fails.
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -3754,7 +3767,8 @@ namespace GXDLMSDirector
                                     d.Comm.ReadValue(it, 2);
                                     dev.DateTimeSkips = it.Time.Skip & (DateTimeSkips.Deviation |
                                         DateTimeSkips.Status | DateTimeSkips.Status);
-                                }catch(Exception)
+                                }
+                                catch (Exception)
                                 {
                                     //It's OK if this fails.
                                 }

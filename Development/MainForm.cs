@@ -5,8 +5,8 @@
 //
 //
 //
-// Version:         $Revision: 15005 $,
-//                  $Date: 2024-11-21 15:13:08 +0200 (Thu, 21 Nov 2024) $
+// Version:         $Revision: 15162 $,
+//                  $Date: 2025-01-30 14:53:26 +0200 (Thu, 30 Jan 2025) $
 //                  $Author: gurux01 $
 //
 // Copyright (c) Gurux Ltd
@@ -1318,7 +1318,7 @@ namespace GXDLMSDirector
                                     {
                                         try
                                         {
-                                            xmlValue = ve.Value.ToString();
+                                            xmlValue = Convert.ToString(ve.Value);
                                             xml = GXDLMSTranslator.ValueToXml(ve.Value);
                                             dev.Comm.MethodRequest(ve.Target, ve.Index, ve.Value, ve.Text, reply);
                                             //Invoke action is called after execution because action might fail.

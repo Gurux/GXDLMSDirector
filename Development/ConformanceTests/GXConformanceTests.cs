@@ -961,7 +961,7 @@ namespace GXDLMSDirector
                     dev.Comm.LogFile = Path.Combine(test.Results, "Trace.txt");
                     GXDLMSClient cl = dev.Comm.client;
                     converter = new GXDLMSConverter(dev.Standard);
-                    dev.Comm.client = new GXDLMSXmlClient(TranslatorOutputType.SimpleXml, false);
+                    dev.Comm.client = new GXDLMSXmlClient(TranslatorOutputType.SimpleXml, true);
                     dev.Comm.client.Ciphering.TestMode = true;
                     cl.CopyTo(dev.Comm.client);
                     test.Device = dev;

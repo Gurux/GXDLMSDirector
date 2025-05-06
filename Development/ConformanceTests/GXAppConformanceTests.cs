@@ -964,8 +964,6 @@ namespace GXDLMSDirector
 
                     byte[][] data2 = (dev.Comm.client as GXDLMSXmlClient).PduToMessages((dev.Comm.client as GXDLMSXmlClient).LoadXml(xml)[0]);
                     GXDLMSTranslator t = new GXDLMSTranslator(TranslatorOutputType.SimpleXml);
-                    //              bb.SetHexString("6036A109060760857405080101A203040144A303040144A403020100A503020100A803020100BE10040E01000000065F1F040060FEDFFFFF");
-                    //            dev.Comm.ReadDataBlock(dev.Comm.client.CustomFrameRequest(Command.Aarq, bb), testName + "AARQ", 1, tryCount, reply);
                     dev.Comm.ReadDataBlock(data2, testName + "AARQ", 1, tryCount, reply);
                     dev.Comm.ParseAAREResponse(reply.Data);
                     reply.Data.Position = 0;
@@ -1866,6 +1864,9 @@ namespace GXDLMSDirector
                         GXConformanceTests.AddError(test, dev, output.Errors, "T_APPL_DATA_LN_N1 subtest 1 failed. " + ex.Message);
                         passed = false;
                     }
+                    reply.Clear();
+                    GXDLMSAssociationLogicalName a = new GXDLMSAssociationLogicalName();
+                    dev.Comm.ReadDataBlock(dev.Comm.Read(a, 1), "T_APPL_DATA_LN_N1 subtest 1. Read association view logical name.", 1, reply);
                 }
                 catch (Exception)
                 {
@@ -1882,7 +1883,9 @@ namespace GXDLMSDirector
                     (dev.Comm.client as GXDLMSXmlClient).ThrowExceptions = true;
                     if (dev.Comm.client.InterfaceType == InterfaceType.HDLC)
                     {
-                        bb.SetHexString("E6E600C001C1000028000100");
+
+                        bb.SetHexString("E6E600C0C1000F0000280000FF0100");
+                        //bb.SetHexString("E6E600C001C1000028000100");
                         dev.Comm.ReadDataBlock(dev.Comm.client.CustomHdlcFrameRequest(0, bb), "T_APPL_DATA_LN_N1 subtest 2. Invalid Get request.", 1, tryCount, reply);
                     }
                     else
@@ -1922,9 +1925,17 @@ namespace GXDLMSDirector
                     dev.Comm.ReadDataBlock(data2, "T_APPL_DATA_LN_N1 subtest 3. Read non-existing object", 1, reply);
                     passed = false;
                 }
-                catch (GXDLMSException)
+                catch (GXDLMSException ex)
                 {
-                    GXConformanceTests.AddInfo(test, dev, output.Info, "T_APPL_DATA_LN_N1 subtest 2 succeeded. Invalid Get request non-existing object succeeded.");
+                    if (ex.ErrorCode == (int)ErrorCode.ReadWriteDenied)
+                    {
+                        GXConformanceTests.AddInfo(test, dev, output.Info, "T_APPL_DATA_LN_N1 subtest 3 succeeded. Invalid Get request succeeded.");
+                    }
+                    else
+                    {
+                        GXConformanceTests.AddError(test, dev, output.Errors, "T_APPL_DATA_LN_N1 subtest 3 failed. " + ex.Message);
+                        passed = false;
+                    }
                 }
                 catch (Exception)
                 {
@@ -1988,7 +1999,8 @@ namespace GXDLMSDirector
             }
             catch (GXDLMSExceptionResponse ex)
             {
-                if (ex.ExceptionStateError == ExceptionStateError.ServiceUnknown && ex.ExceptionServiceError == ExceptionServiceError.ServiceNotSupported)
+                if (ex.ExceptionStateError == ExceptionStateError.ServiceNotAllowed && 
+                    ex.ExceptionServiceError == ExceptionServiceError.ServiceNotSupported)
                 {
                     GXConformanceTests.AddInfo(test, dev, output.Info, "T_APPL_DATA_LN_N1 subtest 3 succeeded when Short Name referencing is used.");
                 }

@@ -2139,6 +2139,19 @@ namespace GXDLMSDirector
                         passed = false;
                     }
                 }
+                catch (GXDLMSExceptionResponse ex)
+                {
+                    if (ex.ExceptionServiceError == ExceptionServiceError.ServiceNotSupported &&
+                        ex.ExceptionStateError == ExceptionStateError.ServiceNotAllowed)
+                    {
+                        GXConformanceTests.AddInfo(test, dev, output.Info, testName + "Invalid Set request succeeded.");
+                    }
+                    else
+                    {
+                        GXConformanceTests.AddError(test, dev, output.Errors, failedTestName + ex.Message);
+                        passed = false;
+                    }
+                }
                 catch (Exception ex)
                 {
                     GXConformanceTests.AddError(test, dev, output.Errors, failedTestName + ex.Message);
@@ -2168,6 +2181,19 @@ namespace GXDLMSDirector
                 catch (GXDLMSException ex)
                 {
                     if (ex.ErrorCode == (int)ErrorCode.ReadWriteDenied)
+                    {
+                        GXConformanceTests.AddInfo(test, dev, output.Info, testName + "Invalid Set request succeeded.");
+                    }
+                    else
+                    {
+                        GXConformanceTests.AddError(test, dev, output.Errors, failedTestName + ex.Message);
+                        passed = false;
+                    }
+                }
+                catch (GXDLMSExceptionResponse ex)
+                {
+                    if (ex.ExceptionServiceError == ExceptionServiceError.ServiceNotSupported &&
+                        ex.ExceptionStateError == ExceptionStateError.ServiceNotAllowed)
                     {
                         GXConformanceTests.AddInfo(test, dev, output.Info, testName + "Invalid Set request succeeded.");
                     }
